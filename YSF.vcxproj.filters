@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="amx">
+      <UniqueIdentifier>{69faaec5-bb8c-4f93-bac4-033a5b7b257d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{c29c9218-2572-432d-bb07-174472b78b52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server\MFR">
+      <UniqueIdentifier>{8885f2d6-5d46-479d-951d-88a46cc8172f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SDK\amxplugin.cpp">
+      <Filter>amx</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\amx\getch.c">
+      <Filter>amx</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="CServer.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayer.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="BitStream.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Inlines.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="RPCs.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Addresses.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="CGangZonePool.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="CModelSizes.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SDK\amx\amx.h">
+      <Filter>amx</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\amx\getch.h">
+      <Filter>amx</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\plugin.h">
+      <Filter>amx</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\plugincommon.h">
+      <Filter>amx</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\amx\sclinux.h">
+      <Filter>amx</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h" />
+    <ClInclude Include="CServer.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayer.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Addresses.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="BitStream.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CVector.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="RPCs.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Structs.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Inlines.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CTypes.h" />
+    <ClInclude Include="CGangZonePool.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CZone2D.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CModelSizes.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="YSF.def">
+      <Filter>amx</Filter>
+    </None>
+  </ItemGroup>
+</Project>
