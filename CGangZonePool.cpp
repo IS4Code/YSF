@@ -51,17 +51,15 @@ WORD CGangZonePool::New(WORD playerid, float fMinX, float fMinY, float fMaxX, fl
 
 void CGangZonePool::Delete(WORD wZone)
 {
-	delete pGangZone[wZone];
-	pGangZone[wZone] = NULL;
-
-	RakNet::BitStream bsParams;
-	bsParams.Write(wZone);
-	pRakServer->RPC(&RPC_HideGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true, false);
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		this->HideForPlayer(i, wZone);
+	}
 }
 
 void CGangZonePool::Delete(WORD playerid, WORD wZone)
 {
-
+	this->HideForPlayer(playerid, wZone, true);
 }
 
 void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
@@ -171,9 +169,10 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 
 void CGangZonePool::HideForAll(WORD wZone)
 {
-	RakNet::BitStream bsParams;
-	bsParams.Write(wZone);
-	pRakServer->RPC(&RPC_HideGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true, false);
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		this->HideForPlayer(i, wZone);
+	}
 }
 
 void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
@@ -199,6 +198,8 @@ void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, boo
 		}
 	}
 
+	pPlayerData[playerid]->dwClientSideZoneFlashColor[i] = dwColor;
+
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
 	bsParams.Write(RGBA_ABGR(dwColor));
@@ -207,10 +208,10 @@ void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, boo
 
 void CGangZonePool::FlashForAll(WORD wZone, DWORD dwColor)
 {
-	RakNet::BitStream bsParams;
-	bsParams.Write(wZone);
-	bsParams.Write(RGBA_ABGR(dwColor));
-	pRakServer->RPC(&RPC_FlashGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true, false);
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		this->FlashForPlayer(i, wZone, dwColor);
+	}
 }
 
 void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
@@ -236,6 +237,8 @@ void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZo
 		}
 	}
 
+	pPlayerData[playerid]->dwClientSideZoneFlashColor[i] = 0;
+
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
 	pRakServer->RPC(&RPC_StopFlashGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
@@ -243,7 +246,8 @@ void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZo
 
 void CGangZonePool::StopFlashForAll(WORD wZone)
 {
-	RakNet::BitStream bsParams;
-	bsParams.Write(wZone);
-	pRakServer->RPC(&RPC_StopFlashGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true, false);
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		this->StopFlashForPlayer(i, wZone);
+	}
 }

@@ -30,6 +30,7 @@ CPlayerData::CPlayerData( void )
 
 	memset(bInGangZone, NULL, sizeof(bInGangZone));
 	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
+	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
 }
 
 CPlayerData::~CPlayerData( void )

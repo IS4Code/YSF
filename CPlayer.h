@@ -39,5 +39,6 @@ public:
 
 	bool bInGangZone[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneColor[MAX_GANG_ZONES];
+	DWORD dwClientSideZoneFlashColor[MAX_GANG_ZONES];
 };
 #endif

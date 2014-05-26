@@ -50,7 +50,7 @@ class CGangZonePool;
 #endif
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R4"
+#define PROJECT_VERSION		"R5"
 
 #define MAX_PLAYERS					500
 #define MAX_OBJECTS					1000
