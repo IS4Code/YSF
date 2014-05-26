@@ -166,7 +166,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		pfn__UnloadFilterScript = (UnloadFilterScript_t)InternalUnloadFS;
 
 		//logprintf("unloadfs: %x", InternalUnloadFS);
-		logprintf("AMXLoad3 - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
+		logprintf("AMXLoad3 -- pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 
 		// Recreate GangZone pool
 		pNetGame->pGangZonePool = new CGangZonePool();
