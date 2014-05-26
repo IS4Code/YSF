@@ -3496,8 +3496,8 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 
 	const char *szWeaonName = GetWeaponName((BYTE)params[1]);
 	cell *addr = NULL;
-    //Get the address of our string parameter (str) and store our message 
     
+	//Get the address of our string parameter (str) and store our message 
 	amx_GetAddr(amx, params[2], &addr);
     amx_SetString(addr, szWeaonName, 0, 0, params[3]);
 	return 1;
