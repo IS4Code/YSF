@@ -1621,10 +1621,10 @@ static cell AMX_NATIVE_CALL n_IsGangZoneVisibleForPlayer( AMX* amx, cell* params
 	return !!(GetIDFromClientSide(playerid, zoneid) != 0xFF);
 }
 
-// native GetGangZoneColorForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_GetGangZoneColorForPlayer( AMX* amx, cell* params )
+// native GangZoneGetColorForPlayer(playerid, zoneid);
+static cell AMX_NATIVE_CALL n_GangZoneGetColorForPlayer( AMX* amx, cell* params )
 {
-	CHECK_PARAMS(2, "GetGangZoneColorForPlayer");
+	CHECK_PARAMS(2, "GangZoneGetColorForPlayer");
 	
 	int playerid = (int)params[1];
 	int zoneid = (int)params[2];
@@ -1641,10 +1641,10 @@ static cell AMX_NATIVE_CALL n_GetGangZoneColorForPlayer( AMX* amx, cell* params 
 	return 0;
 }
 
-// native GetGangZoneFlashColorForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_GetGangZoneFlashColorForPlayer( AMX* amx, cell* params )
+// native GangZoneGetFlashColorForPlayer(playerid, zoneid);
+static cell AMX_NATIVE_CALL n_GangZoneGetFlashColorForPlayer( AMX* amx, cell* params )
 {
-	CHECK_PARAMS(2, "GetGangZoneFlashColorForPlayer");
+	CHECK_PARAMS(2, "GangZoneGetFlashColorForPlayer");
 	
 	int playerid = (int)params[1];
 	int zoneid = (int)params[2];
@@ -1681,14 +1681,14 @@ static cell AMX_NATIVE_CALL n_IsPlayerInGangZone( AMX* amx, cell* params )
 	return 0;
 }
 
-// native GetGangZonePos(zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
-static cell AMX_NATIVE_CALL n_GetGangZonePos( AMX* amx, cell* params )
+// native GangZoneGetPos(zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
+static cell AMX_NATIVE_CALL n_GangZoneGetPos( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(5, "GetGangZonePos");
+	CHECK_PARAMS(5, "GangZoneGetPos");
 
 	int zoneid = (int)params[1];
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -3135,10 +3135,23 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneDestroy( AMX* amx, cell* params )
 	return 1;
 }
 
+// native IsValidPlayerGangZone(playerid, zoneid);
+static cell AMX_NATIVE_CALL n_IsValidPlayerGangZone( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(2, "IsValidPlayerGangZone");
+	
+	int playerid = (int)params[1];
+	int zoneid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+	
+	return pPlayerData[playerid]->pPlayerZone[zoneid] != NULL;
+}
+
 // native IsPlayerInPlayerGangZone(playerid, zoneid);
 static cell AMX_NATIVE_CALL n_IsPlayerInPlayerGangZone( AMX* amx, cell* params )
 {
-	CHECK_PARAMS(3, "IsPlayerInPlayerGangZone");
+	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
 	int playerid = (int)params[1];
 	int zoneid = (int)params[2];
@@ -3155,14 +3168,14 @@ static cell AMX_NATIVE_CALL n_IsPlayerInPlayerGangZone( AMX* amx, cell* params )
 	return 0;
 }
 
-// native GetPlayerGangZonePos(playerid, zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
-static cell AMX_NATIVE_CALL n_GetPlayerGangZonePos( AMX* amx, cell* params )
+// native PlayerGangZoneGetPos(playerid, zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
+static cell AMX_NATIVE_CALL n_PlayerGangZoneGetPos( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(6, "GetPlayerGangZonePos");
+	CHECK_PARAMS(6, "PlayerGangZoneGetPos");
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -3191,7 +3204,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerGangZonePos( AMX* amx, cell* params )
 // native IsPlayerGangZoneVisible(playerid, zoneid);
 static cell AMX_NATIVE_CALL n_IsPlayerGangZoneVisible( AMX* amx, cell* params )
 {
-	CHECK_PARAMS(3, "IsPlayerInPlayerGangZone");
+	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
 	int playerid = (int)params[1];
 	int zoneid = (int)params[2];
@@ -3200,18 +3213,13 @@ static cell AMX_NATIVE_CALL n_IsPlayerGangZoneVisible( AMX* amx, cell* params )
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid, true);
-	if(id != 0xFFFF) 
-	{
-		return pPlayerData[playerid]->bInGangZone[id];
-	}
-	return 0;
+	return GetIDFromClientSide(playerid, zoneid, true) != 0xFFFF;
 }
 
-// native GetPlayerGangZoneColor(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_GetPlayerGangZoneColor( AMX* amx, cell* params )
+// native PlayerGangZoneGetColor(playerid, zoneid);
+static cell AMX_NATIVE_CALL n_PlayerGangZoneGetColor( AMX* amx, cell* params )
 {
-	CHECK_PARAMS(3, "GetPlayerGangZoneColor");
+	CHECK_PARAMS(2, "PlayerGangZoneGetColor");
 	
 	int playerid = (int)params[1];
 	int zoneid = (int)params[2];
@@ -3228,10 +3236,10 @@ static cell AMX_NATIVE_CALL n_GetPlayerGangZoneColor( AMX* amx, cell* params )
 	return 0;
 }
 
-// native GetPlayerGangZoneFlashColor(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_GetPlayerGangZoneFlashColor( AMX* amx, cell* params )
+// native PlayerGangZoneGetFlashColor(playerid, zoneid);
+static cell AMX_NATIVE_CALL n_PlayerGangZoneGetFlashColor( AMX* amx, cell* params )
 {
-	CHECK_PARAMS(3, "GetPlayerGangZoneFlashColor");
+	CHECK_PARAMS(2, "PlayerGangZoneGetFlashColor");
 	
 	int playerid = (int)params[1];
 	int zoneid = (int)params[2];
@@ -3255,7 +3263,7 @@ static cell AMX_NATIVE_CALL n_CreatePlayerPickup( AMX* amx, cell* params )
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(6, "DestroyPlayerPickup");
+	CHECK_PARAMS(6, "CreatePlayerPickup");
 
 	int playerid = (int)params[1];
 	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);
@@ -3765,22 +3773,23 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"IsValidGangZone",					n_IsValidGangZone},
 	{"IsPlayerInGangZone",				n_IsPlayerInGangZone},
 	{"IsGangZoneVisibleForPlayer",		n_IsGangZoneVisibleForPlayer},
-	{"GetGangZoneColorForPlayer",		n_GetGangZoneColorForPlayer},
-	{"GetGangZoneFlashColorForPlayer",	n_GetGangZoneFlashColorForPlayer},
-	{"GetGangZonePos",					n_GetGangZonePos},
+	{"GangZoneGetColorForPlayer",		n_GangZoneGetColorForPlayer},
+	{"GangZoneGetFlashColorForPlayer",	n_GangZoneGetFlashColorForPlayer},
+	{"GangZoneGetPos",					n_GangZoneGetPos},
 
 	// Gangzone - Player
 	{ "CreatePlayerGangZone",			n_CreatePlayerGangZone },
+	{ "PlayerGangZoneDestroy",			n_PlayerGangZoneDestroy },
 	{ "PlayerGangZoneShow",				n_PlayerGangZoneShow },
 	{ "PlayerGangZoneHide",				n_PlayerGangZoneHide },
 	{ "PlayerGangZoneFlash",			n_PlayerGangZoneFlash},
 	{ "PlayerGangZoneStopFlash",		n_PlayerGangZoneStopFlash },
-	{ "PlayerGangZoneDestroy",			n_PlayerGangZoneDestroy },
+	{ "IsValidPlayerGangZone",			n_IsValidPlayerGangZone },
 	{ "IsPlayerInPlayerGangZone",		n_IsPlayerInPlayerGangZone },
-	{ "GetPlayerGangZonePos",			n_GetPlayerGangZonePos },
 	{ "IsPlayerGangZoneVisible",		n_IsPlayerGangZoneVisible },
-	{ "GetPlayerGangZoneColor",			n_GetPlayerGangZoneColor },
-	{ "GetPlayerGangZoneFlashColor",	n_GetPlayerGangZoneFlashColor },
+	{ "PlayerGangZoneGetColor",			n_PlayerGangZoneGetColor },
+	{ "PlayerGangZoneGetFlashColor",	n_PlayerGangZoneGetFlashColor },
+	{ "PlayerGangZoneGetPos",			n_PlayerGangZoneGetPos },
 
 	// Textdraw functions
 	{"IsValidTextDraw",					n_IsValidTextDraw},
