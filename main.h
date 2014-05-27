@@ -24,9 +24,6 @@
 typedef void (* logprintf_t)(char *, ...);
 extern logprintf_t logprintf;
 
-typedef bool (__thiscall *LoadFilterscriptFromMemory_t)(char* pFileName, char* pFileData);
-extern LoadFilterscriptFromMemory_t	pfn__LoadFilterscriptFromMemory;
-
 // Server instance
 extern CServer *pServer;
 

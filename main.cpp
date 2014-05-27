@@ -59,7 +59,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 {
 	pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
 	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
-	logprintf("logprintf = 0x%08X\n", (int)logprintf);
+	logprintf("logprintf = 0x%08X\n", *((int*)(&logprintf)));
 
 	// Store internal pointers
 	InternalNetGame = ppData[225];
@@ -130,12 +130,6 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 // filterscript gets loaded with the server. In here we register
 // the native functions we like to add to the scripts.
 
-typedef bool (__thiscall *LoadFilterscriptFromMemory_t)(char* pFileName, char* pFileData);
-LoadFilterscriptFromMemory_t	pfn__LoadFilterscriptFromMemory;
-
-typedef bool (__thiscall *UnloadFilterScript_t)(char* pFileName);
-UnloadFilterScript_t	pfn__UnloadFilterScript;
-
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx) 
 {
 	if(!pServer) goto Ide;
@@ -162,9 +156,6 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		int (*pfn_GetRakServer)(void) = (int (*)(void))InternalRakServer;
 		pRakServer = (RakServer*)pfn_GetRakServer();
 		
-		pfn__LoadFilterscriptFromMemory = (LoadFilterscriptFromMemory_t)InternalLoadFS;
-		pfn__UnloadFilterScript = (UnloadFilterScript_t)InternalUnloadFS;
-
 		//logprintf("unloadfs: %x", InternalUnloadFS);
 		logprintf("AMXLoad3 - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 

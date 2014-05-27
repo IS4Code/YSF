@@ -3950,19 +3950,19 @@ void
 
 int InitScripting(AMX *amx)
 {
-	Redirect(amx, "AttachPlayerObjectToPlayer", (ucell)n_FIXED_AttachPlayerObjectToPlayer, 0);
-	Redirect(amx, "GetWeaponName", (ucell)n_FIXED_GetWeaponName, 0);
-	Redirect(amx, "SetGravity", (ucell)n_FIXED_SetGravity, 0);
-	Redirect(amx, "GetGravity", (ucell)n_FIXED_GetGravity, 0);
-	Redirect(amx, "SetWeather", (ucell)n_FIXED_SetWeather, 0);
-	Redirect(amx, "SetPlayerWeather", (ucell)n_FIXED_SetPlayerWeather, 0);
-	Redirect(amx, "SetPlayerWorldBounds", (ucell)n_FIXED_SetPlayerWorldBounds, 0);
-	
-	Redirect(amx, "GangZoneCreate", (ucell)n_YSF_GangZoneCreate, 0);
-	Redirect(amx, "GangZoneDestroy", (ucell)n_YSF_GangZoneDestroy, 0);
-	Redirect(amx, "GangZoneShowForPlayer", (ucell)n_YSF_GangZoneShowForPlayer, 0);
-	Redirect(amx, "GangZoneHideForPlayer", (ucell)n_YSF_GangZoneHideForPlayer, 0);
-	Redirect(amx, "GangZoneShowForAll", (ucell)n_YSF_GangZoneShowForAll, 0);
-	Redirect(amx, "GangZoneHideForAll", (ucell)n_YSF_GangZoneHideForAll, 0);
+	Redirect(amx, "AttachPlayerObjectToPlayer",		*((ucell*)(&n_FIXED_AttachPlayerObjectToPlayer)), 0);
+	Redirect(amx, "GetWeaponName",					*((ucell*)(&n_FIXED_GetWeaponName)), 0);
+	Redirect(amx, "SetGravity",						*((ucell*)(&n_FIXED_SetGravity)), 0);
+	Redirect(amx, "GetGravity",						*((ucell*)(&n_FIXED_GetGravity)), 0);
+	Redirect(amx, "SetWeather",						*((ucell*)(&n_FIXED_SetWeather)), 0);
+	Redirect(amx, "SetPlayerWeather",				*((ucell*)(&n_FIXED_SetPlayerWeather)), 0);
+	Redirect(amx, "SetPlayerWorldBounds",			*((ucell*)(&n_FIXED_SetPlayerWorldBounds)), 0);
+								
+	Redirect(amx, "GangZoneCreate",					*((ucell*)(&n_YSF_GangZoneCreate)), 0);
+	Redirect(amx, "GangZoneDestroy",				*((ucell*)(&n_YSF_GangZoneDestroy)), 0);
+	Redirect(amx, "GangZoneShowForPlayer",			*((ucell*)(&n_YSF_GangZoneShowForPlayer)), 0);
+	Redirect(amx, "GangZoneHideForPlayer",			*((ucell*)(&n_YSF_GangZoneHideForPlayer)), 0);
+	Redirect(amx, "GangZoneShowForAll",				*((ucell*)(&n_YSF_GangZoneShowForAll)), 0);
+	Redirect(amx, "GangZoneHideForAll",				*((ucell*)(&n_YSF_GangZoneHideForAll)), 0);
 	return amx_Register(amx, YSINatives, -1);
 }

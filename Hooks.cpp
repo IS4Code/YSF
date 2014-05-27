@@ -64,7 +64,7 @@ bool Unlock(void *address, int len)
 		// Shut up the warnings :D
 		return !!VirtualProtect(address, len, PAGE_EXECUTE_READWRITE, &oldp);
 	#else
-		return !mprotect((void*)(((int)address / PAGESIZE) * PAGESIZE), PAGESIZE, PROT_WRITE | PROT_READ | PROT_EXEC);
+		return !mprotect(*((void*)(&(((int)address / PAGESIZE) * PAGESIZE)), PAGESIZE, PROT_WRITE | PROT_READ | PROT_EXEC);
 	#endif
 }
 
@@ -80,8 +80,11 @@ void GetAddresses()
 
 	POINTER_TO_MEMBER(g_pCFilterscript__LoadFS_t, CAddress::FUNC_CFilterscripts_LoadFilterscript, LoadFS_t);
 	POINTER_TO_MEMBER(g_pCFilterscript__UnLoadFS_t, CAddress::FUNC_CFilterscripts_UnLoadFilterscript, UnLoadFS_t);
-
+	 
+	// Totally not fix, but will be fixed someday..
+#ifdef WIN32
 	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
+#endif
 }
 
 void InstallPreHooks()

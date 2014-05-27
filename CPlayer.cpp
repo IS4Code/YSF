@@ -1,5 +1,9 @@
 #include "main.h"
 
+#ifndef WIN32
+	#include <string.h>
+#endif
+
 CPlayerData::CPlayerData( void )
 {
 	// Null object data

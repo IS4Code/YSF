@@ -3,6 +3,10 @@
 #include "Structs.h"
 #include "main.h"
 
+#ifndef WIN32
+	#include <string.h>
+#endif
+
 CGangZonePool::CGangZonePool()
 {
 	// Set every gang zone pointer to NULL
