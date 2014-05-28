@@ -155,7 +155,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		// Get pRakServer
 		int (*pfn_GetRakServer)(void) = (int (*)(void))InternalRakServer;
 		pRakServer = (RakServer*)pfn_GetRakServer();
-		
+
 		//logprintf("unloadfs: %x", InternalUnloadFS);
 		logprintf("AMXLoad3 - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 
@@ -294,7 +294,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 BYTE g_Ticks = 0;
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
-	if(++g_Ticks == 5)
+	if(++g_Ticks == 10)
 	{
 		//logprintf("process");
 		g_Ticks = 0;

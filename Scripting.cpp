@@ -595,7 +595,7 @@ static cell AMX_NATIVE_CALL n_SetServerRule(AMX *amx, cell *params)
 	}
 	return 0;
 }
-/*
+
 // native RemoveServerRule(name[]);
 static cell AMX_NATIVE_CALL n_RemoveServerRule(AMX *amx, cell *params)
 {
@@ -609,12 +609,11 @@ static cell AMX_NATIVE_CALL n_RemoveServerRule(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		RemoveServerRule(name);
+		//RemoveServerRule(name);
 		return 1;
 	}
 	return 0;
 }
-*/
 
 // native ModifyFlag(name[], flags);
 static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
@@ -1170,11 +1169,9 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedData( AMX* amx, cell* params )
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = *(cell*)&pObject->m_usAttachedVehicleID;
+	*cptr = (cell)pObject->m_usAttachedVehicleID;
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&pObject->m_usAttachedObjectID;
-
-	logprintf("--> %d, %d", pObject->m_usAttachedVehicleID, pObject->m_usAttachedObjectID);
+	*cptr = (cell)pObject->m_usAttachedObjectID;
 	return 1;
 }
 
@@ -1262,11 +1259,9 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedData( AMX* amx, cell* param
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&pObject->m_usAttachedVehicleID;
+	*cptr = (cell)pObject->m_usAttachedVehicleID;
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = *(cell*)&pObject->m_usAttachedObjectID;
-
-	logprintf("--> %d, %d", pObject->m_usAttachedVehicleID, pObject->m_usAttachedObjectID);
+	*cptr = (cell)pObject->m_usAttachedVehicleID;
 	return 1;
 }
 
@@ -2497,9 +2492,9 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelAttachedData( AMX* amx, cell* params
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = *(cell*)&p3DText.attachedToPlayerID;
+	*cptr = (cell)p3DText.attachedToPlayerID;
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&p3DText.attachedToVehicleID;
+	*cptr = (cell)p3DText.attachedToVehicleID;
 	return 1;
 }
 
@@ -3671,6 +3666,7 @@ static cell AMX_NATIVE_CALL n_GetWeaponSlot( AMX* amx, cell* params )
 	return GetWeaponSlot((BYTE)params[1]);
 }
 
+// native GetWeaponName(weaponid, weaponname[], len = sizeof(weaponname));
 static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -3679,13 +3675,7 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 
 	CHECK_PARAMS(3, "GetWeaponName");
 
-	const char *szWeaonName = GetWeaponName((BYTE)params[1]);
-	cell *addr = NULL;
-    
-	//Get the address of our string parameter (str) and store our message 
-	amx_GetAddr(amx, params[2], &addr);
-    amx_SetString(addr, szWeaonName, 0, 0, params[3]);
-	return 1;
+	return set_amxstring(amx, params[2], GetWeaponName((BYTE)params[1]), params[3]);
 }
 
 // And an arra y containing the native function-names and the functions specified with them
@@ -3712,7 +3702,7 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	{"AddServerRule",					n_AddServerRule},
 	{"SetServerRule",					n_SetServerRule},
-//	{"RemoveServerRule",				n_RemoveServerRule}, // Doesn't work!
+	{"RemoveServerRule",				n_RemoveServerRule}, // Doesn't work!
 	{"ModifyFlag",						n_ModifyFlag},
 
 	// Special
@@ -3950,19 +3940,19 @@ void
 
 int InitScripting(AMX *amx)
 {
-	Redirect(amx, "AttachPlayerObjectToPlayer",		*((ucell*)(&n_FIXED_AttachPlayerObjectToPlayer)), 0);
-	Redirect(amx, "GetWeaponName",					*((ucell*)(&n_FIXED_GetWeaponName)), 0);
-	Redirect(amx, "SetGravity",						*((ucell*)(&n_FIXED_SetGravity)), 0);
-	Redirect(amx, "GetGravity",						*((ucell*)(&n_FIXED_GetGravity)), 0);
-	Redirect(amx, "SetWeather",						*((ucell*)(&n_FIXED_SetWeather)), 0);
-	Redirect(amx, "SetPlayerWeather",				*((ucell*)(&n_FIXED_SetPlayerWeather)), 0);
-	Redirect(amx, "SetPlayerWorldBounds",			*((ucell*)(&n_FIXED_SetPlayerWorldBounds)), 0);
-								
-	Redirect(amx, "GangZoneCreate",					*((ucell*)(&n_YSF_GangZoneCreate)), 0);
-	Redirect(amx, "GangZoneDestroy",				*((ucell*)(&n_YSF_GangZoneDestroy)), 0);
-	Redirect(amx, "GangZoneShowForPlayer",			*((ucell*)(&n_YSF_GangZoneShowForPlayer)), 0);
-	Redirect(amx, "GangZoneHideForPlayer",			*((ucell*)(&n_YSF_GangZoneHideForPlayer)), 0);
-	Redirect(amx, "GangZoneShowForAll",				*((ucell*)(&n_YSF_GangZoneShowForAll)), 0);
-	Redirect(amx, "GangZoneHideForAll",				*((ucell*)(&n_YSF_GangZoneHideForAll)), 0);
+	Redirect(amx, "AttachPlayerObjectToPlayer", (uint32_t)n_FIXED_AttachPlayerObjectToPlayer, 0);
+	Redirect(amx, "GetWeaponName", (uint32_t)n_FIXED_GetWeaponName, 0);
+	Redirect(amx, "SetGravity", (uint32_t)n_FIXED_SetGravity, 0);
+	Redirect(amx, "GetGravity", (uint32_t)n_FIXED_GetGravity, 0);
+	Redirect(amx, "SetWeather", (uint32_t)n_FIXED_SetWeather, 0);
+	Redirect(amx, "SetPlayerWeather", (uint32_t)n_FIXED_SetPlayerWeather, 0);
+	Redirect(amx, "SetPlayerWorldBounds", (uint32_t)n_FIXED_SetPlayerWorldBounds, 0);
+	
+	Redirect(amx, "GangZoneCreate", (uint32_t)n_YSF_GangZoneCreate, 0);
+	Redirect(amx, "GangZoneDestroy", (uint32_t)n_YSF_GangZoneDestroy, 0);
+	Redirect(amx, "GangZoneShowForPlayer", (uint32_t)n_YSF_GangZoneShowForPlayer, 0);
+	Redirect(amx, "GangZoneHideForPlayer", (uint32_t)n_YSF_GangZoneHideForPlayer, 0);
+	Redirect(amx, "GangZoneShowForAll", (uint32_t)n_YSF_GangZoneShowForAll, 0);
+	Redirect(amx, "GangZoneHideForAll", (uint32_t)n_YSF_GangZoneHideForAll, 0);
 	return amx_Register(amx, YSINatives, -1);
 }

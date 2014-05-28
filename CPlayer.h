@@ -36,7 +36,6 @@ public:
 	BYTE byteWeather;
 	bool bWidescreen;
 	float fBounds[4];
-	bool bGangZonePresent[MAX_GANG_ZONES];
 
 	BYTE byteTeam;
 	BYTE bytePlayersTeam[MAX_PLAYERS]; // for GetPlayerTeamForPlayer

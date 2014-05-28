@@ -69,14 +69,14 @@ class FakeClass
 #ifdef WIN32
 	typedef void (FakeClass::* AddServerRule_t)(char *, int, char *, int);
 	typedef void (FakeClass::* SetServerRule_t)(char *, char *);
-	//typedef void (FakeClass::* RemoveServerRule_t)(char *);
+	typedef void (FakeClass::* RemoveServerRule_t)(char *);
 	typedef void (FakeClass::* ModifyFlag_t)(char *, int);
 	typedef int (FakeClass::* LoadFS_t)(char *);
 	typedef int (FakeClass::* UnLoadFS_t)(char *);
 #else
 	typedef void (* AddServerRule_t)(FakeClass *, char *, int, char *, int);
 	typedef void (* SetServerRule_t)(FakeClass *, char *, char *);
-	//typedef void (* RemoveServerRule_t)(FakeClass *, char *);
+	typedef void (* RemoveServerRule_t)(FakeClass *, char *);
 	typedef void (* ModifyFlag_t)(FakeClass *, char *, int);
 
 	typedef int (* LoadFS_t)(FakeClass *, char *);

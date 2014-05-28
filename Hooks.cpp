@@ -51,7 +51,7 @@
 
 AddServerRule_t g_pCConsole__AddRule = 0;
 SetServerRule_t g_pCConsole__SetRule = 0;
-//RemoveServerRule_t g_pCConsole__RemoveRule = 0;
+RemoveServerRule_t g_pCConsole__RemoveRule = 0;
 ModifyFlag_t g_pCConsole__MFlag = 0;
 LoadFS_t g_pCFilterscript__LoadFS_t = 0;
 UnLoadFS_t g_pCFilterscript__UnLoadFS_t = 0;
@@ -64,7 +64,7 @@ bool Unlock(void *address, int len)
 		// Shut up the warnings :D
 		return !!VirtualProtect(address, len, PAGE_EXECUTE_READWRITE, &oldp);
 	#else
-		return !mprotect(*((void*)(&(((int)address / PAGESIZE) * PAGESIZE)), PAGESIZE, PROT_WRITE | PROT_READ | PROT_EXEC);
+		return !mprotect(((void*)(((int)address / PAGESIZE) * PAGESIZE)), PAGESIZE, PROT_WRITE | PROT_READ | PROT_EXEC);
 	#endif
 }
 
@@ -75,16 +75,13 @@ void GetAddresses()
 	// Console for adding rules.
 	POINTER_TO_MEMBER(g_pCConsole__AddRule, CAddress::FUNC_CConsole_AddStringVariable, AddServerRule_t);
 	POINTER_TO_MEMBER(g_pCConsole__SetRule, CAddress::FUNC_CConsole_SetStringVariable, SetServerRule_t);
-	//POINTER_TO_MEMBER(g_pCConsole__RemoveRule, CONSOLE_REMOVE_RULE_0341, RemoveServerRule_t);
+//	POINTER_TO_MEMBER(g_pCConsole__RemoveRule, CONSOLE_REMOVE_RULE_0341, RemoveServerRule_t);
 	POINTER_TO_MEMBER(g_pCConsole__MFlag, CAddress::FUNC_CConsole_ModifyVariableFlags, ModifyFlag_t);
 
 	POINTER_TO_MEMBER(g_pCFilterscript__LoadFS_t, CAddress::FUNC_CFilterscripts_LoadFilterscript, LoadFS_t);
 	POINTER_TO_MEMBER(g_pCFilterscript__UnLoadFS_t, CAddress::FUNC_CFilterscripts_UnLoadFilterscript, UnLoadFS_t);
 	 
-	// Totally not fix, but will be fixed someday..
-#ifdef WIN32
 	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
-#endif
 }
 
 void InstallPreHooks()

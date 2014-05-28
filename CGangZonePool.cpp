@@ -59,11 +59,15 @@ void CGangZonePool::Delete(WORD wZone)
 	{
 		this->HideForPlayer(i, wZone);
 	}
+	delete pGangZone[wZone];
+	pGangZone[wZone] = NULL;
 }
 
 void CGangZonePool::Delete(WORD playerid, WORD wZone)
 {
 	this->HideForPlayer(playerid, wZone, true);
+	delete pPlayerData[playerid]->pPlayerZone[wZone];
+	pPlayerData[playerid]->pPlayerZone[wZone] = NULL;
 }
 
 void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
@@ -80,7 +84,7 @@ void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 		i++;
 	}
 
-	logprintf("CGangZonePool::ShowForPlayer playerid = %d, zoneid = %d, clientsideid = %d, bPlayerZone = %d", playerid, wZone, i, bPlayerZone);
+	//logprintf("CGangZonePool::ShowForPlayer playerid = %d, zoneid = %d, clientsideid = %d, bPlayerZone = %d", playerid, wZone, i, bPlayerZone);
 
 	// Mark client side zone id as used
 	if(!bPlayerZone)
@@ -165,6 +169,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 	}
 	pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0xFF;
 	pPlayerData[playerid]->dwClientSideZoneColor[i] = 0;
+	pPlayerData[playerid]->bInGangZone[i] = false;
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);

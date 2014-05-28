@@ -37,7 +37,7 @@
 extern void *pConsole;
 extern AddServerRule_t g_pCConsole__AddRule;
 extern SetServerRule_t g_pCConsole__SetRule;
-//extern RemoveServerRule_t g_pCConsole__RemoveRule;
+extern RemoveServerRule_t g_pCConsole__RemoveRule;
 extern ModifyFlag_t g_pCConsole__MFlag;
 extern LoadFS_t  g_pCFilterscript__LoadFS_t;
 extern UnLoadFS_t  g_pCFilterscript__UnLoadFS_t;
@@ -65,7 +65,7 @@ void SetServerRule(char * rule, char * value)
 		g_pCConsole__SetRule(_CONSOLE, rule, value);
 	#endif
 }
-/*
+
 void RemoveServerRule(char * rule)
 {
 	#ifdef WIN32
@@ -76,7 +76,7 @@ void RemoveServerRule(char * rule)
 		g_pCConsole__RemoveRule(_CONSOLE, rule);
 	#endif
 }
-*/
+
 void ModifyFlag(char * rule, int varflag)
 {
 	#ifdef WIN32
