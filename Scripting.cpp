@@ -2365,7 +2365,7 @@ static cell AMX_NATIVE_CALL n_IsValid3DTextLabel( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "IsValid3DTextLabel");
 	
 	int id = (int)params[1];
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	return pNetGame->p3DTextPool->m_bIsCreated[id];
 }
@@ -2380,7 +2380,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelText( AMX* amx, cell* params )
 	CHECK_PARAMS(3, "Get3DTextLabelText");
 	
 	int id = (int)params[1];
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	const char *szText = (pNetGame->p3DTextPool->m_bIsCreated[id]) ? pNetGame->p3DTextPool->m_TextLabels[id].text : '\0';
 	return set_amxstring(amx, params[2], szText, params[3]);
@@ -2392,7 +2392,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelColor( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "Get3DTextLabelColor");
 	
 	int id = (int)params[1];
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
@@ -2406,7 +2406,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelPos( AMX* amx, cell* params )
 	CHECK_PARAMS(4, "Get3DTextLabelPos");
 	
 	int id = (int)params[1];
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
@@ -2427,7 +2427,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelDrawDistance( AMX* amx, cell* params
 	CHECK_PARAMS(1, "Get3DTextLabelDrawDistance");
 	
 	int id = (int)params[1];
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
@@ -2441,7 +2441,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelLOS( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "Get3DTextLabelLOS");
 	
 	int id = (int)params[1];
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
@@ -2455,7 +2455,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelVirtualWorld( AMX* amx, cell* params
 	CHECK_PARAMS(1, "Get3DTextLabelVirtualWorld");
 	
 	int id = (int)params[1];
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
@@ -2469,7 +2469,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelAttachedData( AMX* amx, cell* params
 	CHECK_PARAMS(3, "Get3DTextLabelAttachedData");
 	
 	int id = (int)params[1];
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
@@ -2491,7 +2491,7 @@ static cell AMX_NATIVE_CALL n_IsValidPlayer3DTextLabel( AMX* amx, cell* params )
 	int id = (int)params[1];
 
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	return pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id];
 }
@@ -2509,7 +2509,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelText( AMX* amx, cell* params )
 	int id = (int)params[1];
 
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
@@ -2526,7 +2526,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelColor( AMX* amx, cell* params 
 	int id = (int)params[1];
 
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
@@ -2543,7 +2543,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelPos( AMX* amx, cell* params )
 	int id = (int)params[1];
 
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
@@ -2567,7 +2567,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelDrawDist( AMX* amx, cell* para
 	int id = (int)params[1];
 
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
@@ -2584,7 +2584,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelLOS( AMX* amx, cell* params )
 	int id = (int)params[1];
 
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
@@ -2601,7 +2601,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelVirtualW( AMX* amx, cell* para
 	int id = (int)params[1];
 
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 

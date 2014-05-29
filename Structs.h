@@ -59,6 +59,7 @@ class CGangZonePool;
 #define	MAX_TEXT_DRAWS				2048
 #define	MAX_PLAYER_TEXT_DRAWS		256
 #define	MAX_3DTEXT_GLOBAL			1024
+#define	MAX_3DTEXT_PLAYER			1024
 #define MAX_MENUS					128
 #define INVALID_PLAYER_ID			65535
 #define MAX_FILTER_SCRIPTS			16
