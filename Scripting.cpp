@@ -463,7 +463,7 @@ static cell AMX_NATIVE_CALL n_SetModeRestartTime(AMX *amx, cell *params)
 		return 0;
 
 	CHECK_PARAMS(1, "SetModeRestartTime");
-	*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
+	//*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
 	return 1;
 }
 
@@ -1448,13 +1448,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleNumberPlate( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	const char *szPlate = pNetGame->pVehiclePool->pVehicle[vehicleid]->szNumberplate;
-	cell *addr = NULL;
-    //Get the address of our string parameter (str) and store our message 
-    
-	amx_GetAddr(amx, params[2], &addr);
-    amx_SetString(addr, szPlate, 0, 0, params[3]);
-	return 1;
+	return set_amxstring(amx, params[2], pNetGame->pVehiclePool->pVehicle[vehicleid]->szNumberplate, params[3]);
 }
 
 // native SetVehicleRespawnDelay(vehicleid, delay);
@@ -1743,12 +1737,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetString( AMX* amx, cell* params )
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	const char *szText = (pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) ? pNetGame->pTextDrawPool->m_szFontText[textdrawid] : '\0';
-	cell *addr = NULL;
-    //Get the address of our string parameter (str) and store our message 
-    
-	amx_GetAddr(amx, params[2], &addr);
-    amx_SetString(addr, szText, 0, 0, params[3]);
-	return 1;
+	return set_amxstring(amx, params[2], szText, params[3]);
 }
 
 // native TextDrawSetPos(textdrawid, Float:fX, Float:fY);
@@ -2394,12 +2383,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelText( AMX* amx, cell* params )
 	if(id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	const char *szText = (pNetGame->p3DTextPool->m_bIsCreated[id]) ? pNetGame->p3DTextPool->m_TextLabels[id].text : '\0';
-	cell *addr = NULL;
-    //Get the address of our string parameter (str) and store our message 
-    
-	amx_GetAddr(amx, params[2], &addr);
-    amx_SetString(addr, szText, 0, 0, params[3]);
-	return 1;
+	return set_amxstring(amx, params[2], szText, params[3]);
 }
 
 // native Get3DTextLabelColor(id);
@@ -2530,12 +2514,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelText( AMX* amx, cell* params )
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
 	const char *szText = (pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id].text) ? pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id].text : '\0';
-	cell *addr = NULL;
-    //Get the address of our string parameter (str) and store our message 
-    
-	amx_GetAddr(amx, params[2], &addr);
-    amx_SetString(addr, szText, 0, 0, params[3]);
-	return 1;
+	return set_amxstring(amx, params[3], szText, params[4]);
 }
 
 // native GetPlayer3DTextLabelColor(playerid, PlayerText3D:id);
@@ -3940,19 +3919,19 @@ void
 
 int InitScripting(AMX *amx)
 {
-	Redirect(amx, "AttachPlayerObjectToPlayer", (uint32_t)n_FIXED_AttachPlayerObjectToPlayer, 0);
-	Redirect(amx, "GetWeaponName", (uint32_t)n_FIXED_GetWeaponName, 0);
-	Redirect(amx, "SetGravity", (uint32_t)n_FIXED_SetGravity, 0);
-	Redirect(amx, "GetGravity", (uint32_t)n_FIXED_GetGravity, 0);
-	Redirect(amx, "SetWeather", (uint32_t)n_FIXED_SetWeather, 0);
-	Redirect(amx, "SetPlayerWeather", (uint32_t)n_FIXED_SetPlayerWeather, 0);
-	Redirect(amx, "SetPlayerWorldBounds", (uint32_t)n_FIXED_SetPlayerWorldBounds, 0);
+	Redirect(amx, "AttachPlayerObjectToPlayer", (uint64_t)n_FIXED_AttachPlayerObjectToPlayer, 0);
+	Redirect(amx, "GetWeaponName", (uint64_t)n_FIXED_GetWeaponName, 0);
+	Redirect(amx, "SetGravity", (uint64_t)n_FIXED_SetGravity, 0);
+	Redirect(amx, "GetGravity", (uint64_t)n_FIXED_GetGravity, 0);
+	Redirect(amx, "SetWeather", (uint64_t)n_FIXED_SetWeather, 0);
+	Redirect(amx, "SetPlayerWeather", (uint64_t)n_FIXED_SetPlayerWeather, 0);
+	Redirect(amx, "SetPlayerWorldBounds", (uint64_t)n_FIXED_SetPlayerWorldBounds, 0);
 	
-	Redirect(amx, "GangZoneCreate", (uint32_t)n_YSF_GangZoneCreate, 0);
-	Redirect(amx, "GangZoneDestroy", (uint32_t)n_YSF_GangZoneDestroy, 0);
-	Redirect(amx, "GangZoneShowForPlayer", (uint32_t)n_YSF_GangZoneShowForPlayer, 0);
-	Redirect(amx, "GangZoneHideForPlayer", (uint32_t)n_YSF_GangZoneHideForPlayer, 0);
-	Redirect(amx, "GangZoneShowForAll", (uint32_t)n_YSF_GangZoneShowForAll, 0);
-	Redirect(amx, "GangZoneHideForAll", (uint32_t)n_YSF_GangZoneHideForAll, 0);
+	Redirect(amx, "GangZoneCreate", (uint64_t)n_YSF_GangZoneCreate, 0);
+	Redirect(amx, "GangZoneDestroy", (uint64_t)n_YSF_GangZoneDestroy, 0);
+	Redirect(amx, "GangZoneShowForPlayer", (uint64_t)n_YSF_GangZoneShowForPlayer, 0);
+	Redirect(amx, "GangZoneHideForPlayer", (uint64_t)n_YSF_GangZoneHideForPlayer, 0);
+	Redirect(amx, "GangZoneShowForAll", (uint64_t)n_YSF_GangZoneShowForAll, 0);
+	Redirect(amx, "GangZoneHideForAll", (uint64_t)n_YSF_GangZoneHideForAll, 0);
 	return amx_Register(amx, YSINatives, -1);
 }

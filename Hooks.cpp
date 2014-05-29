@@ -64,7 +64,8 @@ bool Unlock(void *address, int len)
 		// Shut up the warnings :D
 		return !!VirtualProtect(address, len, PAGE_EXECUTE_READWRITE, &oldp);
 	#else
-		return !mprotect(((void*)(((int)address / PAGESIZE) * PAGESIZE)), PAGESIZE, PROT_WRITE | PROT_READ | PROT_EXEC);
+		int page_size = ((*((int*)(&address)) / PAGESIZE) * PAGESIZE);
+		return !mprotect((void*)&page_size, PAGESIZE, PROT_WRITE | PROT_READ | PROT_EXEC);
 	#endif
 }
 

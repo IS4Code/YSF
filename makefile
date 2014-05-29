@@ -5,8 +5,8 @@
 # make YSF
 #
 
-GPP = g++
-GCC = gcc
+GPP = g++ -m32
+GCC = gcc -m32
 YSF_OUTFILE = "./YSF.so"
 
 COMPILE_FLAGS = -c -O3 -fPIC -w -D LINUX -I ./SDK/amx/
