@@ -52,8 +52,6 @@ PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports()
 void *InternalNetGame = NULL;
 void *InternalConsole = NULL;
 void *InternalRakServer = NULL;
-void *InternalLoadFS = NULL;
-void *InternalUnloadFS = NULL;
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 {
@@ -62,11 +60,9 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	logprintf("logprintf = 0x%08X\n", *((int*)(&logprintf)));
 
 	// Store internal pointers
-	InternalNetGame = ppData[225];
-	InternalConsole = ppData[228];
-	InternalRakServer = ppData[226];
-	InternalLoadFS = ppData[227];
-	InternalUnloadFS = ppData[229];
+	InternalNetGame = ppData[PLUGIN_DATA_NETGAME];
+	InternalConsole = ppData[PLUGIN_DATA_CONSOLE];
+	InternalRakServer = ppData[PLUGIN_DATA_RAKSERVER];
 
 	// Check server version
 	eSAMPVersion version = SAMP_VERSION_UNKNOWN;
@@ -87,7 +83,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	{
 		CAddress::Initialize(version);
 
-		// Create server instance with default SA-MP pointers
+		// Create server instance
 		pServer = new CServer();
 	}
 	else
@@ -136,13 +132,13 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 	// Add AMX instance to our amxlist
 	pAMXList.push_back(amx);
-	logprintf("AMXLoad1");
+	//logprintf("AMXLoad1");
 
 	static bool bFirst = false;
 	if(!bFirst)
 	{
 		bFirst = true;
-		logprintf("AMXLoad2");
+		//logprintf("AMXLoad2");
 
 		// Get pNetGame
 		int (*pfn_GetNetGame)(void) = (int (*)(void))InternalNetGame;
@@ -156,8 +152,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		int (*pfn_GetRakServer)(void) = (int (*)(void))InternalRakServer;
 		pRakServer = (RakServer*)pfn_GetRakServer();
 
-		//logprintf("unloadfs: %x", InternalUnloadFS);
-		logprintf("AMXLoad3 - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
+		logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 
 		// Recreate GangZone pool
 		pNetGame->pGangZonePool = new CGangZonePool();
@@ -317,7 +312,28 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 				// If zone id is unused client side, then continue
 				if(pPlayer->byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;
 
-				CGangZone *pGangZone = pPlayer->byteClientSideZoneIDUsed[zoneid] == 0 ? pNetGame->pGangZonePool->pGangZone[pPlayer->wClientSideGlobalZoneID[zoneid]] : pPlayer->pPlayerZone[pPlayer->wClientSidePlayerZoneID[zoneid]];
+				CGangZone *pGangZone = NULL;
+				if(pPlayer->byteClientSideZoneIDUsed[zoneid] == 0)
+				{
+					if(pPlayer->wClientSideGlobalZoneID[zoneid] = 0xFFFF)
+					{
+						logprintf("pPlayer->wClientSideGlobalZoneID[zoneid] = 0xFFFF");
+						return;
+					}
+					
+					pGangZone = pNetGame->pGangZonePool->pGangZone[pPlayer->wClientSideGlobalZoneID[zoneid]];
+				}
+				else
+				{
+					if(pPlayer->wClientSidePlayerZoneID[zoneid] == 0xFFFF)
+					{
+						logprintf("pPlayer->wClientSidePlayerZoneID[zoneid]");
+						return;
+					}
+
+					pGangZone = pPlayer->pPlayerZone[pPlayer->wClientSidePlayerZoneID[zoneid]];
+				}
+
 				if(!pGangZone) continue;
 
 				// Mutatók létrehozása

@@ -52,17 +52,17 @@ class CGangZonePool;
 #define PROJECT_NAME		"YSF"
 #define PROJECT_VERSION		"R5"
 
-#define MAX_PLAYERS					500
-#define MAX_OBJECTS					1000
-#define MAX_GANG_ZONES				1024
-#define MAX_PICKUPS					4096
+#define	MAX_PLAYERS					500
+#define	MAX_OBJECTS					1000
+#define	MAX_GANG_ZONES				1024
+#define	MAX_PICKUPS					4096
 #define	MAX_TEXT_DRAWS				2048
 #define	MAX_PLAYER_TEXT_DRAWS		256
 #define	MAX_3DTEXT_GLOBAL			1024
 #define	MAX_3DTEXT_PLAYER			1024
-#define MAX_MENUS					128
-#define INVALID_PLAYER_ID			65535
-#define MAX_FILTER_SCRIPTS			16
+#define	MAX_MENUS					128
+#define	INVALID_PLAYER_ID			65535
+#define	MAX_FILTER_SCRIPTS			16
 
 #define WEAPON_BRASSKNUCKLE				1
 #define WEAPON_GOLFCLUB					2

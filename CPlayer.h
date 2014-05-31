@@ -48,6 +48,7 @@ public:
 	WORD wClientSidePlayerZoneID[MAX_GANG_ZONES];
 
 	bool bInGangZone[MAX_GANG_ZONES];
+	bool bIsGangZoneFlashing[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneColor[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneFlashColor[MAX_GANG_ZONES];
 };

@@ -1650,6 +1650,26 @@ static cell AMX_NATIVE_CALL n_GangZoneGetFlashColorForPlayer( AMX* amx, cell* pa
 	return 0;
 }
 
+// native IsGangZoneFlashingForPlayer(playerid, zoneid);
+static cell AMX_NATIVE_CALL n_IsGangZoneFlashingForPlayer( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(2, "IsGangZoneFlashingForPlayer");
+	
+	int playerid = (int)params[1];
+	int zoneid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+	
+	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
+
+	WORD id = GetIDFromClientSide(playerid, zoneid);
+	if(id != 0xFFFF) 
+	{
+		return pPlayerData[playerid]->bIsGangZoneFlashing[id];
+	}
+	return 0;
+}
+
 // native IsPlayerInGangZone(playerid, zoneid);
 static cell AMX_NATIVE_CALL n_IsPlayerInGangZone( AMX* amx, cell* params )
 {
@@ -2707,7 +2727,20 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneCreate(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(4, "GangZoneCreate");
 
-	WORD ret = pNetGame->pGangZonePool->New(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
+	float fMinX = amx_ctof(params[1]);
+	float fMinY = amx_ctof(params[2]);
+	float fMaxX = amx_ctof(params[3]);
+	float fMaxY = amx_ctof(params[4]);
+
+	// If coordinates are wrong, then won't create bugged zone!
+	if(fMaxX <= fMinX || fMaxY <= fMinY) 
+	{
+		logprintf("GangZoneCreate: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
+		logprintf("GangZoneCreate: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
+		return 1;
+	}
+
+	WORD ret = pNetGame->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
 	if (ret == 0xFFFF) return -1;
 
 	return ret;
@@ -2997,7 +3030,20 @@ static cell AMX_NATIVE_CALL n_CreatePlayerGangZone( AMX* amx, cell* params )
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	WORD ret = pNetGame->pGangZonePool->New((WORD)playerid, amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+	float fMinX = amx_ctof(params[2]);
+	float fMinY = amx_ctof(params[3]);
+	float fMaxX = amx_ctof(params[4]);
+	float fMaxY = amx_ctof(params[5]);
+
+	// If coordinates are wrong, then won't create bugged zone!
+	if(fMaxX <= fMinX || fMaxY <= fMinY) 
+	{
+		logprintf("CreatePlayerGangZone: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
+		logprintf("CreatePlayerGangZone: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
+		return 1;
+	}
+
+	WORD ret = pNetGame->pGangZonePool->New(playerid, fMinX, fMinY, fMaxX, fMaxY);
 	if (ret == 0xFFFF) return -1;
 
 	return ret;
@@ -3226,6 +3272,26 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneGetFlashColor( AMX* amx, cell* param
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneFlashColor[id];
+	}
+	return 0;
+}
+
+// native IsPlayerGangZoneFlashing(playerid, zoneid);
+static cell AMX_NATIVE_CALL n_IsPlayerGangZoneFlashing( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(2, "IsPlayerGangZoneFlashing");
+	
+	int playerid = (int)params[1];
+	int zoneid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+	
+	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+
+	WORD id = GetIDFromClientSide(playerid, zoneid, true);
+	if(id != 0xFFFF) 
+	{
+		return pPlayerData[playerid]->bIsGangZoneFlashing[id];
 	}
 	return 0;
 }
@@ -3744,6 +3810,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"IsGangZoneVisibleForPlayer",		n_IsGangZoneVisibleForPlayer},
 	{"GangZoneGetColorForPlayer",		n_GangZoneGetColorForPlayer},
 	{"GangZoneGetFlashColorForPlayer",	n_GangZoneGetFlashColorForPlayer},
+	{"IsGangZoneFlashingForPlayer",		n_IsGangZoneFlashingForPlayer},
 	{"GangZoneGetPos",					n_GangZoneGetPos},
 
 	// Gangzone - Player
@@ -3758,6 +3825,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "IsPlayerGangZoneVisible",		n_IsPlayerGangZoneVisible },
 	{ "PlayerGangZoneGetColor",			n_PlayerGangZoneGetColor },
 	{ "PlayerGangZoneGetFlashColor",	n_PlayerGangZoneGetFlashColor },
+	{ "IsPlayerGangZoneFlashing",		n_IsPlayerGangZoneFlashing },
 	{ "PlayerGangZoneGetPos",			n_PlayerGangZoneGetPos },
 
 	// Textdraw functions

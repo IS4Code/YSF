@@ -42,9 +42,15 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 	// For security..
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
 		return 0;
-	
+
+	if(!pPlayerData[playerid] || !pPlayerData[forplayerid])
+	{
+		logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - pPlayerData = 0");
+		return 0;
+	}
+
 	CSAMPObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(int i = 0; i != 1000; i++)
+	for(int i = 0; i != MAX_OBJECTS; i++)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
 		{
@@ -52,12 +58,6 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 			if(!pObjectPool->m_pPlayerObjects[forplayerid][i]) 
 			{
 				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
-				return 0;
-			}
-
-			if(!pPlayerData[forplayerid])
-			{
-				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - pPlayerData = 0");
 				return 0;
 			}
 
@@ -111,20 +111,20 @@ bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplaye
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
 		return 0;
 
+	if(!pPlayerData[playerid] || !pPlayerData[forplayerid])
+	{
+		logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - pPlayerData = 0");
+		return 0;
+	}
+
 	CSAMPObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(int i = 0; i != 1000; i++)
+	for(int i = 0; i != MAX_OBJECTS; i++)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
 		{
 			if(!pObjectPool->m_pPlayerObjects[forplayerid][i]) 
 			{
 				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - m_pPlayerObjects = 0");
-				return 0;
-			}
-
-			if(!pPlayerData[forplayerid])
-			{
-				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - pPlayerData = 0");
 				return 0;
 			}
 

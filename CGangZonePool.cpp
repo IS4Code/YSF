@@ -174,6 +174,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 	pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0xFF;
 	pPlayerData[playerid]->dwClientSideZoneColor[i] = 0;
 	pPlayerData[playerid]->bInGangZone[i] = false;
+	pPlayerData[playerid]->bIsGangZoneFlashing[i] = false;
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
@@ -215,6 +216,7 @@ void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, boo
 	}
 
 	pPlayerData[playerid]->dwClientSideZoneFlashColor[i] = dwColor;
+	pPlayerData[playerid]->bIsGangZoneFlashing[i] = true;
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
@@ -257,6 +259,7 @@ void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZo
 	}
 
 	pPlayerData[playerid]->dwClientSideZoneFlashColor[i] = 0;
+	pPlayerData[playerid]->bIsGangZoneFlashing[i] = true;
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);

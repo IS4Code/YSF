@@ -9,7 +9,7 @@ CPlayerData::CPlayerData( void )
 	// Null object data
 	for(int i = 0; i != MAX_OBJECTS; i++)
 	{
-		this->stObj[i].usObjectID = 0;
+		this->stObj[i].usObjectID = 0xFFFF;
 		this->stObj[i].usAttachPlayerID = INVALID_PLAYER_ID;
 		this->stObj[i].vecOffset = CVector(0.0f, 0.0f, 0.0f);
 		this->stObj[i].vecRot = CVector(0.0f, 0.0f, 0.0f);
@@ -32,9 +32,10 @@ CPlayerData::CPlayerData( void )
 	memset(wClientSideGlobalZoneID, 0xFFFF, sizeof(wClientSideGlobalZoneID));
 	memset(wClientSidePlayerZoneID, 0xFFFF, sizeof(wClientSidePlayerZoneID));
 
-	memset(bInGangZone, NULL, sizeof(bInGangZone));
+	memset(bInGangZone, false, sizeof(bInGangZone));
 	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
 	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
+	memset(bIsGangZoneFlashing, false, sizeof(bIsGangZoneFlashing));
 }
 
 CPlayerData::~CPlayerData( void )
