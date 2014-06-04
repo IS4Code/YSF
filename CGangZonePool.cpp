@@ -87,8 +87,6 @@ void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 		i++;
 	}
 
-	//logprintf("CGangZonePool::ShowForPlayer playerid = %d, zoneid = %d, clientsideid = %d, bPlayerZone = %d", playerid, wZone, i, bPlayerZone);
-
 	// Mark client side zone id as used
 	if(!bPlayerZone)
 	{
@@ -103,6 +101,8 @@ void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 		pZone = pPlayerData[playerid]->pPlayerZone[wZone];
 	}
 	pPlayerData[playerid]->dwClientSideZoneColor[i] = dwColor;
+
+	//logprintf("CGangZonePool::ShowForPlayer playerid = %d, zoneid = %d, clientsideid = %d, bPlayerZone = %d", playerid, wZone, i, bPlayerZone);
 
 	bsParams.Write(i);
 	bsParams.Write(pZone->fGangZone[0]);
@@ -171,10 +171,13 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 
 		pPlayerData[playerid]->wClientSidePlayerZoneID[i] = 0xFFFF;
 	}
+
 	pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0xFF;
 	pPlayerData[playerid]->dwClientSideZoneColor[i] = 0;
 	pPlayerData[playerid]->bInGangZone[i] = false;
 	pPlayerData[playerid]->bIsGangZoneFlashing[i] = false;
+
+	//logprintf("CGangZonePool::HideForPlayer playerid = %d, zoneid = %d, clientsideid = %d, bPlayerZone = %d", playerid, wZone, i, bPlayerZone);
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);

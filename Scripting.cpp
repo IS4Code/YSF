@@ -1945,6 +1945,20 @@ static cell AMX_NATIVE_CALL n_TextDrawIsProportional( AMX* amx, cell* params )
 	return pTD->byteProportional;
 }
 
+// native TextDrawIsSelectable(textdrawid);
+static cell AMX_NATIVE_CALL n_TextDrawIsSelectable( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(1, "TextDrawIsSelectable");
+	
+	int textdrawid = (int)params[1];
+	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
+	
+	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+
+	return pTD->byteSelectable;
+}
+
 // native TextDrawGetAlignment(textdrawid);
 static cell AMX_NATIVE_CALL n_TextDrawGetAlignment( AMX* amx, cell* params )
 {
@@ -2014,9 +2028,9 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPreviewVehCol( AMX* amx, cell* params )
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = *(cell*)&pTD->color1;
+	*cptr = (cell)pTD->color1;
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&pTD->color2;
+	*cptr = (cell)pTD->color2;
 	return 1;
 }
 
@@ -2293,6 +2307,22 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawIsProportional( AMX* amx, cell* para
 	return pTD->byteProportional;
 }
 
+// native PlayerTextDrawIsSelectable(playerid, PlayerText:textdrawid);
+static cell AMX_NATIVE_CALL n_PlayerTextDrawIsSelectable( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(2, "PlayerTextDrawIsSelectable");
+	
+	int playerid = (int)params[1];
+	int textdrawid = (int)params[2];
+
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	return pTD->byteSelectable;
+}
+
 // native PlayerTextDrawGetAlignment(playerid, PlayerText:textdrawid);
 static cell AMX_NATIVE_CALL n_PlayerTextDrawGetAlignment( AMX* amx, cell* params )
 {
@@ -2372,9 +2402,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewVehCol( AMX* amx, cell* pa
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = *(cell*)&pTD->color1;
+	*cptr = (cell)pTD->color1;
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&pTD->color2;
+	*cptr = (cell)pTD->color2;
 	return 1;
 }
 
@@ -2737,7 +2767,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneCreate(AMX *amx, cell *params)
 	{
 		logprintf("GangZoneCreate: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
 		logprintf("GangZoneCreate: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
-		return 1;
+		return -1;
 	}
 
 	WORD ret = pNetGame->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
@@ -3040,7 +3070,7 @@ static cell AMX_NATIVE_CALL n_CreatePlayerGangZone( AMX* amx, cell* params )
 	{
 		logprintf("CreatePlayerGangZone: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
 		logprintf("CreatePlayerGangZone: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
-		return 1;
+		return -1;
 	}
 
 	WORD ret = pNetGame->pGangZonePool->New(playerid, fMinX, fMinY, fMaxX, fMaxY);
@@ -3810,7 +3840,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"IsGangZoneVisibleForPlayer",		n_IsGangZoneVisibleForPlayer},
 	{"GangZoneGetColorForPlayer",		n_GangZoneGetColorForPlayer},
 	{"GangZoneGetFlashColorForPlayer",	n_GangZoneGetFlashColorForPlayer},
-	{"IsGangZoneFlashingForPlayer",		n_IsGangZoneFlashingForPlayer},
+	{"IsGangZoneFlashingForPlayer",		n_IsGangZoneFlashingForPlayer}, // R6
 	{"GangZoneGetPos",					n_GangZoneGetPos},
 
 	// Gangzone - Player
@@ -3825,7 +3855,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "IsPlayerGangZoneVisible",		n_IsPlayerGangZoneVisible },
 	{ "PlayerGangZoneGetColor",			n_PlayerGangZoneGetColor },
 	{ "PlayerGangZoneGetFlashColor",	n_PlayerGangZoneGetFlashColor },
-	{ "IsPlayerGangZoneFlashing",		n_IsPlayerGangZoneFlashing },
+	{ "IsPlayerGangZoneFlashing",		n_IsPlayerGangZoneFlashing }, // R6
 	{ "PlayerGangZoneGetPos",			n_PlayerGangZoneGetPos },
 
 	// Textdraw functions
@@ -3844,6 +3874,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"TextDrawGetFont",					n_TextDrawGetFont},
 	{"TextDrawIsBox",					n_TextDrawIsBox},
 	{"TextDrawIsProportional",			n_TextDrawIsProportional},
+	{"TextDrawIsSelectable",			n_TextDrawIsSelectable}, // R6
 	{"TextDrawGetAlignment",			n_TextDrawGetAlignment},
 	{"TextDrawGetPreviewModel",			n_TextDrawGetPreviewModel},
 	{"TextDrawGetPreviewRot",			n_TextDrawGetPreviewRot},
@@ -3865,6 +3896,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"PlayerTextDrawGetFont",			n_PlayerTextDrawGetFont},
 	{"PlayerTextDrawIsBox",				n_PlayerTextDrawIsBox},
 	{"PlayerTextDrawIsProportional",	n_PlayerTextDrawIsProportional},
+	{"PlayerTextDrawIsSelectable",		n_PlayerTextDrawIsSelectable}, // R6
 	{"PlayerTextDrawGetAlignment",		n_PlayerTextDrawGetAlignment},
 	{"PlayerTextDrawGetPreviewModel",	n_PlayerTextDrawGetPreviewModel},
 	{"PlayerTextDrawGetPreviewRot",		n_PlayerTextDrawGetPreviewRot},

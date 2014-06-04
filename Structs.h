@@ -38,6 +38,8 @@
 #include "CVector.h"
 #include "CTypes.h"
 #include "CGangZonePool.h"
+#include "SDK/amx/amx.h"
+#include <map>
 
 class CGangZonePool;
 #define PAD(a, b)			char a[b]
@@ -254,13 +256,6 @@ public:
 #pragma pack(push, 1)
 typedef struct CTextdraw
 {
-	BYTE unk;					// 0
-	float fLetterWidth;			// 1
-	float fLetterHeight;		// 5
-	DWORD dwLetterColor;		// 9
-	float fLineWidth;			// 13
-	float fLineHeight;			// 17
-	DWORD dwBoxColor;			// 21
 	union
 	{
 		BYTE byteFlags;			// 25
@@ -274,10 +269,17 @@ typedef struct CTextdraw
 			BYTE bytePadding : 3;
 		};
 	};
+	float fLetterWidth;			// 1
+	float fLetterHeight;		// 5
+	DWORD dwLetterColor;		// 9
+	float fLineWidth;			// 13
+	float fLineHeight;			// 17
+	DWORD dwBoxColor;			// 21
 	BYTE byteShadow; // 26
 	BYTE byteOutline; // 27
 	DWORD dwBackgroundColor; // 31
 	BYTE byteStyle; // 32
+	BYTE byteSelectable; // 32
 	float fX; // 33
 	float fY; // 37
 	WORD dwModelIndex; // 41
@@ -646,6 +648,32 @@ typedef struct _PLAYER_SPAWN_INFO
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+struct ScriptTimer_s // sizeof = 0x11B (283)
+{
+	char szScriptFunc[255];
+	int iTotalTime;
+	int iRemainingTime;
+	BOOL bRepeating;
+	BOOL bKilled;
+	AMX* pAMX;
+	int iParamCount;
+	void* cellParams;
+};
+
+typedef std::map<DWORD, ScriptTimer_s*> DwordTimerMap;
+#pragma pack(pop)
+
+//----------------------------------------------------------------------------------
+#pragma pack(push, 1)
+class CScriptTimers
+{
+public:
+	DwordTimerMap m_Timers;
+	DWORD m_dwTimerCount;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 class CSAMPServer
 {
 	public:
@@ -659,8 +687,8 @@ class CSAMPServer
 		CSAMPTextDrawPool		*pTextDrawPool;			//28
 		CSAMP3DTextPool			*p3DTextPool;			// 32
 		CGangZonePool			*pGangZonePool;			// 36
-		BYTE pad[52];
-		BYTE					byteWeather;
+		BYTE pad[20];
+		CScriptTimers			*pScriptTimers;
 };
 #pragma pack(pop)
 
@@ -853,7 +881,7 @@ public:
 	virtual void SetPassword( const char *_password );
 	virtual bool HasPassword( void );
 	virtual void Disconnect( unsigned int blockDuration, unsigned char orderingChannel=0 );
-	virtual bool Send(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast);
+	virtual bool Send_ASD(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast);
 	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 	virtual void _20(); // Packet* Receive( void );
 	virtual void Kick( const PlayerID playerId );
