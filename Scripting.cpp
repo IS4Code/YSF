@@ -1084,7 +1084,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerSirenState( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetPlayerSirenState");
 
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.byteSirenState;
 }
@@ -1099,7 +1099,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerGearState( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetPlayerGearState");
 
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.byteGearState;
 }
@@ -1114,7 +1114,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerHydraReactorAngle( AMX* amx, cell* params
 	CHECK_PARAMS(1, "GetPlayerHydraReactorAngle");
 
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wHydraReactorAngle[0];
 }
@@ -1129,7 +1129,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerTrainSpeed( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetPlayerTrainSpeed");
 
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
 
 	return amx_ftoc(pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.fTrainSpeed);
 }
@@ -1144,7 +1144,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerZAim( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetPlayerZAim");
 
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
 
 	return amx_ftoc(pNetGame->pPlayerPool->pPlayer[playerid]->aimSyncData.fZAim);
 }
@@ -1159,7 +1159,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerSurfingOffsets( AMX* amx, cell* params )
 	CHECK_PARAMS(4, "GetPlayerSurfingOffsets");
 
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
 
 	CVector vecPos = pNetGame->pPlayerPool->pPlayer[playerid]->syncData.vecSurfing;
 
@@ -1183,7 +1183,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerRotationQuat( AMX* amx, cell* params )
 	CHECK_PARAMS(5, "GetPlayerRotationQuat");
 
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
 
 	CSAMPPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 
@@ -1219,7 +1219,7 @@ static cell AMX_NATIVE_CALL n_SendBulletData( AMX* amx, cell* params )
 	bsSync.vecCenterOfHit = CVector(amx_ctof(params[10]), amx_ctof(params[11]), amx_ctof(params[12]));
 
 	RakNet::BitStream bsSend;
-	bsSend.Write(ID_BULLET_SYNC);
+	bsSend.Write((BYTE)ID_BULLET_SYNC);
 	bsSend.Write((WORD)playerid);
 	bsSend.Write((char*)&bsSync, sizeof(BULLET_SYNC_DATA));
 	pRakServer->Send(&bsSend, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
@@ -1237,8 +1237,8 @@ static cell AMX_NATIVE_CALL n_GetObjectModel( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetObjectModel");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	return pNetGame->pObjectPool->m_pObjects[objectid]->iModel;
 }
@@ -1253,8 +1253,8 @@ static cell AMX_NATIVE_CALL n_GetObjectDrawDistance( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetObjectDrawDistance");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->fDrawDistance);
 }
@@ -1269,8 +1269,8 @@ static cell AMX_NATIVE_CALL n_SetObjectMoveSpeed( AMX* amx, cell* params )
 	CHECK_PARAMS(2, "SetObjectMoveSpeed");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	pNetGame->pObjectPool->m_pObjects[objectid]->fMoveSpeed = amx_ctof(params[2]);
 	return 1;
@@ -1286,8 +1286,8 @@ static cell AMX_NATIVE_CALL n_GetObjectMoveSpeed( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetObjectMoveSpeed");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->fMoveSpeed);
 }
@@ -1302,8 +1302,8 @@ static cell AMX_NATIVE_CALL n_GetObjectTarget( AMX* amx, cell* params )
 	CHECK_PARAMS(4, "GetObjectTarget");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
@@ -1326,9 +1326,9 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedData( AMX* amx, cell* params )
 	CHECK_PARAMS(3, "GetObjectAttachedData");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0;
 	
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
@@ -1349,9 +1349,9 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedOffset( AMX* amx, cell* params )
 	CHECK_PARAMS(7, "GetObjectAttachedOffset");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
@@ -1381,10 +1381,10 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectModel( AMX* amx, cell* params )
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
-	if(objectid < 0 || objectid > 1000) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid > 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	return pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->iModel;
 }
@@ -1400,10 +1400,10 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectDrawDistance( AMX* amx, cell* param
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fDrawDistance);
 }
@@ -1419,10 +1419,10 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectMoveSpeed( AMX* amx, cell* params )
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed);
 }
@@ -1438,10 +1438,10 @@ static cell AMX_NATIVE_CALL n_SetPlayerObjectMoveSpeed( AMX* amx, cell* params )
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed = amx_ctof(params[3]);
 	return 1;
@@ -1458,10 +1458,10 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectTarget( AMX* amx, cell* params )
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
@@ -1485,10 +1485,10 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedData( AMX* amx, cell* param
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
 	
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
@@ -1510,10 +1510,10 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedOffset( AMX* amx, cell* par
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
-	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
@@ -1543,8 +1543,9 @@ static cell AMX_NATIVE_CALL n_GetPlayerAttachedObject( AMX* amx, cell* params )
 
 	int playerid = (int)params[1];
 	int slot = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0xFFFF;
-	if(slot < 0 || slot >= 10) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(slot < 0 || slot >= 10) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->attachedObjectSlot[slot]) return 0;
 
 	cell* cptr;
 	CAttachedObject *pObject = &pNetGame->pPlayerPool->pPlayer[playerid]->attachedObject[slot];
@@ -1625,9 +1626,9 @@ static cell AMX_NATIVE_CALL n_GetVehicleColor( AMX* amx, cell* params )
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->color1;	
+	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->iColor1;	
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->color2;
+	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->iColor2;
 	return 1;
 }
 
@@ -1646,7 +1647,7 @@ static cell AMX_NATIVE_CALL n_GetVehiclePaintjob( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->paintjob - 1;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->bytePaintjo - 1;
 }
 
 // native GetVehicleInterior(vehicleid);
@@ -1664,7 +1665,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleInterior( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->interior;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->iInterior;
 }
 
 // native GetVehicleNumberPlate(vehicleid, plate[], len = sizeof(plate));
@@ -1700,7 +1701,7 @@ static cell AMX_NATIVE_CALL n_SetVehicleRespawnDelay( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	pNetGame->pVehiclePool->pVehicle[vehicleid]->respawndelay = ((int)params[2] * 1000);
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->iRespawnDelay = ((int)params[2] * 1000);
 	return 1;
 }
 
@@ -1719,7 +1720,26 @@ static cell AMX_NATIVE_CALL n_GetVehicleRespawnDelay( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->respawndelay / 1000;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->iRespawnDelay / 1000;
+}
+
+// native SetVehicleOccupiedTick(vehicleid, ticks);
+static cell AMX_NATIVE_CALL n_SetVehicleOccupiedTick( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetVehicleOccupiedTick");
+
+	int vehicleid = (int)params[1];
+	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->vehOccupiedTick = (int)params[2];
+	return 1;
 }
 
 // native GetVehicleOccupiedTick(vehicleid);
@@ -1737,7 +1757,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleOccupiedTick( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->vehOccupied;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->vehOccupiedTick;
 }
 
 // native SetVehicleRespawnTick(vehicleid, ticks);
@@ -4079,6 +4099,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetVehicleNumberPlate",			n_GetVehicleNumberPlate},
 	{"SetVehicleRespawnDelay",			n_SetVehicleRespawnDelay},
 	{"GetVehicleRespawnDelay",			n_GetVehicleRespawnDelay},
+	{"SetVehicleOccupiedTick",			n_SetVehicleOccupiedTick}, // R6
 	{"GetVehicleOccupiedTick",			n_GetVehicleOccupiedTick},
 	{"SetVehicleRespawnTick",			n_SetVehicleRespawnTick},
 	{"GetVehicleRespawnTick",			n_GetVehicleRespawnTick},

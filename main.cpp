@@ -157,7 +157,8 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
-		/*
+			logprintf("infernus used: %d", pNetGame->pVehiclePool->modelsUsed[11]);
+			/*
 			logprintf("timercount: %d, classes: %d", pNetGame->pScriptTimers->m_dwTimerCount, pNetGame->iSpawnsAvailable);
 			logprintf("team: %d, pos: %f, %f, %f, %f - weapon: %d, %d, %d - ammo: %d, %d, %d, skin: %d, unk: %d", pNetGame->AvailableSpawns[0].byteTeam, pNetGame->AvailableSpawns[0].vecPos.fX, pNetGame->AvailableSpawns[0].vecPos.fY, pNetGame->AvailableSpawns[0].vecPos.fZ, pNetGame->AvailableSpawns[0].fRotation, 
 				pNetGame->AvailableSpawns[0].iSpawnWeapons[0], pNetGame->AvailableSpawns[0].iSpawnWeapons[1], pNetGame->AvailableSpawns[0].iSpawnWeapons[2],

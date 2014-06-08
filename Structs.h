@@ -461,26 +461,26 @@ class CSAMPVehicle
 		MATRIX4X4		vehMatrix;						// 0x001C - 0x004C -------
 		CVector			vecVelocity;		// 0x004C - 0x0058
 		CVector			vecTurnSpeed;		// unused
-		WORD wVehicleID;
-		WORD wTrailerID;
-		WORD wCabID;
-		WORD wLastDriverID;
+		WORD			wVehicleID;
+		WORD			wTrailerID;
+		WORD			wCabID;
+		WORD			wLastDriverID;
 		PAD(pad1, 22);						// 0x0058 - 0x0082
 		int				iModelId;			// 0x0082 - 0x0086
 		CVector			vecSpawnPos;
 		PAD(pad2, 12);						// 0x0086 - 0x00A6
-		int				respawndelay;
-		int				interior;
-		BYTE			padding[31];
-		BYTE paintjob;
-		int color1;
-		int color2;
-		char szNumberplate[32 + 1]; // 206
-		BYTE unk[7];
-        bool                    vehDeathNotification;   // + 0x00F4
-        bool                    vehOccupied;                    // + 0x00F5
-        uint					vehOccupiedTick;                // + 0x00F6
-        uint					vehRespawnTick;                 // + 0x00FA
+		int				iRespawnDelay;
+		int				iInterior;
+		PAD(pad3, 31);
+		BYTE			bytePaintjo;
+		int				iColor1;
+		int				iColor2;
+		char			szNumberplate[32 + 1]; // 206
+		BYTE			unk[7];
+        BOOL			vehDeathNotification;   // + 0x00F4
+        BOOL			vehOccupied;                    // + 0x00F5
+        uint			vehOccupiedTick;                // + 0x00F6
+        uint			vehRespawnTick;                 // + 0x00FA
 };
 #pragma pack(pop)
 
