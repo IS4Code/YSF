@@ -63,8 +63,8 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 
 			// First create the object for the player. We don't remove it from the pools, so we need to send RPC for the client to create object
 			RakNet::BitStream bs2;
-			bs2.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->m_wObjectID); // m_wObjectID
-			bs2.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->m_iModel);  // iModel
+			bs2.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
+			bs2.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->iModel);  // iModel
 
 			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
 			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);
@@ -79,7 +79,7 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 
 			// Attach created object to player
 			RakNet::BitStream bs;
-			bs.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->m_wObjectID); // m_wObjectID
+			bs.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
 			bs.Write(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID); // playerid
 
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
@@ -129,7 +129,7 @@ bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplaye
 			}
 
 			RakNet::BitStream bs;
-			bs.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->m_wObjectID);
+			bs.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->wObjectID);
 			pRakServer->RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, forplayerId, 0, 0);
 			/*
 			logprintf("leave %d, %f, %f, %f, %f, %f, %f", gAOData[forplayerid][i].AttachPlayerID,

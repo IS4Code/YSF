@@ -463,7 +463,7 @@ static cell AMX_NATIVE_CALL n_SetModeRestartTime(AMX *amx, cell *params)
 		return 0;
 
 	CHECK_PARAMS(1, "SetModeRestartTime");
-	//*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
+	*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
 	return 1;
 }
 
@@ -632,6 +632,84 @@ static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
 		return 1;
 	}
 	return 0;
+}
+
+/////////////// Timers
+
+// native GetAviableClasses();
+static cell AMX_NATIVE_CALL n_GetAviableClasses(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	return pNetGame->iSpawnsAvailable;
+}
+
+// native GetPlayerClass(classid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
+static cell AMX_NATIVE_CALL n_GetPlayerClass(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(13, "GetPlayerClass");
+
+	int classid = (int)params[1];
+	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
+
+	PLAYER_SPAWN_INFO *pSpawn = &pNetGame->AvailableSpawns[classid];
+	
+	cell *cptr;
+	amx_GetAddr(amx, params[2], &cptr); *cptr = (cell)pSpawn->byteTeam;
+	amx_GetAddr(amx, params[3], &cptr); *cptr = (cell)pSpawn->iSkin;
+	amx_GetAddr(amx, params[4], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fX);
+	amx_GetAddr(amx, params[5], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fY);
+	amx_GetAddr(amx, params[6], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fZ);
+	amx_GetAddr(amx, params[7], &cptr); *cptr = amx_ftoc(pSpawn->fRotation);
+	amx_GetAddr(amx, params[8], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[0];
+	amx_GetAddr(amx, params[9], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[0];
+	amx_GetAddr(amx, params[10], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[1];
+	amx_GetAddr(amx, params[11], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[1];
+	amx_GetAddr(amx, params[12], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[2];
+	amx_GetAddr(amx, params[13], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[2];
+	return 1;
+}
+
+// native EditPlayerClass(classid, teamid, modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
+static cell AMX_NATIVE_CALL n_EditPlayerClass(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(13, "EditPlayerClass");
+
+	int classid = (int)params[1];
+	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
+
+	PLAYER_SPAWN_INFO *pSpawn = &pNetGame->AvailableSpawns[classid];
+
+	pSpawn->byteTeam = (BYTE)params[2];
+	pSpawn->iSkin = (int)params[3];
+	pSpawn->vecPos = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
+	pSpawn->fRotation = amx_ctof(params[7]);
+	pSpawn->iSpawnWeapons[0] = (int)params[8];
+	pSpawn->iSpawnWeaponsAmmo[0] = (int)params[9];
+	pSpawn->iSpawnWeapons[1] = (int)params[10];
+	pSpawn->iSpawnWeaponsAmmo[1] = (int)params[11];
+	pSpawn->iSpawnWeapons[2] = (int)params[12];
+	pSpawn->iSpawnWeaponsAmmo[2] = (int)params[13];
+	return 1;
+}
+// native GetActiveTimers();
+static cell AMX_NATIVE_CALL n_GetActiveTimers(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	return pNetGame->pScriptTimers->m_dwTimerCount;
 }
 
 // native SetGravity(Float:gravity);
@@ -1121,6 +1199,33 @@ static cell AMX_NATIVE_CALL n_GetPlayerRotationQuat( AMX* amx, cell* params )
 	return 1;
 }
 
+// native SendBulletData(sender, hitid, hittype, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ);
+static cell AMX_NATIVE_CALL n_SendBulletData( AMX* amx, cell* params ) 
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(12, "SendBulletData");
+		
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	BULLET_SYNC_DATA bsSync;
+	bsSync.byteHitType = (BYTE)params[3];
+	bsSync.wHitID = (WORD)params[2];
+	bsSync.vecHitOrigin = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
+	bsSync.vecHitTarget = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
+	bsSync.vecCenterOfHit = CVector(amx_ctof(params[10]), amx_ctof(params[11]), amx_ctof(params[12]));
+
+	RakNet::BitStream bsSend;
+	bsSend.Write(ID_BULLET_SYNC);
+	bsSend.Write((WORD)playerid);
+	bsSend.Write((char*)&bsSync, sizeof(BULLET_SYNC_DATA));
+	pRakServer->Send(&bsSend, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
+	return 1;
+}
+
 // Objects - global
 // native GetObjectModel(objectid);
 static cell AMX_NATIVE_CALL n_GetObjectModel( AMX* amx, cell* params )
@@ -1133,8 +1238,9 @@ static cell AMX_NATIVE_CALL n_GetObjectModel( AMX* amx, cell* params )
 
 	int objectid = (int)params[1];
 	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
 
-	return pNetGame->pObjectPool->m_pObjects[objectid]->m_iModel;
+	return pNetGame->pObjectPool->m_pObjects[objectid]->iModel;
 }
 
 // native Float:GetObjectDrawDistance(objectid);
@@ -1148,8 +1254,66 @@ static cell AMX_NATIVE_CALL n_GetObjectDrawDistance( AMX* amx, cell* params )
 
 	int objectid = (int)params[1];
 	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
 
-	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->m_fDrawDistance);
+	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->fDrawDistance);
+}
+
+// native Float:SetObjectMoveSpeed(objectid, Float:fSpeed);
+static cell AMX_NATIVE_CALL n_SetObjectMoveSpeed( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetObjectMoveSpeed");
+
+	int objectid = (int)params[1];
+	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+
+	pNetGame->pObjectPool->m_pObjects[objectid]->fMoveSpeed = amx_ctof(params[2]);
+	return 1;
+}
+
+// native Float:GetObjectMoveSpeed(objectid);
+static cell AMX_NATIVE_CALL n_GetObjectMoveSpeed( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetObjectMoveSpeed");
+
+	int objectid = (int)params[1];
+	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+
+	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->fMoveSpeed);
+}
+
+// native GetObjectTarget(objectid, &Float:fX, &Float:fY, &Float:fZ);
+static cell AMX_NATIVE_CALL n_GetObjectTarget( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(4, "GetObjectTarget");
+
+	int objectid = (int)params[1];
+	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
+
+	cell* cptr;
+	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	amx_GetAddr(amx, params[2], &cptr);
+	*cptr = amx_ftoc(pObject->matTarget.pos.fX);
+	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = amx_ftoc(pObject->matTarget.pos.fY);
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = amx_ftoc(pObject->matTarget.pos.fZ);
+	return 1;
 }
 
 // native GetObjectAttachedData(objectid, &vehicleid, &objectid);
@@ -1164,14 +1328,14 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedData( AMX* amx, cell* params )
 	int objectid = (int)params[1];
 	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
 	
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = (cell)pObject->m_usAttachedVehicleID;
+	*cptr = (cell)pObject->wAttachedVehicleID;
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)pObject->m_usAttachedObjectID;
+	*cptr = (cell)pObject->wAttachedObjectID;
 	return 1;
 }
 
@@ -1187,22 +1351,22 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedOffset( AMX* amx, cell* params )
 	int objectid = (int)params[1];
 	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0xFFFF;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedOffset.fX);
+	*cptr = amx_ftoc(pObject->vecAttachedOffset.fX);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedOffset.fY);
+	*cptr = amx_ftoc(pObject->vecAttachedOffset.fY);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedOffset.fZ);
+	*cptr = amx_ftoc(pObject->vecAttachedOffset.fZ);
 	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedRotation.fX);
+	*cptr = amx_ftoc(pObject->vecAttachedRotation.fX);
 	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedRotation.fY);
+	*cptr = amx_ftoc(pObject->vecAttachedRotation.fY);
 	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedRotation.fZ);
+	*cptr = amx_ftoc(pObject->vecAttachedRotation.fZ);
 	return 1;
 }
 
@@ -1220,7 +1384,9 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectModel( AMX* amx, cell* params )
 	if(!IsPlayerConnected(playerid)) return 0xFFFF;
 	if(objectid < 0 || objectid > 1000) return 0xFFFF;
 
-	return pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->m_iModel;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+
+	return pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->iModel;
 }
 
 // native Float:GetPlayerObjectDrawDistance(playerid, objectid);
@@ -1237,7 +1403,75 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectDrawDistance( AMX* amx, cell* param
 	if(!IsPlayerConnected(playerid)) return 0xFFFF;
 	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
 
-	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->m_fDrawDistance);
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+
+	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fDrawDistance);
+}
+
+// native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
+static cell AMX_NATIVE_CALL n_GetPlayerObjectMoveSpeed( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "GetPlayerObjectMoveSpeed");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+
+	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed);
+}
+
+// native Float:SetPlayerObjectMoveSpeed(playerid, objectid, Float:fSpeed);
+static cell AMX_NATIVE_CALL n_SetPlayerObjectMoveSpeed( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "SetPlayerObjectMoveSpeed");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+
+	pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed = amx_ctof(params[3]);
+	return 1;
+}
+
+// native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ);
+static cell AMX_NATIVE_CALL n_GetPlayerObjectTarget( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(5, "GetPlayerObjectTarget");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0xFFFF;
+	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
+
+	cell* cptr;
+	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = amx_ftoc(pObject->matTarget.pos.fX);
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = amx_ftoc(pObject->matTarget.pos.fY);
+	amx_GetAddr(amx, params[5], &cptr);
+	*cptr = amx_ftoc(pObject->matTarget.pos.fZ);
+	return 1;
 }
 
 // native GetPlayerObjectAttachedData(playerid, objectid, &vehicleid, &objectid);
@@ -1254,14 +1488,14 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedData( AMX* amx, cell* param
 	if(!IsPlayerConnected(playerid)) return 0xFFFF;
 	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
 	
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)pObject->m_usAttachedVehicleID;
+	*cptr = (cell)pObject->wAttachedVehicleID;
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = (cell)pObject->m_usAttachedVehicleID;
+	*cptr = (cell)pObject->wAttachedVehicleID;
 	return 1;
 }
 
@@ -1279,22 +1513,22 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedOffset( AMX* amx, cell* par
 	if(!IsPlayerConnected(playerid)) return 0xFFFF;
 	if(objectid < 0 || objectid >= 1000) return 0xFFFF;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0xFFFF;
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedOffset.fX);
+	*cptr = amx_ftoc(pObject->vecAttachedOffset.fX);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedOffset.fY);
+	*cptr = amx_ftoc(pObject->vecAttachedOffset.fY);
 	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedOffset.fZ);
+	*cptr = amx_ftoc(pObject->vecAttachedOffset.fZ);
 	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedRotation.fX);
+	*cptr = amx_ftoc(pObject->vecAttachedRotation.fX);
 	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedRotation.fY);
+	*cptr = amx_ftoc(pObject->vecAttachedRotation.fY);
 	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = amx_ftoc(pObject->m_vecAttachedRotation.fZ);
+	*cptr = amx_ftoc(pObject->vecAttachedRotation.fZ);
 	return 1;
 }
 
@@ -1558,7 +1792,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleLastDriver( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->usLastDriverID;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->wLastDriverID;
 }
 
 WORD GetIDFromClientSide(WORD playerid, WORD zoneid, bool bPlayer = false)
@@ -2723,6 +2957,7 @@ static cell AMX_NATIVE_CALL n_YSF_RemovePlayer( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "YSF_RemovePlayer");
 	
+	logprintf("YSF_RemovePlayer - connected: %d, raknet geci: %d", pNetGame->pPlayerPool->bIsPlayerConnected[(int)params[1]], pRakServer->GetPlayerIDFromIndex((int)params[1]).binaryAddress);
 	int playerid = (int)params[1];
 	return pServer->RemovePlayer(playerid);
 }
@@ -3027,10 +3262,10 @@ static cell AMX_NATIVE_CALL n_AttachPlayerObjectToObject( AMX* amx, cell* params
 
 	if(!pObjectPool->m_pPlayerObjects[forplayerid][wObjectID] || !pObjectPool->m_pPlayerObjects[forplayerid][wAttachTo]) return 0; // Check if object is exist
 	
-	int iModelID = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->m_iModel;
-	CVector vecPos = CVector(pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->m_vecPos.fX, pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->m_vecPos.fY, pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->m_vecPos.fZ);
-	CVector vecRot = CVector(pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->m_vecRot.fX, pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->m_vecRot.fY, pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->m_vecRot.fZ);
-	float fDrawDistance = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->m_fDrawDistance;
+	int iModelID = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->iModel;
+	CVector vecPos = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->matWorld.pos;
+	CVector vecRot = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->vecRot;
+	float fDrawDistance = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->fDrawDistance;
 	
 	RakNet::BitStream bs;
 	bs.Write(wObjectID);
@@ -3753,7 +3988,7 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 	return set_amxstring(amx, params[2], GetWeaponName((BYTE)params[1]), params[3]);
 }
 
-// And an arra y containing the native function-names and the functions specified with them
+// And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
 {
 	// File
@@ -3780,6 +4015,14 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"RemoveServerRule",				n_RemoveServerRule}, // Doesn't work!
 	{"ModifyFlag",						n_ModifyFlag},
 
+	// Player classes
+	{ "GetAviableClasses",				n_GetAviableClasses}, // R6
+	{ "GetPlayerClass",					n_GetPlayerClass}, // R6
+	{ "EditPlayerClass",				n_EditPlayerClass}, // R6
+
+	// Timers
+	{ "GetActiveTimers",				n_GetActiveTimers}, // R6
+
 	// Special
 	{ "SetPlayerGravity",				n_SetPlayerGravity },
 	{ "GetPlayerGravity",				n_GetPlayerGravity },
@@ -3796,7 +4039,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerRaceCheckpoint",		n_GetPlayerRaceCheckpoint }, // R4
 	{ "GetPlayerWorldBounds",			n_GetPlayerWorldBounds }, // R5
 	{ "IsPlayerInModShop",				n_IsPlayerInModShop }, // R4
-	
+	{ "SendBulletData",					n_SendBulletData }, // R6
+
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			n_GetPlayerSirenState },
 	{ "GetPlayerGearState",				n_GetPlayerGearState },
@@ -3809,12 +4053,18 @@ AMX_NATIVE_INFO YSINatives [] =
 	// Objects get - global
 	{"GetObjectModel",					n_GetObjectModel},
 	{"GetObjectDrawDistance",			n_GetObjectDrawDistance},
+	{"GetObjectMoveSpeed",				n_GetObjectMoveSpeed}, // R6
+	{"SetObjectMoveSpeed",				n_SetObjectMoveSpeed}, // R6
+	{"GetObjectTarget",					n_GetObjectTarget}, // R6
 	{"GetObjectAttachedData",			n_GetObjectAttachedData},
 	{"GetObjectAttachedOffset",			n_GetObjectAttachedOffset},
 
 	// Objects get - player
 	{"GetPlayerObjectModel",			n_GetPlayerObjectModel},
 	{"GetPlayerObjectDrawDistance",		n_GetPlayerObjectDrawDistance},
+	{"GetPlayerObjectMoveSpeed",		n_GetPlayerObjectMoveSpeed}, // R6
+	{"SetPlayerObjectMoveSpeed",		n_SetPlayerObjectMoveSpeed}, // R6
+	{"GetPlayerObjectTarget",			n_GetPlayerObjectTarget}, // R6
 	{"GetPlayerObjectAttachedData",		n_GetPlayerObjectAttachedData},
 	{"GetPlayerObjectAttachedOffset",	n_GetPlayerObjectAttachedOffset},
 
@@ -4019,19 +4269,23 @@ void
 
 int InitScripting(AMX *amx)
 {
-	Redirect(amx, "AttachPlayerObjectToPlayer", (uint64_t)n_FIXED_AttachPlayerObjectToPlayer, 0);
-	Redirect(amx, "GetWeaponName", (uint64_t)n_FIXED_GetWeaponName, 0);
-	Redirect(amx, "SetGravity", (uint64_t)n_FIXED_SetGravity, 0);
-	Redirect(amx, "GetGravity", (uint64_t)n_FIXED_GetGravity, 0);
-	Redirect(amx, "SetWeather", (uint64_t)n_FIXED_SetWeather, 0);
-	Redirect(amx, "SetPlayerWeather", (uint64_t)n_FIXED_SetPlayerWeather, 0);
-	Redirect(amx, "SetPlayerWorldBounds", (uint64_t)n_FIXED_SetPlayerWorldBounds, 0);
+	if(pServer)
+	{
+		Redirect(amx, "AttachPlayerObjectToPlayer", (uint64_t)n_FIXED_AttachPlayerObjectToPlayer, 0);
+		Redirect(amx, "SetGravity", (uint64_t)n_FIXED_SetGravity, 0);
+		Redirect(amx, "GetGravity", (uint64_t)n_FIXED_GetGravity, 0);
+		Redirect(amx, "SetWeather", (uint64_t)n_FIXED_SetWeather, 0);
+		Redirect(amx, "SetPlayerWeather", (uint64_t)n_FIXED_SetPlayerWeather, 0);
+		Redirect(amx, "SetPlayerWorldBounds", (uint64_t)n_FIXED_SetPlayerWorldBounds, 0);
 	
-	Redirect(amx, "GangZoneCreate", (uint64_t)n_YSF_GangZoneCreate, 0);
-	Redirect(amx, "GangZoneDestroy", (uint64_t)n_YSF_GangZoneDestroy, 0);
-	Redirect(amx, "GangZoneShowForPlayer", (uint64_t)n_YSF_GangZoneShowForPlayer, 0);
-	Redirect(amx, "GangZoneHideForPlayer", (uint64_t)n_YSF_GangZoneHideForPlayer, 0);
-	Redirect(amx, "GangZoneShowForAll", (uint64_t)n_YSF_GangZoneShowForAll, 0);
-	Redirect(amx, "GangZoneHideForAll", (uint64_t)n_YSF_GangZoneHideForAll, 0);
+		Redirect(amx, "GangZoneCreate", (uint64_t)n_YSF_GangZoneCreate, 0);
+		Redirect(amx, "GangZoneDestroy", (uint64_t)n_YSF_GangZoneDestroy, 0);
+		Redirect(amx, "GangZoneShowForPlayer", (uint64_t)n_YSF_GangZoneShowForPlayer, 0);
+		Redirect(amx, "GangZoneHideForPlayer", (uint64_t)n_YSF_GangZoneHideForPlayer, 0);
+		Redirect(amx, "GangZoneShowForAll", (uint64_t)n_YSF_GangZoneShowForAll, 0);
+		Redirect(amx, "GangZoneHideForAll", (uint64_t)n_YSF_GangZoneHideForAll, 0);
+	}
+
+	Redirect(amx, "GetWeaponName", (uint64_t)n_FIXED_GetWeaponName, 0);
 	return amx_Register(amx, YSINatives, -1);
 }

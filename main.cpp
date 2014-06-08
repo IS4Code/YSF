@@ -157,8 +157,32 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
-			logprintf("timercount: %d", pNetGame->pScriptTimers->m_dwTimerCount);
+		/*
+			logprintf("timercount: %d, classes: %d", pNetGame->pScriptTimers->m_dwTimerCount, pNetGame->iSpawnsAvailable);
+			logprintf("team: %d, pos: %f, %f, %f, %f - weapon: %d, %d, %d - ammo: %d, %d, %d, skin: %d, unk: %d", pNetGame->AvailableSpawns[0].byteTeam, pNetGame->AvailableSpawns[0].vecPos.fX, pNetGame->AvailableSpawns[0].vecPos.fY, pNetGame->AvailableSpawns[0].vecPos.fZ, pNetGame->AvailableSpawns[0].fRotation, 
+				pNetGame->AvailableSpawns[0].iSpawnWeapons[0], pNetGame->AvailableSpawns[0].iSpawnWeapons[1], pNetGame->AvailableSpawns[0].iSpawnWeapons[2],
+				pNetGame->AvailableSpawns[0].iSpawnWeaponsAmmo[0], pNetGame->AvailableSpawns[0].iSpawnWeaponsAmmo[1], pNetGame->AvailableSpawns[0].iSpawnWeaponsAmmo[2],
+				pNetGame->AvailableSpawns[0].iSkin, pNetGame->AvailableSpawns[0].unk);
+					
+			for(int i = 0; i != 1000; i++)
+			{
+				if(!pNetGame->pObjectPool->m_bObjectSlotState[i]) continue;
 
+				CObject *object = pNetGame->pObjectPool->m_pObjects[i];
+				logprintf("WORLDpos: %f, %f, %f, up: %f, %f, %f, at: %f, %f, %f, right: %f, %f, %f", object->matWorld.pos.fX, object->matWorld.pos.fY, object->matWorld.pos.fZ,
+					object->matWorld.up.fX, object->matWorld.up.fY, object->matWorld.up.fZ,
+					object->matWorld.at.fX, object->matWorld.at.fY, object->matWorld.at.fZ,
+					object->matWorld.right.fX, object->matWorld.right.fY, object->matWorld.right.fZ);
+
+				logprintf("TARGET pos: %f, %f, %f, up: %f, %f, %f, at: %f, %f, %f, right: %f, %f, %f", object->matTarget.pos.fX, object->matTarget.pos.fY, object->matTarget.pos.fZ,
+					object->matTarget.up.fX, object->matTarget.up.fY, object->matTarget.up.fZ,
+					object->matTarget.at.fX, object->matTarget.at.fY, object->matTarget.at.fZ,
+					object->matTarget.right.fX, object->matTarget.right.fY, object->matTarget.right.fZ);
+
+				logprintf("vecpos: %f, %f, %f", object->vecRot.fX, object->vecRot.fY, object->vecRot.fZ);
+				logprintf("ismoving: %d, movepseed: %f, drawdistance: %f, pad: %f, %f, %f", object->bIsMoving, object->fMoveSpeed, object->fDrawDistance, object->matTarget.pad_a, object->matTarget.pad_p, object->matTarget.pad_u);
+			}
+			*/
 #ifdef asdasd
 			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
@@ -224,8 +248,12 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				CSAMPVehicle *pVeh = pNetGame->pVehiclePool->pVehicle[500];
 				logprintf("col: %d, %d, int: %d, respawn: %d", pNetGame->pVehiclePool->pVehicle[500]->color1, pNetGame->pVehiclePool->pVehicle[500]->color2, pNetGame->pVehiclePool->pVehicle[500]->interior, pNetGame->pVehiclePool->pVehicle[500]->respawndelay);
 				logprintf("spawn: %f, %f, %f", pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fX, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fY, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fZ);
-				logprintf("plate: %s, occ: %d, respawn: %d, lastdriver: %d", pVeh->szNumberplate, pVeh->vehOccupiedTick, pVeh->vehRespawnTick, pVeh->usLastDriverID);
-				/*
+				logprintf("plate: %s, occ: %d, respawn: %d, lastdriver: %d", pVeh->szNumberplate, pVeh->vehOccupiedTick, pVeh->vehRespawnTick, pVeh->wLastDriverID);
+				logprintf("vehicleid: %d, trailerid: %d, unkshit: %d, turnspeed: %f, %f, %f", pVeh->wVehicleID, pVeh->wTrailerID, pVeh->wCabID, pVeh->vecTurnSpeed.fX, pVeh->vecTurnSpeed.fY, pVeh->vecTurnSpeed.fZ);
+			}
+			
+			*/
+			/*
 				for(int i = 0; i != 42; i++)
 					logprintf("plate %d: %d", i, pVeh->pad1[i]);
 			

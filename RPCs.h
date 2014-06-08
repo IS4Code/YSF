@@ -50,4 +50,21 @@ extern int RPC_HideGangZone;
 extern int RPC_FlashGangZone;
 extern int RPC_StopFlashGangZone;
 
+enum PacketEnumeration : unsigned char
+{
+	ID_PLAYER_SYNC = 212,
+	ID_MARKERS_SYNC = 213,
+	ID_UNOCCUPIED_SYNC = 214,
+	ID_TRAILER_SYNC = 215,
+	ID_PASSENGER_SYNC = 216,
+	ID_SPECTATOR_SYNC = 217,
+	ID_AIM_SYNC = 218,
+	ID_VEHICLE_SYNC = 219,
+	ID_RCON_COMMAND = 220,
+	ID_RCON_RESPONCE = 221,
+	ID_WEAPONS_UPDATE = 222,
+	ID_STATS_UPDATE = 223,
+	ID_BULLET_SYNC = 224,
+};
+
 #endif

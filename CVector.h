@@ -43,13 +43,14 @@ public:
 		this->fZ = 0;
 	};
 	
+	
 	CVector ( float fX, float fY, float fZ) 
 	{ 
 		this->fX = fX;
 		this->fY = fY;
 		this->fZ = fZ;
 	}
-
+	
     float Normalize ( void ) 
     { 
         double t = sqrt(fX*fX + fY*fY + fZ*fZ);
@@ -121,7 +122,7 @@ public:
 		if (ret >= 360.0f) ret -= 360.0f;
 		return ret;
 	}
-
+	
     CVector operator + ( const CVector& vecRight ) const
     {
         return CVector ( fX + vecRight.fX, fY + vecRight.fY, fZ + vecRight.fZ );

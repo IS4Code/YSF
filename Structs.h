@@ -420,6 +420,17 @@ class CSAMPPlayerPool
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+class CSAMPGameModePool
+{
+public:
+	AMX m_amx;
+	bool m_bInitialised;
+	bool m_bSleeping;
+	float m_fSleepTime;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 class CSAMPFilterScriptPool
 {
 public:
@@ -447,12 +458,13 @@ class CSAMPVehicle
 {
 	public:
 		CVector			vecPosition;		// 0x0000 - 0x000C
-		CVector			vecQuaternion;		// 0x000C - 0x0018 -------
-		float			fQuaternionAngle;	// 0x0018 - 0x001C	MATRIX4x4
-		PAD(pad0, 48);						// 0x001C - 0x004C -------
+		MATRIX4X4		vehMatrix;						// 0x001C - 0x004C -------
 		CVector			vecVelocity;		// 0x004C - 0x0058
-		BYTE unk_[18];
-		ushort usLastDriverID;
+		CVector			vecTurnSpeed;		// unused
+		WORD wVehicleID;
+		WORD wTrailerID;
+		WORD wCabID;
+		WORD wLastDriverID;
 		PAD(pad1, 22);						// 0x0058 - 0x0082
 		int				iModelId;			// 0x0082 - 0x0086
 		CVector			vecSpawnPos;
@@ -472,13 +484,13 @@ class CSAMPVehicle
 };
 #pragma pack(pop)
 
-// *(this + 158) = a7;    respawndelay
-// *(v3 + 162) interior
 #pragma pack(push, 1)
 class CSAMPVehiclePool
 {
 	public:
-		PAD(pad0, 16212);								// 0x0000 - 0x3F54
+		BOOL				bVehicleSlotState[2000];
+		int					byteVirtualWorld[2000];
+		BYTE				modelsUsed[212];
 		CSAMPVehicle		*pVehicle[2000];			// 0x3F54 - 0x5E94
 };
 #pragma pack(pop)
@@ -507,35 +519,20 @@ public:
 class CObject
 {
 public:
-	WORD					m_wObjectID; // 2
-	int						m_iModel; // 6 
-	BYTE padding[52];				// 58
-	CVector m_vecPos;			// 70	
-	int unk;				// 74
-	CVector m_vecRot;			// 86
-	BYTE unk_2[14];			
-	BYTE m_bIsMoving2;		// 100
-	BYTE unk__[34];
-	float unk1;
-	float unk2;
-	float unk3;
-	float unk4;
-	//BYTE unk3[50];			// 162   - pad 58
-	BYTE m_bIsMoving;
-	float m_fMoveSpeed;
-	BYTE unk_4[3];
-	float m_fDrawDistance;
-	ushort					m_usAttachedVehicleID; // 163 
-	ushort					m_usAttachedObjectID; // 165
-	CVector					m_vecAttachedOffset; // 177
-	CVector					m_vecAttachedRotation; // 189
-	char paddin__g[6];
-	BYTE materialindex;
-	BYTE asd[2];
-	DWORD dwColor;
-	char szTXDName[64];
-	char szTextureName[64];
-	char mat[256];
+	WORD				wObjectID;		// 0 - 2
+	int					iModel;			// 2 - 6
+	BOOL				bActive;		// 6 - 10
+	MATRIX4X4			matWorld;		// 10 - 74 - pos - Object position
+	CVector				vecRot; 		// 74 - 86 - Object rotation
+	MATRIX4X4			matTarget;		// 86 - 150	- 
+	BYTE				bIsMoving;		// 150 - 151
+	float				fMoveSpeed;		// 151 - 155
+	BYTE				unk_4[4];		// 155 -159
+	float				fDrawDistance;	// 159 - 163
+	ushort				wAttachedVehicleID;	// 163 
+	ushort				wAttachedObjectID;	// 165
+	CVector				vecAttachedOffset;	// 177
+	CVector				vecAttachedRotation;// 189
 };
 #pragma pack(pop)
 
@@ -636,18 +633,6 @@ private:
 };
 
 #pragma pack(push, 1)
-typedef struct _PLAYER_SPAWN_INFO
-{
-	BYTE byteTeam;
-	int iSkin;
-	VECTOR vecPos;
-	float fRotation;
-	int iSpawnWeapons[3];
-	int iSpawnWeaponsAmmo[3];
-} PLAYER_SPAWN_INFO;
-#pragma pack(pop)
-
-#pragma pack(push, 1)
 struct ScriptTimer_s // sizeof = 0x11B (283)
 {
 	char szScriptFunc[255];
@@ -674,10 +659,23 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+typedef struct _PLAYER_SPAWN_INFO
+{
+	BYTE byteTeam;
+	int iSkin;
+	BYTE unk;
+	CVector vecPos;
+	float fRotation;
+	int iSpawnWeapons[3];
+	int iSpawnWeaponsAmmo[3];
+} PLAYER_SPAWN_INFO;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 class CSAMPServer
 {
 	public:
-		void					*pGameModePool;			// 0x0000 - 0x0004
+		CSAMPGameModePool		*pGameModePool;			// 0x0000 - 0x0004
 		CSAMPFilterScriptPool	*pFilterScriptPool;		// 0x0004 - 0x0008
 		CSAMPPlayerPool			*pPlayerPool;			// 0x0008 - 0x000C
 		CSAMPVehiclePool		*pVehiclePool;			// 0x000C - 0x0010
@@ -686,12 +684,28 @@ class CSAMPServer
 		CMenuPool				*pMenuPool;				// 24
 		CSAMPTextDrawPool		*pTextDrawPool;			//28
 		CSAMP3DTextPool			*p3DTextPool;			// 32
-		CGangZonePool			*pGangZonePool;			// 36
-		BYTE pad[20];
-		CScriptTimers			*pScriptTimers;
+		CGangZonePool			*pGangZonePool;			// 36 - 40
+		int						iCurrentGameModeIndex;	// 40 - 44
+		int						iCurrentGameModeRepeat;	// 44 - 48
+		BOOL					bFirstGameModeLoaded;	// 48 - 52
+		BOOL					bLanMode;				// 52 - 56
+		CScriptTimers			*pScriptTimers;			// 56 - 60
+		BYTE pad2[65];									// 60 - 125
+		int						iSpawnsAvailable;		// 125 - 129
+		PLAYER_SPAWN_INFO		AvailableSpawns[300];
 };
 #pragma pack(pop)
 
+#pragma pack(push, 1)
+typedef struct _BULLET_SYNC_DATA 
+{
+	BYTE byteHitType;
+	WORD wHitID;
+	CVector vecHitOrigin;
+	CVector vecHitTarget;
+	CVector vecCenterOfHit;
+} BULLET_SYNC_DATA; // by 0x688
+#pragma pack(pop)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct PlayerID
@@ -874,15 +888,15 @@ struct Packet
 class RakServer
 {
 public:
-	~RakServer();
-	virtual bool Start( unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress=0 );
-	virtual void InitializeSecurity( const char *privateKeyE, const char *privateKeyN );
-	virtual void DisableSecurity( void );
-	virtual void SetPassword( const char *_password );
-	virtual bool HasPassword( void );
-	virtual void Disconnect( unsigned int blockDuration, unsigned char orderingChannel=0 );
-	virtual bool Send_ASD(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast);
-	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	//~RakServer();
+	virtual bool Start( unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress=0 ); // 0
+	virtual void InitializeSecurity( const char *privateKeyE, const char *privateKeyN ); // 4
+	virtual void DisableSecurity( void ); // 8
+	virtual void SetPassword( const char *_password );	// 12
+	virtual bool HasPassword( void );	// 16
+	virtual void Disconnect( unsigned int blockDuration, unsigned char orderingChannel=0 );	// 20
+	virtual bool Send_ASD(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast); // 24
+	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);	// 28
 	virtual void _20(); // Packet* Receive( void );
 	virtual void Kick( const PlayerID playerId );
 	virtual void _28();
