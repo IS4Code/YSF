@@ -28,7 +28,7 @@ extern logprintf_t logprintf;
 extern CServer *pServer;
 
 // Internal server pointers
-extern CSAMPServer *pNetGame;
+extern CNetGame *pNetGame;
 extern void *pConsole;
 extern RakServer *pRakServer;
 extern CPlayerData *pPlayerData[MAX_PLAYERS];

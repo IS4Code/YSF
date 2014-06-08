@@ -27,7 +27,7 @@ extern void *pAMXFunctions;
 CServer *pServer = NULL;
 
 // Internal server pointers
-CSAMPServer *pNetGame = NULL;
+CNetGame *pNetGame = NULL;
 void *pConsole = NULL;
 RakServer *pRakServer = NULL;
 CPlayerData *pPlayerData[MAX_PLAYERS];
@@ -140,7 +140,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 			// Get pNetGame
 			int (*pfn_GetNetGame)(void) = (int (*)(void))InternalNetGame;
-			pNetGame = (CSAMPServer*)pfn_GetNetGame();
+			pNetGame = (CNetGame*)pfn_GetNetGame();
 
 			// Get pConsole
 			int (*pfn_GetConsole)(void) = (int (*)(void))InternalConsole;
@@ -187,7 +187,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 #ifdef asdasd
 			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
-				CSAMPPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
+				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
 				logprintf("playercolor: %d, spectype: %d, specid: %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->SpectateID);
 
 				//logprintf("3dtext exists: %d, text: %s", pPlayer->p3DText->isCreated[1], pPlayer->p3DText->TextLabels[1].text);
@@ -261,7 +261,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			
 				if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 				{
-					CSAMPPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
+					CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
 					logprintf("model: %d, bone: %d, %f, %f, %f, materialcolor: %d, %d, slotstate: %d", pPlayer->attachedObject[0].iModelID, pPlayer->attachedObject[0].iBoneiD, pPlayer->attachedObject[0].vecPos.fX, pPlayer->attachedObject[0].vecPos.fY, pPlayer->attachedObject[0].vecPos.fZ, pPlayer->attachedObject[0].dwMaterialColor1, pPlayer->attachedObject[0].dwMaterialColor2, pPlayer->attachedObjectSlot[0]);
 					//logprintf("pos: %f, %f, %f, %f", pNetGame->pPlayerPool->pPlayer[4]->vecCPPos.fX, pNetGame->pPlayerPool->pPlayer[4]->vecCPPos.fY, pNetGame->pPlayerPool->pPlayer[4]->vecCPPos.fZ, pNetGame->pPlayerPool->pPlayer[4]->fCPSize);
 					logprintf("quat: %f, %f, %f, %f", pPlayer->fQuaternion[0], pPlayer->fQuaternion[1], pPlayer->fQuaternion[2], pPlayer->fQuaternion[3]);
@@ -329,7 +329,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 			CPlayerData *pPlayer = pPlayerData[playerid];
 			if(!pPlayer) continue;
 			/*
-			CSAMPPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
+			CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
 			if(pPlayer)
 			{
 				logprintf("keys: %d, oldkeys: %d", pPlayer->dwKeys, pPlayer->dwOldKeys);

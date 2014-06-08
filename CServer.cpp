@@ -49,7 +49,7 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 		return 0;
 	}
 
-	CSAMPObjectPool *pObjectPool = pNetGame->pObjectPool;
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	for(int i = 0; i != MAX_OBJECTS; i++)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
@@ -117,7 +117,7 @@ bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplaye
 		return 0;
 	}
 
-	CSAMPObjectPool *pObjectPool = pNetGame->pObjectPool;
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	for(int i = 0; i != MAX_OBJECTS; i++)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)

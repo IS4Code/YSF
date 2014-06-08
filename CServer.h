@@ -1,7 +1,7 @@
 #ifndef __YSF_CSERVER
 #define __YSF_CSERVER
 
-class CSAMPServer;
+class CNetGame;
 class RakServer;
 
 class CServer

@@ -1193,7 +1193,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerRotationQuat( AMX* amx, cell* params )
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	CSAMPPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -3286,7 +3286,7 @@ static cell AMX_NATIVE_CALL n_AttachPlayerObjectToObject( AMX* amx, cell* params
 	CVector vecOffsetRot = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
 	BYTE byteSyncRot = !!params[10];
 
-	CSAMPObjectPool *pObjectPool = pNetGame->pObjectPool;
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 
 	if(!pObjectPool->m_pPlayerObjects[forplayerid][wObjectID] || !pObjectPool->m_pPlayerObjects[forplayerid][wAttachTo]) return 0; // Check if object is exist
 	

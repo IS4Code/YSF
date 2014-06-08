@@ -133,7 +133,7 @@ typedef struct Text3DLabels_t  // size 0x21
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMP3DTextPool
+class C3DTextPool
 {
 public:
 	BOOL                    m_bIsCreated[1024];
@@ -302,7 +302,7 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMPPlayer
+class CPlayer
 {
 	public:
 		CAimSyncData		aimSyncData;		// 0x0000 - 0x001F
@@ -391,7 +391,7 @@ class CSAMPPlayer
 
 /*
 #pragma pack(push, 1)
-class CSAMPPlayer
+class CPlayer
 {
 	public:
 		BYTE padding[0x2321];			// 0
@@ -407,12 +407,12 @@ class CSAMPPlayer
 #pragma pack(pop)
 */
 #pragma pack(push, 1)
-class CSAMPPlayerPool
+class CPlayerPool
 {
 	public:
 		PAD(pad0, 75012);											// 0x00000 - 0x12504
 		BOOL				bIsPlayerConnected[MAX_PLAYERS];		// 0x12504 - 0x12CD4
-		CSAMPPlayer			*pPlayer[MAX_PLAYERS];					// 0x12CD4 - 0x134A4
+		CPlayer			*pPlayer[MAX_PLAYERS];					// 0x12CD4 - 0x134A4
 		char				szName[MAX_PLAYERS][24];				// 0x134A4 - 0x16384
 		PAD(pad3, 500);												// 0x16384 - 0x16578
 		BOOL				m_bIsAnAdmin[MAX_PLAYERS];				// 0x16578 - 0x1676C
@@ -420,7 +420,7 @@ class CSAMPPlayerPool
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMPGameModePool
+class CGameMode
 {
 public:
 	AMX m_amx;
@@ -431,7 +431,7 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMPFilterScriptPool
+class CFilterScripts
 {
 public:
 	void* m_pFilterScripts[MAX_FILTER_SCRIPTS];
@@ -485,7 +485,7 @@ class CSAMPVehicle
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMPVehiclePool
+class CVehiclePool
 {
 	public:
 		BOOL				bVehicleSlotState[2000];
@@ -537,7 +537,7 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMPObjectPool
+class CObjectPool
 {
 public:
 
@@ -560,7 +560,7 @@ typedef struct Pickup_t // size 0x14
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMPPickupPool
+class CPickupPool
 {
 public:
 	tPickup			m_Pickup[ MAX_PICKUPS ];			// + 0x0000
@@ -571,7 +571,7 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMPTextDrawPool
+class CTextDrawPool
 {
 public:
 	BOOL				m_bSlotState[MAX_TEXT_DRAWS];
@@ -672,18 +672,18 @@ typedef struct _PLAYER_SPAWN_INFO
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CSAMPServer
+class CNetGame
 {
 	public:
-		CSAMPGameModePool		*pGameModePool;			// 0x0000 - 0x0004
-		CSAMPFilterScriptPool	*pFilterScriptPool;		// 0x0004 - 0x0008
-		CSAMPPlayerPool			*pPlayerPool;			// 0x0008 - 0x000C
-		CSAMPVehiclePool		*pVehiclePool;			// 0x000C - 0x0010
-		CSAMPPickupPool			*pPickupPool;
-		CSAMPObjectPool			*pObjectPool;			// 0x0010 - 0x0014
+		CGameMode				*pGameModePool;			// 0x0000 - 0x0004
+		CFilterScripts			*pFilterScriptPool;		// 0x0004 - 0x0008
+		CPlayerPool				*pPlayerPool;			// 0x0008 - 0x000C
+		CVehiclePool			*pVehiclePool;			// 0x000C - 0x0010
+		CPickupPool				*pPickupPool;
+		CObjectPool				*pObjectPool;			// 0x0010 - 0x0014
 		CMenuPool				*pMenuPool;				// 24
-		CSAMPTextDrawPool		*pTextDrawPool;			//28
-		CSAMP3DTextPool			*p3DTextPool;			// 32
+		CTextDrawPool			*pTextDrawPool;			//28
+		C3DTextPool			*p3DTextPool;			// 32
 		CGangZonePool			*pGangZonePool;			// 36 - 40
 		int						iCurrentGameModeIndex;	// 40 - 44
 		int						iCurrentGameModeRepeat;	// 44 - 48

@@ -90,7 +90,7 @@ void ModifyFlag(char * rule, int varflag)
 
 int LoadFilterscript(char * name)
 {
-	CSAMPFilterScriptPool *pFS = pNetGame->pFilterScriptPool;
+	CFilterScripts *pFS = pNetGame->pFilterScriptPool;
 	
 	#ifdef WIN32
 		return ((FakeClass *)pFS->*g_pCFilterscript__LoadFS_t)(name);
@@ -102,7 +102,7 @@ int LoadFilterscript(char * name)
 
 int UnLoadFilterscript(char * name)
 {
-	CSAMPFilterScriptPool *pFS = pNetGame->pFilterScriptPool;
+	CFilterScripts *pFS = pNetGame->pFilterScriptPool;
 
 	#ifdef WIN32
 		return ((FakeClass *)pFS->*g_pCFilterscript__UnLoadFS_t)(name);
