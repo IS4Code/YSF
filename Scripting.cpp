@@ -1086,6 +1086,8 @@ static cell AMX_NATIVE_CALL n_GetPlayerSirenState( AMX* amx, cell* params )
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
+
 	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.byteSirenState;
 }
 
@@ -1100,6 +1102,8 @@ static cell AMX_NATIVE_CALL n_GetPlayerGearState( AMX* amx, cell* params )
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
+
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.byteGearState;
 }
@@ -1116,6 +1120,8 @@ static cell AMX_NATIVE_CALL n_GetPlayerHydraReactorAngle( AMX* amx, cell* params
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
+
 	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wHydraReactorAngle[0];
 }
 
@@ -1130,6 +1136,8 @@ static cell AMX_NATIVE_CALL n_GetPlayerTrainSpeed( AMX* amx, cell* params )
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
+
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
 
 	return amx_ftoc(pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.fTrainSpeed);
 }
