@@ -702,6 +702,7 @@ static cell AMX_NATIVE_CALL n_EditPlayerClass(AMX *amx, cell *params)
 	pSpawn->iSpawnWeaponsAmmo[2] = (int)params[13];
 	return 1;
 }
+
 // native GetActiveTimers();
 static cell AMX_NATIVE_CALL n_GetActiveTimers(AMX *amx, cell *params)
 {
@@ -1537,25 +1538,6 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectDrawDistance( AMX* amx, cell* param
 	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fDrawDistance);
 }
 
-// native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectMoveSpeed( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(2, "GetPlayerObjectMoveSpeed");
-
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
-
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed);
-}
-
 // native Float:SetPlayerObjectMoveSpeed(playerid, objectid, Float:fSpeed);
 static cell AMX_NATIVE_CALL n_SetPlayerObjectMoveSpeed( AMX* amx, cell* params )
 {
@@ -1574,6 +1556,25 @@ static cell AMX_NATIVE_CALL n_SetPlayerObjectMoveSpeed( AMX* amx, cell* params )
 
 	pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed = amx_ctof(params[3]);
 	return 1;
+}
+
+// native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
+static cell AMX_NATIVE_CALL n_GetPlayerObjectMoveSpeed( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "GetPlayerObjectMoveSpeed");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+
+	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed);
 }
 
 // native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ);
@@ -4202,21 +4203,20 @@ AMX_NATIVE_INFO YSINatives [] =
 	// Objects get - global
 	{"GetObjectModel",					n_GetObjectModel},
 	{"GetObjectDrawDistance",			n_GetObjectDrawDistance},
-	{"GetObjectMoveSpeed",				n_GetObjectMoveSpeed}, // R6
 	{"SetObjectMoveSpeed",				n_SetObjectMoveSpeed}, // R6
+	{"GetObjectMoveSpeed",				n_GetObjectMoveSpeed}, // R6
 	{"GetObjectTarget",					n_GetObjectTarget}, // R6
 	{"GetObjectAttachedData",			n_GetObjectAttachedData},
 	{"GetObjectAttachedOffset",			n_GetObjectAttachedOffset},
-	{"IsObjectMaterialSlotUsed",		n_IsObjectMaterialSlotUsed},
-	{"GetObjectMaterial",				n_GetObjectMaterial},
-	{"GetObjectMaterialText",			n_GetObjectMaterialText},
-	
+	{"IsObjectMaterialSlotUsed",		n_IsObjectMaterialSlotUsed}, // R6
+	{"GetObjectMaterial",				n_GetObjectMaterial}, // R6
+	{"GetObjectMaterialText",			n_GetObjectMaterialText}, // R6
 
 	// Objects get - player
 	{"GetPlayerObjectModel",			n_GetPlayerObjectModel},
 	{"GetPlayerObjectDrawDistance",		n_GetPlayerObjectDrawDistance},
-	{"GetPlayerObjectMoveSpeed",		n_GetPlayerObjectMoveSpeed}, // R6
 	{"SetPlayerObjectMoveSpeed",		n_SetPlayerObjectMoveSpeed}, // R6
+	{"GetPlayerObjectMoveSpeed",		n_GetPlayerObjectMoveSpeed}, // R6
 	{"GetPlayerObjectTarget",			n_GetPlayerObjectTarget}, // R6
 	{"GetPlayerObjectAttachedData",		n_GetPlayerObjectAttachedData},
 	{"GetPlayerObjectAttachedOffset",	n_GetPlayerObjectAttachedOffset},

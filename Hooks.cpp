@@ -36,6 +36,7 @@
 	#define WIN32_LEAN_AND_MEAN
 	#define VC_EXTRALEAN
 	#include <Windows.h>
+	#include <Psapi.h>
 #else
 	#include <stdio.h>
 	#include <sys/mman.h>
@@ -68,6 +69,38 @@ bool Unlock(void *address, int len)
 		return !mprotect((void*)&page_size, PAGESIZE, PROT_WRITE | PROT_READ | PROT_EXEC);
 	#endif
 }
+
+DWORD FindPattern(char *pattern, char *mask)
+{
+	#ifdef WIN32
+	MODULEINFO mInfo = {0};
+ 
+	GetModuleInformation(GetCurrentProcess(), GetModuleHandle(NULL), &mInfo, sizeof(MODULEINFO));
+ 
+	DWORD base = (DWORD)mInfo.lpBaseOfDll;
+	DWORD size =  (DWORD)mInfo.SizeOfImage;
+	#else
+ 
+	#endif
+ 
+	DWORD patternLength = (DWORD)strlen(mask);
+ 
+	for(DWORD i = 0; i < size - patternLength; i++)
+	{
+		bool found = true;
+		for(DWORD j = 0; j < patternLength; j++)
+		{
+			found &= mask[j] == '?' || pattern[j] == *(char*)(base + i + j);
+		}
+ 
+		if(found) 
+		{
+			return base + i;
+		}
+	}
+ 
+	return NULL;
+} 
 
 void GetAddresses()
 {

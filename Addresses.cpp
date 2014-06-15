@@ -27,63 +27,43 @@ DWORD CAddress::FUNC_CFilterscripts_UnLoadFilterscript = NULL;
 
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
+	// Thx for Whitetiger
+	#ifdef WIN32
+	VAR_pRestartWaitTime =						FindPattern("\x00\x00\xC8\xC2\x00\x00", "xxxxxx") + 0x4;
+ 
+	FUNC_CConsole_AddStringVariable =			FindPattern("\x53\x56\x57\x8B\x7C\x24\x18\x85\xFF", "xxxxxxxxx");
+	FUNC_CConsole_SetStringVariable =			FindPattern("\x8B\x44\x24\x04\x53\x50\xE8\xD5\xFE\xFF\xFF\x8B\xD8\x85\xDB", "xxxxxxx???xxxx");
+	FUNC_CConsole_ModifyVariableFlags =			FindPattern("\x8B\x44\x24\x04\x50\xE8\x16\xFF\xFF\xFF\x85\xC0\x74\x07", "xxxxxx????xxxx");
+ 
+	FUNC_CFilterscripts_LoadFilterscript =		FindPattern("\x8B\x44\x24\x04\x81\xEC\x04\x01\x00\x00", "xxxxxxxxxx");
+	FUNC_CFilterscripts_UnLoadFilterscript =	FindPattern("\xCC\x51\x53\x8B\x5C\x24\x0C\x55\x56\x57\x89", "xxxxxxxxxxx") + 0x1;
+ 
+	#else
+ 
 	switch(sampVersion)
 	{
 	case SAMP_VERSION_03Z:
-		{
-#ifdef _WIN32
-
-			//VAR_ppNetGame =								0x4F234C;
-			//VAR_ppConsole =								0x4F2350;
-			//VAR_ppRakServer =							0x4F24A4;
-
-			VAR_pRestartWaitTime =						0x4B2414;
-
-			FUNC_CConsole_AddStringVariable =			0x004869B0;
-			FUNC_CConsole_SetStringVariable =			0x00485930;
-			FUNC_CConsole_ModifyVariableFlags =			0x004858F0;
-
-			FUNC_CFilterscripts_LoadFilterscript =		0x00469F90;
-			FUNC_CFilterscripts_UnLoadFilterscript =	0x0046C2B0;
-#else
-
-			//VAR_ppNetGame =								0x0819A568;
-			//VAR_ppConsole =								0x0819A564;
-			//VAR_ppRakServer =							0x0819A6A8;
-
+ 
 			VAR_pRestartWaitTime =						0x8150130;
-
+ 
 			FUNC_CConsole_AddStringVariable =			0x0809F590;
 			FUNC_CConsole_SetStringVariable =			0x0809EDB0;
 			FUNC_CConsole_ModifyVariableFlags =			0x0809EE60;
-
+ 
 			FUNC_CFilterscripts_LoadFilterscript =		0x0809FDB0;
 			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A01E0;
-#endif
-			break;
 		}
 	case SAMP_VERSION_03Z_R2_2:
 		{
-#ifdef _WIN32
-			VAR_pRestartWaitTime =						0x4B25C4;
-
-			FUNC_CConsole_AddStringVariable =			0x486FE0;
-			FUNC_CConsole_SetStringVariable =			0x485F60;
-			FUNC_CConsole_ModifyVariableFlags =			0x485F20;
-
-			FUNC_CFilterscripts_LoadFilterscript =		0x46A100;
-			FUNC_CFilterscripts_UnLoadFilterscript =	0x46C4E0;
-#else
 			VAR_pRestartWaitTime =						0x8150B60;
-
+ 
 			FUNC_CConsole_AddStringVariable =			0x809F760;
 			FUNC_CConsole_SetStringVariable =			0x809F000;
 			FUNC_CConsole_ModifyVariableFlags =			0x809F030;
-
+ 
 			FUNC_CFilterscripts_LoadFilterscript =		0x0809FF80;
 			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A03B0;
-#endif
-			break;
 		} 
 	}
+	#endif
 }
