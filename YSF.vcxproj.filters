@@ -22,9 +22,6 @@
     <ClCompile Include="CServer.cpp">
       <Filter>Server</Filter>
     </ClCompile>
-    <ClCompile Include="CPlayer.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="BitStream.cpp">
       <Filter>Server</Filter>
     </ClCompile>
@@ -49,6 +46,9 @@
     <ClCompile Include="CModelSizes.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="CPlayerData.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDK\amx\amx.h">
@@ -68,9 +68,6 @@
     </ClInclude>
     <ClInclude Include="main.h" />
     <ClInclude Include="CServer.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="CPlayer.h">
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="Addresses.h">
@@ -105,6 +102,9 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="CModelSizes.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayerData.h">
       <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,6 +15,7 @@ CPlayerData::CPlayerData( void )
 		this->stObj[i].vecRot = CVector(0.0f, 0.0f, 0.0f);
 	}
 
+	bObjectsRemoved = false;
 	iPlayerPickupCount = 0;
 	fGravity = pServer->GetGravity();
 	byteWeather = pServer->GetWeather();

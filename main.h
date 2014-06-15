@@ -9,7 +9,7 @@
 
 // Includes
 #include "Addresses.h"
-#include "CPlayer.h"
+#include "CPlayerData.h"
 #include "CServer.h"
 #include "CVector.h"
 #include "Hooks.h"

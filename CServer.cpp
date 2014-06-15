@@ -188,3 +188,13 @@ BYTE CServer::GetWeather(void)
 {
 	return m_byteWeather;
 }
+
+void CServer::RemoveAttachedObjects(WORD playerid)
+{
+
+}
+
+void CServer::RestoreAttachedObjects(WORD playerid)
+{
+
+}

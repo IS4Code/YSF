@@ -157,6 +157,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
+#ifdef pina
 			logprintf("infernus used: %d", pNetGame->pVehiclePool->modelsUsed[11]);
 			/*
 			logprintf("timercount: %d, classes: %d", pNetGame->pScriptTimers->m_dwTimerCount, pNetGame->iSpawnsAvailable);
@@ -164,12 +165,13 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				pNetGame->AvailableSpawns[0].iSpawnWeapons[0], pNetGame->AvailableSpawns[0].iSpawnWeapons[1], pNetGame->AvailableSpawns[0].iSpawnWeapons[2],
 				pNetGame->AvailableSpawns[0].iSpawnWeaponsAmmo[0], pNetGame->AvailableSpawns[0].iSpawnWeaponsAmmo[1], pNetGame->AvailableSpawns[0].iSpawnWeaponsAmmo[2],
 				pNetGame->AvailableSpawns[0].iSkin, pNetGame->AvailableSpawns[0].unk);
-					
+				*/
 			for(int i = 0; i != 1000; i++)
 			{
 				if(!pNetGame->pObjectPool->m_bObjectSlotState[i]) continue;
 
 				CObject *object = pNetGame->pObjectPool->m_pObjects[i];
+				/*
 				logprintf("WORLDpos: %f, %f, %f, up: %f, %f, %f, at: %f, %f, %f, right: %f, %f, %f", object->matWorld.pos.fX, object->matWorld.pos.fY, object->matWorld.pos.fZ,
 					object->matWorld.up.fX, object->matWorld.up.fY, object->matWorld.up.fZ,
 					object->matWorld.at.fX, object->matWorld.at.fY, object->matWorld.at.fZ,
@@ -182,8 +184,26 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 				logprintf("vecpos: %f, %f, %f", object->vecRot.fX, object->vecRot.fY, object->vecRot.fZ);
 				logprintf("ismoving: %d, movepseed: %f, drawdistance: %f, pad: %f, %f, %f", object->bIsMoving, object->fMoveSpeed, object->fDrawDistance, object->matTarget.pad_a, object->matTarget.pad_p, object->matTarget.pad_u);
-			}
 			*/
+		/*
+				logprintf("sizeof: %d", sizeof(CObjectMaterial));
+				for(int i = 0; i != 16; i++)
+				{
+					//logprintf("used: %d", object->MaterialUsed[i]);
+					if(object->szMaterialText[i]) logprintf("text: %s", object->szMaterialText[i]);
+					logprintf("byteSomething: %d, count: %d, unk_4: %d", object->byteSomething, object->dwMaterialCount, object->unk_4);
+					logprintf("used: %d, slot: %d, modelid: %d, color: %X, TXD: %s, name: %s", object->Material[i].byteUsed, object->Material[i].byteSlot, object->Material[i].wModelID,
+						object->Material[i].dwMaterialColor, object->Material[i].szMaterialTXD, object->Material[i].szMaterialTexture);
+
+					// native SetObjectMaterialText(objectid, text[], materialindex = 0, materialsize = OBJECT_MATERIAL_SIZE_256x128, 
+					//fontface[] = "Arial", fontsize = 24, bold = 1, fontcolor = 0xFFFFFFFF, backcolor = 0, textalignment = 0);
+
+					logprintf("unk: %d, matsize: %d, fontface: %s, byteFontSize: %d, byteBold: %d, unk3: %d, dwFontColor: %X, dwBackgroundColor: %X, byteAlignment: %d", object->Material[i].unk, object->Material[i].byteMaterialSize, object->Material[i].szFont, object->Material[i].byteFontSize,
+						object->Material[i].byteBold, object->Material[i].byteBold, object->Material[i].dwFontColor, object->Material[i].dwBackgroundColor, object->Material[i].byteAlignment);
+				}
+				*/
+		}
+#endif
 #ifdef asdasd
 			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
@@ -322,12 +342,49 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 
 	if(++g_Ticks == 10)
 	{
-		//logprintf("process");
+		//
 		g_Ticks = 0;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 		{
-			CPlayerData *pPlayer = pPlayerData[playerid];
-			if(!pPlayer) continue;
+			CPlayerData *pPlayerPointer = pPlayerData[playerid];
+			if(!pPlayerPointer) continue;
+
+			// R7 - TODO
+			CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+			switch(pPlayer->aimSyncData.byteAspectRatio)
+			{
+				case 7:
+				case 8:
+				case 16:
+				case 46:
+				case 51:
+				{
+					// Remove objects
+					if(!pPlayerPointer->bObjectsRemoved)
+					{
+						// Remove every attached objects from player - but ONLY for given player
+						pServer->RemoveAttachedObjects(playerid);
+
+						pPlayerPointer->bObjectsRemoved = true;
+						logprintf("removeobjects");
+					}
+					break;
+				}
+				
+				default:
+				{
+					// Restore player objects
+					if(pPlayerPointer->bObjectsRemoved)
+					{
+						// Re-attach removed objects
+						pServer->RestoreAttachedObjects(playerid);
+
+						pPlayerPointer->bObjectsRemoved = false;
+						logprintf("restoreobjects");
+					}
+					break;
+				}
+			}
 			/*
 			CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
 			if(pPlayer)
@@ -341,28 +398,28 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 			for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
 			{
 				// If zone id is unused client side, then continue
-				if(pPlayer->byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;
+				if(pPlayerPointer->byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;
 
 				CGangZone *pGangZone = NULL;
-				if(pPlayer->byteClientSideZoneIDUsed[zoneid] == 0)
+				if(pPlayerPointer->byteClientSideZoneIDUsed[zoneid] == 0)
 				{
-					if(pPlayer->wClientSideGlobalZoneID[zoneid] == 0xFFFF)
+					if(pPlayerPointer->wClientSideGlobalZoneID[zoneid] == 0xFFFF)
 					{
 						logprintf("pPlayer->wClientSideGlobalZoneID[%d] = 0xFFFF", zoneid);
 						return;
 					}
 					
-					pGangZone = pNetGame->pGangZonePool->pGangZone[pPlayer->wClientSideGlobalZoneID[zoneid]];
+					pGangZone = pNetGame->pGangZonePool->pGangZone[pPlayerPointer->wClientSideGlobalZoneID[zoneid]];
 				}
 				else
 				{
-					if(pPlayer->wClientSidePlayerZoneID[zoneid] == 0xFFFF)
+					if(pPlayerPointer->wClientSidePlayerZoneID[zoneid] == 0xFFFF)
 					{
 						logprintf("pPlayer->wClientSidePlayerZoneID[%d] = 0xFFFF", zoneid);
 						return;
 					}
 
-					pGangZone = pPlayer->pPlayerZone[pPlayer->wClientSidePlayerZoneID[zoneid]];
+					pGangZone = pPlayerPointer->pPlayerZone[pPlayerPointer->wClientSidePlayerZoneID[zoneid]];
 				}
 
 				if(!pGangZone) continue;
@@ -377,12 +434,12 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 				//logprintf("validzone: %d, %f, %f, %f, %f", pPlayer->wClientSideGlobalZoneID[zoneid], *fMinX, *fMinY, *fMaxX, *fMaxY);
 
 				// Ha benne van
-				if(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY && !pPlayer->bInGangZone[zoneid])
+				if(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY && !pPlayerPointer->bInGangZone[zoneid])
 				{
-					pPlayer->bInGangZone[zoneid] = true;
+					pPlayerPointer->bInGangZone[zoneid] = true;
 					//logprintf("enterzone: %d", zoneid);
 					
-					if(pPlayer->byteClientSideZoneIDUsed[zoneid] == 0)
+					if(pPlayerPointer->byteClientSideZoneIDUsed[zoneid] == 0)
 					{
 						// Call callback
 						int idx = -1;
@@ -393,7 +450,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 							{
 								cell
 									ret;
-								amx_Push(*second, pPlayer->wClientSideGlobalZoneID[zoneid]);
+								amx_Push(*second, pPlayerPointer->wClientSideGlobalZoneID[zoneid]);
 								amx_Push(*second, playerid);
 
 								amx_Exec(*second, &ret, idx);
@@ -411,7 +468,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 							{
 								cell
 									ret;
-								amx_Push(*second, pPlayer->wClientSidePlayerZoneID[zoneid]);
+								amx_Push(*second, pPlayerPointer->wClientSidePlayerZoneID[zoneid]);
 								amx_Push(*second, playerid);
 
 								amx_Exec(*second, &ret, idx);
@@ -419,12 +476,12 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 						}					
 					}
 				}
-				else if(!(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY) && pPlayer->bInGangZone[zoneid])
+				else if(!(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY) && pPlayerPointer->bInGangZone[zoneid])
 				{
-					pPlayer->bInGangZone[zoneid] = false;
+					pPlayerPointer->bInGangZone[zoneid] = false;
 					//logprintf("leavezone: %d", zoneid);
 					
-					if(pPlayer->byteClientSideZoneIDUsed[zoneid] == 0)
+					if(pPlayerPointer->byteClientSideZoneIDUsed[zoneid] == 0)
 					{
 						// Call callback
 						int idx = -1;
@@ -435,7 +492,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 							{
 								cell
 									ret;
-								amx_Push(*second, pPlayer->wClientSideGlobalZoneID[zoneid]);
+								amx_Push(*second, pPlayerPointer->wClientSideGlobalZoneID[zoneid]);
 								amx_Push(*second, playerid);
 
 								amx_Exec(*second, &ret, idx);
@@ -453,7 +510,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 							{
 								cell
 									ret;
-								amx_Push(*second, pPlayer->wClientSidePlayerZoneID[zoneid]);
+								amx_Push(*second, pPlayerPointer->wClientSidePlayerZoneID[zoneid]);
 								amx_Push(*second, playerid);
 
 								amx_Exec(*second, &ret, idx);

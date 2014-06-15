@@ -1378,6 +1378,127 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedOffset( AMX* amx, cell* params )
 	return 1;
 }
 
+// native IsObjectMaterialSlotUsed(objectid, materialindex);
+static cell AMX_NATIVE_CALL n_IsObjectMaterialSlotUsed( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "IsObjectMaterialSlotUsed");
+
+	int objectid = (int)params[1];
+	if(objectid < 0 || objectid >= 1000) return 0;
+
+	int materialindex = (int)params[2];
+	if(materialindex < 0 || materialindex >= 16) return 0;
+
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+
+	int i = 0;
+	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	
+	// Nothing to comment here..
+	while(i != 16)
+	{
+		if(pObject->Material[i].byteSlot == materialindex) break;
+		i++;
+	}
+	if(i == 16) return 0;
+
+	return pObject->Material[i].byteUsed;
+}
+
+// native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(txdnamelen), &materialcoor);
+static cell AMX_NATIVE_CALL n_GetObjectMaterial( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(8, "GetObjectMaterial");
+
+	int objectid = (int)params[1];
+	if(objectid < 0 || objectid >= 1000) return 0;
+
+	int materialindex = (int)params[2];
+	if(materialindex < 0 || materialindex >= 16) return 0;
+
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+
+	int i = 0;
+	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+
+	// Nothing to comment here..
+	while(i != 16)
+	{
+		if(pObject->Material[i].byteSlot == materialindex) break;
+		i++;
+	}
+	if(i == 16) return 0;
+
+	cell *cptr;
+	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = (cell)pObject->Material[i].wModelID; //  modelid
+
+	set_amxstring(amx, params[4], pObject->Material[i].szMaterialTXD, params[5]); // txdname[], txdnamelen = sizeof(txdname)
+	set_amxstring(amx, params[6], pObject->Material[i].szMaterialTexture, params[7]); // texturenamelen = sizeof(txdnamelen),
+
+	amx_GetAddr(amx, params[8], &cptr);
+	*cptr = (cell)pObject->Material[i].dwMaterialColor; // materialcoor
+	return 1;
+}
+
+// native GetObjectMaterialText(objectid, materialindex, text[], textlen= sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
+static cell AMX_NATIVE_CALL n_GetObjectMaterialText( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(12, "GetObjectMaterialText");
+
+	int objectid = (int)params[1];
+	if(objectid < 0 || objectid >= 1000) return 0;
+
+	int materialindex = (int)params[2];
+	if(materialindex < 0 || materialindex >= 16) return 0;
+
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+
+	int i = 0;
+	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+
+	// Nothing to comment here..
+	while(i != 16)
+	{
+		if(pObject->Material[i].byteSlot == materialindex) break;
+		i++;
+	}
+	if(i == 16) return 0;
+
+	cell *cptr;
+
+	set_amxstring(amx, params[3], pObject->Material[i].szMaterialTXD, params[4]); 
+
+	amx_GetAddr(amx, params[5], &cptr);
+	*cptr = (cell)pObject->Material[i].byteMaterialSize; // materialsize
+
+	set_amxstring(amx, params[6], pObject->Material[i].szFont, params[7]); 
+
+	amx_GetAddr(amx, params[8], &cptr);
+	*cptr = (cell)pObject->Material[i].byteFontSize; // fontsize
+	amx_GetAddr(amx, params[9], &cptr);
+	*cptr = (cell)pObject->Material[i].byteBold; // bold
+	amx_GetAddr(amx, params[10], &cptr);
+	*cptr = (cell)pObject->Material[i].dwFontColor; // fontcolor
+	amx_GetAddr(amx, params[11], &cptr);
+	*cptr = (cell)pObject->Material[i].dwBackgroundColor; // backcolor
+	amx_GetAddr(amx, params[12], &cptr);
+	*cptr = (cell)pObject->Material[i].byteAlignment; // textalignment
+	return 1;
+}
+
 // native GetPlayerObjectModel(playerid, objectid);
 static cell AMX_NATIVE_CALL n_GetPlayerObjectModel( AMX* amx, cell* params )
 {
@@ -4086,6 +4207,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetObjectTarget",					n_GetObjectTarget}, // R6
 	{"GetObjectAttachedData",			n_GetObjectAttachedData},
 	{"GetObjectAttachedOffset",			n_GetObjectAttachedOffset},
+	{"IsObjectMaterialSlotUsed",		n_IsObjectMaterialSlotUsed},
+	{"GetObjectMaterial",				n_GetObjectMaterial},
+	{"GetObjectMaterialText",			n_GetObjectMaterialText},
+	
 
 	// Objects get - player
 	{"GetPlayerObjectModel",			n_GetPlayerObjectModel},

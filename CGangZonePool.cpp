@@ -1,5 +1,5 @@
 #include "CGangZonePool.h"
-#include "CPlayer.h"
+#include "CPlayerData.h"
 #include "Structs.h"
 #include "main.h"
 

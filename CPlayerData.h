@@ -31,6 +31,7 @@ public:
 		CVector vecRot;
 	} stObj[MAX_OBJECTS];
 
+	bool bObjectsRemoved;
 	int iPlayerPickupCount;
 	float fGravity;
 	BYTE byteWeather;

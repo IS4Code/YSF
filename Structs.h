@@ -382,7 +382,7 @@ class CPlayer
 		CVector				vecBulletHit;		// 9900
 		BYTE padlofasz[17];
 		BYTE				byteSpectateType;
-		DWORD				SpectateID;
+		WORD				SpectateID;
 //PAD(pad12, 31);							// 0x2698 - 0x26B7
 		// Size = 0x26B7
 
@@ -516,6 +516,28 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+class CObjectMaterial // sizeof = 212
+{
+public:
+	BYTE byteUsed; // 196
+	BYTE byteSlot; // 197
+	WORD wModelID; // 198
+	DWORD dwMaterialColor; // 200
+	char szMaterialTXD[64 + 1]; // 204
+	char szMaterialTexture[64];	 // 269 - 333
+	BYTE unk;
+	BYTE byteMaterialSize;
+	char szFont[64]; // 335 - 399
+	BYTE vminulla; // 399 - 400
+	BYTE byteFontSize; // 400 - 401
+	BYTE byteBold; // 401 - 402
+	DWORD dwFontColor; // 402 - 406
+	DWORD dwBackgroundColor; // 406 - 410
+	BYTE byteAlignment;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 class CObject
 {
 public:
@@ -527,12 +549,16 @@ public:
 	MATRIX4X4			matTarget;		// 86 - 150	- 
 	BYTE				bIsMoving;		// 150 - 151
 	float				fMoveSpeed;		// 151 - 155
-	BYTE				unk_4[4];		// 155 -159
+	DWORD				unk_4;		// 155 -159
 	float				fDrawDistance;	// 159 - 163
-	ushort				wAttachedVehicleID;	// 163 
-	ushort				wAttachedObjectID;	// 165
-	CVector				vecAttachedOffset;	// 177
-	CVector				vecAttachedRotation;// 189
+	ushort				wAttachedVehicleID;	// 163 - 165
+	ushort				wAttachedObjectID;	// 165 - 167
+	CVector				vecAttachedOffset;	// 167 - 179
+	CVector				vecAttachedRotation;// 179 - 191
+	BYTE				byteSomething; // 191 - 192
+	DWORD				dwMaterialCount; // 192 - 196
+	CObjectMaterial		Material[16]; // 196 - 3636
+	char				*szMaterialText[16];
 };
 #pragma pack(pop)
 
