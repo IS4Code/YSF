@@ -1220,18 +1220,18 @@ static cell AMX_NATIVE_CALL n_SendBulletData( AMX* amx, cell* params )
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	BULLET_SYNC_DATA bsSync;
-	bsSync.byteHitType = (BYTE)params[3];
-	bsSync.wHitID = (WORD)params[2];
-	bsSync.vecHitOrigin = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
-	bsSync.vecHitTarget = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
-	bsSync.vecCenterOfHit = CVector(amx_ctof(params[10]), amx_ctof(params[11]), amx_ctof(params[12]));
+	BULLET_SYNC_DATA bulletSync;
+	bulletSync.byteHitType = (BYTE)params[3];
+	bulletSync.wHitID = (WORD)params[2];
+	bulletSync.vecHitOrigin = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
+	bulletSync.vecHitTarget = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
+	bulletSync.vecCenterOfHit = CVector(amx_ctof(params[10]), amx_ctof(params[11]), amx_ctof(params[12]));
 
-	RakNet::BitStream bsSend;
-	bsSend.Write((BYTE)ID_BULLET_SYNC);
-	bsSend.Write((WORD)playerid);
-	bsSend.Write((char*)&bsSync, sizeof(BULLET_SYNC_DATA));
-	pRakServer->Send(&bsSend, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
+	RakNet::BitStream bs;
+	bs.Write((BYTE)ID_BULLET_SYNC);
+	bs.Write((WORD)playerid);
+	bs.Write((char*)&bulletSync, sizeof(BULLET_SYNC_DATA));
+	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
 	return 1;
 }
 
@@ -1680,7 +1680,6 @@ static cell AMX_NATIVE_CALL n_IsPlayerObjectMaterialSlotUsed( AMX* amx, cell* pa
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	cell* cptr;
 	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
 	

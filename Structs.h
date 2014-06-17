@@ -412,7 +412,7 @@ class CPlayerPool
 	public:
 		PAD(pad0, 75012);											// 0x00000 - 0x12504
 		BOOL				bIsPlayerConnected[MAX_PLAYERS];		// 0x12504 - 0x12CD4
-		CPlayer			*pPlayer[MAX_PLAYERS];					// 0x12CD4 - 0x134A4
+		CPlayer				*pPlayer[MAX_PLAYERS];					// 0x12CD4 - 0x134A4
 		char				szName[MAX_PLAYERS][24];				// 0x134A4 - 0x16384
 		PAD(pad3, 500);												// 0x16384 - 0x16578
 		BOOL				m_bIsAnAdmin[MAX_PLAYERS];				// 0x16578 - 0x1676C
