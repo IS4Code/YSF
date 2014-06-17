@@ -1410,7 +1410,7 @@ static cell AMX_NATIVE_CALL n_IsObjectMaterialSlotUsed( AMX* amx, cell* params )
 	return pObject->Material[i].byteUsed;
 }
 
-// native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(txdnamelen), &materialcolor);
+// native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
 static cell AMX_NATIVE_CALL n_GetObjectMaterial( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -1450,7 +1450,7 @@ static cell AMX_NATIVE_CALL n_GetObjectMaterial( AMX* amx, cell* params )
 	return 1;
 }
 
-// native GetObjectMaterialText(objectid, materialindex, text[], textlen= sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
+// native GetObjectMaterialText(objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 static cell AMX_NATIVE_CALL n_GetObjectMaterialText( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -1696,7 +1696,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerObjectMaterialSlotUsed( AMX* amx, cell* pa
 }
 
 
-// native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(txdnamelen), &materialcolor);
+// native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
 static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterial( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -1737,7 +1737,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterial( AMX* amx, cell* params )
 	return 1;
 }
 
-// native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen= sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
+// native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterialText( AMX* amx, cell* params )
 {
 	// If unknown server version

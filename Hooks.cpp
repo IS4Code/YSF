@@ -70,6 +70,7 @@ bool Unlock(void *address, int len)
 	#endif
 }
 
+#ifdef WIN32
 DWORD FindPattern(char *pattern, char *mask)
 {
 	#ifdef WIN32
@@ -101,7 +102,7 @@ DWORD FindPattern(char *pattern, char *mask)
  
 	return NULL;
 } 
-
+#endif
 void GetAddresses()
 {
 	DWORD temp;

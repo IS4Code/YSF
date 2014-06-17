@@ -18,9 +18,6 @@
 #include "Scripting.h"
 #include "CModelSizes.h"
 
-#define MAX_HOUSES			300
-#define MAX_HOUSE_ELEMENTS	500
-
 typedef void (* logprintf_t)(char *, ...);
 extern logprintf_t logprintf;
 

@@ -42,8 +42,8 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
  
 	switch(sampVersion)
 	{
-	case SAMP_VERSION_03Z:
- 
+		case SAMP_VERSION_03Z:
+		{
 			VAR_pRestartWaitTime =						0x8150130;
  
 			FUNC_CConsole_AddStringVariable =			0x0809F590;
@@ -52,8 +52,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
  
 			FUNC_CFilterscripts_LoadFilterscript =		0x0809FDB0;
 			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A01E0;
+			break;
 		}
-	case SAMP_VERSION_03Z_R2_2:
+		case SAMP_VERSION_03Z_R2_2:
 		{
 			VAR_pRestartWaitTime =						0x8150B60;
  
@@ -63,6 +64,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
  
 			FUNC_CFilterscripts_LoadFilterscript =		0x0809FF80;
 			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A03B0;
+			break;
 		} 
 	}
 	#endif

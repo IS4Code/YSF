@@ -9,7 +9,9 @@
 #define POINTER_TO_MEMBER(m,n,o) temp = n, m = *(o *)&temp
 
 bool Unlock(void *address, int len);
+#ifdef WIN32
 DWORD FindPattern(char *pattern, char *mask);
+#endif
 void GetAddresses();
 void InstallPreHooks();
 void InstallPostHooks();
