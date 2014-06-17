@@ -636,8 +636,8 @@ static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
 
 /////////////// Timers
 
-// native GetAviableClasses();
-static cell AMX_NATIVE_CALL n_GetAviableClasses(AMX *amx, cell *params)
+// native GetAvailableClasses();
+static cell AMX_NATIVE_CALL n_GetAvailableClasses(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -4291,7 +4291,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"ModifyFlag",						n_ModifyFlag},
 
 	// Player classes
-	{ "GetAviableClasses",				n_GetAviableClasses}, // R6
+	{ "GetAvailableClasses",				n_GetAvailableClasses}, // R6
 	{ "GetPlayerClass",					n_GetPlayerClass}, // R6
 	{ "EditPlayerClass",				n_EditPlayerClass}, // R6
 
