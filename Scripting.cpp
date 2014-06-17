@@ -1379,7 +1379,7 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedOffset( AMX* amx, cell* params )
 	return 1;
 }
 
-// native IsObjectMaterialSlotUsed(objectid, materialindex);
+// native IsObjectMaterialSlotUsed(objectid, materialindex); // Return values: 1 = material, 2 = material text
 static cell AMX_NATIVE_CALL n_IsObjectMaterialSlotUsed( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -1410,7 +1410,7 @@ static cell AMX_NATIVE_CALL n_IsObjectMaterialSlotUsed( AMX* amx, cell* params )
 	return pObject->Material[i].byteUsed;
 }
 
-// native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(txdnamelen), &materialcoor);
+// native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(txdnamelen), &materialcolor);
 static cell AMX_NATIVE_CALL n_GetObjectMaterial( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -1420,9 +1420,9 @@ static cell AMX_NATIVE_CALL n_GetObjectMaterial( AMX* amx, cell* params )
 	CHECK_PARAMS(8, "GetObjectMaterial");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
-
 	int materialindex = (int)params[2];
+
+	if(objectid < 0 || objectid >= 1000) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
@@ -1446,7 +1446,7 @@ static cell AMX_NATIVE_CALL n_GetObjectMaterial( AMX* amx, cell* params )
 	set_amxstring(amx, params[6], pObject->Material[i].szMaterialTexture, params[7]); // texturenamelen = sizeof(txdnamelen),
 
 	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = (cell)pObject->Material[i].dwMaterialColor; // materialcoor
+	*cptr = (cell)pObject->Material[i].dwMaterialColor; // materialcolor
 	return 1;
 }
 
@@ -1460,9 +1460,9 @@ static cell AMX_NATIVE_CALL n_GetObjectMaterialText( AMX* amx, cell* params )
 	CHECK_PARAMS(12, "GetObjectMaterialText");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
-
 	int materialindex = (int)params[2];
+
+	if(objectid < 0 || objectid >= 1000) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
@@ -1659,6 +1659,131 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedOffset( AMX* amx, cell* par
 	*cptr = amx_ftoc(pObject->vecAttachedRotation.fY);
 	amx_GetAddr(amx, params[8], &cptr);
 	*cptr = amx_ftoc(pObject->vecAttachedRotation.fZ);
+	return 1;
+}
+
+// native IsPlayerObjectMaterialSlotUsed(playerid, objectid, materialindex); // Return values: 1 = material, 2 = material text
+static cell AMX_NATIVE_CALL n_IsPlayerObjectMaterialSlotUsed( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "IsPlayerObjectMaterialSlotUsed");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	int materialindex = (int)params[3];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
+	if(materialindex < 0 || materialindex >= 16) return 0;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+
+	cell* cptr;
+	int i = 0;
+	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	
+	// Nothing to comment here..
+	while(i != 16)
+	{
+		if(pObject->Material[i].byteSlot == materialindex) break;
+		i++;
+	}
+	if(i == 16) return 0;
+
+	return pObject->Material[i].byteUsed;
+}
+
+
+// native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(txdnamelen), &materialcolor);
+static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterial( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(9, "GetPlayerObjectMaterial");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	int materialindex = (int)params[3];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
+	if(materialindex < 0 || materialindex >= 16) return 0;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+
+	cell* cptr;
+	int i = 0;
+	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	
+	// Nothing to comment here..
+	while(i != 16)
+	{
+		if(pObject->Material[i].byteSlot == materialindex) break;
+		i++;
+	}
+	if(i == 16) return 0;
+
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = (cell)pObject->Material[i].wModelID; //  modelid
+
+	set_amxstring(amx, params[5], pObject->Material[i].szMaterialTXD, params[6]); // txdname[], txdnamelen = sizeof(txdname)
+	set_amxstring(amx, params[7], pObject->Material[i].szMaterialTexture, params[8]); // texturenamelen = sizeof(txdnamelen),
+
+	amx_GetAddr(amx, params[9], &cptr);
+	*cptr = (cell)pObject->Material[i].dwMaterialColor; // materialcolor
+	return 1;
+}
+
+// native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen= sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
+static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterialText( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(13, "GetPlayerObjectMaterialText");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	int materialindex = (int)params[3];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
+	if(materialindex < 0 || materialindex >= 16) return 0;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+
+	cell* cptr;
+	int i = 0;
+	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	
+	// Nothing to comment here..
+	while(i != 16)
+	{
+		if(pObject->Material[i].byteSlot == materialindex) break;
+		i++;
+	}
+	if(i == 16) return 0;
+
+	set_amxstring(amx, params[4], pObject->Material[i].szMaterialTXD, params[5]); 
+
+	amx_GetAddr(amx, params[6], &cptr);
+	*cptr = (cell)pObject->Material[i].byteMaterialSize; // materialsize
+
+	set_amxstring(amx, params[7], pObject->Material[i].szFont, params[8]); 
+
+	amx_GetAddr(amx, params[9], &cptr);
+	*cptr = (cell)pObject->Material[i].byteFontSize; // fontsize
+	amx_GetAddr(amx, params[10], &cptr);
+	*cptr = (cell)pObject->Material[i].byteBold; // bold
+	amx_GetAddr(amx, params[11], &cptr);
+	*cptr = (cell)pObject->Material[i].dwFontColor; // fontcolor
+	amx_GetAddr(amx, params[12], &cptr);
+	*cptr = (cell)pObject->Material[i].dwBackgroundColor; // backcolor
+	amx_GetAddr(amx, params[13], &cptr);
+	*cptr = (cell)pObject->Material[i].byteAlignment; // textalignment
 	return 1;
 }
 
@@ -4220,6 +4345,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetPlayerObjectTarget",			n_GetPlayerObjectTarget}, // R6
 	{"GetPlayerObjectAttachedData",		n_GetPlayerObjectAttachedData},
 	{"GetPlayerObjectAttachedOffset",	n_GetPlayerObjectAttachedOffset},
+	{"IsPlayerObjectMaterialSlotUsed",	n_IsPlayerObjectMaterialSlotUsed}, // R6
+	{"GetPlayerObjectMaterial",			n_GetPlayerObjectMaterial}, // R6
+	{"GetPlayerObjectMaterialText",		n_GetPlayerObjectMaterialText}, // R6
 
 	// special - for attached objects
 	{"GetPlayerAttachedObject",			n_GetPlayerAttachedObject}, // R3

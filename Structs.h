@@ -508,14 +508,6 @@ typedef struct _VECTOR2D {
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CMaterial
-{
-public:
-
-};
-#pragma pack(pop)
-
-#pragma pack(push, 1)
 class CObjectMaterial // sizeof = 212
 {
 public:
@@ -570,7 +562,6 @@ public:
 	BOOL m_bPlayerObjectSlotState[MAX_PLAYERS][MAX_OBJECTS];	// 0 
 	BOOL m_bPlayersObject[MAX_OBJECTS];							// 2.000.000
 	CObject *m_pPlayerObjects[MAX_PLAYERS][MAX_OBJECTS];		// 2.004.000
-	//BYTE APAD_PICASJA_TE_BUZI[2004000];
 	BOOL m_bObjectSlotState[MAX_OBJECTS];
 	CObject *m_pObjects[MAX_OBJECTS];
 };

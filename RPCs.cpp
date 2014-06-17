@@ -18,5 +18,3 @@ int RPC_ShowGangZone = 0x6C;
 int RPC_HideGangZone = 0x78;
 int RPC_FlashGangZone = 0x79;
 int RPC_StopFlashGangZone = 0x55;
-
-BYTE PACKET_BULLET_SYNC = 224;
