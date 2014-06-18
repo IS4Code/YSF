@@ -116,6 +116,7 @@ void GetAddresses()
 	POINTER_TO_MEMBER(g_pCFilterscript__LoadFS_t, CAddress::FUNC_CFilterscripts_LoadFilterscript, LoadFS_t);
 	POINTER_TO_MEMBER(g_pCFilterscript__UnLoadFS_t, CAddress::FUNC_CFilterscripts_UnLoadFilterscript, UnLoadFS_t);
 	 
+	// Unlock restart wait time
 	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
 }
 

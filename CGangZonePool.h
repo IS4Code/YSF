@@ -18,7 +18,7 @@ public:
 
 public:
 	CGangZonePool();
-	~CGangZonePool() {};
+	~CGangZonePool();
 	
 	WORD New(float fMinX, float fMinY, float fMaxX, float fMaxY);
 	WORD New(WORD playerid, float fMinX, float fMinY, float fMaxX, float fMaxY);

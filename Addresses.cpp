@@ -25,6 +25,9 @@ DWORD CAddress::FUNC_CConsole_ModifyVariableFlags = NULL;
 DWORD CAddress::FUNC_CFilterscripts_LoadFilterscript = NULL;
 DWORD CAddress::FUNC_CFilterscripts_UnLoadFilterscript = NULL;
 
+// Others
+DWORD CAddress::ADDR_CNetGame_GMX_GangZoneDelete = NULL;
+
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
 	// Thx for Whitetiger
@@ -38,6 +41,20 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	FUNC_CFilterscripts_LoadFilterscript =		FindPattern("\x8B\x44\x24\x04\x81\xEC\x04\x01\x00\x00", "xxxxxxxxxx");
 	FUNC_CFilterscripts_UnLoadFilterscript =	FindPattern("\xCC\x51\x53\x8B\x5C\x24\x0C\x55\x56\x57\x89", "xxxxxxxxxxx") + 0x1;
  
+	switch(sampVersion)
+	{
+		case SAMP_VERSION_03Z:
+		{
+			ADDR_CNetGame_GMX_GangZoneDelete =			0x4896BA;
+			break;
+		}
+		case SAMP_VERSION_03Z_R2_2:
+		{
+			ADDR_CNetGame_GMX_GangZoneDelete =			0x489DBA; 
+			break;
+		}
+	}
+
 	#else
  
 	switch(sampVersion)
@@ -52,6 +69,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
  
 			FUNC_CFilterscripts_LoadFilterscript =		0x0809FDB0;
 			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A01E0;
+			ADDR_CNetGame_GMX_GangZoneDelete =			0;
 			break;
 		}
 		case SAMP_VERSION_03Z_R2_2:
@@ -64,8 +82,12 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
  
 			FUNC_CFilterscripts_LoadFilterscript =		0x0809FF80;
 			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A03B0;
+			ADDR_CNetGame_GMX_GangZoneDelete =			0;
 			break;
 		} 
 	}
 	#endif
+
+	Unlock((void*)ADDR_CNetGame_GMX_GangZoneDelete, 2); // jz      short loc_489DC8 -> change to jnz      short loc_489DC8
+	*(BYTE*)(ADDR_CNetGame_GMX_GangZoneDelete) = 0x75;	// jnz
 }

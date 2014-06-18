@@ -13,6 +13,11 @@ CGangZonePool::CGangZonePool()
 	memset(pGangZone, NULL, sizeof(pGangZone));
 }
 
+CGangZonePool::~CGangZonePool()
+{
+
+}
+
 WORD CGangZonePool::New(float fMinX, float fMinY, float fMaxX, float fMaxY)
 {
 	WORD wZone = 0;

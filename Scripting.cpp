@@ -3231,7 +3231,7 @@ static cell AMX_NATIVE_CALL n_YSF_RemovePlayer( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "YSF_RemovePlayer");
 	
-	logprintf("YSF_RemovePlayer - connected: %d, raknet geci: %d", pNetGame->pPlayerPool->bIsPlayerConnected[(int)params[1]], pRakServer->GetPlayerIDFromIndex((int)params[1]).binaryAddress);
+	//logprintf("YSF_RemovePlayer - connected: %d, raknet geci: %d", pNetGame->pPlayerPool->bIsPlayerConnected[(int)params[1]], pRakServer->GetPlayerIDFromIndex((int)params[1]).binaryAddress);
 	int playerid = (int)params[1];
 	return pServer->RemovePlayer(playerid);
 }
@@ -3366,6 +3366,58 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneHideForAll( AMX* amx, cell* params )
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
 	pNetGame->pGangZonePool->HideForAll(zoneid);
+	return 1;
+}
+
+static cell AMX_NATIVE_CALL n_YSF_GangZoneFlashForPlayer(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(3, "GangZoneFlashForPlayer");
+
+	int playerid = (int)params[1];
+	int zoneid = (int)params[2];
+
+	// For security
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+
+	pNetGame->pGangZonePool->FlashForPlayer((WORD)playerid, (WORD)zoneid, (DWORD)params[3]);
+	return 1;
+}
+
+static cell AMX_NATIVE_CALL n_YSF_GangZoneFlashForAll(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(2, "GangZoneFlashForAll");
+
+	int zoneid = (int)params[1];
+	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+
+	pNetGame->pGangZonePool->FlashForAll((WORD)zoneid, (DWORD)params[2]);
+	return 1;
+}
+
+static cell AMX_NATIVE_CALL n_YSF_GangZoneStopFlashForPlayer(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(2, "GangZoneStopFlashForPlayer");
+
+	int playerid = (int)params[1];
+	int zoneid = (int)params[2];
+
+	// For security
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+
+	pNetGame->pGangZonePool->StopFlashForPlayer((WORD)playerid, (WORD)zoneid);
+	return 1;
+}
+
+static cell AMX_NATIVE_CALL n_YSF_GangZoneStopFlashForAll(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(1, "GangZoneStopFlashForAll");
+
+	int zoneid = (int)params[1];
+	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+
+	pNetGame->pGangZonePool->StopFlashForAll((WORD)zoneid);
 	return 1;
 }
 
@@ -4558,13 +4610,18 @@ int InitScripting(AMX *amx)
 		Redirect(amx, "SetWeather", (uint64_t)n_FIXED_SetWeather, 0);
 		Redirect(amx, "SetPlayerWeather", (uint64_t)n_FIXED_SetPlayerWeather, 0);
 		Redirect(amx, "SetPlayerWorldBounds", (uint64_t)n_FIXED_SetPlayerWorldBounds, 0);
-	
+
 		Redirect(amx, "GangZoneCreate", (uint64_t)n_YSF_GangZoneCreate, 0);
 		Redirect(amx, "GangZoneDestroy", (uint64_t)n_YSF_GangZoneDestroy, 0);
 		Redirect(amx, "GangZoneShowForPlayer", (uint64_t)n_YSF_GangZoneShowForPlayer, 0);
 		Redirect(amx, "GangZoneHideForPlayer", (uint64_t)n_YSF_GangZoneHideForPlayer, 0);
 		Redirect(amx, "GangZoneShowForAll", (uint64_t)n_YSF_GangZoneShowForAll, 0);
 		Redirect(amx, "GangZoneHideForAll", (uint64_t)n_YSF_GangZoneHideForAll, 0);
+
+		Redirect(amx, "GangZoneFlashForPlayer", (uint64_t)n_YSF_GangZoneFlashForPlayer, 0);
+		Redirect(amx, "GangZoneFlashForAll", (uint64_t)n_YSF_GangZoneFlashForAll, 0);
+		Redirect(amx, "GangZoneStopFlashForPlayer", (uint64_t)n_YSF_GangZoneStopFlashForPlayer, 0);
+		Redirect(amx, "GangZoneStopFlashForAll", (uint64_t)n_YSF_GangZoneStopFlashForAll, 0);
 	}
 
 	Redirect(amx, "GetWeaponName", (uint64_t)n_FIXED_GetWeaponName, 0);

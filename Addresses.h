@@ -67,6 +67,9 @@ public:
 
 	static DWORD			FUNC_CFilterscripts_LoadFilterscript;
 	static DWORD			FUNC_CFilterscripts_UnLoadFilterscript;
+
+	// Others
+	static DWORD			ADDR_CNetGame_GMX_GangZoneDelete;
 };
 
 #endif
