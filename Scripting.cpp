@@ -1092,14 +1092,14 @@ static cell AMX_NATIVE_CALL n_GetPlayerSirenState( AMX* amx, cell* params )
 	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.byteSirenState;
 }
 
-// native GetPlayerGearState(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerGearState( AMX* amx, cell* params )
+// native GetPlayerLandingGearState(playerid);
+static cell AMX_NATIVE_CALL n_GetPlayerLandingGearState( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(1, "GetPlayerGearState");
+	CHECK_PARAMS(1, "GetPlayerLandingGearState");
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -4369,7 +4369,7 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			n_GetPlayerSirenState },
-	{ "GetPlayerGearState",				n_GetPlayerGearState },
+	{ "GetPlayerLandingGearState",				n_GetPlayerLandingGearState },
 	{ "GetPlayerHydraReactorAngle",		n_GetPlayerHydraReactorAngle },
 	{ "GetPlayerTrainSpeed",			n_GetPlayerTrainSpeed },
 	{ "GetPlayerZAim",					n_GetPlayerZAim },
