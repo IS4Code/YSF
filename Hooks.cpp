@@ -57,7 +57,8 @@ ModifyFlag_t g_pCConsole__MFlag = 0;
 LoadFS_t g_pCFilterscript__LoadFS_t = 0;
 UnLoadFS_t g_pCFilterscript__UnLoadFS_t = 0;
 
-bool Unlock(void *address, int len)
+// Y_Less
+bool Unlock(void *address, size_t len)
 {
 	#ifdef WIN32
 		DWORD
@@ -65,9 +66,43 @@ bool Unlock(void *address, int len)
 		// Shut up the warnings :D
 		return !!VirtualProtect(address, len, PAGE_EXECUTE_READWRITE, &oldp);
 	#else
-		int page_size = ((*((int*)(&address)) / PAGESIZE) * PAGESIZE);
-		return !mprotect((void*)&page_size, PAGESIZE, PROT_WRITE | PROT_READ | PROT_EXEC);
+		size_t
+			iPageSize = getpagesize(),
+			iAddr = ((reinterpret_cast <uint32_t>(address) / iPageSize) * iPageSize);
+		return !mprotect(reinterpret_cast <void*>(iAddr), len, PROT_READ | PROT_WRITE | PROT_EXEC);
 	#endif
+}
+
+// Y_Less - fixes2
+void AssemblySwap(char * addr, char * dat, int len)
+{
+	char
+		swp;
+	while (len--)
+	{
+		swp = addr[len];
+		addr[len] = dat[len];
+		dat[len] = swp;
+	}
+}
+
+void AssemblyRedirect(void * from, void * to, char * ret)
+{
+	#ifdef LINUX
+		size_t
+			iPageSize = getpagesize(),
+			iAddr = ((reinterpret_cast <uint32_t>(from) / iPageSize) * iPageSize),
+			iCount = (5 / iPageSize) * iPageSize + iPageSize * 2;
+		mprotect(reinterpret_cast <void*>(iAddr), iCount, PROT_READ | PROT_WRITE | PROT_EXEC);
+		//mprotect(from, 5, PROT_READ | PROT_WRITE | PROT_EXEC);
+	#else
+		DWORD
+			old;
+		VirtualProtect(from, 5, PAGE_EXECUTE_READWRITE, &old);
+	#endif
+	*((unsigned char *)ret) = 0xE9;
+	*((char **)(ret + 1)) = (char *)((char *)to - (char *)from) - 5;
+	AssemblySwap((char *)from, ret, 5);
 }
 
 #ifdef WIN32
@@ -103,6 +138,43 @@ DWORD FindPattern(char *pattern, char *mask)
 	return NULL;
 } 
 #endif
+
+///////////////////////////////////////////////////////////////
+// Hooks //
+///////////////////////////////////////////////////////////////
+char gContainsInvalidCharsAssembly[5];
+std::vector <char> gValidNameCharacters;
+
+bool YSF_ContainsInvalidChars(char * szString)
+{
+	int i = 0;
+	bool bIllegal = false;
+
+	while(*szString) 
+	{
+		if( (*szString >= '0' && *szString <= '9') || (*szString >= 'A' && *szString <= 'Z') || (*szString >= 'a' && *szString <= 'z')  ||
+			*szString == ']' || *szString == '[' || *szString == '_'  || *szString == '$' || *szString == ':' || *szString == '=' || 
+			*szString == '(' || *szString == ')' || *szString == '@' ||  *szString == '.' ) 
+		{
+
+			szString++;
+		} 
+		else 
+		{
+			if(Contains(gValidNameCharacters, *szString)) 
+			{
+				szString++;
+			}
+			else
+			{
+				return true;
+			}
+
+		}
+	}
+	return false;
+}
+
 void GetAddresses()
 {
 	DWORD temp;
@@ -118,14 +190,12 @@ void GetAddresses()
 	 
 	// Unlock restart wait time
 	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
+
+	// Redirect ContainsInvalidChars function to our own function
+	AssemblyRedirect((void *)CAddress::FUNC_ContainsInvalidChars, (void *)YSF_ContainsInvalidChars, gContainsInvalidCharsAssembly);
 }
 
 void InstallPreHooks()
 {
 	GetAddresses();
-}
-
-void InstallPostHooks()
-{
-	// For things which need setting up after pNetGame is initiated
 }

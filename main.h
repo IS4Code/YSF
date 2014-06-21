@@ -1,6 +1,7 @@
 #ifndef __YSF_MAINH
 #define __YSF_MAINH
 
+
 #include <stdio.h>
 #include <vector>
 #include <list>
@@ -17,6 +18,25 @@
 #include "RPCs.h"
 #include "Scripting.h"
 #include "CModelSizes.h"
+
+#ifdef WIN32
+	#define OS_NAME			"Windows"
+#else
+	#define OS_NAME			"Linux"
+#endif
+
+#define PROJECT_NAME		"YSF"
+#define PROJECT_VERSION		"R7"
+
+//
+template <typename T> 
+const bool Contains( std::vector<T>& Vec, const T& Element ) 
+{
+    if (std::find(Vec.begin(), Vec.end(), Element) != Vec.end())
+        return true;
+
+    return false;
+}
 
 typedef void (* logprintf_t)(char *, ...);
 extern logprintf_t logprintf;

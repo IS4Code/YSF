@@ -117,6 +117,9 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 	logprintf("  %s unloaded\n", PROJECT_NAME);
 	logprintf(" ==============");
 
+	delete pNetGame->pGangZonePool;
+	pNetGame->pGangZonePool = NULL;
+
 	delete pServer;
 	pServer = NULL;
 }
@@ -150,7 +153,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			int (*pfn_GetRakServer)(void) = (int (*)(void))InternalRakServer;
 			pRakServer = (RakServer*)pfn_GetRakServer();
 
-			logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
+			//logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 
 			// Recreate GangZone pool
 			pNetGame->pGangZonePool = new CGangZonePool();
@@ -351,7 +354,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 
 			// R7 - TODO
 			CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-			switch(pPlayer->aimSyncData.byteAspectRatio)
+			switch(pPlayer->aimSyncData.byteCameraMode)
 			{
 				case 7:
 				case 8:
@@ -366,7 +369,6 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 						pServer->RemoveAttachedObjects(playerid);
 
 						pPlayerPointer->bObjectsRemoved = true;
-						logprintf("removeobjects");
 					}
 					break;
 				}
@@ -380,7 +382,6 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 						pServer->RestoreAttachedObjects(playerid);
 
 						pPlayerPointer->bObjectsRemoved = false;
-						logprintf("restoreobjects");
 					}
 					break;
 				}

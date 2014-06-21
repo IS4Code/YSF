@@ -634,6 +634,47 @@ static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
 	return 0;
 }
 
+// native AllowNickNameCharacter(character, bool:allow);
+static cell AMX_NATIVE_CALL n_AllowNickNameCharacter(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "AllowNickNameCharacter");
+	
+	char character = (char)params[1];
+	if(params[2])
+	{
+		// If vector already doesn't contain item, then add it
+		if(!Contains(gValidNameCharacters, character))
+		{
+			gValidNameCharacters.push_back(character);
+		}
+	}
+	else
+	{
+		std::vector<char>::iterator it = std::find(gValidNameCharacters.begin(), gValidNameCharacters.end(), character);
+		if(it != gValidNameCharacters.end())
+		{
+			gValidNameCharacters.erase(it);
+		}
+	}
+	return 0;
+}
+
+// native IsNickNameCharacterAllowed(character);
+static cell AMX_NATIVE_CALL n_IsNickNameCharacterAllowed(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsNickNameCharacterAllowed");
+
+	return Contains(gValidNameCharacters, (char)params[1]);
+}
+
 /////////////// Timers
 
 // native GetAvailableClasses();
@@ -4341,8 +4382,12 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"RemoveServerRule",				n_RemoveServerRule}, // Doesn't work!
 	{"ModifyFlag",						n_ModifyFlag},
 
+	// Nick name
+	{"AllowNickNameCharacter",			n_AllowNickNameCharacter},
+	{"IsNickNameCharacterAllowed",		n_IsNickNameCharacterAllowed},
+
 	// Player classes
-	{ "GetAvailableClasses",				n_GetAvailableClasses}, // R6
+	{ "GetAvailableClasses",			n_GetAvailableClasses}, // R6
 	{ "GetPlayerClass",					n_GetPlayerClass}, // R6
 	{ "EditPlayerClass",				n_EditPlayerClass}, // R6
 
@@ -4369,7 +4414,7 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			n_GetPlayerSirenState },
-	{ "GetPlayerLandingGearState",				n_GetPlayerLandingGearState },
+	{ "GetPlayerLandingGearState",		n_GetPlayerLandingGearState },
 	{ "GetPlayerHydraReactorAngle",		n_GetPlayerHydraReactorAngle },
 	{ "GetPlayerTrainSpeed",			n_GetPlayerTrainSpeed },
 	{ "GetPlayerZAim",					n_GetPlayerZAim },

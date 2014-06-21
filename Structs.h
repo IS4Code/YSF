@@ -45,21 +45,15 @@ class CGangZonePool;
 #define PAD(a, b)			char a[b]
 
 // SA-MP defines
-#ifdef WIN32
-	#define OS_NAME			"Windows"
-#else
-	#define OS_NAME			"Linux"
-#endif
-
-#define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R6"
-
 #define	MAX_PLAYERS					500
 #define	MAX_OBJECTS					1000
 #define	MAX_GANG_ZONES				1024
 #define	MAX_PICKUPS					4096
 #define	MAX_TEXT_DRAWS				2048
 #define	MAX_PLAYER_TEXT_DRAWS		256
+#define	MAX_VEHICLES				2000
+#define	MAX_ATTACHED_OBJECTS		10
+#define	MAX_PLAYER_NAME				24
 #define	MAX_3DTEXT_GLOBAL			1024
 #define	MAX_3DTEXT_PLAYER			1024
 #define	MAX_MENUS					128
@@ -136,8 +130,8 @@ typedef struct Text3DLabels_t  // size 0x21
 class C3DTextPool
 {
 public:
-	BOOL                    m_bIsCreated[1024];
-	C3DText					m_TextLabels[1024];
+	BOOL                    m_bIsCreated[MAX_3DTEXT_GLOBAL];
+	C3DText					m_TextLabels[MAX_3DTEXT_GLOBAL];
 };
 #pragma pack(pop)
 
@@ -145,9 +139,9 @@ public:
 class CPlayerText3DLabels // size 0x9802
 {
 public:
-	C3DText				TextLabels[ 1024 ];	// + 0x0000
-	BOOL				isCreated[ 1024 ];	// + 0x8400
-	BYTE				unknown9800[1024];				// + 0x9400
+	C3DText				TextLabels[ MAX_3DTEXT_PLAYER ];	// + 0x0000
+	BOOL				isCreated[ MAX_3DTEXT_PLAYER ];	// + 0x8400
+	BYTE				unknown9800[MAX_3DTEXT_PLAYER];				// + 0x9400
 	WORD				ownerID;
 };
 #pragma pack(pop)
@@ -328,8 +322,8 @@ class CPlayer
 		WORD				wPlayerId;			// 0x2373 - 0x2375 
 		int					iUpdateState;		// 0x2375 - 0x2379 
 		DWORD pad;
-		CAttachedObject		attachedObject[10];
-		BOOL				attachedObjectSlot[10];
+		CAttachedObject		attachedObject[MAX_ATTACHED_OBJECTS];
+		BOOL				attachedObjectSlot[MAX_ATTACHED_OBJECTS];
 		//PAD(pad4, 40);
 		//PAD(pad4, 564);							// 0x2379 - 0x25AD
 		BOOL				bHasAimSync;		// 0x25AD - 0x25B1
@@ -413,7 +407,7 @@ class CPlayerPool
 		PAD(pad0, 75012);											// 0x00000 - 0x12504
 		BOOL				bIsPlayerConnected[MAX_PLAYERS];		// 0x12504 - 0x12CD4
 		CPlayer				*pPlayer[MAX_PLAYERS];					// 0x12CD4 - 0x134A4
-		char				szName[MAX_PLAYERS][24];				// 0x134A4 - 0x16384
+		char				szName[MAX_PLAYERS][MAX_PLAYER_NAME];	// 0x134A4 - 0x16384
 		PAD(pad3, 500);												// 0x16384 - 0x16578
 		BOOL				m_bIsAnAdmin[MAX_PLAYERS];				// 0x16578 - 0x1676C
 };
@@ -488,10 +482,10 @@ class CSAMPVehicle
 class CVehiclePool
 {
 	public:
-		BOOL				bVehicleSlotState[2000];
-		int					byteVirtualWorld[2000];
+		BOOL				bVehicleSlotState[MAX_VEHICLES];
+		int					byteVirtualWorld[MAX_VEHICLES];
 		BYTE				modelsUsed[212];
-		CSAMPVehicle		*pVehicle[2000];			// 0x3F54 - 0x5E94
+		CSAMPVehicle		*pVehicle[MAX_VEHICLES];			// 0x3F54 - 0x5E94
 };
 #pragma pack(pop)
 

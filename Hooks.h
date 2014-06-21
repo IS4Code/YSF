@@ -8,12 +8,14 @@
 // just bypasses the compilers checks to do what I want
 #define POINTER_TO_MEMBER(m,n,o) temp = n, m = *(o *)&temp
 
-bool Unlock(void *address, int len);
+bool Unlock(void *address, size_t len);
+void AssemblySwap(char * addr, char * dat, int len);
+void AssemblyRedirect(void * from, void * to, char * ret);
+
 #ifdef WIN32
 DWORD FindPattern(char *pattern, char *mask);
 #endif
 void GetAddresses();
 void InstallPreHooks();
-void InstallPostHooks();
 
 #endif

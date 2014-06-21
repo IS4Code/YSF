@@ -67,9 +67,12 @@ public:
 
 	static DWORD			FUNC_CFilterscripts_LoadFilterscript;
 	static DWORD			FUNC_CFilterscripts_UnLoadFilterscript;
+	static DWORD			FUNC_ContainsInvalidChars;
 
 	// Others
 	static DWORD			ADDR_CNetGame_GMX_GangZoneDelete;
 };
+
+extern std::vector <char> gValidNameCharacters;
 
 #endif
