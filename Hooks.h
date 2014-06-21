@@ -12,9 +12,12 @@ bool Unlock(void *address, size_t len);
 void AssemblySwap(char * addr, char * dat, int len);
 void AssemblyRedirect(void * from, void * to, char * ret);
 
+void Redirect(AMX * amx, char const * const from, ucell to, AMX_NATIVE * store);
+
 #ifdef WIN32
 DWORD FindPattern(char *pattern, char *mask);
 #endif
+
 void GetAddresses();
 void InstallPreHooks();
 

@@ -4,7 +4,7 @@
 	#include <string.h>
 #endif
 
-CPlayerData::CPlayerData( void )
+CPlayerData::CPlayerData( WORD playerid )
 {
 	// Null object data
 	for(int i = 0; i != MAX_OBJECTS; i++)
@@ -15,6 +15,7 @@ CPlayerData::CPlayerData( void )
 		this->stObj[i].vecRot = CVector(0.0f, 0.0f, 0.0f);
 	}
 
+	wPlayerID = playerid;
 	bObjectsRemoved = false;
 	iPlayerPickupCount = 0;
 	fGravity = pServer->GetGravity();
@@ -42,4 +43,132 @@ CPlayerData::CPlayerData( void )
 CPlayerData::~CPlayerData( void )
 {
 
+}
+
+void CPlayerData::Process(void)
+{
+	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
+	{
+		// If zone id is unused client side, then continue
+		if(this->byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;
+
+		CGangZone *pGangZone = NULL;
+		if(this->byteClientSideZoneIDUsed[zoneid] == 0)
+		{
+			if(this->wClientSideGlobalZoneID[zoneid] == 0xFFFF)
+			{
+				logprintf("pPlayer->wClientSideGlobalZoneID[%d] = 0xFFFF", zoneid);
+				return;
+			}
+					
+			pGangZone = pNetGame->pGangZonePool->pGangZone[this->wClientSideGlobalZoneID[zoneid]];
+		}
+		else
+		{
+			if(this->wClientSidePlayerZoneID[zoneid] == 0xFFFF)
+			{
+				logprintf("pPlayer->wClientSidePlayerZoneID[%d] = 0xFFFF", zoneid);
+				return;
+			}
+
+			pGangZone = this->pPlayerZone[this->wClientSidePlayerZoneID[zoneid]];
+		}
+
+		if(!pGangZone) continue;
+
+		// Mutatók létrehozása
+		CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[this->wPlayerID]->vecPosition;
+		float *fMinX = &pGangZone->fGangZone[0];
+		float *fMinY = &pGangZone->fGangZone[1];
+		float *fMaxX = &pGangZone->fGangZone[2];
+		float *fMaxY = &pGangZone->fGangZone[3];
+
+		//logprintf("validzone: %d, %f, %f, %f, %f", pPlayer->wClientSideGlobalZoneID[zoneid], *fMinX, *fMinY, *fMaxX, *fMaxY);
+
+		// Ha benne van
+		if(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY && !this->bInGangZone[zoneid])
+		{
+			this->bInGangZone[zoneid] = true;
+			//logprintf("enterzone: %d", zoneid);
+					
+			if(this->byteClientSideZoneIDUsed[zoneid] == 0)
+			{
+				// Call callback
+				int idx = -1;
+				std::list<AMX*>::iterator second;
+				for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+				{
+					if(!amx_FindPublic(*second, "OnPlayerEnterGangZone", &idx))
+					{
+						cell
+							ret;
+						amx_Push(*second, this->wClientSideGlobalZoneID[zoneid]);
+						amx_Push(*second, this->wPlayerID);
+
+						amx_Exec(*second, &ret, idx);
+					}
+				}
+			}
+			else
+			{
+				// Call callback
+				int idx = -1;
+				std::list<AMX*>::iterator second;
+				for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+				{
+					if(!amx_FindPublic(*second, "OnPlayerEnterPlayerGangZone", &idx))
+					{
+						cell
+							ret;
+						amx_Push(*second, this->wClientSidePlayerZoneID[zoneid]);
+						amx_Push(*second, this->wPlayerID);
+
+						amx_Exec(*second, &ret, idx);
+					}
+				}					
+			}
+		}
+		else if(!(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY) && this->bInGangZone[zoneid])
+		{
+			this->bInGangZone[zoneid] = false;
+			//logprintf("leavezone: %d", zoneid);
+					
+			if(this->byteClientSideZoneIDUsed[zoneid] == 0)
+			{
+				// Call callback
+				int idx = -1;
+				std::list<AMX*>::iterator second;
+				for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+				{
+					if(!amx_FindPublic(*second, "OnPlayerLeaveGangZone", &idx))
+					{
+						cell
+							ret;
+						amx_Push(*second, this->wClientSideGlobalZoneID[zoneid]);
+						amx_Push(*second, this->wPlayerID);
+
+						amx_Exec(*second, &ret, idx);
+					}
+				}
+			}
+			else
+			{
+				// Call callback
+				int idx = -1;
+				std::list<AMX*>::iterator second;
+				for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+				{
+					if(!amx_FindPublic(*second, "OnPlayerLeavePlayerGangZone", &idx))
+					{
+						cell
+							ret;
+						amx_Push(*second, this->wClientSidePlayerZoneID[zoneid]);
+						amx_Push(*second, this->wPlayerID);
+
+						amx_Exec(*second, &ret, idx);
+					}
+				}					
+			}
+		}
+	}
 }

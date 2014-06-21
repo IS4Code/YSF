@@ -16,7 +16,7 @@ bool CServer::AddPlayer(int playerid)
 {
 	if(!pPlayerData[playerid])
 	{
-		pPlayerData[playerid] = new CPlayerData();
+		pPlayerData[playerid] = new CPlayerData(playerid);
 		return 1;
 	}
 	return 0;

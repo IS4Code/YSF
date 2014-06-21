@@ -20,8 +20,10 @@ class CGangZone;
 class CPlayerData
 {
 public:
-	CPlayerData(void);
+	CPlayerData(WORD playerid);
 	~CPlayerData(void);
+
+	void Process(void);
 
 	struct sObj
 	{
@@ -31,6 +33,7 @@ public:
 		CVector vecRot;
 	} stObj[MAX_OBJECTS];
 
+	WORD wPlayerID;
 	bool bObjectsRemoved;
 	int iPlayerPickupCount;
 	float fGravity;

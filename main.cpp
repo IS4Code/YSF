@@ -338,19 +338,22 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 	return AMX_ERR_NONE;
 }
 
-BYTE g_Ticks = 0;
+
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
 	if(!pServer) return;
 
+	static BYTE g_Ticks = 0;
 	if(++g_Ticks == 10)
 	{
-		//
 		g_Ticks = 0;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 		{
 			CPlayerData *pPlayerPointer = pPlayerData[playerid];
 			if(!pPlayerPointer) continue;
+
+			// Process player
+			pPlayerPointer->Process();
 
 			// R7 - TODO
 			CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
@@ -384,140 +387,6 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 						pPlayerPointer->bObjectsRemoved = false;
 					}
 					break;
-				}
-			}
-			/*
-			CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
-			if(pPlayer)
-			{
-				logprintf("keys: %d, oldkeys: %d", pPlayer->dwKeys, pPlayer->dwOldKeys);
-				//logprintf("siren: %d, gearstate: %d, trailer: %d, trainspeed: %f, hydrareactor: %d, %d", pPlayer->vehicleSyncData.byteSirenState, pPlayer->vehicleSyncData.byteGearState, pPlayer->vehicleSyncData.wTrailerID, 
-					//pPlayer->vehicleSyncData.fTrainSpeed, pPlayer->vehicleSyncData.wHydraReactorAngle[0], pPlayer->vehicleSyncData.wHydraReactorAngle[1]);
-				//logprintf("surfinginfo: %d, %f, %f, %f", pPlayer->syncData.wSurfingInfo, pPlayer->syncData.vecSurfing.fX, pPlayer->syncData.vecSurfing.fY, pPlayer->syncData.vecSurfing.fZ);
-			}
-			*/
-			for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
-			{
-				// If zone id is unused client side, then continue
-				if(pPlayerPointer->byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;
-
-				CGangZone *pGangZone = NULL;
-				if(pPlayerPointer->byteClientSideZoneIDUsed[zoneid] == 0)
-				{
-					if(pPlayerPointer->wClientSideGlobalZoneID[zoneid] == 0xFFFF)
-					{
-						logprintf("pPlayer->wClientSideGlobalZoneID[%d] = 0xFFFF", zoneid);
-						return;
-					}
-					
-					pGangZone = pNetGame->pGangZonePool->pGangZone[pPlayerPointer->wClientSideGlobalZoneID[zoneid]];
-				}
-				else
-				{
-					if(pPlayerPointer->wClientSidePlayerZoneID[zoneid] == 0xFFFF)
-					{
-						logprintf("pPlayer->wClientSidePlayerZoneID[%d] = 0xFFFF", zoneid);
-						return;
-					}
-
-					pGangZone = pPlayerPointer->pPlayerZone[pPlayerPointer->wClientSidePlayerZoneID[zoneid]];
-				}
-
-				if(!pGangZone) continue;
-
-				// Mutatók létrehozása
-				CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition;
-				float *fMinX = &pGangZone->fGangZone[0];
-				float *fMinY = &pGangZone->fGangZone[1];
-				float *fMaxX = &pGangZone->fGangZone[2];
-				float *fMaxY = &pGangZone->fGangZone[3];
-
-				//logprintf("validzone: %d, %f, %f, %f, %f", pPlayer->wClientSideGlobalZoneID[zoneid], *fMinX, *fMinY, *fMaxX, *fMaxY);
-
-				// Ha benne van
-				if(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY && !pPlayerPointer->bInGangZone[zoneid])
-				{
-					pPlayerPointer->bInGangZone[zoneid] = true;
-					//logprintf("enterzone: %d", zoneid);
-					
-					if(pPlayerPointer->byteClientSideZoneIDUsed[zoneid] == 0)
-					{
-						// Call callback
-						int idx = -1;
-						std::list<AMX*>::iterator second;
-						for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
-						{
-							if(!amx_FindPublic(*second, "OnPlayerEnterGangZone", &idx))
-							{
-								cell
-									ret;
-								amx_Push(*second, pPlayerPointer->wClientSideGlobalZoneID[zoneid]);
-								amx_Push(*second, playerid);
-
-								amx_Exec(*second, &ret, idx);
-							}
-						}
-					}
-					else
-					{
-						// Call callback
-						int idx = -1;
-						std::list<AMX*>::iterator second;
-						for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
-						{
-							if(!amx_FindPublic(*second, "OnPlayerEnterPlayerGangZone", &idx))
-							{
-								cell
-									ret;
-								amx_Push(*second, pPlayerPointer->wClientSidePlayerZoneID[zoneid]);
-								amx_Push(*second, playerid);
-
-								amx_Exec(*second, &ret, idx);
-							}
-						}					
-					}
-				}
-				else if(!(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY) && pPlayerPointer->bInGangZone[zoneid])
-				{
-					pPlayerPointer->bInGangZone[zoneid] = false;
-					//logprintf("leavezone: %d", zoneid);
-					
-					if(pPlayerPointer->byteClientSideZoneIDUsed[zoneid] == 0)
-					{
-						// Call callback
-						int idx = -1;
-						std::list<AMX*>::iterator second;
-						for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
-						{
-							if(!amx_FindPublic(*second, "OnPlayerLeaveGangZone", &idx))
-							{
-								cell
-									ret;
-								amx_Push(*second, pPlayerPointer->wClientSideGlobalZoneID[zoneid]);
-								amx_Push(*second, playerid);
-
-								amx_Exec(*second, &ret, idx);
-							}
-						}
-					}
-					else
-					{
-						// Call callback
-						int idx = -1;
-						std::list<AMX*>::iterator second;
-						for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
-						{
-							if(!amx_FindPublic(*second, "OnPlayerLeavePlayerGangZone", &idx))
-							{
-								cell
-									ret;
-								amx_Push(*second, pPlayerPointer->wClientSidePlayerZoneID[zoneid]);
-								amx_Push(*second, playerid);
-
-								amx_Exec(*second, &ret, idx);
-							}
-						}					
-					}
 				}
 			}
 		}

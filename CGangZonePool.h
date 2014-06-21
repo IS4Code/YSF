@@ -33,7 +33,7 @@ public:
 	void FlashForAll(WORD wZone, DWORD dwColor);
 	void StopFlashForPlayer(WORD bytePlayer, WORD wZone, bool bPlayerZone = false);
 	void StopFlashForAll(WORD wZone);
-	
+
 	bool GetSlotState(WORD wZone)
 	{
 		if (wZone >= 1024) return 0;
