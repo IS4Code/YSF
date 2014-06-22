@@ -4384,8 +4384,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"ModifyFlag",						n_ModifyFlag},
 
 	// Nick name
-	{"AllowNickNameCharacter",			n_AllowNickNameCharacter},
-	{"IsNickNameCharacterAllowed",		n_IsNickNameCharacterAllowed},
+	{"AllowNickNameCharacter",			n_AllowNickNameCharacter}, // R7
+	{"IsNickNameCharacterAllowed",		n_IsNickNameCharacterAllowed}, // R7
 
 	// Player classes
 	{ "GetAvailableClasses",			n_GetAvailableClasses}, // R6
