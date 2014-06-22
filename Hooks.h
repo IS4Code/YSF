@@ -1,6 +1,9 @@
 #ifndef __YSF_HOOKS
 #define __YSF_HOOKS
 
+#include "SDK/amx/amx.h"
+#include "SDK/plugincommon.h"
+
 // Hopefully this will be optimised out
 // Unfortunately I can't get ANY direct cast to work
 // pointer_to_member seems like a very special structure

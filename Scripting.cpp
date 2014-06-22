@@ -44,6 +44,7 @@
 	#include <dirent.h>
 	#include <fnmatch.h>
 //	#include <sys/times.h>
+	#include <algorithm>
 #endif
 
 #include <string.h>

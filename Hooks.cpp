@@ -42,6 +42,7 @@
 	#include <sys/mman.h>
 	#include <limits.h>
 	#include <string.h>
+	#include <algorithm>
 #endif
 
 #ifndef PAGESIZE

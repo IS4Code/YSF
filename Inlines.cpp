@@ -302,24 +302,3 @@ BYTE GetWeaponSlot(BYTE weaponid)
 	}
 	return 0;
 }
-/*
-char *strdel(char *string, size_t first, size_t len)
-{
-      char *pos0, *pos1;
-
-      if (string)
-      {
-            if (first < strlen(string))
-            {
-                  for (pos0 = pos1 = string + first;
-                        *pos1 && len;
-                        ++pos1, --len)
-                  {
-                        ;
-                  }
-                  strcpy(pos0, pos1);
-            }
-      }
-      return string;
-}
-*/

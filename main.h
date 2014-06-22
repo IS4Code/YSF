@@ -23,6 +23,7 @@
 	#define OS_NAME			"Windows"
 #else
 	#define OS_NAME			"Linux"
+	#include <algorithm>
 #endif
 
 #define PROJECT_NAME		"YSF"
