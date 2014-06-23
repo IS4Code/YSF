@@ -207,11 +207,20 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				*/
 		}
 #endif
-#ifdef asdasd
+
 			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
 				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
-				logprintf("playercolor: %d, spectype: %d, specid: %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->SpectateID);
+				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d, %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
+					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID, pPlayer->padvmifassag);
+				for(int i = 0; i != 13; i++)
+				{
+					logprintf("padlofasz %d - %d", i, pPlayer->padlofasz[i]);
+				}
+				for(int i = 0; i != 8; i++)
+				{
+					logprintf("padgeci %d - %d", i, pPlayer->padgeci[i]);
+				}
 
 				//logprintf("3dtext exists: %d, text: %s", pPlayer->p3DText->isCreated[1], pPlayer->p3DText->TextLabels[1].text);
 				/*
@@ -225,7 +234,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				logprintf("bInModShop: %d - %d", pPlayer->bIsInModShop, pPlayer->vmifasssag);
 				*/
 			}
-	#endif
+
 			/*
 			CMenu *pMenu = pNetGame->pMenuPool->menu[1];
 			logprintf("menu: %d", pNetGame->pMenuPool->isCreated[1]);

@@ -645,6 +645,10 @@ static cell AMX_NATIVE_CALL n_AllowNickNameCharacter(AMX *amx, cell *params)
 	CHECK_PARAMS(2, "AllowNickNameCharacter");
 	
 	char character = (char)params[1];
+
+	// Enable %s is disabled for security
+	if(character == '%') return 0;
+
 	if(params[2])
 	{
 		// If vector already doesn't contain item, then add it
@@ -979,27 +983,33 @@ static cell AMX_NATIVE_CALL n_IsPlayerWidescreenToggled( AMX* amx, cell* params 
 	return pPlayerData[playerid]->bWidescreen;
 }
 
-// native GetPlayerSpawnPos(playerid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_GetPlayerSpawnPos( AMX* amx, cell* params )
+// native GetPlayerSpawnInfo(playerid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
+static cell AMX_NATIVE_CALL n_GetPlayerSpawnInfo( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(4, "GetPlayerSpawnPos");
+	CHECK_PARAMS(4, "GetPlayerSpawnInfo");
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	cell* cptr;
-	CVector vecPos = pNetGame->pPlayerPool->pPlayer[playerid]->vecSpawnPosition;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(vecPos.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(vecPos.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(vecPos.fZ);
-	return 1;
+	PLAYER_SPAWN_INFO *pSpawn = &pNetGame->pPlayerPool->pPlayer[playerid]->spawn;
+
+	cell *cptr;
+	amx_GetAddr(amx, params[2], &cptr); *cptr = (cell)pSpawn->byteTeam;
+	amx_GetAddr(amx, params[3], &cptr); *cptr = (cell)pSpawn->iSkin;
+	amx_GetAddr(amx, params[4], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fX);
+	amx_GetAddr(amx, params[5], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fY);
+	amx_GetAddr(amx, params[6], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fZ);
+	amx_GetAddr(amx, params[7], &cptr); *cptr = amx_ftoc(pSpawn->fRotation);
+	amx_GetAddr(amx, params[8], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[0];
+	amx_GetAddr(amx, params[9], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[0];
+	amx_GetAddr(amx, params[10], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[1];
+	amx_GetAddr(amx, params[11], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[1];
+	amx_GetAddr(amx, params[12], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[2];
+	amx_GetAddr(amx, params[13], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[2];
 }
 
 // native GetPlayerSkillLevel(playerid, skill);
@@ -1248,6 +1258,51 @@ static cell AMX_NATIVE_CALL n_GetPlayerRotationQuat( AMX* amx, cell* params )
 	amx_GetAddr(amx, params[5], &cptr);
 	*cptr = amx_ftoc(pPlayer->fQuaternion[3]);
 	return 1;
+}
+
+// native GetPlayerDialogID(playerid);
+static cell AMX_NATIVE_CALL n_GetPlayerDialogID( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPlayerDialogID");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->wDialogID;
+}
+
+// native GetPlayerSpectateID(playerid);
+static cell AMX_NATIVE_CALL n_GetPlayerSpectateID( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPlayerSpectateID");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->wSpectateID;
+}
+
+// native GetPlayerSpectateType(playerid);
+static cell AMX_NATIVE_CALL n_GetPlayerSpectateType( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPlayerSpectateType");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->byteSpectateType;
 }
 
 // native SendBulletData(sender, hitid, hittype, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ);
@@ -4405,7 +4460,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerWorldBounds",			n_GetPlayerWorldBounds },
 	{ "TogglePlayerWidescreen",			n_TogglePlayerWidescreen },
 	{ "IsPlayerWidescreenToggled",		n_IsPlayerWidescreenToggled },
-	{ "GetPlayerSpawnPos",				n_GetPlayerSpawnPos },
+	{ "GetPlayerSpawnInfo",				n_GetPlayerSpawnInfo }, // R7
 	{ "GetPlayerSkillLevel",			n_GetPlayerSkillLevel }, // R3
 	{ "GetPlayerCheckpoint",			n_GetPlayerCheckpoint }, // R4
 	{ "GetPlayerRaceCheckpoint",		n_GetPlayerRaceCheckpoint }, // R4
@@ -4421,7 +4476,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerZAim",					n_GetPlayerZAim },
 	{ "GetPlayerSurfingOffsets",		n_GetPlayerSurfingOffsets },
 	{ "GetPlayerRotationQuat",			n_GetPlayerRotationQuat }, // R3
-	
+	{ "GetPlayerDialogID",				n_GetPlayerDialogID }, // R8
+	{ "GetPlayerSpectateID",			n_GetPlayerSpectateID }, // R8
+	{ "GetPlayerSpectateType",			n_GetPlayerSpectateType }, // R8
+
 	// Objects get - global
 	{"GetObjectModel",					n_GetObjectModel},
 	{"GetObjectDrawDistance",			n_GetObjectDrawDistance},

@@ -296,6 +296,53 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+typedef struct _PLAYER_SPAWN_INFO
+{
+	BYTE byteTeam;
+	int iSkin;
+	BYTE unk;
+	CVector vecPos;
+	float fRotation;
+	int iSpawnWeapons[3];
+	int iSpawnWeaponsAmmo[3];
+} PLAYER_SPAWN_INFO;
+#pragma pack(pop)
+
+typedef struct SPECTATING_SYNC_t		// size 0x12
+{
+#pragma pack( 1 )
+	WORD		leftRightKeysOnSpectating;				// + 0x0000
+	WORD		updownKeysOnSpectating;					// + 0x0002
+	WORD		keysOnSpectating;						// + 0x0004
+	CVector		position;								// + 0x0006
+} SPECTATING_SYNC;
+
+typedef struct TRAILER_SYNC_t // size 0x32
+{
+#pragma pack( 1 )
+
+	WORD trailerID;		// + 0x0000
+	CVector	roll;				// + 0x0002
+	CVector direction;			// + 0x000E
+	CVector position;			// + 0x001A
+	CVector velocity;			// + 0x0026
+} TRAILER_SYNC;
+
+typedef struct UNOCCUPIED_SYNC_t // size 0x43
+{
+#pragma pack( 1 )
+
+	WORD vehicleID;				// + 0x0000
+	BYTE passengerSlot;			// + 0x0002
+	CVector roll;				// + 0x0003
+	CVector direction;			// + 0x000F
+	CVector position;			// + 0x001B
+	CVector velocity;			// + 0x0027
+	CVector turnVelocity;		// + 0x0033
+	float health;				// + 0x003F
+} UNOCCUPIED_SYNC;
+
+#pragma pack(push, 1)
 class CPlayer
 {
 	public:
@@ -303,7 +350,13 @@ class CPlayer
 		CVehicleSyncData	vehicleSyncData;	// 0x001F - 0x005E
 		CPassengerSyncData	passengerSyncData;	// 0x005E - 0x0076
 		CSyncData			syncData;			// 0x0076 - 0x00BA
-		PAD(pad1, 8803);						// 0x00BA - 0x231D
+		SPECTATING_SYNC		spectatingSyncData;					// + 0x00FC
+		TRAILER_SYNC		trailerSyncData;					// + 0x010E
+		UNOCCUPIED_SYNC		unoccupiedSyncData;					// + 0x0151
+		DWORD padnemtommi;
+		//PAD(asd, 139);
+		BYTE				byteStreamedIn[MAX_PLAYERS];
+		PAD(pad1, 8164);						// 0x00BA - 0x231D
 		BOOL				bUpdateKeys;		// 0x231D - 0x2321
 		CVector				vecPosition;		// 0x2321 - 0x232D
 		float				fHealth;			// 0x232D - 0x2331
@@ -315,17 +368,15 @@ class CPlayer
 		WORD				wLRAnalog;			// 0x2357 - 0x2359
 		DWORD				dwKeys;				// 0x2359 - 0x235D
 		DWORD				dwOldKeys;			// 0x235D - 0x2361
-		BYTE unkasd[10];
-		CPlayerTextDraw		*pTextdraw;				// 9067
+		BYTE unkasd[8];
+		WORD				wDialogID;			// 9065
+		CPlayerTextDraw		*pTextdraw;			// 9067
 		CPlayerText3DLabels*	p3DText;
-		//PAD(pad3, 18);							// 0x2361 - 0x2373
 		WORD				wPlayerId;			// 0x2373 - 0x2375 
 		int					iUpdateState;		// 0x2375 - 0x2379 
 		DWORD pad;
 		CAttachedObject		attachedObject[MAX_ATTACHED_OBJECTS];
 		BOOL				attachedObjectSlot[MAX_ATTACHED_OBJECTS];
-		//PAD(pad4, 40);
-		//PAD(pad4, 564);							// 0x2379 - 0x25AD
 		BOOL				bHasAimSync;		// 0x25AD - 0x25B1
 		BOOL				bHasUnkSync;		// 0x25B1 - 0x25B5
 		BOOL				bHasUnk2Sync;		// 0x25B5 - 0x25B9
@@ -346,15 +397,7 @@ class CPlayer
 		//PAD(pad5, 45);
 		WORD				wSkillLevel[11];
 		int					iLastMarkerUpdate;
-		BYTE				byteTeam;
-		//PAD(pad5, 84);							// 0x25BA - 0x260E - start: 9658
-		int					iSkinId;			// 0x260E - 0x2612
-		PAD(pad6, 1);							// 0x2612 - 0x2613
-		CVector				vecSpawnPosition;	// 0x2613 - 0x261F
-		float				fSpawnAngle;
-		int					iSpawnWeapons[3];
-		int					iSpawnAmmo[3];
-		//PAD(pad7, 28);							// 0x261F - 0x263B
+		PLAYER_SPAWN_INFO	spawn;
 		BOOL				bReadyToSpawn;		// 0x263B - 0x263F
 		BYTE				byteWantedLevel;
 		BYTE				byteFightingStyle;
@@ -369,14 +412,15 @@ class CPlayer
 		WORD				wWeaponAmmo[12];	// 0x2654 - 0x266C
 		PAD(pad10, 28);							// 0x266C - 0x2688
 		BYTE				byteWeaponId[12];	// 0x2688 - 0x2694
-		PAD(pad11, 2);							// 0x2694 - 0x2696
+		BYTE				byteWeaponID;
+		BYTE				padvmifassag;		// 0x2694 - 0x2696
 		WORD				wTargetId;			// 0x2696 - 0x2698
 		BYTE padgeci[8];
 		CVector				vecBulletStart;		// 9988
 		CVector				vecBulletHit;		// 9900
-		BYTE padlofasz[17];
+		BYTE padlofasz[13];
 		BYTE				byteSpectateType;
-		WORD				SpectateID;
+		WORD				wSpectateID;
 //PAD(pad12, 31);							// 0x2698 - 0x26B7
 		// Size = 0x26B7
 
@@ -404,7 +448,8 @@ class CPlayer
 class CPlayerPool
 {
 	public:
-		PAD(pad0, 75012);											// 0x00000 - 0x12504
+		DWORD				dwVirtualWorld[MAX_PLAYERS];
+		PAD(pad0, 73012);											// 0x00000 - 0x12504
 		BOOL				bIsPlayerConnected[MAX_PLAYERS];		// 0x12504 - 0x12CD4
 		CPlayer				*pPlayer[MAX_PLAYERS];					// 0x12CD4 - 0x134A4
 		char				szName[MAX_PLAYERS][MAX_PLAYER_NAME];	// 0x134A4 - 0x16384
@@ -667,19 +712,6 @@ public:
 	DwordTimerMap m_Timers;
 	DWORD m_dwTimerCount;
 };
-#pragma pack(pop)
-
-#pragma pack(push, 1)
-typedef struct _PLAYER_SPAWN_INFO
-{
-	BYTE byteTeam;
-	int iSkin;
-	BYTE unk;
-	CVector vecPos;
-	float fRotation;
-	int iSpawnWeapons[3];
-	int iSpawnWeaponsAmmo[3];
-} PLAYER_SPAWN_INFO;
 #pragma pack(pop)
 
 #pragma pack(push, 1)
