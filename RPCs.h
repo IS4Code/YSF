@@ -49,6 +49,9 @@ extern int RPC_ShowGangZone;
 extern int RPC_HideGangZone;
 extern int RPC_FlashGangZone;
 extern int RPC_StopFlashGangZone;
+extern int RPC_UpdateScoresPingsIPs;
+
+void InitRPCs();
 
 enum PacketEnumeration : unsigned char
 {
@@ -67,5 +70,4 @@ enum PacketEnumeration : unsigned char
 	ID_BULLET_SYNC = 224,
 };
 
-void InitRPCs();
 #endif

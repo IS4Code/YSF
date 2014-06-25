@@ -44,6 +44,7 @@
 	#include <string.h>
 	#include <algorithm>
 #endif
+#include "Inlines.h"
 
 #ifndef PAGESIZE
 	#define PAGESIZE (4096)
@@ -246,7 +247,176 @@ void GetAddresses()
 	AssemblyRedirect((void *)CAddress::FUNC_ContainsInvalidChars, (void *)YSF_ContainsInvalidChars, gContainsInvalidCharsAssembly);
 }
 
+unsigned long rakNet_receive_hook_return;
+Packet *rakNet_receive_hook_pktptr;
+unsigned char rakNet_receive_hook_packetid;
+
+void installJump(unsigned long addr, void *func)
+{
+#ifdef WIN32
+	unsigned long dwOld;
+	VirtualProtect((LPVOID)addr, 5, PAGE_EXECUTE_READWRITE, &dwOld);
+#else
+	int pagesize = sysconf(_SC_PAGE_SIZE);
+	void *unpraddr = (void *)(((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize;
+	mprotect(unpraddr, pagesize, PROT_WRITE);
+#endif
+	*(unsigned char *)addr = 0xE9;
+	*(unsigned long *)((unsigned long)addr + 0x1) = (unsigned long)func - (unsigned long)addr - 5;
+#ifdef WIN32
+	VirtualProtect((LPVOID)addr, 5, dwOld, &dwOld);
+#else
+	mprotect(unpraddr, pagesize, PROT_READ | PROT_EXEC);
+#endif
+}
+
+bool IsPlayerUpdatePacket(unsigned char packetId)
+{
+	if(packetId == ID_PLAYER_SYNC || packetId == ID_VEHICLE_SYNC || packetId == ID_PASSENGER_SYNC || packetId == ID_SPECTATOR_SYNC)
+		return true;
+	else
+		return false;
+}
+
+void ProcessPacket()
+{
+	PlayerIndex playerIndex = rakNet_receive_hook_pktptr->playerIndex;
+	unsigned char packetId = rakNet_receive_hook_packetid;
+
+	// invalid
+	if(playerIndex < 0 || playerIndex > MAX_PLAYERS)
+		return;
+
+	//SYSTEMTIME time;
+	//GetLocalTime(&time);
+
+	if(IsPlayerUpdatePacket(packetId) && pPlayerData[playerIndex])
+	{
+		if(pNetGame->pPlayerPool->bIsPlayerConnected[playerIndex] && pNetGame->pPlayerPool->pPlayer[playerIndex]->byteState != 0 && pNetGame->pPlayerPool->pPlayer[playerIndex]->byteState != 7)
+		{
+			pPlayerData[playerIndex]->dwLastUpdateTick = GetTickCount();
+			pPlayerData[playerIndex]->bEverUpdated = true;
+		}
+	}
+
+	//logprintf("[%02d:%02d:%02d.%03d] Incoming packet - playerIndex: %d | packetId: %d", time.wHour, time.wMinute, time.wSecond, time.wMilliseconds, playerIndex, packetId);
+}
+
+extern void *InternalRakServer;
+#ifdef WIN32
+unsigned char _declspec(naked) RakNet_Receive_Hook(void)
+#else
+unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
+#endif
+{
+#ifdef WIN32
+	_asm
+	{
+		mov ecx, dword ptr [esi+0x10]
+		mov al, byte ptr [ecx]
+
+		push eax
+		mov eax, dword ptr [edi]
+		add eax, 8
+		mov InternalRakServer, eax
+		pop eax
+
+		mov rakNet_receive_hook_packetid, al
+		mov rakNet_receive_hook_pktptr, esi
+
+		pushad
+	}
+#else
+
+	// hax cos the naked doesn't work :s
+	__asm(
+	".intel_syntax noprefix\n"
+		"add esp, 8\n"
+		"pop ebp\n"
+	".att_syntax\n");
+
+	__asm(
+	".intel_syntax noprefix\n"
+		"push eax\n"
+		"mov eax, dword ptr [ebp+8]\n"
+		"mov eax, dword ptr [eax]\n"
+		"mov InternalRakServer, eax\n"
+		"pop eax\n"
+	".att_syntax\n");
+
+	__asm(
+	".intel_syntax noprefix\n"
+		"mov rakNet_receive_hook_packetid, al\n"
+		"mov rakNet_receive_hook_pktptr, ebx\n"
+		"pushad\n"
+	".att_syntax\n");
+
+#endif
+
+	ProcessPacket();
+
+#ifdef WIN32
+	_asm
+	{
+		popad
+
+		push eax
+		mov eax, CAddress::ADDR_RECEIVE_HOOKPOS
+		add eax, 5
+		mov rakNet_receive_hook_return, eax
+		pop eax
+
+		jmp rakNet_receive_hook_return
+	}
+#else
+	__asm(
+	".intel_syntax noprefix\n"
+		"popad\n"
+
+		"push eax\n"
+	".att_syntax\n"
+	);
+
+	__asm(
+	".intel_syntax noprefix\n"
+		"mov eax, %0\n"
+	".att_syntax\n"
+		:
+		: "r"(CAddress::ADDR_RECEIVE_HOOKPOS)
+	);
+
+	__asm(
+	".intel_syntax noprefix\n"
+		"add eax, 6\n"
+		"mov rakNet_receive_hook_return, eax\n"
+		"pop eax\n"
+
+		"movzx eax, al\n"
+		"sub eax, 0x20\n"
+
+		"jmp dword ptr [rakNet_receive_hook_return]\n"
+	".att_syntax\n"
+	);
+#endif
+}
+
+void InstallRakNetReceiveHook()
+{
+#ifdef WIN32
+	if(!memcmp((void *)CAddress::ADDR_RECEIVE_HOOKPOS, "\x8B\x4E\x10\x8A\x01", 5))
+#else
+	//if(!memcmp((void *)CAddress::ADDR_RECEIVE_HOOKPOS, "\x0F\xB6\xC0\x83\xE8\x20", 6)) // 0.3c
+	if(!memcmp((void *)CAddress::ADDR_RECEIVE_HOOKPOS, "\x0F\xB6\xC0\x83\xE8\x21", 6)) // 0.3z
+#endif
+	{
+		installJump(CAddress::ADDR_RECEIVE_HOOKPOS, (void*)RakNet_Receive_Hook);
+	}
+	else
+		logprintf( "Failed to hook RakNet_Receive_Hook (memcmp)\n" );
+}
+
 void InstallPreHooks()
 {
 	GetAddresses();
+	InstallRakNetReceiveHook();
 }

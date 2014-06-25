@@ -33,6 +33,7 @@
 #include "main.h"
 #include "BitStream.h"
 #include "RPCs.h"
+#include "Inlines.h"
 
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN
@@ -1373,7 +1374,7 @@ static cell AMX_NATIVE_CALL n_TogglePlayerFakePing(AMX *amx, cell *params)
 	CHECK_PARAMS(2, "TogglePlayerFakePing");
 
 	int playerid = (int)params[1];
-	BOOL toggle = !!params[2];
+	bool toggle = !!params[2];
 
 	if(!IsPlayerConnected(playerid)) return 0;
 
@@ -1395,6 +1396,31 @@ static cell AMX_NATIVE_CALL n_SetPlayerFakePing(AMX *amx, cell *params)
 
 	pPlayerData[playerid]->dwFakePingValue = fakeping;
 	return 1;
+}
+
+// native IsPlayerPaused(playerid);
+static cell AMX_NATIVE_CALL n_IsPlayerPaused(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(1, "IsPlayerPaused");
+
+	int playerid = (int)params[1];
+
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pPlayerData[playerid]->bAFKState;
+}
+
+// native GetPlayerPausedTime(playerid);
+static cell AMX_NATIVE_CALL n_GetPlayerPausedTime(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(1, "GetPlayerPausedTime");
+
+	int playerid = (int)params[1];
+
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(!pPlayerData[playerid]->bAFKState) return 0;
+
+	return GetTickCount() - pPlayerData[playerid]->dwLastUpdateTick;
 }
 
 // Objects - global
@@ -4550,6 +4576,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "TogglePlayerScoresPingsUpdate",	n_TogglePlayerScoresPingsUpdate }, // R8
 	{ "TogglePlayerFakePing",			n_TogglePlayerFakePing }, // R8
 	{ "SetPlayerFakePing",				n_SetPlayerFakePing }, // R8
+	
+	// AFK
+	{ "IsPlayerPaused",					n_IsPlayerPaused },
+	{ "GetPlayerPausedTime",			n_GetPlayerPausedTime },
 	
 	// Objects get - global
 	{"GetObjectModel",					n_GetObjectModel},

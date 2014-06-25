@@ -107,6 +107,8 @@ class CGangZonePool;
 #define WEAPON_DROWN					53
 #define WEAPON_COLLISION				54
 
+#define AFK_ACCURACY					1500
+
 typedef int                 INT;
 typedef unsigned int        UINT;
 
@@ -733,7 +735,7 @@ typedef std::map<DWORD, ScriptTimer_s*> DwordTimerMap;
 class CScriptTimers
 {
 public:
-	DwordTimerMap m_Timers;
+	void* m_Timers;
 	DWORD m_dwTimerCount;
 };
 #pragma pack(pop)
@@ -757,7 +759,8 @@ class CNetGame
 		BOOL					bFirstGameModeLoaded;	// 48 - 52
 		BOOL					bLanMode;				// 52 - 56
 		CScriptTimers			*pScriptTimers;			// 56 - 60
-		BYTE pad2[65];									// 60 - 125
+		RakServer				*pRak;					// 60 - 64
+		BYTE pad2[61];									// 64 - 125
 		int						iSpawnsAvailable;		// 125 - 129
 		PLAYER_SPAWN_INFO		AvailableSpawns[300];
 };
@@ -950,6 +953,7 @@ struct Packet
 	/// Indicates whether to delete the data, or to simply delete the packet.
 	bool deleteData;
 };
+
 #ifdef WIN32
 
 class RakServer
@@ -964,9 +968,9 @@ public:
 	virtual void Disconnect( unsigned int blockDuration, unsigned char orderingChannel=0 );	// 20
 	virtual bool Send_ASD(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast); // 24
 	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);	// 28
-	virtual void _20(); // Packet* Receive( void );	// 32
+	virtual void _20();	// 32
 	virtual void Kick( const PlayerID playerId );	// 36
-	virtual void _28();		// 40
+	virtual Packet* Receive( void );		// 40
 	virtual void _2C();		// 44
 	virtual void _30();		// 48
 	virtual void SetAllowedPlayers(unsigned short numberAllowed);	// 52

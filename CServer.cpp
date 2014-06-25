@@ -198,3 +198,22 @@ void CServer::RestoreAttachedObjects(WORD playerid)
 {
 
 }
+
+void CServer::OnPlayerPauseStateChange(int playerid, bool afkstate)
+{
+	logprintf("OnPlayerPauseStateChange %d - %d", playerid, afkstate);
+	int idx = -1;
+	std::list<AMX*>::iterator second;
+	for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+	{
+		if(!amx_FindPublic(*second, "OnPlayerPauseStateChange", &idx))
+		{
+			cell
+				ret;
+			amx_Push(*second, afkstate);
+			amx_Push(*second, playerid);
+
+			amx_Exec(*second, &ret, idx);
+		}
+	}	
+}

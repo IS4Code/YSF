@@ -78,7 +78,7 @@ class FakeClass
 #else
 	typedef void (* AddServerRule_t)(FakeClass *, char *, int, char *, int);
 	typedef void (* SetServerRule_t)(FakeClass *, char *, char *);
-	typedef void (* SetServerInt_t)(FakeClass *, char *, int);
+	typedef void (* SetServerRuleInt_t)(FakeClass *, char *, int);
 	typedef void (* RemoveServerRule_t)(FakeClass *, char *);
 	typedef void (* ModifyFlag_t)(FakeClass *, char *, int);
 
@@ -86,5 +86,9 @@ class FakeClass
 	typedef int (* UnLoadFS_t)(FakeClass *, char *);
 #endif
 
-//char *strdel(char *string, size_t first, size_t len);
+// Linux GetTickCount
+#ifndef _WIN32
+int GetTickCount()
+#endif
+
 #endif

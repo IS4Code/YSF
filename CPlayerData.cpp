@@ -1,4 +1,5 @@
 #include "main.h"
+#include "Inlines.h"
 
 #ifndef WIN32
 	#include <string.h>
@@ -42,6 +43,10 @@ CPlayerData::CPlayerData( WORD playerid )
 	bUpdateScoresPingsDisabled = false;
 	bFakePingToggle = false;
 	dwFakePingValue = 0;
+
+	bAFKState = false;
+	bEverUpdated = false;
+	dwLastUpdateTick = false;
 }
 
 CPlayerData::~CPlayerData( void )
@@ -51,6 +56,26 @@ CPlayerData::~CPlayerData( void )
 
 void CPlayerData::Process(void)
 {
+	// Process AFK detection
+	DWORD dwTickCount = GetTickCount();
+
+	if(bEverUpdated)
+	{
+		if(bAFKState == false && dwTickCount - dwLastUpdateTick > AFK_ACCURACY)
+		{
+			bAFKState = true;
+
+			pServer->OnPlayerPauseStateChange(wPlayerID, bAFKState);
+		}
+
+		else if(bAFKState == true && dwTickCount - dwLastUpdateTick < AFK_ACCURACY)
+		{
+			bAFKState = false;
+
+			pServer->OnPlayerPauseStateChange(wPlayerID, bAFKState);
+		}
+	}
+
 	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
 	{
 		// If zone id is unused client side, then continue

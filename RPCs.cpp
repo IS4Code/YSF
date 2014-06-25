@@ -1,4 +1,5 @@
 #include "main.h"
+#include "Structs.h"
 
 int RPC_Gravity = 0x92;
 int RPC_Weather = 0x98;
@@ -19,6 +20,8 @@ int RPC_HideGangZone = 0x78;
 int RPC_FlashGangZone = 0x79;
 int RPC_StopFlashGangZone = 0x55;
 int RPC_UpdateScoresPingsIPs = 0x9B;
+
+void UpdateScoresPingsIPs(RPCParameters *rpcParams);
 
 void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 {

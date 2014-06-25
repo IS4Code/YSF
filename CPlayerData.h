@@ -60,5 +60,8 @@ public:
 	bool bFakePingToggle;
 	DWORD dwFakePingValue;
 
+	bool bAFKState;
+	bool bEverUpdated;
+	DWORD dwLastUpdateTick;
 };
 #endif

@@ -24,6 +24,8 @@ public:
 
 	void RemoveAttachedObjects(unsigned short playerid);
 	void RestoreAttachedObjects(unsigned short playerid);
+
+	void OnPlayerPauseStateChange(int playerid, bool afkstate);
 private:
 	float m_fGravity;
 	unsigned char m_byteWeather;

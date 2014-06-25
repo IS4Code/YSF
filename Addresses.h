@@ -72,6 +72,9 @@ public:
 
 	// Others
 	static DWORD			ADDR_CNetGame_GMX_GangZoneDelete;
+
+	// Receive hook
+	static DWORD			ADDR_RECEIVE_HOOKPOS;
 };
 
 extern std::vector <char> gValidNameCharacters;

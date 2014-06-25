@@ -31,6 +31,9 @@ DWORD CAddress::FUNC_ContainsInvalidChars = NULL;
 // Others
 DWORD CAddress::ADDR_CNetGame_GMX_GangZoneDelete = NULL;
 
+// Receive hook
+DWORD CAddress::ADDR_RECEIVE_HOOKPOS = NULL;
+
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
 	// Thx for Whitetiger
@@ -47,6 +50,20 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
 	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
+
+	switch(sampVersion)
+	{
+		case SAMP_VERSION_03Z:
+		{
+			ADDR_RECEIVE_HOOKPOS =						0x458B80;
+			break;
+		}
+		case SAMP_VERSION_03Z_R2_2:
+		{
+			ADDR_RECEIVE_HOOKPOS =						0x458A20;
+			break;
+		}
+	}
 	#else
  
 	switch(sampVersion)
@@ -64,6 +81,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	
 			ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
 			FUNC_ContainsInvalidChars =					0x080D2A50;
+			ADDR_RECEIVE_HOOKPOS =						0x80645D6;
 			break;
 		}
 		case SAMP_VERSION_03Z_R2_2:
@@ -79,6 +97,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 			ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
 			FUNC_ContainsInvalidChars =					0x080D2F50;
+			ADDR_RECEIVE_HOOKPOS =						0x80645D6;
 			break;
 		} 
 	}

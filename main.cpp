@@ -8,6 +8,7 @@
 #include "main.h"
 #include <fstream>
 #include "CGangZonePool.h"
+#include "Inlines.h"
 
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
@@ -163,6 +164,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
+
 #ifdef pina
 			logprintf("infernus used: %d", pNetGame->pVehiclePool->modelsUsed[11]);
 			/*
@@ -412,3 +414,4 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 		}
 	}
 }
+
