@@ -499,6 +499,19 @@ typedef struct _MATRIX4X4 {
 } MATRIX4X4, *PMATRIX4X4;
 #pragma pack(pop)
 
+typedef struct VEHPARAM_EX
+{
+#pragma pack ( 1 )
+
+	BYTE engine;
+	BYTE lights;
+	BYTE alarm;
+	BYTE doors;
+	BYTE bonnet;
+	BYTE boot;
+	BYTE objective;
+} VEHPARAM_EX;
+
 #pragma pack(push, 1)
 class CSAMPVehicle
 {
@@ -511,7 +524,11 @@ class CSAMPVehicle
 		WORD			wTrailerID;
 		WORD			wCabID;
 		WORD			wLastDriverID;
-		PAD(pad1, 22);						// 0x0058 - 0x0082
+		
+		WORD			vehPassengers[7];	// + 0x006C
+		DWORD			vehActive;			// + 0x007A
+		DWORD			vehWasted;			// + 0x007E		
+		//PAD(pad1, 22);						// 0x0058 - 0x0082
 		int				iModelId;			// 0x0082 - 0x0086
 		CVector			vecSpawnPos;
 		PAD(pad2, 12);						// 0x0086 - 0x00A6
@@ -522,7 +539,7 @@ class CSAMPVehicle
 		int				iColor1;
 		int				iColor2;			
 		char			szNumberplate[32 + 1]; // 206
-		BYTE			unk[7];
+		VEHPARAM_EX		vehParamEx;
         BOOL			vehDeathNotification;   // + 0x00F4
         BOOL			vehOccupied;                    // + 0x00F5
         uint			vehOccupiedTick;                // + 0x00F6
@@ -534,9 +551,9 @@ class CSAMPVehicle
 class CVehiclePool
 {
 	public:
-		BOOL				bVehicleSlotState[MAX_VEHICLES];
-		int					byteVirtualWorld[MAX_VEHICLES];
-		BYTE				modelsUsed[212];
+		BOOL				bVehicleSlotState[MAX_VEHICLES];	// 0 - 8000
+		BYTE				modelsUsed[212];					// 8000 - 8212
+		int					byteVirtualWorld[MAX_VEHICLES];		// 8212 - 0x3F54
 		CSAMPVehicle		*pVehicle[MAX_VEHICLES];			// 0x3F54 - 0x5E94
 };
 #pragma pack(pop)

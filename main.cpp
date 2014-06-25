@@ -210,9 +210,10 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				*/
 		}
 #endif
-			logprintf("players: %d, %d", pRakServer->GetAllowedPlayers(), pRakServer->GetConnectedPlayers());
+			//logprintf("players: %d, %d", pRakServer->GetAllowedPlayers(), pRakServer->GetConnectedPlayers());
 			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
+		/*
 				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
 				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d, %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
 					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID_unknown, pPlayer->padvmifassag);
@@ -227,7 +228,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 				PlayerID PlayerId = pRakServer->GetPlayerIDFromIndex(4);
 				logprintf("last: %d, lowest: %d, average: %d", pRakServer->GetLastPing(PlayerId), pRakServer->GetAveragePing(PlayerId), pRakServer->GetLowestPing(PlayerId));
-
+				*/
 				//logprintf("3dtext exists: %d, text: %s", pPlayer->p3DText->isCreated[1], pPlayer->p3DText->TextLabels[1].text);
 				/*
 				logprintf("td: %d, pos: %f, text: %s", pPlayer->pTextdraw->m_bSlotState[1], pPlayer->pTextdraw->m_TextDraw[1]->fX, pPlayer->pTextdraw->m_szFontText[1]);
@@ -285,13 +286,17 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			if(pNetGame->pVehiclePool->pVehicle[500]) 
 			{
 				CSAMPVehicle *pVeh = pNetGame->pVehiclePool->pVehicle[500];
-				logprintf("col: %d, %d, int: %d, respawn: %d", pNetGame->pVehiclePool->pVehicle[500]->color1, pNetGame->pVehiclePool->pVehicle[500]->color2, pNetGame->pVehiclePool->pVehicle[500]->interior, pNetGame->pVehiclePool->pVehicle[500]->respawndelay);
-				logprintf("spawn: %f, %f, %f", pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fX, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fY, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fZ);
-				logprintf("plate: %s, occ: %d, respawn: %d, lastdriver: %d", pVeh->szNumberplate, pVeh->vehOccupiedTick, pVeh->vehRespawnTick, pVeh->wLastDriverID);
-				logprintf("vehicleid: %d, trailerid: %d, unkshit: %d, turnspeed: %f, %f, %f", pVeh->wVehicleID, pVeh->wTrailerID, pVeh->wCabID, pVeh->vecTurnSpeed.fX, pVeh->vecTurnSpeed.fY, pVeh->vecTurnSpeed.fZ);
+				//logprintf("col: %d, %d, int: %d, respawn: %d", pNetGame->pVehiclePool->pVehicle[500]->color1, pNetGame->pVehiclePool->pVehicle[500]->color2, pNetGame->pVehiclePool->pVehicle[500]->interior, pNetGame->pVehiclePool->pVehicle[500]->respawndelay);
+				//logprintf("spawn: %f, %f, %f", pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fX, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fY, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fZ);
+				//logprintf("plate: %s, occ: %d, respawn: %d, lastdriver: %d", pVeh->szNumberplate, pVeh->vehOccupiedTick, pVeh->vehRespawnTick, pVeh->wLastDriverID);
+				//logprintf("vehicleid: %d, trailerid: %d, unkshit: %d, turnspeed: %f, %f, %f", pVeh->wVehicleID, pVeh->wTrailerID, pVeh->wCabID, pVeh->vecTurnSpeed.fX, pVeh->vecTurnSpeed.fY, pVeh->vecTurnSpeed.fZ);
+				for(int i = 0; i != 7; i++)
+				{
+					logprintf("passenger %d - %d", i, pVeh->vehPassengers[i]);
+				}
 			}
-			
 			*/
+			
 			/*
 				for(int i = 0; i != 42; i++)
 					logprintf("plate %d: %d", i, pVeh->pad1[i]);
@@ -353,12 +358,12 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 	return AMX_ERR_NONE;
 }
 
+BYTE g_Ticks = 0;
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
 	if(!pServer) return;
 
-	static BYTE g_Ticks = 0;
 	if(++g_Ticks == 10)
 	{
 		g_Ticks = 0;
