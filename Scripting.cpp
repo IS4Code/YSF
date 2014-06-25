@@ -492,7 +492,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerAdmin(AMX *amx, cell *params)
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	pNetGame->pPlayerPool->m_bIsAnAdmin[playerid] = !!params[2];
+	pNetGame->pPlayerPool->bIsAnAdmin[playerid] = !!params[2];
 	return 1;
 }
 
@@ -983,14 +983,14 @@ static cell AMX_NATIVE_CALL n_IsPlayerWidescreenToggled( AMX* amx, cell* params 
 	return pPlayerData[playerid]->bWidescreen;
 }
 
-// native GetPlayerSpawnInfo(playerid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
-static cell AMX_NATIVE_CALL n_GetPlayerSpawnInfo( AMX* amx, cell* params )
+// native GetSpawnInfo(playerid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
+static cell AMX_NATIVE_CALL n_GetSpawnInfo( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(4, "GetPlayerSpawnInfo");
+	CHECK_PARAMS(4, "GetSpawnInfo");
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2330,7 +2330,7 @@ static cell AMX_NATIVE_CALL n_IsValidTextDraw( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	return pNetGame->pTextDrawPool->m_bSlotState[textdrawid];
+	return pNetGame->pTextDrawPool->bSlotState[textdrawid];
 }
 
 // native IsTextDrawVisibleForPlayer(playerid, textdrawid);
@@ -2344,9 +2344,9 @@ static cell AMX_NATIVE_CALL n_IsTextDrawVisibleForPlayer( AMX* amx, cell* params
 	int textdrawid = (int)params[2];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 
-	return pNetGame->pTextDrawPool->m_bHasText[textdrawid][playerid];
+	return pNetGame->pTextDrawPool->bHasText[textdrawid][playerid];
 }
 
 // native TextDrawGetString(textdrawid, text[], len = sizeof(text));
@@ -2361,7 +2361,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetString( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	const char *szText = (pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) ? pNetGame->pTextDrawPool->m_szFontText[textdrawid] : '\0';
+	const char *szText = (pNetGame->pTextDrawPool->bSlotState[textdrawid]) ? pNetGame->pTextDrawPool->szFontText[textdrawid] : '\0';
 	return set_amxstring(amx, params[2], szText, params[3]);
 }
 
@@ -2373,8 +2373,8 @@ static cell AMX_NATIVE_CALL n_TextDrawSetPos( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	pTD->fX = amx_ctof(params[2]);
 	pTD->fY = amx_ctof(params[3]);
@@ -2389,8 +2389,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetLetterSize( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -2408,8 +2408,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetFontSize( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -2427,8 +2427,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPos( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -2446,8 +2446,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetColor( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return ABGR_RGBA(pTD->dwLetterColor);
 }
@@ -2460,8 +2460,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetBoxColor( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return ABGR_RGBA(pTD->dwBoxColor);
 }
@@ -2474,8 +2474,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetBackgroundColor( AMX* amx, cell* params
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return ABGR_RGBA(pTD->dwBackgroundColor);
 }
@@ -2488,8 +2488,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetShadow( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return pTD->byteShadow;
 }
@@ -2502,8 +2502,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetOutline( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return pTD->byteOutline;
 }
@@ -2516,8 +2516,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetFont( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return pTD->byteStyle;
 }
@@ -2530,8 +2530,8 @@ static cell AMX_NATIVE_CALL n_TextDrawIsBox( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return pTD->byteBox;
 }
@@ -2544,8 +2544,8 @@ static cell AMX_NATIVE_CALL n_TextDrawIsProportional( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return pTD->byteProportional;
 }
@@ -2558,8 +2558,8 @@ static cell AMX_NATIVE_CALL n_TextDrawIsSelectable( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return pTD->byteSelectable;
 }
@@ -2572,8 +2572,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetAlignment( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	BYTE ret;
 
@@ -2591,8 +2591,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPreviewModel( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	return pTD->dwModelIndex;
 }
@@ -2605,8 +2605,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPreviewRot( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -2628,8 +2628,8 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPreviewVehCol( AMX* amx, cell* params )
 	int textdrawid = (int)params[1];
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
-	if(!pNetGame->pTextDrawPool->m_bSlotState[textdrawid]) return 0;
-	CTextdraw *pTD = pNetGame->pTextDrawPool->m_TextDraw[textdrawid];
+	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -2650,9 +2650,9 @@ static cell AMX_NATIVE_CALL n_IsValidPlayerTextDraw( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	return pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid];
+	return pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid];
 }
 
 // native IsPlayerTextDrawVisible(playerid, PlayerText:textdrawid);
@@ -2665,9 +2665,9 @@ static cell AMX_NATIVE_CALL n_IsPlayerTextDrawVisible( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	return pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bHasText[textdrawid];
+	return pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bHasText[textdrawid];
 }
 
 // native PlayerTextDrawGetString(playerid, PlayerText:textdrawid, text[], len = sizeof(text));
@@ -2681,10 +2681,10 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetString( AMX* amx, cell* params )
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
 	
-	bool bIsValid = !!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid];
+	bool bIsValid = !!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid];
 	if(!bIsValid) return 0;
 
-	const char *szText = (bIsValid) ? pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_szFontText[textdrawid]: '\0';
+	const char *szText = (bIsValid) ? pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->szFontText[textdrawid]: '\0';
 	return set_amxstring(amx, params[3], szText, params[4]);
 }
 
@@ -2698,9 +2698,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawSetPos( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
 	pTD->fX = amx_ctof(params[3]);
 	pTD->fY = amx_ctof(params[4]);
@@ -2717,9 +2717,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetLetterSize( AMX* amx, cell* param
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[3], &cptr);
@@ -2739,9 +2739,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetFontSize( AMX* amx, cell* params 
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[3], &cptr);
@@ -2761,9 +2761,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPos( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[3], &cptr);
@@ -2783,9 +2783,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetColor( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	/*
 	int color = (int)pTD->dwLetterColor;
 	BYTE r, g, b, a;
@@ -2810,9 +2810,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetBoxColor( AMX* amx, cell* params 
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return ABGR_RGBA(pTD->dwBoxColor);
 }
 
@@ -2826,9 +2826,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetBackgroundCol( AMX* amx, cell* pa
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return ABGR_RGBA(pTD->dwBackgroundColor);
 }
 
@@ -2842,9 +2842,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetShadow( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return pTD->byteShadow;
 }
 
@@ -2858,9 +2858,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetOutline( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return pTD->byteOutline;
 }
 
@@ -2874,9 +2874,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetFont( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return pTD->byteStyle;
 }
 
@@ -2890,9 +2890,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawIsBox( AMX* amx, cell* params )
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return pTD->byteBox;
 }
 
@@ -2906,9 +2906,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawIsProportional( AMX* amx, cell* para
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return pTD->byteProportional;
 }
 
@@ -2922,9 +2922,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawIsSelectable( AMX* amx, cell* params
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return pTD->byteSelectable;
 }
 
@@ -2938,9 +2938,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetAlignment( AMX* amx, cell* params
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	BYTE ret;
 
 	if(pTD->byteCenter) ret = 2;
@@ -2959,9 +2959,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewModel( AMX* amx, cell* par
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 	return pTD->dwModelIndex;
 }
 
@@ -2975,9 +2975,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewRot( AMX* amx, cell* param
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -3001,9 +3001,9 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewVehCol( AMX* amx, cell* pa
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
-	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_bSlotState[textdrawid]) return 0;
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
-	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->m_TextDraw[textdrawid];
+	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -4460,7 +4460,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerWorldBounds",			n_GetPlayerWorldBounds },
 	{ "TogglePlayerWidescreen",			n_TogglePlayerWidescreen },
 	{ "IsPlayerWidescreenToggled",		n_IsPlayerWidescreenToggled },
-	{ "GetPlayerSpawnInfo",				n_GetPlayerSpawnInfo }, // R7
+	{ "GetSpawnInfo",					n_GetSpawnInfo }, // R8
 	{ "GetPlayerSkillLevel",			n_GetPlayerSkillLevel }, // R3
 	{ "GetPlayerCheckpoint",			n_GetPlayerCheckpoint }, // R4
 	{ "GetPlayerRaceCheckpoint",		n_GetPlayerRaceCheckpoint }, // R4
