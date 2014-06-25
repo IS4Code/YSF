@@ -63,6 +63,7 @@ public:
 	// Functions
 	static DWORD			FUNC_CConsole_AddStringVariable;
 	static DWORD			FUNC_CConsole_SetStringVariable;
+	static DWORD			FUNC_CConsole_SetIntVariable;
 	static DWORD			FUNC_CConsole_ModifyVariableFlags;
 
 	static DWORD			FUNC_CFilterscripts_LoadFilterscript;

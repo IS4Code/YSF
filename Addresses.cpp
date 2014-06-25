@@ -21,6 +21,7 @@ DWORD CAddress::VAR_pRestartWaitTime = NULL;
 // Functions
 DWORD CAddress::FUNC_CConsole_AddStringVariable = NULL;
 DWORD CAddress::FUNC_CConsole_SetStringVariable = NULL;
+DWORD CAddress::FUNC_CConsole_SetIntVariable = NULL;
 DWORD CAddress::FUNC_CConsole_ModifyVariableFlags = NULL;
 
 DWORD CAddress::FUNC_CFilterscripts_LoadFilterscript = NULL;
@@ -38,27 +39,14 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
  
 	FUNC_CConsole_AddStringVariable =			FindPattern("\x53\x56\x57\x8B\x7C\x24\x18\x85\xFF", "xxxxxxxxx");
 	FUNC_CConsole_SetStringVariable =			FindPattern("\x8B\x44\x24\x04\x53\x50\xE8\xD5\xFE\xFF\xFF\x8B\xD8\x85\xDB", "xxxxxxx???xxxx");
+	FUNC_CConsole_SetIntVariable =				FindPattern("\x8B\x44\x24\x04\x50\xE8\xF6\xFD\xFF\xFF\x85\xC0\x74\xE0\x83\x38\x01", "xxxxxx????xx??xxx") + 0x20;
 	FUNC_CConsole_ModifyVariableFlags =			FindPattern("\x8B\x44\x24\x04\x50\xE8\x16\xFF\xFF\xFF\x85\xC0\x74\x07", "xxxxxx????xxxx");
  
 	FUNC_CFilterscripts_LoadFilterscript =		FindPattern("\x8B\x44\x24\x04\x81\xEC\x04\x01\x00\x00", "xxxxxxxxxx");
 	FUNC_CFilterscripts_UnLoadFilterscript =	FindPattern("\xCC\x51\x53\x8B\x5C\x24\x0C\x55\x56\x57\x89", "xxxxxxxxxxx") + 0x1;
 
-	switch(sampVersion)
-	{
-		case SAMP_VERSION_03Z:
-		{
-			ADDR_CNetGame_GMX_GangZoneDelete =			0x4896BA;
-			FUNC_ContainsInvalidChars =					0x468690;
-			break;
-		}
-		case SAMP_VERSION_03Z_R2_2:
-		{
-			ADDR_CNetGame_GMX_GangZoneDelete =			0x489DBA; 
-			FUNC_ContainsInvalidChars =					0x4687F0;
-			break;
-		}
-	}
-
+	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
+	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
 	#else
  
 	switch(sampVersion)

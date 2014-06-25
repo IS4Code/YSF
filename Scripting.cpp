@@ -456,6 +456,20 @@ static cell AMX_NATIVE_CALL n_drename(AMX *amx, cell *params)
 	return 0;
 }
 
+// native SetMaxPlayers(maxplayers);
+static cell AMX_NATIVE_CALL n_SetMaxPlayers(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	int maxplayers = (int)params[1];
+	if(maxplayers < 1 || maxplayers > MAX_PLAYERS) return 0;
+
+	SetServerRuleInt("maxplayers", maxplayers);
+	return 1;
+}
+
 // native SetModeRestartTime(Float:time);
 static cell AMX_NATIVE_CALL n_SetModeRestartTime(AMX *amx, cell *params)
 {
@@ -1010,6 +1024,7 @@ static cell AMX_NATIVE_CALL n_GetSpawnInfo( AMX* amx, cell* params )
 	amx_GetAddr(amx, params[11], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[1];
 	amx_GetAddr(amx, params[12], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[2];
 	amx_GetAddr(amx, params[13], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[2];
+	return 1;
 }
 
 // native GetPlayerSkillLevel(playerid, skill);
@@ -4424,6 +4439,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"drename",							n_drename},
 
 	// Generic
+	{"SetMaxPlayers",					n_SetMaxPlayers},
 	{"SetModeRestartTime",				n_SetModeRestartTime},
 	{"GetModeRestartTime",				n_GetModeRestartTime},
 

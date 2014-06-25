@@ -37,6 +37,7 @@
 extern void *pConsole;
 extern AddServerRule_t g_pCConsole__AddRule;
 extern SetServerRule_t g_pCConsole__SetRule;
+extern SetServerRuleInt_t g_pCConsole__SetRuleInt;
 extern RemoveServerRule_t g_pCConsole__RemoveRule;
 extern ModifyFlag_t g_pCConsole__MFlag;
 extern LoadFS_t  g_pCFilterscript__LoadFS_t;
@@ -63,6 +64,17 @@ void SetServerRule(char * rule, char * value)
 		// Linux messes up lowercase
 		// But not any more :D
 		g_pCConsole__SetRule(_CONSOLE, rule, value);
+	#endif
+}
+
+void SetServerRuleInt(char * rule, int value)
+{
+	#ifdef WIN32
+		(_CONSOLE->*g_pCConsole__SetRuleInt)(rule, value);
+	#else
+		// Linux messes up lowercase
+		// But not any more :D
+		g_pCConsole__SetRuleInt(_CONSOLE, rule, value);
 	#endif
 }
 

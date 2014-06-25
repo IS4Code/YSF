@@ -53,6 +53,7 @@
 
 AddServerRule_t g_pCConsole__AddRule = 0;
 SetServerRule_t g_pCConsole__SetRule = 0;
+SetServerRuleInt_t g_pCConsole__SetRuleInt = 0;
 RemoveServerRule_t g_pCConsole__RemoveRule = 0;
 ModifyFlag_t g_pCConsole__MFlag = 0;
 LoadFS_t g_pCFilterscript__LoadFS_t = 0;
@@ -231,6 +232,7 @@ void GetAddresses()
 	// Console for adding rules.
 	POINTER_TO_MEMBER(g_pCConsole__AddRule, CAddress::FUNC_CConsole_AddStringVariable, AddServerRule_t);
 	POINTER_TO_MEMBER(g_pCConsole__SetRule, CAddress::FUNC_CConsole_SetStringVariable, SetServerRule_t);
+	POINTER_TO_MEMBER(g_pCConsole__SetRuleInt, CAddress::FUNC_CConsole_SetIntVariable, SetServerRuleInt_t);
 //	POINTER_TO_MEMBER(g_pCConsole__RemoveRule, CONSOLE_REMOVE_RULE_0341, RemoveServerRule_t);
 	POINTER_TO_MEMBER(g_pCConsole__MFlag, CAddress::FUNC_CConsole_ModifyVariableFlags, ModifyFlag_t);
 

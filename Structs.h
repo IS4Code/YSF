@@ -947,20 +947,20 @@ public:
 	virtual void Disconnect( unsigned int blockDuration, unsigned char orderingChannel=0 );	// 20
 	virtual bool Send_ASD(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast); // 24
 	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);	// 28
-	virtual void _20(); // Packet* Receive( void );
-	virtual void Kick( const PlayerID playerId );
-	virtual void _28();
-	virtual void _2C();
-	virtual void _30();
-	virtual void SetAllowedPlayers(unsigned short numberAllowed);
-	virtual void _38();
-	virtual void _3C(); // elvileg unban
-	virtual void _40();
-	virtual void _44();
-	virtual void _48();
-	virtual void _4C();
-	virtual void _50();
-	virtual void _54();
+	virtual void _20(); // Packet* Receive( void );	// 32
+	virtual void Kick( const PlayerID playerId );	// 36
+	virtual void _28();		// 40
+	virtual void _2C();		// 44
+	virtual void _30();		// 48
+	virtual void SetAllowedPlayers(unsigned short numberAllowed);	// 52
+	virtual unsigned short GetAllowedPlayers( void ) ;	// 56
+	virtual unsigned short GetConnectedPlayers( void );		// 60								
+	virtual void GetPlayerIPFromID( const PlayerID playerId, char returnValue[ 22 ], unsigned short *port );	// 64
+	virtual void PingPlayer( const PlayerID playerId );	// 68
+	virtual int GetAveragePing( const PlayerID playerId );	// 72
+	virtual int GetLastPing( const PlayerID playerId );	// 76
+	virtual int GetLowestPing( const PlayerID playerId );	// 80
+	virtual void SetOccasionalPing( bool doPing );
 	virtual void _58();
 	virtual void _5C();
 	virtual void _60();

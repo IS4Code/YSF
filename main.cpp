@@ -207,12 +207,12 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				*/
 		}
 #endif
-
+			logprintf("players: %d, %d", pRakServer->GetAllowedPlayers(), pRakServer->GetConnectedPlayers());
 			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
 				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
 				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d, %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
-					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID, pPlayer->padvmifassag);
+					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID_unknown, pPlayer->padvmifassag);
 				for(int i = 0; i != 13; i++)
 				{
 					logprintf("padlofasz %d - %d", i, pPlayer->padlofasz[i]);
@@ -221,6 +221,9 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				{
 					logprintf("padgeci %d - %d", i, pPlayer->padgeci[i]);
 				}
+
+				PlayerID PlayerId = pRakServer->GetPlayerIDFromIndex(4);
+				logprintf("last: %d, lowest: %d, average: %d", pRakServer->GetLastPing(PlayerId), pRakServer->GetAveragePing(PlayerId), pRakServer->GetLowestPing(PlayerId));
 
 				//logprintf("3dtext exists: %d, text: %s", pPlayer->p3DText->isCreated[1], pPlayer->p3DText->TextLabels[1].text);
 				/*

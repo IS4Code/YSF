@@ -37,6 +37,7 @@
 
 void AddServerRule(char * rule, char * value, int flags);
 void SetServerRule(char * rule, char * value);
+void SetServerRuleInt(char * rule, int value);
 void ModifyFlag(char * rule, int varflag);
 int LoadFilterscript(char * name);
 int UnLoadFilterscript(char * name);
@@ -69,6 +70,7 @@ class FakeClass
 #ifdef WIN32
 	typedef void (FakeClass::* AddServerRule_t)(char *, int, char *, int);
 	typedef void (FakeClass::* SetServerRule_t)(char *, char *);
+	typedef void (FakeClass::* SetServerRuleInt_t)(char *, int);
 	typedef void (FakeClass::* RemoveServerRule_t)(char *);
 	typedef void (FakeClass::* ModifyFlag_t)(char *, int);
 	typedef int (FakeClass::* LoadFS_t)(char *);
@@ -76,6 +78,7 @@ class FakeClass
 #else
 	typedef void (* AddServerRule_t)(FakeClass *, char *, int, char *, int);
 	typedef void (* SetServerRule_t)(FakeClass *, char *, char *);
+	typedef void (* SetServerInt_t)(FakeClass *, char *, int);
 	typedef void (* RemoveServerRule_t)(FakeClass *, char *);
 	typedef void (* ModifyFlag_t)(FakeClass *, char *, int);
 
