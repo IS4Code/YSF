@@ -38,6 +38,10 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
 	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
 	memset(bIsGangZoneFlashing, false, sizeof(bIsGangZoneFlashing));
+
+	bUpdateScoresPingsDisabled = false;
+	bFakePingToggle = false;
+	dwFakePingValue = 0;
 }
 
 CPlayerData::~CPlayerData( void )

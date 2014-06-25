@@ -67,4 +67,5 @@ enum PacketEnumeration : unsigned char
 	ID_BULLET_SYNC = 224,
 };
 
+void InitRPCs();
 #endif

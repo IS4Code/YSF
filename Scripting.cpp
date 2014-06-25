@@ -1347,6 +1347,56 @@ static cell AMX_NATIVE_CALL n_SendBulletData( AMX* amx, cell* params )
 	return 1;
 }
 
+// Scoreboard manipulation
+
+// native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
+static cell AMX_NATIVE_CALL n_TogglePlayerScoresPingsUpdate(AMX *amx, cell *params)
+{
+	if(!pServer) return 0;
+
+	CHECK_PARAMS(2, "TogglePlayerScoresPingsUpdate");
+
+	int playerid = (int)params[1];
+	bool toggle = !!params[2];
+
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	pPlayerData[playerid]->bUpdateScoresPingsDisabled = !toggle;
+	return 1;
+}
+
+// native TogglePlayerFakePing(playerid, bool:toggle);
+static cell AMX_NATIVE_CALL n_TogglePlayerFakePing(AMX *amx, cell *params)
+{
+	if(!pServer) return 0;
+
+	CHECK_PARAMS(2, "TogglePlayerFakePing");
+
+	int playerid = (int)params[1];
+	BOOL toggle = !!params[2];
+
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	pPlayerData[playerid]->bFakePingToggle = toggle;
+	return 1;
+}
+
+// native SetPlayerFakePing(playerid, ping);
+static cell AMX_NATIVE_CALL n_SetPlayerFakePing(AMX *amx, cell *params)
+{
+	if(!pServer) return 0;
+
+	CHECK_PARAMS(2, "SetPlayerFakePing");
+
+	int playerid = (int)params[1];
+	int fakeping = (int)params[2];
+
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	pPlayerData[playerid]->dwFakePingValue = fakeping;
+	return 1;
+}
+
 // Objects - global
 // native GetObjectModel(objectid);
 static cell AMX_NATIVE_CALL n_GetObjectModel( AMX* amx, cell* params )
@@ -4496,6 +4546,11 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerSpectateID",			n_GetPlayerSpectateID }, // R8
 	{ "GetPlayerSpectateType",			n_GetPlayerSpectateType }, // R8
 
+	// Scoreboard manipulation
+	{ "TogglePlayerScoresPingsUpdate",	n_TogglePlayerScoresPingsUpdate }, // R8
+	{ "TogglePlayerFakePing",			n_TogglePlayerFakePing }, // R8
+	{ "SetPlayerFakePing",				n_SetPlayerFakePing }, // R8
+	
 	// Objects get - global
 	{"GetObjectModel",					n_GetObjectModel},
 	{"GetObjectDrawDistance",			n_GetObjectDrawDistance},

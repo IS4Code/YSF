@@ -55,5 +55,10 @@ public:
 	bool bIsGangZoneFlashing[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneColor[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneFlashColor[MAX_GANG_ZONES];
+
+	bool bUpdateScoresPingsDisabled;
+	bool bFakePingToggle;
+	DWORD dwFakePingValue;
+
 };
 #endif

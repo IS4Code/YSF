@@ -157,6 +157,9 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 			// Recreate GangZone pool
 			pNetGame->pGangZonePool = new CGangZonePool();
+
+			// Re-init some RPCs
+			InitRPCs();
 		}
 		else
 		{

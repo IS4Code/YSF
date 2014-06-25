@@ -18,3 +18,40 @@ int RPC_ShowGangZone = 0x6C;
 int RPC_HideGangZone = 0x78;
 int RPC_FlashGangZone = 0x79;
 int RPC_StopFlashGangZone = 0x55;
+int RPC_UpdateScoresPingsIPs = 0x9B;
+
+void UpdateScoresPingsIPs(RPCParameters *rpcParams)
+{
+	RakNet::BitStream bsUpdate;
+
+	for(PLAYERID i = 0; i < MAX_PLAYERS; i++)
+	{
+		if(pNetGame->pPlayerPool->bIsPlayerConnected[i] && pPlayerData[i])
+		{
+			bsUpdate.Write(i);
+
+			if(!pPlayerData[i]->bUpdateScoresPingsDisabled)
+			{
+				bsUpdate.Write(pNetGame->pPlayerPool->dwScore[i]);
+
+				if(pPlayerData[i]->bFakePingToggle)
+					bsUpdate.Write(pPlayerData[i]->dwFakePingValue);
+				else
+					bsUpdate.Write(pRakServer->GetLastPing(pRakServer->GetPlayerIDFromIndex(i)));
+			}
+			else
+			{
+				bsUpdate.Write(0);
+				bsUpdate.Write(0);
+			}
+		}
+	}
+
+	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, HIGH_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
+}
+
+void InitRPCs()
+{
+	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
+}
