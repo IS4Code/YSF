@@ -34,6 +34,7 @@
 #include "BitStream.h"
 #include "RPCs.h"
 #include "Inlines.h"
+#include "Utils.h"
 
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN

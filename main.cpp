@@ -390,6 +390,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 					// Remove objects
 					if(!pPlayerPointer->bObjectsRemoved)
 					{
+						logprintf("remove attacahed objects");
 						// Remove every attached objects from player - but ONLY for given player
 						pServer->RemoveAttachedObjects(playerid);
 
@@ -403,6 +404,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 					// Restore player objects
 					if(pPlayerPointer->bObjectsRemoved)
 					{
+						logprintf("restore attacahed objects");
 						// Re-attach removed objects
 						pServer->RestoreAttachedObjects(playerid);
 
@@ -414,4 +416,3 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 		}
 	}
 }
-

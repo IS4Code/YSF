@@ -35,6 +35,7 @@
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
 
+// Functions
 void AddServerRule(char * rule, char * value, int flags);
 void SetServerRule(char * rule, char * value);
 void SetServerRuleInt(char * rule, int value);
@@ -73,6 +74,7 @@ class FakeClass
 	typedef void (FakeClass::* SetServerRuleInt_t)(char *, int);
 	typedef void (FakeClass::* RemoveServerRule_t)(char *);
 	typedef void (FakeClass::* ModifyFlag_t)(char *, int);
+	
 	typedef int (FakeClass::* LoadFS_t)(char *);
 	typedef int (FakeClass::* UnLoadFS_t)(char *);
 #else
@@ -84,11 +86,6 @@ class FakeClass
 
 	typedef int (* LoadFS_t)(FakeClass *, char *);
 	typedef int (* UnLoadFS_t)(FakeClass *, char *);
-#endif
-
-// Linux GetTickCount
-#ifndef _WIN32
-int GetTickCount()
 #endif
 
 #endif

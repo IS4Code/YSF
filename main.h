@@ -14,7 +14,6 @@
 #include "CServer.h"
 #include "CVector.h"
 #include "Hooks.h"
-#include "Inlines.h"
 #include "RPCs.h"
 #include "Scripting.h"
 #include "CModelSizes.h"
@@ -67,4 +66,5 @@ typedef float               FLOAT;
 typedef int                 INT;
 typedef unsigned int        UINT;
 #endif
+
 #endif

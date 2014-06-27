@@ -1,5 +1,5 @@
 #include "main.h"
-#include "Inlines.h"
+#include "Utils.h"
 
 #ifndef WIN32
 	#include <string.h>

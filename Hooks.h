@@ -3,6 +3,7 @@
 
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
+#include "Inlines.h"
 
 // Hopefully this will be optimised out
 // Unfortunately I can't get ANY direct cast to work
@@ -11,6 +12,7 @@
 // just bypasses the compilers checks to do what I want
 #define POINTER_TO_MEMBER(m,n,o) temp = n, m = *(o *)&temp
 
+// Definitions
 bool Unlock(void *address, size_t len);
 void AssemblySwap(char * addr, char * dat, int len);
 void AssemblyRedirect(void * from, void * to, char * ret);

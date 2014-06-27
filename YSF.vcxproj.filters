@@ -7,9 +7,6 @@
     <Filter Include="Server">
       <UniqueIdentifier>{c29c9218-2572-432d-bb07-174472b78b52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Server\MFR">
-      <UniqueIdentifier>{8885f2d6-5d46-479d-951d-88a46cc8172f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SDK\amxplugin.cpp">
@@ -47,6 +44,9 @@
       <Filter>Server</Filter>
     </ClCompile>
     <ClCompile Include="CPlayerData.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
       <Filter>Server</Filter>
     </ClCompile>
   </ItemGroup>
@@ -105,6 +105,9 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="CPlayerData.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
       <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>

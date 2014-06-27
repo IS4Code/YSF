@@ -50,17 +50,19 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
 	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
+	ADDR_RECEIVE_HOOKPOS =						FindPattern("\x8B\x4E\x10\x8A\x01\x3C\x16\x74\x10\x83\x7E", "xx?xxxx??xx"); // R2-2: 0x458A20
 
+	logprintf("ADDR_RECEIVE_HOOKPOS: %x", ADDR_RECEIVE_HOOKPOS);
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:
 		{
-			ADDR_RECEIVE_HOOKPOS =						0x458B80;
+			//ADDR_RECEIVE_HOOKPOS =						0x458B80;
 			break;
 		}
 		case SAMP_VERSION_03Z_R2_2:
 		{
-			ADDR_RECEIVE_HOOKPOS =						0x458A20;
+			//ADDR_RECEIVE_HOOKPOS =						0x458A20;
 			break;
 		}
 	}
