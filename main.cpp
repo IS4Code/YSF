@@ -9,6 +9,7 @@
 #include <fstream>
 #include "CGangZonePool.h"
 #include "Inlines.h"
+#include "Utils.h"
 
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
@@ -158,6 +159,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 			// Recreate GangZone pool
 			pNetGame->pGangZonePool = new CGangZonePool();
+			pNetGame->pScriptTimers = new CScriptTimers();
 
 			// Re-init some RPCs
 			InitRPCs();
@@ -365,6 +367,13 @@ BYTE g_Ticks = 0;
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
 	if(!pServer) return;
+
+	float fElapsedTime = GetElapsedTime();
+	if(pNetGame)
+	{
+		if(pNetGame->pScriptTimers)
+			pNetGame->pScriptTimers->Process((DWORD)(fElapsedTime * 1000.0f));
+	}
 
 	if(++g_Ticks == 10)
 	{

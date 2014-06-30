@@ -63,6 +63,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		case SAMP_VERSION_03Z_R2_2:
 		{
 			//ADDR_RECEIVE_HOOKPOS =						0x458A20;
+
+			Unlock((void*)0x48BC22, 8); // jz
+			memset((void*)0x48BC22, 0x90, 8);
 			break;
 		}
 	}

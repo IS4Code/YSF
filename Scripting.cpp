@@ -472,6 +472,20 @@ static cell AMX_NATIVE_CALL n_SetMaxPlayers(AMX *amx, cell *params)
 	return 1;
 }
 
+// native SetMaxNPCs(maxnpcs);
+static cell AMX_NATIVE_CALL n_SetMaxNPCs(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	int maxnpcs = (int)params[1];
+	if(maxnpcs < 1 || maxnpcs > MAX_PLAYERS) return 0;
+
+	SetServerRuleInt("maxnpc", maxnpcs);
+	return 1;
+}
+
 // native SetModeRestartTime(Float:time);
 static cell AMX_NATIVE_CALL n_SetModeRestartTime(AMX *amx, cell *params)
 {
@@ -772,7 +786,7 @@ static cell AMX_NATIVE_CALL n_GetActiveTimers(AMX *amx, cell *params)
 	if(!pServer)
 		return 0;
 
-	return pNetGame->pScriptTimers->m_dwTimerCount;
+	return pNetGame->pScriptTimers->GetTimerCount();
 }
 
 // native SetGravity(Float:gravity);
@@ -4503,6 +4517,44 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 	return set_amxstring(amx, params[2], GetWeaponName((BYTE)params[1]), params[3]);
 }
 
+// native SetTimer(funcname[], interval, repeating)
+static cell AMX_NATIVE_CALL n_YSF_SetTimer(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(3, "SetTimer");
+
+	char* szFuncName;
+	amx_StrParam(amx, params[1], szFuncName);
+	return pNetGame->pScriptTimers->New(szFuncName, params[2], params[3], amx);
+}
+
+// native SetTimerEx(funcname[], interval, repeating, parameter)
+static cell AMX_NATIVE_CALL n_YSF_SetTimerEx(AMX *amx, cell *params)
+{
+	if (params[0] < 4 * sizeof (cell))
+	{
+		logprintf("SCRIPT: Bad parameter count (%d < 4): ", params[0]);
+		return 0;
+	}
+	else if (params[0] > 260 * sizeof (cell))
+	{
+		logprintf("SCRIPT: Bad parameter count (%d > 260): ", params[0]);
+		return 0;
+	}
+
+	char* szFuncName;
+	amx_StrParam(amx, params[1], szFuncName);
+	return pNetGame->pScriptTimers->NewEx(szFuncName, params[2], params[3], params, amx);
+}
+
+// native KillTimer(timerid)
+static cell AMX_NATIVE_CALL n_YSF_KillTimer(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(1, "KillTimer");
+
+	pNetGame->pScriptTimers->Kill(params[1]);
+	return 1;
+}
+
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
 {
@@ -4517,6 +4569,7 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// Generic
 	{"SetMaxPlayers",					n_SetMaxPlayers},
+	{"SetMaxNPCs",						n_SetMaxNPCs},
 	{"SetModeRestartTime",				n_SetModeRestartTime},
 	{"GetModeRestartTime",				n_GetModeRestartTime},
 
@@ -4728,6 +4781,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPickupType",					n_GetPickupType },
 	{ "GetPickupVirtualWorld",			n_GetPickupVirtualWorld },
 
+	// Timer functions
+
 	// RakServer functions
 	{ "ClearBanList",					n_ClearBanList },
 	{ "IsBanned",						n_IsBanned },
@@ -4778,6 +4833,10 @@ int InitScripting(AMX *amx)
 		Redirect(amx, "GangZoneFlashForAll", (uint64_t)n_YSF_GangZoneFlashForAll, 0);
 		Redirect(amx, "GangZoneStopFlashForPlayer", (uint64_t)n_YSF_GangZoneStopFlashForPlayer, 0);
 		Redirect(amx, "GangZoneStopFlashForAll", (uint64_t)n_YSF_GangZoneStopFlashForAll, 0);
+
+		Redirect(amx, "SetTimer", (uint64_t)n_YSF_SetTimer, 0);
+		Redirect(amx, "SetTimerEx", (uint64_t)n_YSF_SetTimerEx, 0);
+		Redirect(amx, "KillTimer", (uint64_t)n_YSF_KillTimer, 0);
 	}
 
 	Redirect(amx, "GetWeaponName", (uint64_t)n_FIXED_GetWeaponName, 0);

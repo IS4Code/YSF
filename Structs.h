@@ -37,6 +37,7 @@
 #include "BitStream.h"
 #include "CVector.h"
 #include "CTypes.h"
+#include "scrtimers.h"
 #include "CGangZonePool.h"
 #include "SDK/amx/amx.h"
 #include <map>
@@ -714,32 +715,7 @@ public:
 private:
 };
 
-#pragma pack(push, 1)
-struct ScriptTimer_s // sizeof = 0x11B (283)
-{
-	char szScriptFunc[255];
-	int iTotalTime;
-	int iRemainingTime;
-	BOOL bRepeating;
-	BOOL bKilled;
-	AMX* pAMX;
-	int iParamCount;
-	void* cellParams;
-};
-
-typedef std::map<DWORD, ScriptTimer_s*> DwordTimerMap;
-#pragma pack(pop)
-
-//----------------------------------------------------------------------------------
-#pragma pack(push, 1)
-class CScriptTimers
-{
-public:
-	void* m_Timers;
-	DWORD m_dwTimerCount;
-};
-#pragma pack(pop)
-
+// 89 = iGameState
 #pragma pack(push, 1)
 class CNetGame
 {
@@ -976,7 +952,7 @@ public:
 	virtual void Kick( const PlayerID playerId );	// 36
 	virtual Packet* Receive( void );		// 40
 #ifdef WIN32
-	virtual void _2C();		// 44
+	virtual void DeallocatePacket( Packet *packet );();		// 44
 #endif
 	virtual void _30();		// 48
 	virtual void SetAllowedPlayers(unsigned short numberAllowed);	// 52 - linux: 56

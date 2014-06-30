@@ -17,6 +17,10 @@
 int GetTickCount();
 void TickCountLoad();
 
+#else
+
+float GetElapsedTime();
+
 #endif
 
 #endif

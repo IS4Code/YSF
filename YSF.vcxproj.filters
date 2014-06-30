@@ -49,6 +49,9 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="scrtimers.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDK\amx\amx.h">
@@ -108,6 +111,9 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="scrtimers.h">
       <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
