@@ -458,6 +458,30 @@ static cell AMX_NATIVE_CALL n_drename(AMX *amx, cell *params)
 	return 0;
 }
 
+// native SetModeRestartTime(Float:time);
+static cell AMX_NATIVE_CALL n_SetModeRestartTime(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "SetModeRestartTime");
+	*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
+	return 1;
+}
+
+// native Float:GetModeRestartTime();
+static cell AMX_NATIVE_CALL n_GetModeRestartTime(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "SetModeRestartTime");
+	float fRestartTime = *(float*)CAddress::VAR_pRestartWaitTime;
+	return amx_ftoc(fRestartTime);
+}
+
 // native SetMaxPlayers(maxplayers);
 static cell AMX_NATIVE_CALL n_SetMaxPlayers(AMX *amx, cell *params)
 {
@@ -484,30 +508,6 @@ static cell AMX_NATIVE_CALL n_SetMaxNPCs(AMX *amx, cell *params)
 
 	SetServerRuleInt("maxnpc", maxnpcs);
 	return 1;
-}
-
-// native SetModeRestartTime(Float:time);
-static cell AMX_NATIVE_CALL n_SetModeRestartTime(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "SetModeRestartTime");
-	*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
-	return 1;
-}
-
-// native Float:GetModeRestartTime();
-static cell AMX_NATIVE_CALL n_GetModeRestartTime(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "SetModeRestartTime");
-	float fRestartTime = *(float*)CAddress::VAR_pRestartWaitTime;
-	return amx_ftoc(fRestartTime);
 }
 
 // native SetPlayerAdmin(playerid, bool:admin);
@@ -787,6 +787,80 @@ static cell AMX_NATIVE_CALL n_GetActiveTimers(AMX *amx, cell *params)
 		return 0;
 
 	return pNetGame->pScriptTimers->GetTimerCount();
+}
+
+// native IsTimerActive(timerid);
+static cell AMX_NATIVE_CALL n_IsTimerActive(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsTimerActive");
+
+	return pNetGame->pScriptTimers->IsTimerActive((DWORD)params[1]);
+}
+
+// native GetTimerFunctionName(timerid, funcname[], len = sizeof(funcname));
+static cell AMX_NATIVE_CALL n_GetTimerFunctionName(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "GetTimerFunctionName");
+
+	const char *szFuncname = pNetGame->pScriptTimers->IsTimerActive((DWORD)params[1]) ? pNetGame->pScriptTimers->GetTimerCallback((DWORD)params[1]) : "";
+	
+	return set_amxstring(amx, params[2], szFuncname, params[3]);
+}
+
+// native SetTimerInterval(timerid, time);
+static cell AMX_NATIVE_CALL n_SetTimerInterval(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetTimerInterval");
+
+	return pNetGame->pScriptTimers->SetTimerTimeInterval((DWORD)params[1], (int)params[2]);
+}
+
+// native GetTimerInterval(timerid);
+static cell AMX_NATIVE_CALL n_GetTimerInterval(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetTimerInterval");
+
+	return pNetGame->pScriptTimers->GetTimerTimeInterval((DWORD)params[1]);
+}
+
+// native GetTimerRemainingTime(timerid);
+static cell AMX_NATIVE_CALL n_GetTimerRemainingTime(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetTimerRemainingTime");
+
+	return pNetGame->pScriptTimers->GetTimerRemainingTime((DWORD)params[1]);
+}
+
+// native IsTimerRepeating(timerid);
+static cell AMX_NATIVE_CALL n_IsTimerRepeating(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsTimerRepeating");
+
+	return pNetGame->pScriptTimers->IsTimerRepeating((DWORD)params[1]);
 }
 
 // native SetGravity(Float:gravity);
@@ -4568,10 +4642,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"drename",							n_drename},
 
 	// Generic
-	{"SetMaxPlayers",					n_SetMaxPlayers},
-	{"SetMaxNPCs",						n_SetMaxNPCs},
 	{"SetModeRestartTime",				n_SetModeRestartTime},
 	{"GetModeRestartTime",				n_GetModeRestartTime},
+	{"SetMaxPlayers",					n_SetMaxPlayers},
+	{"SetMaxNPCs",						n_SetMaxNPCs},
 
 	{"SetPlayerAdmin",					n_SetPlayerAdmin},
 	{"LoadFilterScript",				n_LoadFilterScript},
@@ -4594,7 +4668,13 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "EditPlayerClass",				n_EditPlayerClass}, // R6
 
 	// Timers
-	{ "GetActiveTimers",				n_GetActiveTimers}, // R6
+	{ "GetActiveTimers",				n_GetActiveTimers}, // R8
+	{ "IsTimerActive",					n_IsTimerActive}, // R8
+	{ "GetTimerFunctionName",			n_GetTimerFunctionName}, // R8
+	{ "SetTimerInterval",				n_SetTimerInterval}, // R8
+	{ "GetTimerInterval",				n_GetTimerInterval}, // R8
+	{ "GetTimerRemainingTime",			n_GetTimerRemainingTime}, // R8
+	{ "IsTimerRepeating",				n_IsTimerRepeating}, // R8
 
 	// Special
 	{ "SetPlayerGravity",				n_SetPlayerGravity },

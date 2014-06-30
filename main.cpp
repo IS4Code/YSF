@@ -368,11 +368,10 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
 	if(!pServer) return;
 
-	float fElapsedTime = GetElapsedTime();
 	if(pNetGame)
 	{
 		if(pNetGame->pScriptTimers)
-			pNetGame->pScriptTimers->Process((DWORD)(fElapsedTime * 1000.0f));
+			pNetGame->pScriptTimers->Process((DWORD)(GetElapsedTime() * 1000.0f));
 	}
 
 	if(++g_Ticks == 10)

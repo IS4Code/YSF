@@ -37,6 +37,8 @@ class CScriptTimers
 private:
 	DwordTimerMap m_Timers;
 	DWORD m_dwTimerCount;
+
+	ScriptTimer_s*	FindTimer(DWORD dwTimerID);
 public:
 	CScriptTimers();
 	~CScriptTimers();
@@ -50,6 +52,15 @@ public:
 	void FreeMem(ScriptTimer_s* Timer);
 
 	DWORD GetTimerCount() { return m_dwTimerCount; }
+	bool IsTimerActive(DWORD dwTimerID);
+	char* GetTimerCallback(DWORD dwTimerID);
+
+	int GetTimerTimeInterval(DWORD dwTimerID);
+	bool SetTimerTimeInterval(DWORD dwTimerID, int time);
+
+	int GetTimerRemainingTime(DWORD dwTimerID);
+
+	bool IsTimerRepeating(DWORD dwTimerID);
 };
 
 

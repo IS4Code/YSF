@@ -34,6 +34,9 @@ DWORD CAddress::ADDR_CNetGame_GMX_GangZoneDelete = NULL;
 // Receive hook
 DWORD CAddress::ADDR_RECEIVE_HOOKPOS = NULL;
 
+// Process timers
+DWORD CAddress::ADDR_CScriptTimers__ProcessCall = NULL;
+
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
 	// Thx for Whitetiger
@@ -50,9 +53,11 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
 	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
+	
 	ADDR_RECEIVE_HOOKPOS =						FindPattern("\x8B\x4E\x10\x8A\x01\x3C\x16\x74\x10\x83\x7E", "xx?xxxx??xx"); // R2-2: 0x458A20
+	ADDR_CScriptTimers__ProcessCall	 =			FindPattern("\x50\x8B\xCF\xE8\x46\x39\xFF\xFF\x8B\x4E\x34\x85\xC9", "xxx????xx?xx"); // R2-2: 0x48BC22
 
-	logprintf("ADDR_RECEIVE_HOOKPOS: %x", ADDR_RECEIVE_HOOKPOS);
+	logprintf("ADDR_CScriptTimers__ProcessCall: %x", ADDR_CScriptTimers__ProcessCall);
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:
@@ -64,8 +69,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		{
 			//ADDR_RECEIVE_HOOKPOS =						0x458A20;
 
-			Unlock((void*)0x48BC22, 8); // jz
-			memset((void*)0x48BC22, 0x90, 8);
 			break;
 		}
 	}
@@ -109,7 +112,12 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	#endif
 
 #ifdef WIN32
+	// Disable GangZonePool deletion at GMX
 	Unlock((void*)ADDR_CNetGame_GMX_GangZoneDelete, 2); // jz      short loc_489DC8 -> change to jnz      short loc_489DC8
 	*(BYTE*)(ADDR_CNetGame_GMX_GangZoneDelete) = 0x75;	// jnz
+
+	// Disable pScriptTimers->Process()
+	Unlock((void*)ADDR_CScriptTimers__ProcessCall, 8);
+	memset((void*)ADDR_CScriptTimers__ProcessCall, 0x90, 8);
 #endif
 }

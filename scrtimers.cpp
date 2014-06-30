@@ -300,5 +300,86 @@ void CScriptTimers::Process(int iElapsedTime)
 	}
 }*/
 
-//----------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+
+ScriptTimer_s* CScriptTimers::FindTimer(DWORD dwTimerID)
+{
+	DwordTimerMap::iterator itor;
+	itor = m_Timers.find(dwTimerID);
+	if (itor != m_Timers.end())
+	{
+		return itor->second;
+	}
+	return NULL;
+}
+
+//---------------------------------------------------------------------------------
+
+bool CScriptTimers::IsTimerActive(DWORD dwTimerID)
+{
+	ScriptTimer_s* Timer = FindTimer(dwTimerID);
+	return Timer != NULL;
+}
+
+//---------------------------------------------------------------------------------
+
+char* CScriptTimers::GetTimerCallback(DWORD dwTimerID)
+{
+	ScriptTimer_s* Timer = FindTimer(dwTimerID);
+	if(Timer != NULL)
+	{
+		
+		return &Timer->szScriptFunc[0];
+	}
+	return NULL;
+}
+
+//---------------------------------------------------------------------------------
+
+int CScriptTimers::GetTimerTimeInterval(DWORD dwTimerID)
+{
+	ScriptTimer_s* Timer = FindTimer(dwTimerID);
+	if(Timer != NULL)
+	{
+		return Timer->iTotalTime;
+	}
+	return NULL;
+}
+
+//---------------------------------------------------------------------------------
+
+bool CScriptTimers::SetTimerTimeInterval(DWORD dwTimerID, int time)
+{
+	ScriptTimer_s* Timer = FindTimer(dwTimerID);
+	if(Timer != NULL)
+	{
+		Timer->iTotalTime = time;
+		return 1;
+	}
+	return 0;
+}
+
+//---------------------------------------------------------------------------------
+
+int CScriptTimers::GetTimerRemainingTime(DWORD dwTimerID)
+{
+	ScriptTimer_s* Timer = FindTimer(dwTimerID);
+	if(Timer != NULL)
+	{
+		return Timer->iRemainingTime;
+	}
+	return NULL;
+}
+
+//---------------------------------------------------------------------------------
+
+bool CScriptTimers::IsTimerRepeating(DWORD dwTimerID)
+{
+	ScriptTimer_s* Timer = FindTimer(dwTimerID);
+	if(Timer != NULL)
+	{
+		return !!Timer->bRepeating;
+	}
+	return NULL;
+}
 // EOF
