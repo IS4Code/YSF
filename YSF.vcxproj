@@ -116,7 +116,7 @@
     <ClCompile Include="Inlines.cpp" />
     <ClCompile Include="RPCs.cpp" />
     <ClCompile Include="Scripting.cpp" />
-    <ClCompile Include="scrtimers.cpp" />
+    <ClCompile Include="CScriptTimers.cpp" />
     <ClCompile Include="SDK\amxplugin.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -142,7 +142,7 @@
     <ClInclude Include="Inlines.h" />
     <ClInclude Include="RPCs.h" />
     <ClInclude Include="Scripting.h" />
-    <ClInclude Include="scrtimers.h" />
+    <ClInclude Include="CScriptTimers.h" />
     <ClInclude Include="SDK\amx\amx.h" />
     <ClInclude Include="SDK\amx\getch.h" />
     <ClInclude Include="SDK\plugin.h" />

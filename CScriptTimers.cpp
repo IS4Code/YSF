@@ -1,11 +1,7 @@
-/*
-Leaked by ZYRONIX.net.
-*/
-
 //----------------------------------------------------------------------------------
 
 #include "main.h"
-#include "scrtimers.h"
+#include "CScriptTimers.h"
 //----------------------------------------------------------------------------------
 
 CScriptTimers::CScriptTimers()

@@ -37,7 +37,7 @@
 #include "BitStream.h"
 #include "CVector.h"
 #include "CTypes.h"
-#include "scrtimers.h"
+#include "CScriptTimers.h"
 #include "CGangZonePool.h"
 #include "SDK/amx/amx.h"
 #include <map>

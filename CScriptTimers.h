@@ -1,9 +1,5 @@
-/*
-Leaked by ZYRONIX.net.
-*/
-
-#ifndef SAMPSRV_TIMERS_H
-#define SAMPSRV_TIMERS_H
+#ifndef YSF_TIMERS_H
+#define YSF_TIMERS_H
 
 #include "CTypes.h"
 #include <iostream>
