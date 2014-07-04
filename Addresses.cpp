@@ -115,9 +115,10 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	// Disable GangZonePool deletion at GMX
 	Unlock((void*)ADDR_CNetGame_GMX_GangZoneDelete, 2); // jz      short loc_489DC8 -> change to jnz      short loc_489DC8
 	*(BYTE*)(ADDR_CNetGame_GMX_GangZoneDelete) = 0x75;	// jnz
-
+	/*
 	// Disable pScriptTimers->Process()
 	Unlock((void*)ADDR_CScriptTimers__ProcessCall, 8);
 	memset((void*)ADDR_CScriptTimers__ProcessCall, 0x90, 8);
+	*/
 #endif
 }

@@ -23,6 +23,7 @@ void Redirect(AMX * amx, char const * const from, ucell to, AMX_NATIVE * store);
 DWORD FindPattern(char *pattern, char *mask);
 #endif
 
+bool YSF_ContainsInvalidChars(char * szString);
 void GetAddresses();
 void InstallPreHooks();
 

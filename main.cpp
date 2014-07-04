@@ -159,7 +159,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 			// Recreate GangZone pool
 			pNetGame->pGangZonePool = new CGangZonePool();
-			pNetGame->pScriptTimers = new CScriptTimers();
+			//pNetGame->pScriptTimers = new CScriptTimers();
 
 			// Re-init some RPCs
 			InitRPCs();
@@ -367,13 +367,13 @@ BYTE g_Ticks = 0;
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
 	if(!pServer) return;
-
+	/*
 	if(pNetGame)
 	{
 		if(pNetGame->pScriptTimers)
 			pNetGame->pScriptTimers->Process((DWORD)(GetElapsedTime() * 1000.0f));
 	}
-
+	*/
 	if(++g_Ticks == 10)
 	{
 		g_Ticks = 0;

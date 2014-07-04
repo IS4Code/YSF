@@ -654,13 +654,30 @@ static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
 		return 0;
 
 	CHECK_PARAMS(2, "ModifyFlag");
-	char
-		*name;
+	
+	char *name;
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
 		ModifyFlag(name, (int)params[2]);
 		return 1;
+	}
+	return 0;
+}
+
+static cell AMX_NATIVE_CALL n_IsValidNickName(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsValidNickName");
+
+	char *name;
+	amx_StrParam(amx, params[1], name);
+	if (name)
+	{
+		return !YSF_ContainsInvalidChars(name);
 	}
 	return 0;
 }
@@ -4659,6 +4676,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"ModifyFlag",						n_ModifyFlag},
 
 	// Nick name
+	{"IsValidNickName",					n_IsValidNickName},	// R8
 	{"AllowNickNameCharacter",			n_AllowNickNameCharacter}, // R7
 	{"IsNickNameCharacterAllowed",		n_IsNickNameCharacterAllowed}, // R7
 
@@ -4914,9 +4932,9 @@ int InitScripting(AMX *amx)
 		Redirect(amx, "GangZoneStopFlashForPlayer", (uint64_t)n_YSF_GangZoneStopFlashForPlayer, 0);
 		Redirect(amx, "GangZoneStopFlashForAll", (uint64_t)n_YSF_GangZoneStopFlashForAll, 0);
 
-		Redirect(amx, "SetTimer", (uint64_t)n_YSF_SetTimer, 0);
-		Redirect(amx, "SetTimerEx", (uint64_t)n_YSF_SetTimerEx, 0);
-		Redirect(amx, "KillTimer", (uint64_t)n_YSF_KillTimer, 0);
+		//Redirect(amx, "SetTimer", (uint64_t)n_YSF_SetTimer, 0);
+		//Redirect(amx, "SetTimerEx", (uint64_t)n_YSF_SetTimerEx, 0);
+		//Redirect(amx, "KillTimer", (uint64_t)n_YSF_KillTimer, 0);
 	}
 
 	Redirect(amx, "GetWeaponName", (uint64_t)n_FIXED_GetWeaponName, 0);
