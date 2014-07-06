@@ -189,19 +189,9 @@ BYTE CServer::GetWeather(void)
 	return m_byteWeather;
 }
 
-void CServer::RemoveAttachedObjects(WORD playerid)
-{
-
-}
-
-void CServer::RestoreAttachedObjects(WORD playerid)
-{
-
-}
-
 void CServer::OnPlayerPauseStateChange(int playerid, bool afkstate)
 {
-	logprintf("OnPlayerPauseStateChange %d - %d", playerid, afkstate);
+	//logprintf("OnPlayerPauseStateChange %d - %d", playerid, afkstate);
 	int idx = -1;
 	std::list<AMX*>::iterator second;
 	for(second = pAMXList.begin(); second != pAMXList.end(); ++second)

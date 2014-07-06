@@ -5,9 +5,11 @@
 #ifdef _WIN32
 DWORD CAddress::FUNC_Logprintf_03Z = 0x00486CB0;
 DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x00487310;
+DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x00487460;
 #else
 DWORD CAddress::FUNC_Logprintf_03Z = 0x080A7440;
 DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x080A77D0;
+DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x080A77D0;
 #endif
 
 // Pointers
@@ -57,7 +59,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	ADDR_RECEIVE_HOOKPOS =						FindPattern("\x8B\x4E\x10\x8A\x01\x3C\x16\x74\x10\x83\x7E", "xx?xxxx??xx"); // R2-2: 0x458A20
 	ADDR_CScriptTimers__ProcessCall	 =			FindPattern("\x50\x8B\xCF\xE8\x46\x39\xFF\xFF\x8B\x4E\x34\x85\xC9", "xxx????xx?xx"); // R2-2: 0x48BC22
 
-	logprintf("ADDR_CScriptTimers__ProcessCall: %x", ADDR_CScriptTimers__ProcessCall);
+	//logprintf("ADDR_CScriptTimers__ProcessCall: %x", ADDR_CScriptTimers__ProcessCall);
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:

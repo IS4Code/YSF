@@ -79,6 +79,11 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		version = SAMP_VERSION_03Z_R2_2;
 		strcpy(szVersion, "0.3z R2-2");
 	}
+	else if(logprintf == (logprintf_t)CAddress::FUNC_Logprintf_03ZR3)
+	{
+		version = SAMP_VERSION_03Z_R3;
+		strcpy(szVersion, "0.3z R3");
+	}
 
 	// If not unknown, then initalize things
 	if(version != SAMP_VERSION_UNKNOWN)
@@ -166,7 +171,15 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
+			/*
+			DwordTimerMap *myMap = reinterpret_cast<DwordTimerMap *>(&pNetGame->pScriptTimers->m_Timers);
+			DwordTimerMap::iterator itor;
 
+			for (itor = myMap->begin(); itor != myMap->end(); itor++)
+			{
+				logprintf("remaining time: %d", itor->second->iRemainingTime);
+			}
+			*/
 #ifdef pina
 			logprintf("infernus used: %d", pNetGame->pVehiclePool->modelsUsed[11]);
 			/*
@@ -384,43 +397,6 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 
 			// Process player
 			pPlayerPointer->Process();
-
-			// R7 - TODO
-			CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-			switch(pPlayer->aimSyncData.byteCameraMode)
-			{
-				case 7:
-				case 8:
-				case 16:
-				case 46:
-				case 51:
-				{
-					// Remove objects
-					if(!pPlayerPointer->bObjectsRemoved)
-					{
-						logprintf("remove attacahed objects");
-						// Remove every attached objects from player - but ONLY for given player
-						pServer->RemoveAttachedObjects(playerid);
-
-						pPlayerPointer->bObjectsRemoved = true;
-					}
-					break;
-				}
-				
-				default:
-				{
-					// Restore player objects
-					if(pPlayerPointer->bObjectsRemoved)
-					{
-						logprintf("restore attacahed objects");
-						// Re-attach removed objects
-						pServer->RestoreAttachedObjects(playerid);
-
-						pPlayerPointer->bObjectsRemoved = false;
-					}
-					break;
-				}
-			}
 		}
 	}
 }

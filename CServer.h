@@ -22,9 +22,6 @@ public:
 	void SetWeather(unsigned char byteWeather);
 	unsigned char GetWeather(void);
 
-	void RemoveAttachedObjects(unsigned short playerid);
-	void RestoreAttachedObjects(unsigned short playerid);
-
 	void OnPlayerPauseStateChange(int playerid, bool afkstate);
 private:
 	float m_fGravity;

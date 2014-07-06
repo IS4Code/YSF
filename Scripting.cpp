@@ -803,9 +803,9 @@ static cell AMX_NATIVE_CALL n_GetActiveTimers(AMX *amx, cell *params)
 	if(!pServer)
 		return 0;
 
-	return pNetGame->pScriptTimers->GetTimerCount();
+	return pNetGame->pScriptTimers->m_dwTimerCount;
 }
-
+/*
 // native IsTimerActive(timerid);
 static cell AMX_NATIVE_CALL n_IsTimerActive(AMX *amx, cell *params)
 {
@@ -879,7 +879,7 @@ static cell AMX_NATIVE_CALL n_IsTimerRepeating(AMX *amx, cell *params)
 
 	return pNetGame->pScriptTimers->IsTimerRepeating((DWORD)params[1]);
 }
-
+*/
 // native SetGravity(Float:gravity);
 static cell AMX_NATIVE_CALL n_FIXED_SetGravity( AMX* amx, cell* params )
 {
@@ -4607,7 +4607,7 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 
 	return set_amxstring(amx, params[2], GetWeaponName((BYTE)params[1]), params[3]);
 }
-
+/*
 // native SetTimer(funcname[], interval, repeating)
 static cell AMX_NATIVE_CALL n_YSF_SetTimer(AMX *amx, cell *params)
 {
@@ -4645,7 +4645,7 @@ static cell AMX_NATIVE_CALL n_YSF_KillTimer(AMX *amx, cell *params)
 	pNetGame->pScriptTimers->Kill(params[1]);
 	return 1;
 }
-
+*/
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
 {
@@ -4684,16 +4684,17 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetAvailableClasses",			n_GetAvailableClasses}, // R6
 	{ "GetPlayerClass",					n_GetPlayerClass}, // R6
 	{ "EditPlayerClass",				n_EditPlayerClass}, // R6
-
+	
 	// Timers
 	{ "GetActiveTimers",				n_GetActiveTimers}, // R8
+	/*
 	{ "IsTimerActive",					n_IsTimerActive}, // R8
 	{ "GetTimerFunctionName",			n_GetTimerFunctionName}, // R8
 	{ "SetTimerInterval",				n_SetTimerInterval}, // R8
 	{ "GetTimerInterval",				n_GetTimerInterval}, // R8
 	{ "GetTimerRemainingTime",			n_GetTimerRemainingTime}, // R8
 	{ "IsTimerRepeating",				n_IsTimerRepeating}, // R8
-
+	*/
 	// Special
 	{ "SetPlayerGravity",				n_SetPlayerGravity },
 	{ "GetPlayerGravity",				n_GetPlayerGravity },

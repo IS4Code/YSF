@@ -20,6 +20,7 @@ int RPC_HideGangZone = 0x78;
 int RPC_FlashGangZone = 0x79;
 int RPC_StopFlashGangZone = 0x55;
 int RPC_UpdateScoresPingsIPs = 0x9B;
+int RPC_RemovePlayerAttachedObject = 0x71;
 
 void UpdateScoresPingsIPs(RPCParameters *rpcParams);
 

@@ -237,7 +237,7 @@ class CPassengerSyncData
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CAttachedObject
+class CAttachedObject // sizeof = 52 - 0x34
 {
 public:
         int				iModelID;
@@ -715,7 +715,17 @@ public:
 private:
 };
 
-// 89 = iGameState
+typedef std::map<DWORD, ScriptTimer_s*> DwordTimerMap;
+
+#pragma pack(push, 1)
+class CScriptTimers_
+{
+public:
+	DwordTimerMap m_Timers;
+	DWORD m_dwTimerCount;
+};
+#pragma pack(pop)
+
 #pragma pack(push, 1)
 class CNetGame
 {
@@ -734,7 +744,7 @@ class CNetGame
 		int						iCurrentGameModeRepeat;	// 44 - 48
 		BOOL					bFirstGameModeLoaded;	// 48 - 52
 		BOOL					bLanMode;				// 52 - 56
-		CScriptTimers			*pScriptTimers;			// 56 - 60
+		CScriptTimers_			*pScriptTimers;			// 56 - 60
 		RakServer				*pRak;					// 60 - 64
 		BYTE pad2[61];									// 64 - 125
 		int						iSpawnsAvailable;		// 125 - 129
