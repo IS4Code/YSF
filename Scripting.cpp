@@ -581,10 +581,6 @@ static cell AMX_NATIVE_CALL n_GetFilterScriptName(AMX *amx, cell *params)
 	return set_amxstring(amx, params[2], pNetGame->pFilterScriptPool->m_szFilterScriptName[id], params[3]);
 }
 
-#define CON_VARFLAG_DEBUG		1
-#define CON_VARFLAG_READONLY	2
-#define CON_VARFLAG_RULE		4
-
 // native AddServerRule(name[], value[], flags = CON_VARFLAG_RULE);
 static cell AMX_NATIVE_CALL n_AddServerRule(AMX *amx, cell *params)
 {
@@ -665,6 +661,7 @@ static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
 	return 0;
 }
 
+// native IsValidNickName(name[]);
 static cell AMX_NATIVE_CALL n_IsValidNickName(AMX *amx, cell *params)
 {
 	// If unknown server version
@@ -693,7 +690,7 @@ static cell AMX_NATIVE_CALL n_AllowNickNameCharacter(AMX *amx, cell *params)
 	
 	char character = (char)params[1];
 
-	// Enable %s is disabled for security
+	// Enable %s is disallowed
 	if(character == '%') return 0;
 
 	if(params[2])
@@ -1427,17 +1424,23 @@ static cell AMX_NATIVE_CALL n_GetPlayerSpectateType( AMX* amx, cell* params )
 	return pNetGame->pPlayerPool->pPlayer[playerid]->byteSpectateType;
 }
 
-// native SendBulletData(sender, hitid, hittype, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ);
+// native SendBulletData(sender, hitid, hittype, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
 static cell AMX_NATIVE_CALL n_SendBulletData( AMX* amx, cell* params ) 
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(12, "SendBulletData");
-		
+	CHECK_PARAMS(13, "SendBulletData");
+
 	int playerid = (int)params[1];
+	int forplayerid = (int)params[12];
 	if(!IsPlayerConnected(playerid)) return 0;
+
+	if(forplayerid != -1)
+	{
+		if(!IsPlayerConnected(forplayerid)) return 0;
+	}
 
 	BULLET_SYNC_DATA bulletSync;
 	bulletSync.byteHitType = (BYTE)params[3];
@@ -1450,12 +1453,61 @@ static cell AMX_NATIVE_CALL n_SendBulletData( AMX* amx, cell* params )
 	bs.Write((BYTE)ID_BULLET_SYNC);
 	bs.Write((WORD)playerid);
 	bs.Write((char*)&bulletSync, sizeof(BULLET_SYNC_DATA));
-	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
+
+	if(forplayerid == -1)
+	{
+		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
+	}
+	else
+	{
+		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), false);
+	}
+	return 1;
+}
+
+// native ShowPlayerForPlayer(forplayerid, playerid);
+static cell AMX_NATIVE_CALL n_ShowPlayerForPlayer( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "ShowPlayerForPlayer");
+
+	int forplayerid = (int)params[1];
+	if(!IsPlayerConnected(forplayerid)) return 0;
+
+	int playerid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	RakNet::BitStream bs;
+	bs.Write((WORD)playerid);
+	pRakServer->RPC(&RPC_WorldPlayerAdd, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	return 1;
+}
+
+// native HidePlayerForPlayer(forplayerid, playerid);
+static cell AMX_NATIVE_CALL n_HidePlayerForPlayer( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "HidePlayerForPlayer");
+
+	int forplayerid = (int)params[1];
+	if(!IsPlayerConnected(forplayerid)) return 0;
+
+	int playerid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	RakNet::BitStream bs;
+	bs.Write((WORD)playerid);
+	pRakServer->RPC(&RPC_WorldPlayerRemove, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
 // Scoreboard manipulation
-
 // native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
 static cell AMX_NATIVE_CALL n_TogglePlayerScoresPingsUpdate(AMX *amx, cell *params)
 {
@@ -4661,8 +4713,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	// Generic
 	{"SetModeRestartTime",				n_SetModeRestartTime},
 	{"GetModeRestartTime",				n_GetModeRestartTime},
-	{"SetMaxPlayers",					n_SetMaxPlayers},
-	{"SetMaxNPCs",						n_SetMaxNPCs},
+	{"SetMaxPlayers",					n_SetMaxPlayers}, // R8
+	{"SetMaxNPCs",						n_SetMaxNPCs}, // R8
 
 	{"SetPlayerAdmin",					n_SetPlayerAdmin},
 	{"LoadFilterScript",				n_LoadFilterScript},
@@ -4712,6 +4764,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerWorldBounds",			n_GetPlayerWorldBounds }, // R5
 	{ "IsPlayerInModShop",				n_IsPlayerInModShop }, // R4
 	{ "SendBulletData",					n_SendBulletData }, // R6
+	{ "ShowPlayerForPlayer",			n_ShowPlayerForPlayer }, // R8
+	{ "HidePlayerForPlayer",			n_HidePlayerForPlayer }, // R8
 
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			n_GetPlayerSirenState },

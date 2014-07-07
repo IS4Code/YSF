@@ -189,6 +189,7 @@ BYTE CServer::GetWeather(void)
 	return m_byteWeather;
 }
 
+// forward OnPlayerPauseStateChange(playerid, pausestate);
 void CServer::OnPlayerPauseStateChange(int playerid, bool afkstate)
 {
 	//logprintf("OnPlayerPauseStateChange %d - %d", playerid, afkstate);

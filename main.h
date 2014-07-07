@@ -1,7 +1,6 @@
 #ifndef __YSF_MAINH
 #define __YSF_MAINH
 
-
 #include <stdio.h>
 #include <vector>
 #include <list>
@@ -17,6 +16,11 @@
 #include "RPCs.h"
 #include "Scripting.h"
 #include "CModelSizes.h"
+
+// Defines
+#define CON_VARFLAG_DEBUG		1
+#define CON_VARFLAG_READONLY	2
+#define CON_VARFLAG_RULE		4
 
 #ifdef WIN32
 	#define OS_NAME			"Windows"

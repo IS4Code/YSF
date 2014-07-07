@@ -9,7 +9,7 @@ DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x00487460;
 #else
 DWORD CAddress::FUNC_Logprintf_03Z = 0x080A7440;
 DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x080A77D0;
-DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x080A77D0;
+DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x080A78E0;
 #endif
 
 // Pointers
@@ -84,6 +84,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
  
 			FUNC_CConsole_AddStringVariable =			0x0809F590;
 			FUNC_CConsole_SetStringVariable =			0x0809EDB0;
+			FUNC_CConsole_SetIntVariable =				0x0809ED10;
 			FUNC_CConsole_ModifyVariableFlags =			0x0809EE60;
  
 			FUNC_CFilterscripts_LoadFilterscript =		0x0809FDB0;
@@ -100,6 +101,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
  
 			FUNC_CConsole_AddStringVariable =			0x809F760;
 			FUNC_CConsole_SetStringVariable =			0x809F000;
+			FUNC_CConsole_SetIntVariable =				0x809EEE0;
 			FUNC_CConsole_ModifyVariableFlags =			0x809F030;
  
 			FUNC_CFilterscripts_LoadFilterscript =		0x0809FF80;
@@ -109,7 +111,24 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			FUNC_ContainsInvalidChars =					0x080D2F50;
 			ADDR_RECEIVE_HOOKPOS =						0x80645D6;
 			break;
-		} 
+		}
+		case SAMP_VERSION_03Z_R3:
+		{
+			VAR_pRestartWaitTime =						0x8150B60;
+ 
+			FUNC_CConsole_AddStringVariable =			0x809F760;
+			FUNC_CConsole_SetStringVariable =			0x809F000;
+			FUNC_CConsole_SetIntVariable =				0x809EEE0;
+			FUNC_CConsole_ModifyVariableFlags =			0x809F030;
+ 
+			FUNC_CFilterscripts_LoadFilterscript =		0x0809FF80; // done
+			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A03B0; // done
+
+			ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
+			FUNC_ContainsInvalidChars =					0x080D2F50;
+			ADDR_RECEIVE_HOOKPOS =						0x80645D6;
+			break;
+		}
 	}
 	#endif
 
