@@ -75,58 +75,39 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		}
 	}
 	#else
+
+	FUNC_CConsole_AddStringVariable = 			FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\x85\xF6\x74\x00\x89\x34\x24", "xxxxxxx?xx?xxx?xxx");
+	FUNC_CConsole_SetStringVariable =			FindPattern("\x55\x89\xE5\x83\xEC\x00\x89\x75\x00\x8B\x45\x00\x89\x7D\x00\x8B\x7D\x00\x89\x5D\x00\x89\x44\x24\x00\x8B\x45\x00", "xxxxx?xx?xx?xx?xx?xx?xxx?xx?");
+	FUNC_CConsole_SetIntVariable =				FindPattern("\x74\x00\x83\x38\x00\x74\x00\xC9\x31\xC0\xC3\x8B\x40\x00\x8B\x00", "x?xx?x?xxxxxx?xx") - 0x1A;
+	FUNC_CConsole_ModifyVariableFlags =			FindPattern("\x89\x04\x24\xE8\x00\x00\x00\x00\x85\xC0\x89\xC2\x74\x00\x8B\x45\x00", "xxxx????xxxxx?xx?") - 0x10;
+	 
+	FUNC_CFilterscripts_LoadFilterscript =		FindPattern("\x89\x7D\x00\x8B\x45\x00\x8B\x7D\x00\x89\x5D\x00\x89\x44\x24\x00", "xx?xx?xx?xx?xxx?") - 0x9;
+	FUNC_CFilterscripts_UnLoadFilterscript =	FindPattern("\x31\xF6\x53\x83\xEC\x00\x8B\x45\x00\x8B\x7D\x00\x89\xC3", "xxxxx?xx?xx?xx") - 0x5;
+
+	ADDR_CNetGame_GMX_GangZoneDelete =	NULL;
+	FUNC_ContainsInvalidChars =					FindPattern("\x53\x8B\x5D\x00\x0F\xB6\x0B\x84\xC9\x74\x00\x66\x90", "xxx?xxxxxx?xx") - 0x3;
  
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:
 		{
-			VAR_pRestartWaitTime =						0x8150130;
- 
-			FUNC_CConsole_AddStringVariable =			0x0809F590;
-			FUNC_CConsole_SetStringVariable =			0x0809EDB0;
-			FUNC_CConsole_SetIntVariable =				0x0809ED10;
-			FUNC_CConsole_ModifyVariableFlags =			0x0809EE60;
- 
-			FUNC_CFilterscripts_LoadFilterscript =		0x0809FDB0;
-			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A01E0;
-	
-			ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
-			FUNC_ContainsInvalidChars =					0x080D2A50;
-			ADDR_RECEIVE_HOOKPOS =						0x80645D6;
+			VAR_pRestartWaitTime = 0x8150130;
+
+			ADDR_RECEIVE_HOOKPOS = 0x80645D6;
 			break;
 		}
 		case SAMP_VERSION_03Z_R2_2:
 		{
-			VAR_pRestartWaitTime =						0x8150B60;
- 
-			FUNC_CConsole_AddStringVariable =			0x809F760;
-			FUNC_CConsole_SetStringVariable =			0x809F000;
-			FUNC_CConsole_SetIntVariable =				0x809EEE0;
-			FUNC_CConsole_ModifyVariableFlags =			0x809F030;
- 
-			FUNC_CFilterscripts_LoadFilterscript =		0x0809FF80;
-			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A03B0;
+			VAR_pRestartWaitTime = 0x8150B60;
 
-			ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
-			FUNC_ContainsInvalidChars =					0x080D2F50;
-			ADDR_RECEIVE_HOOKPOS =						0x80645D6;
+			ADDR_RECEIVE_HOOKPOS = 0x80645D6;
 			break;
 		}
 		case SAMP_VERSION_03Z_R3:
 		{
-			VAR_pRestartWaitTime =						0x8150B60;
+			VAR_pRestartWaitTime = 0x8150B60;
  
-			FUNC_CConsole_AddStringVariable =			0x809F760;
-			FUNC_CConsole_SetStringVariable =			0x809F000;
-			FUNC_CConsole_SetIntVariable =				0x809EEE0;
-			FUNC_CConsole_ModifyVariableFlags =			0x809F030;
- 
-			FUNC_CFilterscripts_LoadFilterscript =		0x0809FF80; // done
-			FUNC_CFilterscripts_UnLoadFilterscript =	0x080A03B0; // done
-
-			ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
-			FUNC_ContainsInvalidChars =					0x080D2F50;
-			ADDR_RECEIVE_HOOKPOS =						0x80645D6;
+			ADDR_RECEIVE_HOOKPOS = 0x80645D6;
 			break;
 		}
 	}
