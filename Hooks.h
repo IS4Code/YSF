@@ -3,6 +3,7 @@
 
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
+#include "CTypes.h"
 #include "Inlines.h"
 
 // Hopefully this will be optimised out
@@ -19,9 +20,8 @@ void AssemblyRedirect(void * from, void * to, char * ret);
 
 void Redirect(AMX * amx, char const * const from, ucell to, AMX_NATIVE * store);
 
-#ifdef WIN32
 DWORD FindPattern(char *pattern, char *mask);
-#endif
+bool memory_compare(BYTE *data, const BYTE *pattern, const char *mask);
 
 bool YSF_ContainsInvalidChars(char * szString);
 void GetAddresses();

@@ -109,39 +109,38 @@ void AssemblyRedirect(void * from, void * to, char * ret)
 	AssemblySwap((char *)from, ret, 5);
 }
 
-#ifdef WIN32
 DWORD FindPattern(char *pattern, char *mask)
 {
-	#ifdef WIN32
-	MODULEINFO mInfo = {0};
- 
-	GetModuleInformation(GetCurrentProcess(), GetModuleHandle(NULL), &mInfo, sizeof(MODULEINFO));
- 
-	DWORD base = (DWORD)mInfo.lpBaseOfDll;
-	DWORD size =  (DWORD)mInfo.SizeOfImage;
-	#else
- 
-	#endif
- 
-	DWORD patternLength = (DWORD)strlen(mask);
- 
-	for(DWORD i = 0; i < size - patternLength; i++)
-	{
-		bool found = true;
-		for(DWORD j = 0; j < patternLength; j++)
-		{
-			found &= mask[j] == '?' || pattern[j] == *(char*)(base + i + j);
-		}
- 
-		if(found) 
-		{
-			return base + i;
-		}
-	}
- 
-	return NULL;
-} 
+	DWORD i;
+	DWORD size;
+	DWORD address;
+#ifdef WIN32
+	MODULEINFO info = { 0 };
+
+	address = (DWORD)GetModuleHandle(NULL);
+	GetModuleInformation(GetCurrentProcess(), GetModuleHandle(NULL), &info, sizeof(MODULEINFO));
+	size = (DWORD)info.SizeOfImage;
+#else
+	address = 0x804b480; // around the elf base
+	size = 0x8128B80 - address;
 #endif
+	for(i = 0; i < size; ++i)
+	{
+		if(memory_compare((BYTE *)(address + i), (BYTE *)pattern, mask))
+			return (DWORD)(address + i);
+	}
+	return 0;
+}
+
+bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask)
+{
+	for(; *mask; ++mask, ++data, ++pattern)
+	{
+		if(*mask == 'x' && *data != *pattern)
+			return false;
+	}
+	return (*mask) == NULL;
+}
 
 // From "amx.c", part of the PAWN language runtime:
 // http://code.google.com/p/pawnscript/source/browse/trunk/amx/amx.c
