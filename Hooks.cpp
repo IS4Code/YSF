@@ -1,3 +1,4 @@
+
 /*  
  *  Version: MPL 1.1
  *  
@@ -299,10 +300,14 @@ void ProcessPacket()
 		}
 	}
 
+	logprintf("incomming packet: %d %d", playerIndex, packetId);
 	//logprintf("[%02d:%02d:%02d.%03d] Incoming packet - playerIndex: %d | packetId: %d", time.wHour, time.wMinute, time.wSecond, time.wMilliseconds, playerIndex, packetId);
 }
 
 extern void *InternalRakServer;
+
+void *pInternelRakServer = (void*)pRakServer;
+
 #ifdef WIN32
 unsigned char _declspec(naked) RakNet_Receive_Hook(void)
 #else
@@ -318,7 +323,7 @@ unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
 		push eax
 		mov eax, dword ptr [edi]
 		add eax, 8
-		mov InternalRakServer, eax
+		mov pInternelRakServer, eax
 		pop eax
 
 		mov rakNet_receive_hook_packetid, al
@@ -340,7 +345,7 @@ unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
 		"push eax\n"
 		"mov eax, dword ptr [ebp+8]\n"
 		"mov eax, dword ptr [eax]\n"
-		"mov InternalRakServer, eax\n"
+		"mov pInternelRakServer, eax\n"
 		"pop eax\n"
 	".att_syntax\n");
 

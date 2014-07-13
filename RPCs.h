@@ -49,10 +49,13 @@ extern int RPC_ShowGangZone;
 extern int RPC_HideGangZone;
 extern int RPC_FlashGangZone;
 extern int RPC_StopFlashGangZone;
-extern int RPC_UpdateScoresPingsIPs;
 extern int RPC_RemovePlayerAttachedObject;
 extern int RPC_WorldPlayerAdd;
 extern int RPC_WorldPlayerRemove;
+
+extern int RPC_UpdateScoresPingsIPs;
+extern int RPC_PickedUpPickup;
+extern int RPC_Death;
 
 void InitRPCs();
 

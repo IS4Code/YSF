@@ -232,10 +232,13 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 #endif
 			//logprintf("players: %d, %d", pRakServer->GetAllowedPlayers(), pRakServer->GetConnectedPlayers());
+			
 			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
-		/*
-				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
+		
+				//CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
+				//logprintf("streamedin: %d", pPlayer->byteStreamedIn[0]);
+				/*
 				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d, %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
 					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID_unknown, pPlayer->padvmifassag);
 				for(int i = 0; i != 13; i++)

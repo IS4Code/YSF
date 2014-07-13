@@ -30,7 +30,7 @@
 #endif
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R8 BETA__"
+#define PROJECT_VERSION		"R8"
 
 //
 template <typename T> 

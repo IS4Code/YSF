@@ -19,10 +19,13 @@ int RPC_ShowGangZone = 0x6C;
 int RPC_HideGangZone = 0x78;
 int RPC_FlashGangZone = 0x79;
 int RPC_StopFlashGangZone = 0x55;
-int RPC_UpdateScoresPingsIPs = 0x9B;
 int RPC_RemovePlayerAttachedObject = 0x71;
 int RPC_WorldPlayerAdd = 32;
 int RPC_WorldPlayerRemove = 163;
+
+int RPC_UpdateScoresPingsIPs = 0x9B;
+int RPC_PickedUpPickup = 0x83;
+int RPC_Death = 0x35;
 
 void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 {
@@ -54,8 +57,110 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, HIGH_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
 }
 
+void PickUpPickup(RPCParameters* rpcParams)
+{
+	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
+
+	int PlayerID = pRakServer->GetIndexFromPlayerID(rpcParams->sender),
+		PickupID;
+
+	bsData.Read(PickupID);
+
+	if(PlayerID < 0 || PlayerID >= MAX_PLAYERS) return;
+	if(PickupID < 0 || PickupID >= MAX_PICKUPS) return;
+	if(!pNetGame->pPickupPool->m_bActive[PickupID]) return;
+	
+	CVector PlayerPos = pNetGame->pPlayerPool->pPlayer[PlayerID]->vecPosition;
+	CVector PickupPos = pNetGame->pPickupPool->m_Pickup[PickupID].vecPos;
+
+	float rX = (PlayerPos.fX - PickupPos.fX) * (PlayerPos.fX - PickupPos.fX);
+	float rY = (PlayerPos.fY - PickupPos.fY) * (PlayerPos.fY - PickupPos.fY);
+	float rZ = (PlayerPos.fZ - PickupPos.fZ) * (PlayerPos.fZ - PickupPos.fZ);
+
+	if(sqrt(rX + rY + rZ) > 15.0f) return;
+
+	int idx = -1;
+	std::list<AMX*>::iterator second;
+	for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+	{
+		if(!amx_FindPublic(*second, "OnPlayerPickUpPickup", &idx))
+		{
+			cell
+				ret;
+			amx_Push(*second, PickupID);
+			amx_Push(*second, PlayerID);
+
+			amx_Exec(*second, &ret, idx);
+		}
+	}
+}
+
+
+void Death(RPCParameters* rpcParams)
+{
+	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
+
+	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender),
+		killerid;
+	BYTE reasonid;
+
+	bsData.Read(reasonid);
+	bsData.Read(killerid);
+
+	if(playerid < 0 || playerid >= MAX_PLAYERS) 
+		return;
+
+	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+	
+	// If another player killed
+	if(IsPlayerConnected(killerid))
+	{
+		CPlayer *pKiller = pNetGame->pPlayerPool->pPlayer[killerid];
+
+		// If they doesn't streamed for each other, then won't call OnPlayerDeath
+		logprintf("streamed: %d, %d", pKiller->byteStreamedIn[playerid], pPlayer->byteStreamedIn[killerid]);
+		if(!pKiller->byteStreamedIn[playerid] || !pPlayer->byteStreamedIn[killerid])
+			return;
+
+		//logprintf("syncdata: %d, reason: %d, health: %f", pKiller->syncData.byteWeapon, reasonid, pPlayer->fHealth);
+		if( pKiller->syncData.byteWeapon != reasonid && reasonid <= 46 )// 46 = parachute
+			return;
+		else if( ( reasonid == 48 || reasonid == 49 ) && pKiller->byteState != 2 ) // 48 - carkill // 49 - helikill
+			return;
+
+		//logprintf("[kill] %s killed %s %s", pNetGame->pPlayerPool->szName[killerid], pNetGame->pPlayerPool->szName[playerid], GetWeaponName(reasonid));
+	}
+	else
+	{
+		//logprintf("[death] %s died %d", pNetGame->pPlayerPool->szName[playerid], reasonid);
+	}
+
+	// Call OnPlayerDeath
+	int idx = -1;
+	std::list<AMX*>::iterator second;
+	for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+	{
+		if(!amx_FindPublic(*second, "OnPlayerDeath", &idx))
+		{
+			cell
+				ret;
+			amx_Push(*second, reasonid);
+			amx_Push(*second, killerid);
+			amx_Push(*second, playerid);
+
+			amx_Exec(*second, &ret, idx);
+		}
+	}
+}
+
 void InitRPCs()
 {
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
+
+//	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
+//	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickUpPickup);
+
+	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
 }

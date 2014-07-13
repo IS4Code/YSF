@@ -37,7 +37,6 @@
 #include "BitStream.h"
 #include "CVector.h"
 #include "CTypes.h"
-#include "CScriptTimers.h"
 #include "CGangZonePool.h"
 #include "SDK/amx/amx.h"
 #include <map>
@@ -715,7 +714,21 @@ public:
 private:
 };
 
+#pragma pack(push, 1)
+struct ScriptTimer_s // sizeof = 0x11B (283)
+{
+	char szScriptFunc[255];
+	int iTotalTime;
+	int iRemainingTime;
+	BOOL bRepeating;
+	BOOL bKilled;
+	AMX* pAMX;
+	int iParamCount;
+	void* cellParams;
+};
+
 typedef std::map<DWORD, ScriptTimer_s*> DwordTimerMap;
+#pragma pack(pop)
 
 #pragma pack(push, 1)
 class CScriptTimers_
@@ -1054,10 +1067,10 @@ public:
 	virtual void RemoveRouterInterface( void *routerInterface );
 	virtual void RegisterAsRemoteProcedureCall4( int* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );
 	virtual void RegisterAsRemoteProcedureCall( int* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );
-	virtual void RegisterAsRemoteProcedureCall2( int* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );
-	virtual void RegisterAsRemoteProcedureCallBAD( int* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );
-	virtual void asd(); //UnregisterAsRemoteProcedureCall( int* uniqueID );
+	virtual void RegisterClassMemberRPC( int* uniqueID, void *functionPointer );
+	virtual void UnregisterAsRemoteProcedureCall_( int* uniqueID );
 	virtual void UnregisterAsRemoteProcedureCall( int* uniqueID );
+	virtual void UnregisterAsRemoteProcedureCall___( int* uniqueID );
 	virtual bool RPC(int* uniqueID, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 	virtual void _90();
 	virtual void _94();
