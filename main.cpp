@@ -81,12 +81,8 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	}
 	else if(logprintf == (logprintf_t)CAddress::FUNC_Logprintf_03ZR3)
 	{
-#ifndef WIN32
-		logprintf("Error: 0.3z R3 is not supported on linux! Use R2.");
-#else
 		version = SAMP_VERSION_03Z_R3;
 		strcpy(szVersion, "0.3z R3");
-#endif
 	}
 
 	// If not unknown, then initalize things

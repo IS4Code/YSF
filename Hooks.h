@@ -20,8 +20,8 @@ void AssemblyRedirect(void * from, void * to, char * ret);
 
 void Redirect(AMX * amx, char const * const from, ucell to, AMX_NATIVE * store);
 
+bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask);
 DWORD FindPattern(char *pattern, char *mask);
-bool memory_compare(BYTE *data, const BYTE *pattern, const char *mask);
 
 bool YSF_ContainsInvalidChars(char * szString);
 void GetAddresses();

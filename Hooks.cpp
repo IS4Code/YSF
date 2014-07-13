@@ -110,6 +110,16 @@ void AssemblyRedirect(void * from, void * to, char * ret)
 	AssemblySwap((char *)from, ret, 5);
 }
 
+bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask)
+{
+	for(; *mask; ++mask, ++data, ++pattern)
+	{
+		if(*mask == 'x' && *data != *pattern)
+			return false;
+	}
+	return (*mask) == NULL;
+}
+
 DWORD FindPattern(char *pattern, char *mask)
 {
 	DWORD i;
@@ -133,15 +143,6 @@ DWORD FindPattern(char *pattern, char *mask)
 	return 0;
 }
 
-bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask)
-{
-	for(; *mask; ++mask, ++data, ++pattern)
-	{
-		if(*mask == 'x' && *data != *pattern)
-			return false;
-	}
-	return (*mask) == NULL;
-}
 
 // From "amx.c", part of the PAWN language runtime:
 // http://code.google.com/p/pawnscript/source/browse/trunk/amx/amx.c
@@ -281,6 +282,9 @@ bool IsPlayerUpdatePacket(unsigned char packetId)
 
 void ProcessPacket()
 {
+#ifndef WIN32
+	logprintf("ProcessPacket %x, %x", rakNet_receive_hook_pktptr, rakNet_receive_hook_packetid);
+#endif
 	PlayerIndex playerIndex = rakNet_receive_hook_pktptr->playerIndex;
 	unsigned char packetId = rakNet_receive_hook_packetid;
 
@@ -300,13 +304,8 @@ void ProcessPacket()
 		}
 	}
 
-	logprintf("incomming packet: %d %d", playerIndex, packetId);
 	//logprintf("[%02d:%02d:%02d.%03d] Incoming packet - playerIndex: %d | packetId: %d", time.wHour, time.wMinute, time.wSecond, time.wMilliseconds, playerIndex, packetId);
 }
-
-extern void *InternalRakServer;
-
-void *pInternelRakServer = (void*)pRakServer;
 
 #ifdef WIN32
 unsigned char _declspec(naked) RakNet_Receive_Hook(void)
@@ -319,13 +318,13 @@ unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
 	{
 		mov ecx, dword ptr [esi+0x10]
 		mov al, byte ptr [ecx]
-
+		/*
 		push eax
 		mov eax, dword ptr [edi]
 		add eax, 8
 		mov pInternelRakServer, eax
 		pop eax
-
+		*/
 		mov rakNet_receive_hook_packetid, al
 		mov rakNet_receive_hook_pktptr, esi
 
@@ -339,7 +338,7 @@ unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
 		"add esp, 8\n"
 		"pop ebp\n"
 	".att_syntax\n");
-
+	/*
 	__asm(
 	".intel_syntax noprefix\n"
 		"push eax\n"
@@ -348,7 +347,7 @@ unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
 		"mov pInternelRakServer, eax\n"
 		"pop eax\n"
 	".att_syntax\n");
-
+	*/
 	__asm(
 	".intel_syntax noprefix\n"
 		"mov rakNet_receive_hook_packetid, al\n"
@@ -392,12 +391,12 @@ unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
 
 	__asm(
 	".intel_syntax noprefix\n"
-		"add eax, 6\n"
+		"add eax, 8\n"
 		"mov rakNet_receive_hook_return, eax\n"
 		"pop eax\n"
 
 		"movzx eax, al\n"
-		"sub eax, 0x20\n"
+		"cmp eax, 0x0D8\n"
 
 		"jmp dword ptr [rakNet_receive_hook_return]\n"
 	".att_syntax\n"
@@ -407,21 +406,13 @@ unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
 
 void InstallRakNetReceiveHook()
 {
-#ifdef WIN32
-	if(!memcmp((void *)CAddress::ADDR_RECEIVE_HOOKPOS, "\x8B\x4E\x10\x8A\x01", 5))
-#else
-	//if(!memcmp((void *)CAddress::ADDR_RECEIVE_HOOKPOS, "\x0F\xB6\xC0\x83\xE8\x20", 6)) // 0.3c
-	if(!memcmp((void *)CAddress::ADDR_RECEIVE_HOOKPOS, "\x0F\xB6\xC0\x83\xE8\x21", 6)) // 0.3z
-#endif
-	{
-		installJump(CAddress::ADDR_RECEIVE_HOOKPOS, (void*)RakNet_Receive_Hook);
-	}
-	else
-		logprintf( "Failed to hook RakNet_Receive_Hook (memcmp)\n" );
+	installJump(CAddress::ADDR_RECEIVE_HOOKPOS, (void*)RakNet_Receive_Hook);
 }
 
 void InstallPreHooks()
 {
 	GetAddresses();
+#ifdef WIN32
 	InstallRakNetReceiveHook();
+#endif
 }

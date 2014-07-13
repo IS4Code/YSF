@@ -70,44 +70,56 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		case SAMP_VERSION_03Z_R2_2:
 		{
 			//ADDR_RECEIVE_HOOKPOS =						0x458A20;
-
 			break;
 		}
 	}
 	#else
 
+	// Thx for Mellnik
 	FUNC_CConsole_AddStringVariable = 			FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\x85\xF6\x74\x00\x89\x34\x24", "xxxxxxx?xx?xxx?xxx");
 	FUNC_CConsole_SetStringVariable =			FindPattern("\x55\x89\xE5\x83\xEC\x00\x89\x75\x00\x8B\x45\x00\x89\x7D\x00\x8B\x7D\x00\x89\x5D\x00\x89\x44\x24\x00\x8B\x45\x00", "xxxxx?xx?xx?xx?xx?xx?xxx?xx?");
-	FUNC_CConsole_SetIntVariable =				FindPattern("\x74\x00\x83\x38\x00\x74\x00\xC9\x31\xC0\xC3\x8B\x40\x00\x8B\x00", "x?xx?x?xxxxxx?xx") - 0x1A;
 	FUNC_CConsole_ModifyVariableFlags =			FindPattern("\x89\x04\x24\xE8\x00\x00\x00\x00\x85\xC0\x89\xC2\x74\x00\x8B\x45\x00", "xxxx????xxxxx?xx?") - 0x10;
 	 
 	FUNC_CFilterscripts_LoadFilterscript =		FindPattern("\x89\x7D\x00\x8B\x45\x00\x8B\x7D\x00\x89\x5D\x00\x89\x44\x24\x00", "xx?xx?xx?xx?xxx?") - 0x9;
 	FUNC_CFilterscripts_UnLoadFilterscript =	FindPattern("\x31\xF6\x53\x83\xEC\x00\x8B\x45\x00\x8B\x7D\x00\x89\xC3", "xxxxx?xx?xx?xx") - 0x5;
 
-	ADDR_CNetGame_GMX_GangZoneDelete =	NULL;
+	ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
 	FUNC_ContainsInvalidChars =					FindPattern("\x53\x8B\x5D\x00\x0F\xB6\x0B\x84\xC9\x74\x00\x66\x90", "xxx?xxxxxx?xx") - 0x3;
- 
+	/*
+	logprintf("FUNC_CConsole_AddStringVariable: %X", FUNC_CConsole_AddStringVariable);
+	logprintf("FUNC_CConsole_SetStringVariable: %X", FUNC_CConsole_SetStringVariable);
+	logprintf("FUNC_CConsole_SetIntVariable: %X", FUNC_CConsole_ModifyVariableFlags);
+	logprintf("FUNC_CConsole_ModifyVariableFlags: %X", FUNC_CConsole_ModifyVariableFlags);
+	
+	logprintf("FUNC_CFilterscripts_LoadFilterscript: %X", FUNC_CFilterscripts_LoadFilterscript);
+	logprintf("FUNC_CFilterscripts_UnLoadFilterscript: %X", FUNC_CFilterscripts_UnLoadFilterscript);
+
+	logprintf("FUNC_ContainsInvalidChars: %X", FUNC_ContainsInvalidChars);
+	*/
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:
 		{
-			VAR_pRestartWaitTime = 0x8150130;
+			VAR_pRestartWaitTime =						0x8150130;
+			FUNC_CConsole_SetIntVariable =				0x809ECE0;
 
-			ADDR_RECEIVE_HOOKPOS = 0x80645D6;
+			ADDR_RECEIVE_HOOKPOS =						0x80ACC0F;
 			break;
 		}
 		case SAMP_VERSION_03Z_R2_2:
 		{
-			VAR_pRestartWaitTime = 0x8150B60;
+			VAR_pRestartWaitTime =						0x8150B60;
+			FUNC_CConsole_SetIntVariable =				0x809EEB0;
 
-			ADDR_RECEIVE_HOOKPOS = 0x80645D6;
+			ADDR_RECEIVE_HOOKPOS =						NULL;
 			break;
 		}
 		case SAMP_VERSION_03Z_R3:
 		{
-			VAR_pRestartWaitTime = 0x8150B60;
- 
-			ADDR_RECEIVE_HOOKPOS = 0x80645D6;
+			VAR_pRestartWaitTime =						0x81512F0;
+			FUNC_CConsole_SetIntVariable =				0x809EFB0;
+
+			ADDR_RECEIVE_HOOKPOS =						NULL;
 			break;
 		}
 	}
