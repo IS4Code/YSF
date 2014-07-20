@@ -60,6 +60,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
 	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
 	logprintf("logprintf = 0x%08X\n", *((int*)(&logprintf)));
+	setlocale(LC_ALL, "");
 
 	// Store internal pointers
 	InternalNetGame = ppData[PLUGIN_DATA_NETGAME];

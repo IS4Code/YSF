@@ -6,6 +6,7 @@
 #include "CTypes.h"
 #include "Inlines.h"
 
+extern bool bInPrint;
 // Hopefully this will be optimised out
 // Unfortunately I can't get ANY direct cast to work
 // pointer_to_member seems like a very special structure

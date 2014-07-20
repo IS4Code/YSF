@@ -55,6 +55,9 @@
 // extern
 typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 
+AMX_NATIVE
+	pPrint,
+	pPrintF;
 //----------------------------------------------------
 #ifdef WIN32
 	// native ffind(const pattern[], filename[], len, &idx);
@@ -4698,6 +4701,26 @@ static cell AMX_NATIVE_CALL n_YSF_KillTimer(AMX *amx, cell *params)
 	return 1;
 }
 */
+
+// Intercept "print" and "printf" to just log them (relatively) normally.
+static cell AMX_NATIVE_CALL n_print(AMX * amx, cell * params)
+{
+	bInPrint = true;
+	cell
+		ret = pPrint(amx, params);
+	bInPrint = false;
+	return ret;
+}
+
+static cell AMX_NATIVE_CALL n_printf(AMX * amx, cell * params)
+{
+	bInPrint = true;
+	cell
+		ret = pPrintF(amx, params);
+	bInPrint = false;
+	return ret;
+}
+
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
 {
@@ -4986,6 +5009,9 @@ int InitScripting(AMX *amx)
 		Redirect(amx, "GangZoneFlashForAll", (uint64_t)n_YSF_GangZoneFlashForAll, 0);
 		Redirect(amx, "GangZoneStopFlashForPlayer", (uint64_t)n_YSF_GangZoneStopFlashForPlayer, 0);
 		Redirect(amx, "GangZoneStopFlashForAll", (uint64_t)n_YSF_GangZoneStopFlashForAll, 0);
+
+		Redirect(amx, "print", (ucell)n_print, &pPrint);
+		Redirect(amx, "printf", (ucell)n_printf, &pPrintF);
 
 		//Redirect(amx, "SetTimer", (uint64_t)n_YSF_SetTimer, 0);
 		//Redirect(amx, "SetTimerEx", (uint64_t)n_YSF_SetTimerEx, 0);

@@ -34,6 +34,11 @@
 #include "main.h"
 #include "Utils.h"
 
+#include <iostream>
+#include <fstream>
+#include <stdarg.h>
+#include <time.h>
+
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN
 	#define VC_EXTRALEAN
@@ -61,6 +66,15 @@ RemoveServerRule_t g_pCConsole__RemoveRule = 0;
 ModifyFlag_t g_pCConsole__MFlag = 0;
 LoadFS_t g_pCFilterscript__LoadFS_t = 0;
 UnLoadFS_t g_pCFilterscript__UnLoadFS_t = 0;
+
+char
+	gLogTimeFormat[32] = "[%H:%M:%S]",
+	gLogprintfAssembly[5];
+
+bool
+	bDoLog,
+	bTimestamp,
+	bInPrint;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -192,6 +206,7 @@ void Redirect(AMX * amx, char const * const from, ucell to, AMX_NATIVE * store)
 		}
 	}
 }
+
 ///////////////////////////////////////////////////////////////
 // Hooks //
 ///////////////////////////////////////////////////////////////
@@ -228,6 +243,59 @@ bool YSF_ContainsInvalidChars(char * szString)
 	return false;
 }
 
+// logprintf hook from fixes2 - Thanks to Y_Less
+int FIXES_logprintf(char * str, ...)
+{
+	va_list ap;
+	char
+		dst[1024];
+	va_start(ap, str);
+	vsnprintf(dst, 1024, str, ap);
+	va_end(ap);
+	printf("%s\n", dst);
+	if (bDoLog)
+	{
+		// Re-enable logging.
+		std::ofstream
+			f("server_log.txt", std::fstream::app | std::fstream::out);
+		if (f.is_open())
+		{
+			char
+				ft[32];
+			time_t
+				t;
+			time(&t);
+			strftime(ft, sizeof (ft), gLogTimeFormat, localtime(&t));
+			
+			if(bTimestamp)
+				f << ft << ' ' << dst << std::endl;
+			else
+				f << dst << std::endl;
+			f.close();
+		}
+	}
+
+	// So we can use "printf" without getting stuck in endless loops.
+	if (!bInPrint)
+	{
+		int idx = -1;
+		std::list<AMX*>::iterator second;
+		for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+		{
+			if(!amx_FindPublic(*second, "OnServerMessage", &idx))
+			{
+				cell
+					ret,
+					addr;
+				amx_PushString(*second, &addr, 0, dst, 0, 0);
+				amx_Exec(*second, &ret, idx);
+				amx_Release(*second, addr);
+			}
+		}
+	}
+	return 1;
+}
+
 void GetAddresses()
 {
 	DWORD temp;
@@ -245,8 +313,16 @@ void GetAddresses()
 	// Unlock restart wait time
 	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
 
-	// Redirect ContainsInvalidChars function to our own function
+	// Custom name check
 	AssemblyRedirect((void *)CAddress::FUNC_ContainsInvalidChars, (void *)YSF_ContainsInvalidChars, gContainsInvalidCharsAssembly);
+
+	// OnServerMessage
+	AssemblyRedirect((void *)logprintf, (void *)FIXES_logprintf, gLogprintfAssembly);
+	bInPrint = false;
+	CFGLoad("logtimeformat", gLogTimeFormat, sizeof (gLogTimeFormat));
+	
+	bDoLog = !!CFGLoad("enablelog", 0, 0);
+	bTimestamp = !!CFGLoad("timestamp", 0, 0);
 }
 
 unsigned long rakNet_receive_hook_return;
@@ -294,7 +370,21 @@ void ProcessPacket()
 
 	//SYSTEMTIME time;
 	//GetLocalTime(&time);
+	/*
+	if(packetId == ID_AIM_SYNC)
+	{
+		RakNet::BitStream bsData( rakNet_receive_hook_pktptr->data, rakNet_receive_hook_pktptr->length / 8, false );
+		CSyncData pSyncData;
+		bsData.Read((char*)&pSyncData, sizeof(pSyncData));
 
+		if(pSyncData.byteWeapon == 44)
+		{
+			logprintf("nightvision");
+		}
+	}
+	*/
+
+	//AFK
 	if(IsPlayerUpdatePacket(packetId) && pPlayerData[playerIndex])
 	{
 		if(pNetGame->pPlayerPool->bIsPlayerConnected[playerIndex] && pNetGame->pPlayerPool->pPlayer[playerIndex]->byteState != 0 && pNetGame->pPlayerPool->pPlayer[playerIndex]->byteState != 7)
