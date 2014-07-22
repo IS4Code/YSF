@@ -777,17 +777,20 @@ typedef struct _BULLET_SYNC_DATA
 #pragma pack(pop)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma pack(push, 1)
 struct PlayerID
 {
 	unsigned int binaryAddress;
 	unsigned short port;
 };
+#pragma pack(pop)
 
 const PlayerID UNASSIGNED_PLAYER_ID =
 {
 	0xFFFFFFFF, 0xFFFF
 };
 
+#pragma pack(push, 1)
 /// All RPC functions have the same parameter list - this structure.
 struct RPCParameters
 {
@@ -809,6 +812,7 @@ struct RPCParameters
 	/// If your send is not reliable, it will block for triple the ping time, or until you are disconnected, or you get a reply, whichever is first.
 	RakNet::BitStream *replyToSender;
 };
+#pragma pack(pop)
 
 /// These enumerations are used to describe when packets are delivered.
 enum PacketPriority
@@ -929,6 +933,7 @@ struct RakNetStatisticsStruct
 	RakNetTime connectionStartTime;
 };
 
+#pragma pack(push, 1)
 /// This represents a user message from another system.
 struct Packet
 {
@@ -952,6 +957,7 @@ struct Packet
 	/// Indicates whether to delete the data, or to simply delete the packet.
 	bool deleteData;
 };
+#pragma pack(pop)
 
 #ifdef WIN32
 class RakServer

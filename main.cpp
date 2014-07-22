@@ -391,7 +391,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 			pNetGame->pScriptTimers->Process((DWORD)(GetElapsedTime() * 1000.0f));
 	}
 	*/
-	if(++g_Ticks == 10)
+	if(++g_Ticks == 20)
 	{
 		g_Ticks = 0;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)

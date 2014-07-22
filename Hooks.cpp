@@ -370,19 +370,23 @@ void ProcessPacket()
 
 	//SYSTEMTIME time;
 	//GetLocalTime(&time);
-	/*
+	
 	if(packetId == ID_AIM_SYNC)
 	{
 		RakNet::BitStream bsData( rakNet_receive_hook_pktptr->data, rakNet_receive_hook_pktptr->length / 8, false );
+		BYTE bytePacketID;
 		CSyncData pSyncData;
+
+		bsData.Read(bytePacketID);
 		bsData.Read((char*)&pSyncData, sizeof(pSyncData));
 
-		if(pSyncData.byteWeapon == 44)
+		if(pSyncData.byteWeapon == 44 || pSyncData.byteWeapon == 45)
 		{
+			pSyncData.byteWeapon = 0;
 			logprintf("nightvision");
 		}
 	}
-	*/
+	
 
 	//AFK
 	if(IsPlayerUpdatePacket(packetId) && pPlayerData[playerIndex])

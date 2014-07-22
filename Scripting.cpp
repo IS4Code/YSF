@@ -55,9 +55,8 @@
 // extern
 typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 
-AMX_NATIVE
-	pPrint,
-	pPrintF;
+AMX_NATIVE pPrint, pPrintF, pSendClientMessage;
+
 //----------------------------------------------------
 #ifdef WIN32
 	// native ffind(const pattern[], filename[], len, &idx);
@@ -4721,6 +4720,11 @@ static cell AMX_NATIVE_CALL n_printf(AMX * amx, cell * params)
 	return ret;
 }
 
+static cell AMX_NATIVE_CALL n_SendClientMessageEx(AMX * amx, cell * params)
+{
+	return pSendClientMessage(amx, params);
+}
+
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
 {
@@ -5012,6 +5016,7 @@ int InitScripting(AMX *amx)
 
 		Redirect(amx, "print", (ucell)n_print, &pPrint);
 		Redirect(amx, "printf", (ucell)n_printf, &pPrintF);
+//		Redirect(amx, "SendClientMessage", (ucell)n_SendClientMessage, &pSendClientMessage);
 
 		//Redirect(amx, "SetTimer", (uint64_t)n_YSF_SetTimer, 0);
 		//Redirect(amx, "SetTimerEx", (uint64_t)n_YSF_SetTimerEx, 0);

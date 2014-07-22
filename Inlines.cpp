@@ -35,6 +35,9 @@
 #include <fstream>
 #include <iostream>
 
+#ifdef LINUX
+	#include <cstring>
+#endif
 #define _CONSOLE ((FakeClass *)pConsole)
 
 // Extern functions
