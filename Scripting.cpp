@@ -55,8 +55,6 @@
 // extern
 typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 
-AMX_NATIVE pPrint, pPrintF, pSendClientMessage;
-
 //----------------------------------------------------
 #ifdef WIN32
 	// native ffind(const pattern[], filename[], len, &idx);
@@ -4661,69 +4659,6 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 
 	return set_amxstring(amx, params[2], GetWeaponName((BYTE)params[1]), params[3]);
 }
-/*
-// native SetTimer(funcname[], interval, repeating)
-static cell AMX_NATIVE_CALL n_YSF_SetTimer(AMX *amx, cell *params)
-{
-	CHECK_PARAMS(3, "SetTimer");
-
-	char* szFuncName;
-	amx_StrParam(amx, params[1], szFuncName);
-	return pNetGame->pScriptTimers->New(szFuncName, params[2], params[3], amx);
-}
-
-// native SetTimerEx(funcname[], interval, repeating, parameter)
-static cell AMX_NATIVE_CALL n_YSF_SetTimerEx(AMX *amx, cell *params)
-{
-	if (params[0] < 4 * sizeof (cell))
-	{
-		logprintf("SCRIPT: Bad parameter count (%d < 4): ", params[0]);
-		return 0;
-	}
-	else if (params[0] > 260 * sizeof (cell))
-	{
-		logprintf("SCRIPT: Bad parameter count (%d > 260): ", params[0]);
-		return 0;
-	}
-
-	char* szFuncName;
-	amx_StrParam(amx, params[1], szFuncName);
-	return pNetGame->pScriptTimers->NewEx(szFuncName, params[2], params[3], params, amx);
-}
-
-// native KillTimer(timerid)
-static cell AMX_NATIVE_CALL n_YSF_KillTimer(AMX *amx, cell *params)
-{
-	CHECK_PARAMS(1, "KillTimer");
-
-	pNetGame->pScriptTimers->Kill(params[1]);
-	return 1;
-}
-*/
-
-// Intercept "print" and "printf" to just log them (relatively) normally.
-static cell AMX_NATIVE_CALL n_print(AMX * amx, cell * params)
-{
-	bInPrint = true;
-	cell
-		ret = pPrint(amx, params);
-	bInPrint = false;
-	return ret;
-}
-
-static cell AMX_NATIVE_CALL n_printf(AMX * amx, cell * params)
-{
-	bInPrint = true;
-	cell
-		ret = pPrintF(amx, params);
-	bInPrint = false;
-	return ret;
-}
-
-static cell AMX_NATIVE_CALL n_SendClientMessageEx(AMX * amx, cell * params)
-{
-	return pSendClientMessage(amx, params);
-}
 
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
@@ -5013,14 +4948,6 @@ int InitScripting(AMX *amx)
 		Redirect(amx, "GangZoneFlashForAll", (uint64_t)n_YSF_GangZoneFlashForAll, 0);
 		Redirect(amx, "GangZoneStopFlashForPlayer", (uint64_t)n_YSF_GangZoneStopFlashForPlayer, 0);
 		Redirect(amx, "GangZoneStopFlashForAll", (uint64_t)n_YSF_GangZoneStopFlashForAll, 0);
-
-		Redirect(amx, "print", (ucell)n_print, &pPrint);
-		Redirect(amx, "printf", (ucell)n_printf, &pPrintF);
-//		Redirect(amx, "SendClientMessage", (ucell)n_SendClientMessage, &pSendClientMessage);
-
-		//Redirect(amx, "SetTimer", (uint64_t)n_YSF_SetTimer, 0);
-		//Redirect(amx, "SetTimerEx", (uint64_t)n_YSF_SetTimerEx, 0);
-		//Redirect(amx, "KillTimer", (uint64_t)n_YSF_KillTimer, 0);
 	}
 
 	Redirect(amx, "GetWeaponName", (uint64_t)n_FIXED_GetWeaponName, 0);

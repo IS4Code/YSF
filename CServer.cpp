@@ -45,7 +45,7 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 
 	if(!pPlayerData[playerid] || !pPlayerData[forplayerid])
 	{
-		logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - pPlayerData = 0");
+		//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - pPlayerData = 0");
 		return 0;
 	}
 
@@ -57,7 +57,7 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 			// logprintf("should work");
 			if(!pObjectPool->m_pPlayerObjects[forplayerid][i]) 
 			{
-				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
+				//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
 				return 0;
 			}
 
@@ -113,7 +113,7 @@ bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplaye
 
 	if(!pPlayerData[playerid] || !pPlayerData[forplayerid])
 	{
-		logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - pPlayerData = 0");
+		//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - pPlayerData = 0");
 		return 0;
 	}
 
@@ -124,7 +124,7 @@ bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplaye
 		{
 			if(!pObjectPool->m_pPlayerObjects[forplayerid][i]) 
 			{
-				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - m_pPlayerObjects = 0");
+				//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - m_pPlayerObjects = 0");
 				return 0;
 			}
 

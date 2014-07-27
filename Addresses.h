@@ -77,9 +77,6 @@ public:
 
 	// Receive hook
 	static DWORD			ADDR_RECEIVE_HOOKPOS;
-
-	// Process timers
-	static DWORD			ADDR_CScriptTimers__ProcessCall;
 };
 
 extern std::vector <char> gValidNameCharacters;

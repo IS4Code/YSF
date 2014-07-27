@@ -67,15 +67,6 @@ ModifyFlag_t g_pCConsole__MFlag = 0;
 LoadFS_t g_pCFilterscript__LoadFS_t = 0;
 UnLoadFS_t g_pCFilterscript__UnLoadFS_t = 0;
 
-char
-	gLogTimeFormat[32] = "[%H:%M:%S]",
-	gLogprintfAssembly[5];
-
-bool
-	bDoLog,
-	bTimestamp,
-	bInPrint;
-
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
 {
@@ -243,59 +234,6 @@ bool YSF_ContainsInvalidChars(char * szString)
 	return false;
 }
 
-// logprintf hook from fixes2 - Thanks to Y_Less
-int FIXES_logprintf(char * str, ...)
-{
-	va_list ap;
-	char
-		dst[1024];
-	va_start(ap, str);
-	vsnprintf(dst, 1024, str, ap);
-	va_end(ap);
-	printf("%s\n", dst);
-	if (bDoLog)
-	{
-		// Re-enable logging.
-		std::ofstream
-			f("server_log.txt", std::fstream::app | std::fstream::out);
-		if (f.is_open())
-		{
-			char
-				ft[32];
-			time_t
-				t;
-			time(&t);
-			strftime(ft, sizeof (ft), gLogTimeFormat, localtime(&t));
-			
-			if(bTimestamp)
-				f << ft << ' ' << dst << std::endl;
-			else
-				f << dst << std::endl;
-			f.close();
-		}
-	}
-
-	// So we can use "printf" without getting stuck in endless loops.
-	if (!bInPrint)
-	{
-		int idx = -1;
-		std::list<AMX*>::iterator second;
-		for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
-		{
-			if(!amx_FindPublic(*second, "OnServerMessage", &idx))
-			{
-				cell
-					ret,
-					addr;
-				amx_PushString(*second, &addr, 0, dst, 0, 0);
-				amx_Exec(*second, &ret, idx);
-				amx_Release(*second, addr);
-			}
-		}
-	}
-	return 1;
-}
-
 void GetAddresses()
 {
 	DWORD temp;
@@ -315,14 +253,6 @@ void GetAddresses()
 
 	// Custom name check
 	AssemblyRedirect((void *)CAddress::FUNC_ContainsInvalidChars, (void *)YSF_ContainsInvalidChars, gContainsInvalidCharsAssembly);
-
-	// OnServerMessage
-	AssemblyRedirect((void *)logprintf, (void *)FIXES_logprintf, gLogprintfAssembly);
-	bInPrint = false;
-	CFGLoad("logtimeformat", gLogTimeFormat, sizeof (gLogTimeFormat));
-	
-	bDoLog = !!CFGLoad("enablelog", 0, 0);
-	bTimestamp = !!CFGLoad("timestamp", 0, 0);
 }
 
 unsigned long rakNet_receive_hook_return;

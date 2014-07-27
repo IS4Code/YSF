@@ -391,6 +391,7 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 			pNetGame->pScriptTimers->Process((DWORD)(GetElapsedTime() * 1000.0f));
 	}
 	*/
+	/*
 	if(++g_Ticks == 20)
 	{
 		g_Ticks = 0;
@@ -403,4 +404,5 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 			pPlayerPointer->Process();
 		}
 	}
+	*/
 }
