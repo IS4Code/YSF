@@ -137,7 +137,6 @@
     <ClInclude Include="CServer.h" />
     <ClInclude Include="CTypes.h" />
     <ClInclude Include="CVector.h" />
-    <ClInclude Include="CZone2D.h" />
     <ClInclude Include="Hooks.h" />
     <ClInclude Include="Inlines.h" />
     <ClInclude Include="RPCs.h" />

@@ -30,7 +30,6 @@ int RPC_Death = 0x35;
 void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 {
 	RakNet::BitStream bsUpdate;
-
 	for(PLAYERID i = 0; i < MAX_PLAYERS; i++)
 	{
 		if(pNetGame->pPlayerPool->bIsPlayerConnected[i] && pPlayerData[i])
@@ -70,27 +69,24 @@ void PickUpPickup(RPCParameters* rpcParams)
 	if(PickupID < 0 || PickupID >= MAX_PICKUPS) return;
 	if(!pNetGame->pPickupPool->m_bActive[PickupID]) return;
 	
-	CVector PlayerPos = pNetGame->pPlayerPool->pPlayer[PlayerID]->vecPosition;
-	CVector PickupPos = pNetGame->pPickupPool->m_Pickup[PickupID].vecPos;
+	CVector *vecPlayerPos = &pNetGame->pPlayerPool->pPlayer[PlayerID]->vecPosition;
+	CVector *vecPickupPos = &pNetGame->pPickupPool->m_Pickup[PickupID].vecPos;
 
-	float rX = (PlayerPos.fX - PickupPos.fX) * (PlayerPos.fX - PickupPos.fX);
-	float rY = (PlayerPos.fY - PickupPos.fY) * (PlayerPos.fY - PickupPos.fY);
-	float rZ = (PlayerPos.fZ - PickupPos.fZ) * (PlayerPos.fZ - PickupPos.fZ);
+	float rX = (vecPlayerPos->fX - vecPickupPos->fX) * (vecPlayerPos->fX - vecPickupPos->fX);
+	float rY = (vecPlayerPos->fY - vecPickupPos->fY) * (vecPlayerPos->fY - vecPickupPos->fY);
+	float rZ = (vecPlayerPos->fZ - vecPickupPos->fZ) * (vecPlayerPos->fZ - vecPickupPos->fZ);
 
 	if(sqrt(rX + rY + rZ) > 15.0f) return;
 
 	int idx = -1;
-	std::list<AMX*>::iterator second;
-	for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+	for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
 	{
 		if(!amx_FindPublic(*second, "OnPlayerPickUpPickup", &idx))
 		{
-			cell
-				ret;
 			amx_Push(*second, PickupID);
 			amx_Push(*second, PlayerID);
 
-			amx_Exec(*second, &ret, idx);
+			amx_Exec(*second, NULL, idx);
 		}
 	}
 }
@@ -137,18 +133,15 @@ void Death(RPCParameters* rpcParams)
 
 	// Call OnPlayerDeath
 	int idx = -1;
-	std::list<AMX*>::iterator second;
-	for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+	for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
 	{
 		if(!amx_FindPublic(*second, "OnPlayerDeath", &idx))
 		{
-			cell
-				ret;
 			amx_Push(*second, reasonid);
 			amx_Push(*second, killerid);
 			amx_Push(*second, playerid);
 
-			amx_Exec(*second, &ret, idx);
+			amx_Exec(*second, NULL, idx);
 		}
 	}
 }

@@ -34,11 +34,6 @@
 #include "main.h"
 #include "Utils.h"
 
-#include <iostream>
-#include <fstream>
-#include <stdarg.h>
-#include <time.h>
-
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN
 	#define VC_EXTRALEAN

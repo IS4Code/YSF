@@ -95,9 +95,6 @@
     <ClInclude Include="CGangZonePool.h">
       <Filter>Server</Filter>
     </ClInclude>
-    <ClInclude Include="CZone2D.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="Hooks.h">
       <Filter>Server</Filter>
     </ClInclude>

@@ -60,7 +60,6 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
 	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
 	logprintf("logprintf = 0x%08X\n", *((int*)(&logprintf)));
-	setlocale(LC_ALL, "");
 
 	// Store internal pointers
 	InternalNetGame = ppData[PLUGIN_DATA_NETGAME];
@@ -168,7 +167,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			//pNetGame->pScriptTimers = new CScriptTimers();
 
 			// Re-init some RPCs
-			InitRPCs();
+			//InitRPCs();
 		}
 		else
 		{
@@ -229,11 +228,13 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 #endif
 			//logprintf("players: %d, %d", pRakServer->GetAllowedPlayers(), pRakServer->GetConnectedPlayers());
-			
-			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
+			if(pNetGame->pPlayerPool->bIsPlayerConnected[0])
 			{
-		
-				//CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
+			
+				//pNetGame->pPlayerPool->bIsNPC[3] = 0;	
+				//pNetGame->pPlayerPool->bIsNPC[2] = 1;	
+				logprintf("Version: %s", pNetGame->pPlayerPool->szVersion[0]);
+				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[0];
 				//logprintf("streamedin: %d", pPlayer->byteStreamedIn[0]);
 				/*
 				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d, %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
@@ -251,16 +252,15 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				logprintf("last: %d, lowest: %d, average: %d", pRakServer->GetLastPing(PlayerId), pRakServer->GetAveragePing(PlayerId), pRakServer->GetLowestPing(PlayerId));
 				*/
 				//logprintf("3dtext exists: %d, text: %s", pPlayer->p3DText->isCreated[1], pPlayer->p3DText->TextLabels[1].text);
-				/*
-				logprintf("td: %d, pos: %f, text: %s", pPlayer->pTextdraw->m_bSlotState[1], pPlayer->pTextdraw->m_TextDraw[1]->fX, pPlayer->pTextdraw->m_szFontText[1]);
-				logprintf("ispresent: %d", pPlayer->pTextdraw->m_bHasText[1]);
+				
+				//logprintf("td: %d, pos: %f, text: %s", pPlayer->pTextdraw->m_bSlotState[1], pPlayer->pTextdraw->m_TextDraw[1]->fX, pPlayer->pTextdraw->m_szFontText[1]);
+				//logprintf("ispresent: %d", pPlayer->pTextdraw->m_bHasText[1]);
 
 				logprintf("vec: %f, %f, %f", pPlayer->vecBulletStart.fX, pPlayer->vecBulletStart.fY, pPlayer->vecBulletStart.fZ);
 				logprintf("fcp: %f, %f, %f, %f", pPlayer->vecCPPos.fX, pPlayer->vecCPPos.fY, pPlayer->vecCPPos.fZ, pPlayer->fCPSize);
 				logprintf("fracecp: %f, %f, %f - %f, %f, %f - size: %f, type: %d", pPlayer->vecRaceCPPos.fX, pPlayer->vecRaceCPPos.fY, pPlayer->vecRaceCPPos.fZ, 
 					pPlayer->vecRaceCPNextPos.fX, pPlayer->vecRaceCPNextPos.fY, pPlayer->vecRaceCPNextPos.fZ, pPlayer->fRaceCPSize, pPlayer->byteRaceCPType);
-				logprintf("bInModShop: %d - %d", pPlayer->bIsInModShop, pPlayer->vmifasssag);
-				*/
+				logprintf("bInModShop: %d - %d, spawned: %d, weaponstate: %d, cameramode: %d", pPlayer->bIsInModShop, pPlayer->vmifasssag, pPlayer->bSpawned, pPlayer->aimSyncData.byteWeaponState, pPlayer->aimSyncData.byteCameraMode);
 			}
 
 			/*
@@ -384,14 +384,7 @@ BYTE g_Ticks = 0;
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
 	if(!pServer) return;
-	/*
-	if(pNetGame)
-	{
-		if(pNetGame->pScriptTimers)
-			pNetGame->pScriptTimers->Process((DWORD)(GetElapsedTime() * 1000.0f));
-	}
-	*/
-	/*
+
 	if(++g_Ticks == 20)
 	{
 		g_Ticks = 0;
@@ -404,5 +397,4 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 			pPlayerPointer->Process();
 		}
 	}
-	*/
 }

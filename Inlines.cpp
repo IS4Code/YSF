@@ -32,8 +32,6 @@
 
 #include "main.h"
 #include "Hooks.h"
-#include <fstream>
-#include <iostream>
 
 #ifdef LINUX
 	#include <cstring>
@@ -143,47 +141,6 @@ int set_amxstring(AMX *amx, cell amx_addr, const char *source, int max)
     *dest++=(cell)*source++;
   *dest = 0;
   return dest-start;
-}
-
-// Load an entry from server.cfg.
-int CFGLoad(char const * const name, char * const dest, size_t dlen)
-{
-	std::ifstream
-		f("server.cfg");
-	int
-		ret = 1,
-		len = strlen(name);
-	if (f.is_open())
-	{
-		char
-			line[256];
-		f.clear();
-		while (!f.eof())
-		{
-			f.getline(line, 256);
-			if (f.fail())
-			{
-				goto CFGLoad_close;
-			}
-			// Does the line START with this text?  Anything other than the
-			// first character fails.
-			if (!strncmp(line, name, len) && line[len] <= ' ')
-			{
-				while (line[++len] <= ' ')
-				{
-					if (line[len] == '\0') goto CFGLoad_close;
-				}
-				// Skipped leading spaces, save the value.
-				if (dest) strncpy(dest, line + len, dlen);
-				ret = atoi(line + len);
-				goto CFGLoad_close;
-			}
-		}
-CFGLoad_close:
-		// Yes, I used a label!  I needed to escape from a double loop.
-		f.close();
-	}
-	return ret;
 }
 
 const char* GetWeaponName(BYTE weaponid)

@@ -57,6 +57,7 @@ CPlayerData::~CPlayerData( void )
 void CPlayerData::Process(void)
 {
 	// Process AFK detection
+#ifdef WIN32
 	DWORD dwTickCount = GetTickCount();
 
 	if(bEverUpdated)
@@ -75,7 +76,7 @@ void CPlayerData::Process(void)
 			pServer->OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 	}
-
+#endif
 	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
 	{
 		// If zone id is unused client side, then continue
@@ -112,8 +113,8 @@ void CPlayerData::Process(void)
 		float *fMaxX = &pGangZone->fGangZone[2];
 		float *fMaxY = &pGangZone->fGangZone[3];
 
-		//logprintf("validzone: %d, %f, %f, %f, %f", pPlayer->wClientSideGlobalZoneID[zoneid], *fMinX, *fMinY, *fMaxX, *fMaxY);
-
+		//logprintf("validzone: %d, %f, %f, %f, %f", this->wClientSideGlobalZoneID[zoneid], *fMinX, *fMinY, *fMaxX, *fMaxY);
+		
 		// Ha benne van
 		if(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY && !this->bInGangZone[zoneid])
 		{
@@ -124,17 +125,14 @@ void CPlayerData::Process(void)
 			{
 				// Call callback
 				int idx = -1;
-				std::list<AMX*>::iterator second;
-				for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+				for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
 				{
 					if(!amx_FindPublic(*second, "OnPlayerEnterGangZone", &idx))
 					{
-						cell
-							ret;
 						amx_Push(*second, this->wClientSideGlobalZoneID[zoneid]);
 						amx_Push(*second, this->wPlayerID);
 
-						amx_Exec(*second, &ret, idx);
+						amx_Exec(*second, NULL, idx);
 					}
 				}
 			}
@@ -142,17 +140,14 @@ void CPlayerData::Process(void)
 			{
 				// Call callback
 				int idx = -1;
-				std::list<AMX*>::iterator second;
-				for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+				for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
 				{
 					if(!amx_FindPublic(*second, "OnPlayerEnterPlayerGangZone", &idx))
 					{
-						cell
-							ret;
 						amx_Push(*second, this->wClientSidePlayerZoneID[zoneid]);
 						amx_Push(*second, this->wPlayerID);
 
-						amx_Exec(*second, &ret, idx);
+						amx_Exec(*second, NULL, idx);
 					}
 				}					
 			}
@@ -166,17 +161,14 @@ void CPlayerData::Process(void)
 			{
 				// Call callback
 				int idx = -1;
-				std::list<AMX*>::iterator second;
-				for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+				for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
 				{
 					if(!amx_FindPublic(*second, "OnPlayerLeaveGangZone", &idx))
 					{
-						cell
-							ret;
 						amx_Push(*second, this->wClientSideGlobalZoneID[zoneid]);
 						amx_Push(*second, this->wPlayerID);
 
-						amx_Exec(*second, &ret, idx);
+						amx_Exec(*second, NULL, idx);
 					}
 				}
 			}
@@ -184,17 +176,14 @@ void CPlayerData::Process(void)
 			{
 				// Call callback
 				int idx = -1;
-				std::list<AMX*>::iterator second;
-				for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+				for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
 				{
 					if(!amx_FindPublic(*second, "OnPlayerLeavePlayerGangZone", &idx))
 					{
-						cell
-							ret;
 						amx_Push(*second, this->wClientSidePlayerZoneID[zoneid]);
 						amx_Push(*second, this->wPlayerID);
 
-						amx_Exec(*second, &ret, idx);
+						amx_Exec(*second, NULL, idx);
 					}
 				}					
 			}

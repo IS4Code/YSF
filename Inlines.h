@@ -44,7 +44,6 @@ int LoadFilterscript(char * name);
 int UnLoadFilterscript(char * name);
 bool IsPlayerConnected(int playerid);
 int set_amxstring(AMX *amx, cell amx_addr, const char *source, int max);
-int CFGLoad(char const * const name, char * const dest, size_t dlen);
 const char* GetWeaponName(BYTE weaponid);
 BYTE GetWeaponSlot(BYTE weaponid);
 

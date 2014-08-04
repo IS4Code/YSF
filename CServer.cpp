@@ -44,13 +44,10 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 		return 0;
 
 	if(!pPlayerData[playerid] || !pPlayerData[forplayerid])
-	{
-		//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - pPlayerData = 0");
 		return 0;
-	}
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(int i = 0; i != MAX_OBJECTS; i++)
+	for(WORD i = 0; i != MAX_OBJECTS; i++)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
 		{
@@ -61,6 +58,7 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 				return 0;
 			}
 
+			logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
 			// First create the object for the player. We don't remove it from the pools, so we need to send RPC for the client to create object
 			RakNet::BitStream bs2;
 			bs2.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
@@ -104,6 +102,7 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 
 bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplayerid)
 {
+	return 1;
 	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);
 	PlayerID forplayerId = pRakServer->GetPlayerIDFromIndex(forplayerid);
@@ -112,13 +111,10 @@ bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplaye
 		return 0;
 
 	if(!pPlayerData[playerid] || !pPlayerData[forplayerid])
-	{
-		//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - pPlayerData = 0");
 		return 0;
-	}
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(int i = 0; i != MAX_OBJECTS; i++)
+	for(WORD i = 0; i != MAX_OBJECTS; i++)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
 		{
@@ -128,6 +124,7 @@ bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplaye
 				return 0;
 			}
 
+			logprintf("remove objects i: %d, forplayerid: %d", i, forplayerid);
 			RakNet::BitStream bs;
 			bs.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->wObjectID);
 			pRakServer->RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, forplayerId, 0, 0);
@@ -194,17 +191,14 @@ void CServer::OnPlayerPauseStateChange(int playerid, bool afkstate)
 {
 	//logprintf("OnPlayerPauseStateChange %d - %d", playerid, afkstate);
 	int idx = -1;
-	std::list<AMX*>::iterator second;
-	for(second = pAMXList.begin(); second != pAMXList.end(); ++second)
+	for(std::list<AMX*>::iterator iter = pAMXList.begin(); iter != pAMXList.end(); ++iter)
 	{
-		if(!amx_FindPublic(*second, "OnPlayerPauseStateChange", &idx))
+		if(!amx_FindPublic(*iter, "OnPlayerPauseStateChange", &idx))
 		{
-			cell
-				ret;
-			amx_Push(*second, afkstate);
-			amx_Push(*second, playerid);
+			amx_Push(*iter, afkstate);
+			amx_Push(*iter, playerid);
 
-			amx_Exec(*second, &ret, idx);
+			amx_Exec(*iter, NULL, idx);
 		}
 	}	
 }

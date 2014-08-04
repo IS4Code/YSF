@@ -589,9 +589,8 @@ static cell AMX_NATIVE_CALL n_AddServerRule(AMX *amx, cell *params)
 		return 0;
 
 	CHECK_PARAMS(3, "AddServerRule");
-	char
-		*name,
-		*value;
+	
+	char *name, *value;
 	amx_StrParam(amx, params[1], name);
 	amx_StrParam(amx, params[2], value);
 	if (name && value)
@@ -610,14 +609,32 @@ static cell AMX_NATIVE_CALL n_SetServerRule(AMX *amx, cell *params)
 		return 0;
 
 	CHECK_PARAMS(2, "SetServerRule");
-	char
-		*name,
-		*value;
+
+	char *name, *value;
 	amx_StrParam(amx, params[1], name);
 	amx_StrParam(amx, params[2], value);
 	if (name && value)
 	{
 		SetServerRule(name, value);
+		return 1;
+	}
+	return 0;
+}
+
+// native SetServerRuleInt(name[], value);
+static cell AMX_NATIVE_CALL n_SetServerRuleInt(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetServerRuleInt");
+
+	char *name;
+	amx_StrParam(amx, params[1], name);
+	if (name)
+	{
+		SetServerRuleInt(name, (int)params[2]);
 		return 1;
 	}
 	return 0;
@@ -631,8 +648,8 @@ static cell AMX_NATIVE_CALL n_RemoveServerRule(AMX *amx, cell *params)
 		return 0;
 
 	CHECK_PARAMS(1, "RemoveServerRule");
-	char
-		*name;
+
+	char *name;
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
@@ -802,81 +819,7 @@ static cell AMX_NATIVE_CALL n_GetActiveTimers(AMX *amx, cell *params)
 
 	return pNetGame->pScriptTimers->m_dwTimerCount;
 }
-/*
-// native IsTimerActive(timerid);
-static cell AMX_NATIVE_CALL n_IsTimerActive(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
 
-	CHECK_PARAMS(1, "IsTimerActive");
-
-	return pNetGame->pScriptTimers->IsTimerActive((DWORD)params[1]);
-}
-
-// native GetTimerFunctionName(timerid, funcname[], len = sizeof(funcname));
-static cell AMX_NATIVE_CALL n_GetTimerFunctionName(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(3, "GetTimerFunctionName");
-
-	const char *szFuncname = pNetGame->pScriptTimers->IsTimerActive((DWORD)params[1]) ? pNetGame->pScriptTimers->GetTimerCallback((DWORD)params[1]) : "";
-	
-	return set_amxstring(amx, params[2], szFuncname, params[3]);
-}
-
-// native SetTimerInterval(timerid, time);
-static cell AMX_NATIVE_CALL n_SetTimerInterval(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(2, "SetTimerInterval");
-
-	return pNetGame->pScriptTimers->SetTimerTimeInterval((DWORD)params[1], (int)params[2]);
-}
-
-// native GetTimerInterval(timerid);
-static cell AMX_NATIVE_CALL n_GetTimerInterval(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "GetTimerInterval");
-
-	return pNetGame->pScriptTimers->GetTimerTimeInterval((DWORD)params[1]);
-}
-
-// native GetTimerRemainingTime(timerid);
-static cell AMX_NATIVE_CALL n_GetTimerRemainingTime(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "GetTimerRemainingTime");
-
-	return pNetGame->pScriptTimers->GetTimerRemainingTime((DWORD)params[1]);
-}
-
-// native IsTimerRepeating(timerid);
-static cell AMX_NATIVE_CALL n_IsTimerRepeating(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "IsTimerRepeating");
-
-	return pNetGame->pScriptTimers->IsTimerRepeating((DWORD)params[1]);
-}
-*/
 // native SetGravity(Float:gravity);
 static cell AMX_NATIVE_CALL n_FIXED_SetGravity( AMX* amx, cell* params )
 {
@@ -1108,7 +1051,7 @@ static cell AMX_NATIVE_CALL n_GetSpawnInfo( AMX* amx, cell* params )
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(4, "GetSpawnInfo");
+	CHECK_PARAMS(13, "GetSpawnInfo");
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1505,6 +1448,42 @@ static cell AMX_NATIVE_CALL n_HidePlayerForPlayer( AMX* amx, cell* params )
 	bs.Write((WORD)playerid);
 	pRakServer->RPC(&RPC_WorldPlayerRemove, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
+}
+
+// native SetPlayerVersion(playerid, version[], len = sizeof(version));
+static cell AMX_NATIVE_CALL n_SetPlayerVersion( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "SetPlayerVersion");
+
+	int playerid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+	
+	char *version;
+	amx_StrParam(amx, params[2], version);
+
+	if (!version) return 0;
+	
+	strcpy(pNetGame->pPlayerPool->szVersion[playerid], version);
+	return 1;
+}
+
+// native IsPlayerSpawned(playerid);
+static cell AMX_NATIVE_CALL n_IsPlayerSpawned( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsPlayerSpawned");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bReadyToSpawn;
 }
 
 // Scoreboard manipulation
@@ -4686,6 +4665,7 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	{"AddServerRule",					n_AddServerRule},
 	{"SetServerRule",					n_SetServerRule},
+	{"SetServerRuleInt",				n_SetServerRuleInt},
 	{"RemoveServerRule",				n_RemoveServerRule}, // Doesn't work!
 	{"ModifyFlag",						n_ModifyFlag},
 
@@ -4701,14 +4681,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	
 	// Timers
 	{ "GetActiveTimers",				n_GetActiveTimers}, // R8
-	/*
-	{ "IsTimerActive",					n_IsTimerActive}, // R8
-	{ "GetTimerFunctionName",			n_GetTimerFunctionName}, // R8
-	{ "SetTimerInterval",				n_SetTimerInterval}, // R8
-	{ "GetTimerInterval",				n_GetTimerInterval}, // R8
-	{ "GetTimerRemainingTime",			n_GetTimerRemainingTime}, // R8
-	{ "IsTimerRepeating",				n_IsTimerRepeating}, // R8
-	*/
+
 	// Special
 	{ "SetPlayerGravity",				n_SetPlayerGravity },
 	{ "GetPlayerGravity",				n_GetPlayerGravity },
@@ -4728,6 +4701,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SendBulletData",					n_SendBulletData }, // R6
 	{ "ShowPlayerForPlayer",			n_ShowPlayerForPlayer }, // R8
 	{ "HidePlayerForPlayer",			n_HidePlayerForPlayer }, // R8
+	{ "SetPlayerVersion",				n_SetPlayerVersion }, // R9
+	{ "IsPlayerSpawned",				n_IsPlayerSpawned }, // R4
 
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			n_GetPlayerSirenState },
@@ -4895,8 +4870,6 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPickupModel",					n_GetPickupModel },
 	{ "GetPickupType",					n_GetPickupType },
 	{ "GetPickupVirtualWorld",			n_GetPickupVirtualWorld },
-
-	// Timer functions
 
 	// RakServer functions
 	{ "ClearBanList",					n_ClearBanList },
