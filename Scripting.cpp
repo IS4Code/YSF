@@ -1483,7 +1483,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerSpawned( AMX* amx, cell* params )
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	return pNetGame->pPlayerPool->pPlayer[playerid]->bReadyToSpawn;
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bSpawned;
 }
 
 // Scoreboard manipulation
