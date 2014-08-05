@@ -236,9 +236,10 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				logprintf("Version: %s", pNetGame->pPlayerPool->szVersion[0]);
 				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[0];
 				//logprintf("streamedin: %d", pPlayer->byteStreamedIn[0]);
+				
+				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
+					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID_unknown);
 				/*
-				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d, %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
-					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID_unknown, pPlayer->padvmifassag);
 				for(int i = 0; i != 13; i++)
 				{
 					logprintf("padlofasz %d - %d", i, pPlayer->padlofasz[i]);
@@ -256,11 +257,17 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				//logprintf("td: %d, pos: %f, text: %s", pPlayer->pTextdraw->m_bSlotState[1], pPlayer->pTextdraw->m_TextDraw[1]->fX, pPlayer->pTextdraw->m_szFontText[1]);
 				//logprintf("ispresent: %d", pPlayer->pTextdraw->m_bHasText[1]);
 
+				logprintf("pos: %f, %f, %f", pPlayer->vecPosition.fX, pPlayer->vecPosition.fY, pPlayer->vecPosition.fZ);
 				logprintf("vec: %f, %f, %f", pPlayer->vecBulletStart.fX, pPlayer->vecBulletStart.fY, pPlayer->vecBulletStart.fZ);
 				logprintf("fcp: %f, %f, %f, %f", pPlayer->vecCPPos.fX, pPlayer->vecCPPos.fY, pPlayer->vecCPPos.fZ, pPlayer->fCPSize);
 				logprintf("fracecp: %f, %f, %f - %f, %f, %f - size: %f, type: %d", pPlayer->vecRaceCPPos.fX, pPlayer->vecRaceCPPos.fY, pPlayer->vecRaceCPPos.fZ, 
 					pPlayer->vecRaceCPNextPos.fX, pPlayer->vecRaceCPNextPos.fY, pPlayer->vecRaceCPNextPos.fZ, pPlayer->fRaceCPSize, pPlayer->byteRaceCPType);
-				logprintf("bInModShop: %d - %d, spawned: %d, weaponstate: %d, cameramode: %d", pPlayer->bIsInModShop, pPlayer->vmifasssag, pPlayer->bSpawned, pPlayer->aimSyncData.byteWeaponState, pPlayer->aimSyncData.byteCameraMode);
+				logprintf("bInModShop: %d, spawned: %d, weaponstate: %d, cameramode: %d", pPlayer->bIsInModShop, pPlayer->bSpawned, pPlayer->aimSyncData.byteWeaponState, pPlayer->aimSyncData.byteCameraMode);
+			
+				for(int i = 0; i != 11; i++)
+				{
+					logprintf("skill %d - %d", i, pPlayer->wSkillLevel[i]);
+				}
 			}
 
 			/*

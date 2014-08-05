@@ -1465,10 +1465,12 @@ static cell AMX_NATIVE_CALL n_SetPlayerVersion( AMX* amx, cell* params )
 	char *version;
 	amx_StrParam(amx, params[2], version);
 
-	if (!version) return 0;
-	
-	strcpy(pNetGame->pPlayerPool->szVersion[playerid], version);
-	return 1;
+	if (version)
+	{
+		strcpy(pNetGame->pPlayerPool->szVersion[playerid], version);
+		return 1;
+	}
+	return 0;
 }
 
 // native IsPlayerSpawned(playerid);
@@ -2180,11 +2182,11 @@ static cell AMX_NATIVE_CALL n_GetVehicleSpawnPos( AMX* amx, cell* params )
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->vecSpawnPos.fX);
+	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.vecPos.fX);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->vecSpawnPos.fY);
+	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.vecPos.fY);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->vecSpawnPos.fZ);
+	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.vecPos.fZ);
 	return 1;
 }
 
@@ -2205,9 +2207,9 @@ static cell AMX_NATIVE_CALL n_GetVehicleColor( AMX* amx, cell* params )
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->iColor1;	
+	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.iColor1;	
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->iColor2;
+	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.iColor2;
 	return 1;
 }
 
@@ -2226,7 +2228,7 @@ static cell AMX_NATIVE_CALL n_GetVehiclePaintjob( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->bytePaintjo - 1;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.bytePaintJob - 1;
 }
 
 // native GetVehicleInterior(vehicleid);
@@ -2244,7 +2246,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleInterior( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->iInterior;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iInterior;
 }
 
 // native GetVehicleNumberPlate(vehicleid, plate[], len = sizeof(plate));
@@ -2280,7 +2282,7 @@ static cell AMX_NATIVE_CALL n_SetVehicleRespawnDelay( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	pNetGame->pVehiclePool->pVehicle[vehicleid]->iRespawnDelay = ((int)params[2] * 1000);
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iRespawnTime = ((int)params[2] * 1000);
 	return 1;
 }
 
@@ -2299,7 +2301,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleRespawnDelay( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->iRespawnDelay / 1000;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iRespawnTime / 1000;
 }
 
 // native SetVehicleOccupiedTick(vehicleid, ticks);
