@@ -2164,6 +2164,36 @@ static cell AMX_NATIVE_CALL n_GetPlayerAttachedObject( AMX* amx, cell* params )
 	return 1;
 }
 
+// native IsPlayerEditingObject(playerid);
+static cell AMX_NATIVE_CALL n_IsPlayerEditingObject( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsPlayerEditingObject");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject;
+}
+
+// native IsPlayerEditingAttachedObject(playerid);
+static cell AMX_NATIVE_CALL n_IsPlayerEditingAttachedObject( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsPlayerEditingAttachedObject");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bEditAttachedObject;
+}
+
 // Vehicle functions
 // native GetVehicleSpawnPos(vehicleid, &Float:fX, &Float:fY, &Float:fZ);
 static cell AMX_NATIVE_CALL n_GetVehicleSpawnPos( AMX* amx, cell* params )
@@ -3255,6 +3285,20 @@ static cell AMX_NATIVE_CALL n_IsValid3DTextLabel( AMX* amx, cell* params )
 	return pNetGame->p3DTextPool->m_bIsCreated[id];
 }
 
+// native Is3DTextLabelStreamedIn(playerid, Text3D:id);
+static cell AMX_NATIVE_CALL n_Is3DTextLabelStreamedIn( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(2, "Is3DTextLabelStreamedIn");
+	
+	int playerid = (int)params[1];
+	int id = (int)params[1];
+
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	
+	return pNetGame->pPlayerPool->pPlayer[playerid]->byte3DTextLabelStreamedIn[id];
+}
+
 // native Get3DTextLabelText(id, text[], len = sizeof(text));
 static cell AMX_NATIVE_CALL n_Get3DTextLabelText( AMX* amx, cell* params )
 {
@@ -4268,12 +4312,31 @@ static cell AMX_NATIVE_CALL n_IsValidPickup( AMX* amx, cell* params )
 	// If unknown server version
 	if(!pServer)
 		return 0;
+	
+	CHECK_PARAMS(1, "IsValidPickup");
 
 	int id = (int)params[1];
 	if(id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
 	return pNetGame->pPickupPool->m_bActive[id];
+}
+
+// native IsPickupStreamedIn(playerid, pickupid);
+static cell AMX_NATIVE_CALL n_IsPickupStreamedIn( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "IsPickupStreamedIn");
+
+	int playerid = (int)params[1];
+	int pickupid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(pickupid < 0 || pickupid >= MAX_PICKUPS) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bPickupStreamedIn[pickupid];
 }
 
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
@@ -4704,7 +4767,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "ShowPlayerForPlayer",			n_ShowPlayerForPlayer }, // R8
 	{ "HidePlayerForPlayer",			n_HidePlayerForPlayer }, // R8
 	{ "SetPlayerVersion",				n_SetPlayerVersion }, // R9
-	{ "IsPlayerSpawned",				n_IsPlayerSpawned }, // R4
+	{ "IsPlayerSpawned",				n_IsPlayerSpawned }, // R9
 
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			n_GetPlayerSirenState },
@@ -4753,6 +4816,8 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// special - for attached objects
 	{"GetPlayerAttachedObject",			n_GetPlayerAttachedObject}, // R3
+	{"IsPlayerEditingObject",			n_IsPlayerEditingObject}, // R9
+	{"IsPlayerEditingAttachedObject",	n_IsPlayerEditingAttachedObject}, // R9
 	
 	// Vehicle functions
 	{"GetVehicleSpawnPos",				n_GetVehicleSpawnPos},
@@ -4838,6 +4903,7 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// 3D Text
 	{"IsValid3DTextLabel",				n_IsValid3DTextLabel}, // R4
+	{"Is3DTextLabelStreamedIn",			n_Is3DTextLabelStreamedIn}, // R9
 	{"Get3DTextLabelText",				n_Get3DTextLabelText},
 	{"Get3DTextLabelColor",				n_Get3DTextLabelColor},
 	{"Get3DTextLabelPos",				n_Get3DTextLabelPos},
@@ -4867,7 +4933,8 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// Pickups
 	//{ "DestroyPlayerPickup",			n_DestroyPlayerPickup },
-	{ "IsValidPickup",					n_IsValidPickup },
+	{ "IsValidPickup",					n_IsValidPickup }, 
+	{ "IsPickupStreamedIn",				n_IsPickupStreamedIn }, // R9
 	{ "GetPickupPos",					n_GetPickupPos },
 	{ "GetPickupModel",					n_GetPickupModel },
 	{ "GetPickupType",					n_GetPickupType },
