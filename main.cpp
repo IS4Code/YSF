@@ -237,6 +237,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[0];
 				//logprintf("streamedin: %d", pPlayer->byteStreamedIn[0]);
 				
+				logprintf("dwUnk: %d", pNetGame->pPlayerPool->pad3[0]);
 				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
 					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID_unknown);
 				/*

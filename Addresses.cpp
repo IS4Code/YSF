@@ -38,6 +38,7 @@ DWORD CAddress::ADDR_RECEIVE_HOOKPOS = NULL;
 
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
+	DWORD asd;
 	// Thx for Whitetiger
 	#ifdef WIN32
 	VAR_pRestartWaitTime =						FindPattern("\x00\x00\xC8\xC2\x00\x00", "xxxxxx") + 0x4;
@@ -54,8 +55,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
 	
 	ADDR_RECEIVE_HOOKPOS =						FindPattern("\x8B\x4E\x10\x8A\x01\x3C\x16\x74\x10\x83\x7E", "xx?xxxx??xx"); // R2-2: 0x458A20
+	asd =										FindPattern("\x75\x53\x8B\x81\x19\x23\x00\x00\x85\xC0", "xxxx????xx");
 
-	logprintf("ADDR_RECEIVE_HOOKPOS: %x", ADDR_RECEIVE_HOOKPOS);
+	logprintf("ADDR_RECEIVE_HOOKPOS: %x", asd);
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:
@@ -126,4 +128,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	Unlock((void*)ADDR_CNetGame_GMX_GangZoneDelete, 2); // jz      short loc_489DC8 -> change to jnz      short loc_489DC8
 	*(BYTE*)(ADDR_CNetGame_GMX_GangZoneDelete) = 0x75;	// jnz
 #endif
+	Unlock((void*)asd, 2);
+	*(BYTE*)(asd) = 0xEB;
 }

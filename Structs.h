@@ -297,6 +297,36 @@ public:
 };
 #pragma pack(pop)
 
+#define MAX_PVARS               800
+#define MAX_PVAR_NAME			40
+
+// PVar enumeration
+#define PLAYER_VARTYPE_NONE		0
+#define PLAYER_VARTYPE_INT		1
+#define PLAYER_VARTYPE_STRING	2
+#define PLAYER_VARTYPE_FLOAT	3
+
+typedef struct PVAR_DATA_t
+{
+#pragma pack( 1 )
+        char			pVarName[MAX_PVAR_NAME + 1];
+        BOOL			isReadOnly;
+        int				pVarType;
+        int				intValue;
+        float			floatValue;
+        char*			stringValue;
+} PVAR_DATA;
+
+class CPlayerVar
+{
+#pragma pack( 1 )
+public:
+
+        PVAR_DATA       pVars[MAX_PVARS];
+		BOOL			isPVarActive[MAX_PVARS];
+        int				upperIndex;
+};
+
 #pragma pack(push, 1)
 typedef struct _PLAYER_SPAWN_INFO // size  46
 {
@@ -390,16 +420,16 @@ class CPlayer
 		BOOL					bEditObject;		// 9057
 		BOOL					bEditAttachedObject;// 9061
 		WORD					wDialogID;			// 9065
-		CPlayerTextDraw			*pTextdraw;			// 9067
-		CPlayerText3DLabels		*p3DText;
+		CPlayerTextDraw*		pTextdraw;			// 9067
+		CPlayerText3DLabels*	p3DText;
 		WORD					wPlayerId;			// 0x2373 - 0x2375 
 		int						iUpdateState;		// 0x2375 - 0x2379 
-		DWORD					pad;
+		DWORD					dwLastSyncTick;
 		CAttachedObject			attachedObject[MAX_ATTACHED_OBJECTS];
 		BOOL					attachedObjectSlot[MAX_ATTACHED_OBJECTS];
 		BOOL					bHasAimSync;		// 0x25AD - 0x25B1
-		BOOL					bHasUnkSync;		// 0x25B1 - 0x25B5
-		BOOL					bHasUnk2Sync;		// 0x25B5 - 0x25B9
+		BOOL					bHasTrailerSync;	// 0x25B1 - 0x25B5
+		BOOL					bHasUnoccupiedSync;	// 0x25B5 - 0x25B9
 		BYTE					byteState;			// 0x25B9 - 0x25BA
 		CVector					vecCPPos;			// 9658	- 9670
 		float					fCPSize;			// 9670 - 9674
@@ -441,18 +471,19 @@ class CPlayer
 		float					m_fGameTime;		// 9925 - 9929
 		BYTE					byteSpectateType;	// 9929 - 9930
 		DWORD					wSpectateID;		// 9930 - 9934
-		DWORD					dw_9934;
-		DWORD					dwRecordingFilePos;	// 9938 - 9942
+		DWORD					dwLastStreaming;
+		DWORD					dwNPCRecordingType;	// 9938 - 9942
 		FILE					*pRecordingFile;	// 9942 - 9946
-		DWORD					dw_9946;
-		BYTE					byte_9950;			// 9950 - 9951
+		DWORD					dwFirstNPCWritingTime; // 9946 - 9950 
+		PAD(unused, 9);								// 9950 - 9959
+		CPlayerVar*				pPlayerVars;		// 9959 - 9963
 		// Size = 9963
 
 };
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CPlayerPool
+class CPlayerPool // sizeof = 99520
 {
 	public:
 		DWORD				dwVirtualWorld[MAX_PLAYERS];			// 0 - 2000
