@@ -15,6 +15,37 @@
 #define INVALID_PLAYER_ID			65535
 #define MAX_FILTER_SCRIPTS			16
 
+#define PLAYER_STATE_NONE						0
+#define PLAYER_STATE_ONFOOT						1
+#define PLAYER_STATE_DRIVER						2
+#define PLAYER_STATE_PASSENGER					3
+#define PLAYER_STATE_EXIT_VEHICLE				4
+#define PLAYER_STATE_ENTER_VEHICLE_DRIVER		5
+#define PLAYER_STATE_ENTER_VEHICLE_PASSENGER	6
+#define PLAYER_STATE_WASTED						7
+#define PLAYER_STATE_SPAWNED					8
+#define PLAYER_STATE_SPECTATING					9
+
+#define UPDATE_TYPE_NONE		0
+#define UPDATE_TYPE_ONFOOT		1
+#define UPDATE_TYPE_INCAR		2
+#define UPDATE_TYPE_PASSENGER	3
+
+#define SPECTATE_TYPE_NONE		0
+#define SPECTATE_TYPE_PLAYER	1
+#define SPECTATE_TYPE_VEHICLE	2
+
+#define SPECIAL_ACTION_NONE				0
+#define SPECIAL_ACTION_USEJETPACK		2
+#define SPECIAL_ACTION_DANCE1			5
+#define SPECIAL_ACTION_DANCE2			6
+#define SPECIAL_ACTION_DANCE3			7
+#define SPECIAL_ACTION_DANCE4			8
+#define SPECIAL_ACTION_HANDSUP			10
+#define SPECIAL_ACTION_USECELLPHONE		11
+#define SPECIAL_ACTION_SITTING			12
+#define SPECIAL_ACTION_STOPUSECELLPHONE 13
+
 class CGangZone;
 
 class CPlayerData
@@ -23,6 +54,7 @@ public:
 	CPlayerData(WORD playerid);
 	~CPlayerData(void);
 
+	WORD GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer = false);
 	void Process(void);
 
 	struct sObj

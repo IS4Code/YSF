@@ -228,16 +228,16 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 #endif
 			//logprintf("players: %d, %d", pRakServer->GetAllowedPlayers(), pRakServer->GetConnectedPlayers());
-			if(pNetGame->pPlayerPool->bIsPlayerConnected[0])
+			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
 			
 				//pNetGame->pPlayerPool->bIsNPC[3] = 0;	
 				//pNetGame->pPlayerPool->bIsNPC[2] = 1;	
-				logprintf("Version: %s", pNetGame->pPlayerPool->szVersion[0]);
-				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[0];
+				logprintf("Version: %s", pNetGame->pPlayerPool->szVersion[4]);
+				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
 				//logprintf("streamedin: %d", pPlayer->byteStreamedIn[0]);
 				
-				logprintf("dwUnk: %d", pNetGame->pPlayerPool->pad3[0]);
+				logprintf("dwUnk: %d, picsa: %d, %d", pNetGame->pPlayerPool->pad3[4], pPlayer->picsatuggyami, pPlayer->fasztuggyami);
 				logprintf("playercolor: %d, spectype: %d, specid: %d, dialogid: %d, ctype: %d, weapon: %d", pPlayer->iNickNameColor, pPlayer->byteSpectateType, pPlayer->wSpectateID, 
 					pPlayer->wDialogID, pPlayer->byteRaceCPType, pPlayer->byteWeaponID_unknown);
 				/*
@@ -311,7 +311,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 					//logprintf("mat %d - %X", x, object->paddin__g[x]);
 			}
 			*/
-			/*
+			
 			if(pNetGame->pVehiclePool->pVehicle[500]) 
 			{
 				CSAMPVehicle *pVeh = pNetGame->pVehiclePool->pVehicle[500];
@@ -319,12 +319,14 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				//logprintf("spawn: %f, %f, %f", pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fX, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fY, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fZ);
 				//logprintf("plate: %s, occ: %d, respawn: %d, lastdriver: %d", pVeh->szNumberplate, pVeh->vehOccupiedTick, pVeh->vehRespawnTick, pVeh->wLastDriverID);
 				//logprintf("vehicleid: %d, trailerid: %d, unkshit: %d, turnspeed: %f, %f, %f", pVeh->wVehicleID, pVeh->wTrailerID, pVeh->wCabID, pVeh->vecTurnSpeed.fX, pVeh->vecTurnSpeed.fY, pVeh->vecTurnSpeed.fZ);
+				
+				logprintf("cab: %d, deathnotified: %d, occ: %d, killerid: %d", pVeh->wCabID, pVeh->bDeathNotification, pVeh->bOccupied, pVeh->wKillerID);
 				for(int i = 0; i != 7; i++)
 				{
 					logprintf("passenger %d - %d", i, pVeh->vehPassengers[i]);
 				}
 			}
-			*/
+			
 			
 			/*
 				for(int i = 0; i != 42; i++)

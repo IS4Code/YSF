@@ -54,6 +54,28 @@ CPlayerData::~CPlayerData( void )
 
 }
 
+WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
+{
+	// Loop though every global gang zone
+	if(!bPlayer)
+	{
+		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; wZone++)
+		{
+			if(wClientSideGlobalZoneID[wZone] == zoneid)
+				return wZone;
+		}
+	}
+	else
+	{
+		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; wZone++)
+		{
+			if(wClientSidePlayerZoneID[wZone] == zoneid)
+				return wZone;
+		}	
+	}
+	return 0xFFFF;
+}
+
 void CPlayerData::Process(void)
 {
 	// Process AFK detection

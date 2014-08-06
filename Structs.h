@@ -602,10 +602,10 @@ class CSAMPVehicle
 		VEHMOD_INFO     vehModInfo;			// 183 - 206
 		char			szNumberplate[32 + 1]; // 206
 		VEHPARAM_EX		vehParamEx;			// 239 - 246
-        BOOL			bDeathNotification; // 246 - 250
-        BOOL			bOccupied;			// 250 - 254
-        uint			vehOccupiedTick;	// 254 - 258
-        uint			vehRespawnTick;		// 258 - 262
+        BYTE			bDeathNotification; // 246 - 247
+        BYTE			bOccupied;			// 247 - 248
+        DWORD			vehOccupiedTick;	// 248 - 252
+        DWORD			vehRespawnTick;		// 252 - 256
 };
 #pragma pack(pop)
 

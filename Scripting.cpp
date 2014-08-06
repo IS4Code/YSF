@@ -2195,14 +2195,14 @@ static cell AMX_NATIVE_CALL n_IsPlayerEditingAttachedObject( AMX* amx, cell* par
 }
 
 // Vehicle functions
-// native GetVehicleSpawnPos(vehicleid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_GetVehicleSpawnPos( AMX* amx, cell* params )
+// native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
+static cell AMX_NATIVE_CALL n_GetVehicleSpawnInfo( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(4, "GetVehicleSpawnPos");
+	CHECK_PARAMS(7, "GetVehicleSpawnInfo");
 
 	int vehicleid = (int)params[1];
 	if(vehicleid < 1 || vehicleid >= 2000) return 0;
@@ -2217,6 +2217,12 @@ static cell AMX_NATIVE_CALL n_GetVehicleSpawnPos( AMX* amx, cell* params )
 	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.vecPos.fY);
 	amx_GetAddr(amx, params[4], &cptr);
 	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.vecPos.fZ);
+	amx_GetAddr(amx, params[5], &cptr);
+	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.fRot);
+	amx_GetAddr(amx, params[6], &cptr);
+	*cptr = (cell)pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iColor1;
+	amx_GetAddr(amx, params[7], &cptr);
+	*cptr = (cell)pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iColor2;
 	return 1;
 }
 
@@ -2426,26 +2432,73 @@ static cell AMX_NATIVE_CALL n_GetVehicleLastDriver( AMX* amx, cell* params )
 	return pNetGame->pVehiclePool->pVehicle[vehicleid]->wLastDriverID;
 }
 
-WORD GetIDFromClientSide(WORD playerid, WORD zoneid, bool bPlayer = false)
+// native GetVehicleCab(vehicleid);
+static cell AMX_NATIVE_CALL n_GetVehicleCab( AMX* amx, cell* params )
 {
-	// Loop though every global gang zone
-	if(!bPlayer)
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetVehicleCab");
+
+	int vehicleid = (int)params[1];
+	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+	
+	CSAMPVehicle *pVeh;
+	for(WORD i = 0; i != MAX_VEHICLES; i++)
 	{
-		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; wZone++)
-		{
-			if(pPlayerData[playerid]->wClientSideGlobalZoneID[wZone] == zoneid)
-				return wZone;
-		}
+		pVeh = pNetGame->pVehiclePool->pVehicle[i];
+		if(!pVeh) continue;
+
+		if(pVeh->wTrailerID != 0 && pVeh->wTrailerID == vehicleid)
+			return i;
 	}
-	else
+	return 0;
+}
+
+// native IsVehicleOccupied(vehicleid);
+static cell AMX_NATIVE_CALL n_IsVehicleOccupied( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsVehicleOccupied");
+
+	int vehicleid = (int)params[1];
+	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	
+	CPlayer *pPlayer;
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
-		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; wZone++)
-		{
-			if(pPlayerData[playerid]->wClientSidePlayerZoneID[wZone] == zoneid)
-				return wZone;
-		}	
+		if(!IsPlayerConnected(i)) continue; 
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[i];
+
+		if(pPlayer->wVehicleId == vehicleid && (pPlayer->byteState == PLAYER_STATE_DRIVER || pPlayer->byteState == PLAYER_STATE_PASSENGER)) 
+			return 1;
 	}
-	return 0xFFFF;
+	return 0;
+}
+
+// native IsVehicleDead(vehicleid);
+static cell AMX_NATIVE_CALL n_IsVehicleDead( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsVehicleDead");
+
+	int vehicleid = (int)params[1];
+	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->bDead;
 }
 
 // Gangzone functions
@@ -2472,7 +2525,7 @@ static cell AMX_NATIVE_CALL n_IsGangZoneVisibleForPlayer( AMX* amx, cell* params
 
 	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
 
-	return !!(GetIDFromClientSide(playerid, zoneid) != 0xFF);
+	return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(playerid, zoneid) != 0xFF);
 }
 
 // native GangZoneGetColorForPlayer(playerid, zoneid);
@@ -2487,7 +2540,7 @@ static cell AMX_NATIVE_CALL n_GangZoneGetColorForPlayer( AMX* amx, cell* params 
 	
 	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(playerid, zoneid);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneColor[id];
@@ -2507,7 +2560,7 @@ static cell AMX_NATIVE_CALL n_GangZoneGetFlashColorForPlayer( AMX* amx, cell* pa
 	
 	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneFlashColor[id];
@@ -2527,7 +2580,7 @@ static cell AMX_NATIVE_CALL n_IsGangZoneFlashingForPlayer( AMX* amx, cell* param
 	
 	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->bIsGangZoneFlashing[id];
@@ -2547,7 +2600,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerInGangZone( AMX* amx, cell* params )
 	
 	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->bInGangZone[id];
@@ -3417,7 +3470,7 @@ static cell AMX_NATIVE_CALL n_IsValidPlayer3DTextLabel( AMX* amx, cell* params )
 	CHECK_PARAMS(2, "IsValidPlayer3DTextLabel");
 	
 	int playerid = (int)params[1];
-	int id = (int)params[1];
+	int id = (int)params[2];
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3435,7 +3488,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelText( AMX* amx, cell* params )
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelText");
 	
 	int playerid = (int)params[1];
-	int id = (int)params[1];
+	int id = (int)params[2];
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3452,7 +3505,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelColor( AMX* amx, cell* params 
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelColor");
 	
 	int playerid = (int)params[1];
-	int id = (int)params[1];
+	int id = (int)params[2];
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3469,7 +3522,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelPos( AMX* amx, cell* params )
 	CHECK_PARAMS(5, "GetPlayer3DTextLabelPos");
 	
 	int playerid = (int)params[1];
-	int id = (int)params[1];
+	int id = (int)params[2];
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3493,7 +3546,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelDrawDist( AMX* amx, cell* para
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelDrawDist");
 	
 	int playerid = (int)params[1];
-	int id = (int)params[1];
+	int id = (int)params[2];
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3510,7 +3563,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelLOS( AMX* amx, cell* params )
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelLOS");
 	
 	int playerid = (int)params[1];
-	int id = (int)params[1];
+	int id = (int)params[2];
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3527,7 +3580,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelVirtualW( AMX* amx, cell* para
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelVirtualW");
 	
 	int playerid = (int)params[1];
-	int id = (int)params[1];
+	int id = (int)params[2];
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3536,6 +3589,28 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelVirtualW( AMX* amx, cell* para
 
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
 	return p3DText.virtualWorld;
+}
+
+// native GetPlayer3DTextLabelAttached(playerid, PlayerText3D:id, &attached_playerid, &attached_vehicleid);
+static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelAttached( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(4, "GetPlayer3DTextLabelAttached");
+	
+	int playerid = (int)params[1];
+	int id = (int)params[2];
+
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	
+	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
+
+	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
+	cell* cptr;
+	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = (cell)p3DText.attachedToPlayerID;
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = (cell)p3DText.attachedToVehicleID;
+	return 1;
 }
 
 static cell AMX_NATIVE_CALL n_FIXED_AttachPlayerObjectToPlayer( AMX* amx, cell* params )
@@ -4142,7 +4217,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerInPlayerGangZone( AMX* amx, cell* params )
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->bInGangZone[id];
@@ -4167,7 +4242,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneGetPos( AMX* amx, cell* params )
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 	
-	WORD id = GetIDFromClientSide(playerid, zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
 	if(id != 0xFFFF) 
 	{
 		cell* cptr;
@@ -4195,7 +4270,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerGangZoneVisible( AMX* amx, cell* params )
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	return GetIDFromClientSide(playerid, zoneid, true) != 0xFFFF;
+	return pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true) != 0xFFFF;
 }
 
 // native PlayerGangZoneGetColor(playerid, zoneid);
@@ -4210,7 +4285,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneGetColor( AMX* amx, cell* params )
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneColor[id];
@@ -4230,7 +4305,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneGetFlashColor( AMX* amx, cell* param
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneFlashColor[id];
@@ -4250,7 +4325,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerGangZoneFlashing( AMX* amx, cell* params )
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = GetIDFromClientSide(playerid, zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->bIsGangZoneFlashing[id];
@@ -4816,11 +4891,11 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// special - for attached objects
 	{"GetPlayerAttachedObject",			n_GetPlayerAttachedObject}, // R3
-	{"IsPlayerEditingObject",			n_IsPlayerEditingObject}, // R9
-	{"IsPlayerEditingAttachedObject",	n_IsPlayerEditingAttachedObject}, // R9
+//	{"IsPlayerEditingObject",			n_IsPlayerEditingObject}, // R9 do not reset after player quit from editing
+//	{"IsPlayerEditingAttachedObject",	n_IsPlayerEditingAttachedObject}, // R9
 	
 	// Vehicle functions
-	{"GetVehicleSpawnPos",				n_GetVehicleSpawnPos},
+	{"GetVehicleSpawnInfo",				n_GetVehicleSpawnInfo},
 	{"GetVehicleColor",					n_GetVehicleColor},
 	{"GetVehiclePaintjob",				n_GetVehiclePaintjob},
 	{"GetVehicleInterior",				n_GetVehicleInterior},
@@ -4832,6 +4907,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"SetVehicleRespawnTick",			n_SetVehicleRespawnTick},
 	{"GetVehicleRespawnTick",			n_GetVehicleRespawnTick},
 	{"GetVehicleLastDriver",			n_GetVehicleLastDriver},
+	{"GetVehicleCab",					n_GetVehicleCab}, // R9
+	{"IsVehicleOccupied",				n_IsVehicleOccupied}, // R9
+	{"IsVehicleDead",					n_IsVehicleDead}, // R9
 
 	// Gangzone - Global
 	{"IsValidGangZone",					n_IsValidGangZone},
@@ -4920,6 +4998,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetPlayer3DTextLabelDrawDist",	n_GetPlayer3DTextLabelDrawDist},
 	{"GetPlayer3DTextLabelLOS",			n_GetPlayer3DTextLabelLOS}, // R4
 	{"GetPlayer3DTextLabelVirtualW",	n_GetPlayer3DTextLabelVirtualW}, // R4
+	{"GetPlayer3DTextLabelAttached",	n_GetPlayer3DTextLabelAttached}, // R9
 
 	// Menus
 	{"IsMenuDisabled",					n_IsMenuDisabled}, // R5 
