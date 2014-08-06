@@ -460,8 +460,8 @@ class CPlayer
 		BYTE					byteWeaponID_unknown;	// 9876 - 9877
 		BYTE					byteWeaponshotWeapon;// 9877 - 9878
 		WORD					wTargetId;			// 9878 - 9880
-		DWORD					picsatuggyami;		// 9880
-		BYTE					fasztuggyami;		// 9884
+		DWORD					dwLastShotTick;		// 9880
+		BYTE					byteLastShotWeapon;		// 9884
 		CVector vecBulletStart;
 		CVector vecHitTarget;
 		CVector vecCenterOfHit;

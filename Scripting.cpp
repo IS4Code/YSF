@@ -1465,9 +1465,11 @@ static cell AMX_NATIVE_CALL n_SetPlayerVersion( AMX* amx, cell* params )
 	char *version;
 	amx_StrParam(amx, params[2], version);
 
+	logprintf("1 - %s", version);
 	if (version)
 	{
 		strcpy(pNetGame->pPlayerPool->szVersion[playerid], version);
+		logprintf("2");
 		return 1;
 	}
 	return 0;
@@ -2459,6 +2461,43 @@ static cell AMX_NATIVE_CALL n_GetVehicleCab( AMX* amx, cell* params )
 	return 0;
 }
 
+// native HasVehicleBeenOccupied(vehicleid);
+static cell AMX_NATIVE_CALL n_HasVehicleBeenOccupied( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "HasVehicleBeenOccupied");
+
+	int vehicleid = (int)params[1];
+	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->bOccupied;
+}
+
+// native SetVehicleBeenOccupied(vehicleid, occupied);
+static cell AMX_NATIVE_CALL n_SetVehicleBeenOccupied( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetVehicleBeenOccupied");
+
+	int vehicleid = (int)params[1];
+	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->bOccupied = !!params[2];;
+	return 1;
+}
+
 // native IsVehicleOccupied(vehicleid);
 static cell AMX_NATIVE_CALL n_IsVehicleOccupied( AMX* amx, cell* params )
 {
@@ -2475,7 +2514,7 @@ static cell AMX_NATIVE_CALL n_IsVehicleOccupied( AMX* amx, cell* params )
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		if(!IsPlayerConnected(i)) continue; 
-		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[i];
+		pPlayer = pNetGame->pPlayerPool->pPlayer[i];
 
 		if(pPlayer->wVehicleId == vehicleid && (pPlayer->byteState == PLAYER_STATE_DRIVER || pPlayer->byteState == PLAYER_STATE_PASSENGER)) 
 			return 1;
@@ -2525,7 +2564,7 @@ static cell AMX_NATIVE_CALL n_IsGangZoneVisibleForPlayer( AMX* amx, cell* params
 
 	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
 
-	return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(playerid, zoneid) != 0xFF);
+	return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid) != 0xFF);
 }
 
 // native GangZoneGetColorForPlayer(playerid, zoneid);
@@ -2540,7 +2579,7 @@ static cell AMX_NATIVE_CALL n_GangZoneGetColorForPlayer( AMX* amx, cell* params 
 	
 	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(playerid, zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneColor[id];
@@ -4908,6 +4947,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetVehicleRespawnTick",			n_GetVehicleRespawnTick},
 	{"GetVehicleLastDriver",			n_GetVehicleLastDriver},
 	{"GetVehicleCab",					n_GetVehicleCab}, // R9
+	{"HasVehicleBeenOccupied",			n_HasVehicleBeenOccupied}, // R9
+	{"SetVehicleBeenOccupied",			n_SetVehicleBeenOccupied}, // R9
 	{"IsVehicleOccupied",				n_IsVehicleOccupied}, // R9
 	{"IsVehicleDead",					n_IsVehicleDead}, // R9
 

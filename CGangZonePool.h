@@ -3,7 +3,6 @@
 
 #include "main.h"
 #include "Structs.h"
-#include "CZone2D.h"
 
 class CGangZone
 {

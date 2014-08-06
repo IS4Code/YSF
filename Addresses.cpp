@@ -128,6 +128,4 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	Unlock((void*)ADDR_CNetGame_GMX_GangZoneDelete, 2); // jz      short loc_489DC8 -> change to jnz      short loc_489DC8
 	*(BYTE*)(ADDR_CNetGame_GMX_GangZoneDelete) = 0x75;	// jnz
 #endif
-	Unlock((void*)asd, 2);
-	*(BYTE*)(asd) = 0xEB;
 }
