@@ -54,9 +54,6 @@ extern void *pConsole;
 extern RakServer *pRakServer;
 extern CPlayerData *pPlayerData[MAX_PLAYERS];
 
-// AMX list
-extern std::list<AMX*> pAMXList;
-
 typedef unsigned short PLAYERID;
 
 #ifdef LINUX

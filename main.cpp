@@ -34,9 +34,6 @@ CNetGame *pNetGame = NULL;
 void *pConsole = NULL;
 RakServer *pRakServer = NULL;
 CPlayerData *pPlayerData[MAX_PLAYERS];
-
-// AMX list
-std::list<AMX*> pAMXList;
 //----------------------------------------------------------
 // The Support() function indicates what possibilities this
 // plugin has. The SUPPORTS_VERSION flag is required to check
@@ -171,6 +168,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
+			//logprintf("weather: %d, gravity: %f, bLimitGlobalChatRadius: %d, cjwalk: %d", pNetGame->byteWeather, pNetGame->fGravity, pNetGame->bLimitGlobalChatRadius, pNetGame->bUseCJWalk);
 #ifdef pina
 			logprintf("infernus used: %d", pNetGame->pVehiclePool->modelsUsed[11]);
 			/*

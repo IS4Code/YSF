@@ -842,6 +842,9 @@ class CNetGame
 		BYTE					bLimitPlayerMarkers;	// 116
 		float					fPlayerMarkesLimit;		// 117
 		BOOL					bVehicleFriendlyFire;	// 121
+#ifndef WIN32
+		double					dElapsedTime;			// size = 8
+#endif
 		int						iSpawnsAvailable;		// 125 - 129
 		PLAYER_SPAWN_INFO		AvailableSpawns[300];	// 129 - 13929
 };

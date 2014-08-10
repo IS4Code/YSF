@@ -117,8 +117,8 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			VAR_pRestartWaitTime =						0x81512F0;
 			FUNC_CConsole_SetIntVariable =				0x809EFB0;
 
-			ADDR_RECEIVE_HOOKPOS =						NULL;
-			asd =										0x080AEBB7;
+			ADDR_RECEIVE_HOOKPOS =						0x080AD1FF;
+			asd =										0x080AF1E7;
 			break;
 		}
 	}
@@ -133,6 +133,12 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	{
 		Unlock((void*)asd, 2);
 		*(BYTE*)(asd) = 0xEB;
+	}
+#else
+	if(asd)
+	{
+		Unlock((void*)asd, 2);
+		*(BYTE*)(asd) = 0xE9;
 	}
 #endif
 }

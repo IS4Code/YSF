@@ -56,41 +56,6 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, HIGH_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
 }
 
-void PickUpPickup(RPCParameters* rpcParams)
-{
-	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
-
-	int PlayerID = pRakServer->GetIndexFromPlayerID(rpcParams->sender),
-		PickupID;
-
-	bsData.Read(PickupID);
-
-	if(PlayerID < 0 || PlayerID >= MAX_PLAYERS) return;
-	if(PickupID < 0 || PickupID >= MAX_PICKUPS) return;
-	if(!pNetGame->pPickupPool->m_bActive[PickupID]) return;
-	
-	CVector *vecPlayerPos = &pNetGame->pPlayerPool->pPlayer[PlayerID]->vecPosition;
-	CVector *vecPickupPos = &pNetGame->pPickupPool->m_Pickup[PickupID].vecPos;
-
-	float rX = (vecPlayerPos->fX - vecPickupPos->fX) * (vecPlayerPos->fX - vecPickupPos->fX);
-	float rY = (vecPlayerPos->fY - vecPickupPos->fY) * (vecPlayerPos->fY - vecPickupPos->fY);
-	float rZ = (vecPlayerPos->fZ - vecPickupPos->fZ) * (vecPlayerPos->fZ - vecPickupPos->fZ);
-
-	if(sqrt(rX + rY + rZ) > 15.0f) return;
-
-	int idx = -1;
-	for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
-	{
-		if(!amx_FindPublic(*second, "OnPlayerPickUpPickup", &idx))
-		{
-			amx_Push(*second, PickupID);
-			amx_Push(*second, PlayerID);
-
-			amx_Exec(*second, NULL, idx);
-		}
-	}
-}
-
 
 void Death(RPCParameters* rpcParams)
 {
@@ -130,7 +95,7 @@ void Death(RPCParameters* rpcParams)
 	{
 		//logprintf("[death] %s died %d", pNetGame->pPlayerPool->szName[playerid], reasonid);
 	}
-
+	/*
 	// Call OnPlayerDeath
 	int idx = -1;
 	for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
@@ -144,15 +109,13 @@ void Death(RPCParameters* rpcParams)
 			amx_Exec(*second, NULL, idx);
 		}
 	}
+	*/
 }
 
 void InitRPCs()
 {
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
-
-//	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
-//	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickUpPickup);
 
 //	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
 //	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);

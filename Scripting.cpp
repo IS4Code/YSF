@@ -685,6 +685,33 @@ static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
 	return 0;
 }
 
+// native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, 
+//		&limitplayermarkers, &vehiclefriendlyfire, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
+static cell AMX_NATIVE_CALL n_GetServerSettings(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(13, "GetServerSettings");
+
+	cell *cptr;
+	amx_GetAddr(amx, params[1], &cptr); *cptr = (cell)pNetGame->bShowPlayerMarkers;
+	amx_GetAddr(amx, params[2], &cptr); *cptr = (cell)pNetGame->byteShowNameTags;
+	amx_GetAddr(amx, params[3], &cptr); *cptr = (cell)pNetGame->byteStuntBonus;
+	amx_GetAddr(amx, params[4], &cptr); *cptr = (cell)pNetGame->bUseCJWalk;
+	amx_GetAddr(amx, params[5], &cptr); *cptr = (cell)pNetGame->bLimitGlobalChatRadius;
+	amx_GetAddr(amx, params[6], &cptr); *cptr = (cell)pNetGame->byteDisableEnterExits;
+	amx_GetAddr(amx, params[7], &cptr); *cptr = (cell)pNetGame->byteNameTagLOS;
+	amx_GetAddr(amx, params[8], &cptr); *cptr = (cell)pNetGame->bManulVehicleEngineAndLights;
+	amx_GetAddr(amx, params[9], &cptr); *cptr = (cell)pNetGame->bLimitPlayerMarkers;
+	amx_GetAddr(amx, params[10], &cptr); *cptr = (cell)pNetGame->bVehicleFriendlyFire;
+	amx_GetAddr(amx, params[11], &cptr); *cptr = amx_ftoc(pNetGame->fGlobalChatRadius);
+	amx_GetAddr(amx, params[12], &cptr); *cptr = amx_ftoc(pNetGame->fNameTagDrawDistance);
+	amx_GetAddr(amx, params[13], &cptr); *cptr = amx_ftoc(pNetGame->fPlayerMarkesLimit);
+	return 1;
+}
+
 // native IsValidNickName(name[]);
 static cell AMX_NATIVE_CALL n_IsValidNickName(AMX *amx, cell *params)
 {
@@ -4847,8 +4874,8 @@ static cell AMX_NATIVE_CALL n_FIXED_DestroyVehicle( AMX* amx, cell* params )
 				if(pObject->wAttachedVehicleID == vehicleid)
 				{
 					cell id = i;
-					logprintf("destroy id: %d, frontamx: %d", id, pAMXList.front());
-					pDestroyObject(pAMXList.front(), &id);
+					//logprintf("destroy id: %d, frontamx: %d", id, pAMXList.front());
+					//pDestroyObject(pAMXList.front(), &id);
 				}
 			}
 		}
@@ -4898,6 +4925,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"SetServerRuleInt",				n_SetServerRuleInt},
 	{"RemoveServerRule",				n_RemoveServerRule}, // Doesn't work!
 	{"ModifyFlag",						n_ModifyFlag},
+
+	// Server settings
+	{"GetServerSettings",				n_GetServerSettings},
 
 	// Nick name
 	{"IsValidNickName",					n_IsValidNickName},	// R8
