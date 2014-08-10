@@ -38,7 +38,7 @@ DWORD CAddress::ADDR_RECEIVE_HOOKPOS = NULL;
 
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
-	DWORD asd;
+	DWORD asd = NULL;
 	// Thx for Whitetiger
 	#ifdef WIN32
 	VAR_pRestartWaitTime =						FindPattern("\x00\x00\xC8\xC2\x00\x00", "xxxxxx") + 0x4;
@@ -101,7 +101,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			VAR_pRestartWaitTime =						0x8150130;
 			FUNC_CConsole_SetIntVariable =				0x809ECE0;
 
-			ADDR_RECEIVE_HOOKPOS =						0x80ACC0F;
+			ADDR_RECEIVE_HOOKPOS =						0x80ACC0F;							
 			break;
 		}
 		case SAMP_VERSION_03Z_R2_2:
@@ -118,6 +118,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			FUNC_CConsole_SetIntVariable =				0x809EFB0;
 
 			ADDR_RECEIVE_HOOKPOS =						NULL;
+			asd =										0x080AEBB7;
 			break;
 		}
 	}
@@ -127,5 +128,11 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	// Disable GangZonePool deletion at GMX
 	Unlock((void*)ADDR_CNetGame_GMX_GangZoneDelete, 2); // jz      short loc_489DC8 -> change to jnz      short loc_489DC8
 	*(BYTE*)(ADDR_CNetGame_GMX_GangZoneDelete) = 0x75;	// jnz
+
+	if(asd)
+	{
+		Unlock((void*)asd, 2);
+		*(BYTE*)(asd) = 0xEB;
+	}
 #endif
 }

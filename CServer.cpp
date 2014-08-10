@@ -125,9 +125,8 @@ bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplaye
 			}
 
 			logprintf("remove objects i: %d, forplayerid: %d", i, forplayerid);
-			RakNet::BitStream bs;
-			bs.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->wObjectID);
-			pRakServer->RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, forplayerId, 0, 0);
+			pPlayerData[playerid]->DestroyObject(i);
+
 			/*
 			logprintf("leave %d, %f, %f, %f, %f, %f, %f", gAOData[forplayerid][i].AttachPlayerID,
 				gAOData[forplayerid][i].vecOffset.fX, gAOData[forplayerid][i].vecOffset.fY, gAOData[forplayerid][i].vecOffset.fZ,
@@ -184,21 +183,4 @@ void CServer::SetWeather(BYTE byteWeather)
 BYTE CServer::GetWeather(void)
 {
 	return m_byteWeather;
-}
-
-// forward OnPlayerPauseStateChange(playerid, pausestate);
-void CServer::OnPlayerPauseStateChange(int playerid, bool afkstate)
-{
-	//logprintf("OnPlayerPauseStateChange %d - %d", playerid, afkstate);
-	int idx = -1;
-	for(std::list<AMX*>::iterator iter = pAMXList.begin(); iter != pAMXList.end(); ++iter)
-	{
-		if(!amx_FindPublic(*iter, "OnPlayerPauseStateChange", &idx))
-		{
-			amx_Push(*iter, afkstate);
-			amx_Push(*iter, playerid);
-
-			amx_Exec(*iter, NULL, idx);
-		}
-	}	
 }

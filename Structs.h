@@ -1170,10 +1170,10 @@ public:
 	virtual void PushBackPacket( Packet *packet, bool pushAtHead );
 	virtual void SetRouterInterface( void *routerInterface );
 	virtual void RemoveRouterInterface( void *routerInterface );
-	virtual void UnregisterAsRemoteProcedureCall( int* uniqueID );
-	virtual void RegisterAsRemoteProcedureCall( int* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );
-	virtual void UnregisterAsRemoteProcedureCall_2( int* uniqueID );//RegisterClassMemberRPC( int* uniqueID, void *functionPointer );
-	virtual void UnregisterAsRemoteProcedureCall_3( int* uniqueID );
+	virtual void UnregisterAsRemoteProcedureCall_BAD( int* uniqueID );
+	virtual void RegisterAsRemoteProcedureCall( int* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) ); // 120
+	virtual void RegisterClassMemberRPC( int* uniqueID, void *functionPointer ); // 124
+	virtual void UnregisterAsRemoteProcedureCall( int* uniqueID ); // 128
 	virtual void UnregisterAsRemoteProcedureCall_4( int* uniqueID );
 	virtual void UnregisterAsRemoteProcedureCall_5( int* uniqueID );
 	virtual bool RPC(int* uniqueID, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);

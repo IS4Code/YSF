@@ -32,7 +32,7 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 	RakNet::BitStream bsUpdate;
 	for(PLAYERID i = 0; i < MAX_PLAYERS; i++)
 	{
-		if(pNetGame->pPlayerPool->bIsPlayerConnected[i] && pPlayerData[i])
+		if(IsPlayerConnected(i))
 		{
 			bsUpdate.Write(i);
 
@@ -154,6 +154,6 @@ void InitRPCs()
 //	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
 //	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickUpPickup);
 
-	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
-	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
+//	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
+//	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
 }

@@ -55,6 +55,8 @@ public:
 	~CPlayerData(void);
 
 	WORD GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer = false);
+	bool DestroyObject(WORD objectid);
+
 	void Process(void);
 
 	struct sObj

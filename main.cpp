@@ -10,6 +10,7 @@
 #include "CGangZonePool.h"
 #include "Inlines.h"
 #include "Utils.h"
+#include "CCallbackManager.h"
 
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
@@ -138,7 +139,7 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx) 
 {
-	pAMXList.push_back(amx);
+	CCallbackManager::RegisterAMX(amx);
 	
 	if(pServer)
 	{
@@ -164,22 +165,12 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 			// Recreate GangZone pool
 			pNetGame->pGangZonePool = new CGangZonePool();
-			//pNetGame->pScriptTimers = new CScriptTimers();
 
 			// Re-init some RPCs
-			//InitRPCs();
+			InitRPCs();
 		}
 		else
 		{
-			/*
-			DwordTimerMap *myMap = reinterpret_cast<DwordTimerMap *>(&pNetGame->pScriptTimers->m_Timers);
-			DwordTimerMap::iterator itor;
-
-			for (itor = myMap->begin(); itor != myMap->end(); itor++)
-			{
-				logprintf("remaining time: %d", itor->second->iRemainingTime);
-			}
-			*/
 #ifdef pina
 			logprintf("infernus used: %d", pNetGame->pVehiclePool->modelsUsed[11]);
 			/*
@@ -227,6 +218,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 				*/
 		}
 #endif
+#ifdef anayadfasza
 			//logprintf("players: %d, %d", pRakServer->GetAllowedPlayers(), pRakServer->GetConnectedPlayers());
 			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
 			{
@@ -270,7 +262,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 					logprintf("skill %d - %d", i, pPlayer->wSkillLevel[i]);
 				}
 			}
-
+#endif
 			/*
 			CMenu *pMenu = pNetGame->pMenuPool->menu[1];
 			logprintf("menu: %d", pNetGame->pMenuPool->isCreated[1]);
@@ -311,7 +303,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 					//logprintf("mat %d - %X", x, object->paddin__g[x]);
 			}
 			*/
-			
+			/*
 			if(pNetGame->pVehiclePool->pVehicle[500]) 
 			{
 				CSAMPVehicle *pVeh = pNetGame->pVehiclePool->pVehicle[500];
@@ -326,6 +318,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 					logprintf("passenger %d - %d", i, pVeh->vehPassengers[i]);
 				}
 			}
+			*/
 			
 			
 			/*
@@ -385,7 +378,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx) 
 {
 	// Remove AMX instance from our amxlist
-	pAMXList.remove(amx);
+	CCallbackManager::UnregisterAMX(amx);
 	return AMX_ERR_NONE;
 }
 

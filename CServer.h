@@ -21,8 +21,6 @@ public:
 
 	void SetWeather(unsigned char byteWeather);
 	unsigned char GetWeather(void);
-
-	void OnPlayerPauseStateChange(int playerid, bool afkstate);
 private:
 	float m_fGravity;
 	unsigned char m_byteWeather;

@@ -49,6 +49,9 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="CCallbackManager.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDK\amx\amx.h">
@@ -105,6 +108,9 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CCallbackManager.h">
       <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>
