@@ -102,7 +102,6 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 
 bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplayerid)
 {
-	return 1;
 	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);
 	PlayerID forplayerId = pRakServer->GetPlayerIDFromIndex(forplayerid);

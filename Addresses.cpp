@@ -6,10 +6,12 @@
 DWORD CAddress::FUNC_Logprintf_03Z = 0x00486CB0;
 DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x00487310;
 DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x00487460;
+DWORD CAddress::FUNC_Logprintf_03ZR4 = 0x004875F0;
 #else
 DWORD CAddress::FUNC_Logprintf_03Z = 0x080A7440;
 DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x080A77D0;
 DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x080A78E0;
+DWORD CAddress::FUNC_Logprintf_03ZR4 = 0x80A7A90;
 #endif
 
 // Pointers
@@ -65,7 +67,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			//ADDR_RECEIVE_HOOKPOS =						0x458B80;
 			break;
 		}
-		case SAMP_VERSION_03Z_R2_2:
+		case SAMP_VERSION_03Z_R4:
 		{
 			//ADDR_RECEIVE_HOOKPOS =						0x458A20;
 			break;
@@ -118,7 +120,12 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			FUNC_CConsole_SetIntVariable =				0x809EFB0;
 
 			ADDR_RECEIVE_HOOKPOS =						0x080AD1FF;
-			asd =										0x080AF1E7;
+			break;
+		}
+		case SAMP_VERSION_03Z_R4:
+		{
+			VAR_pRestartWaitTime =						0x81514E0; // 12.0
+			FUNC_CConsole_SetIntVariable =				0x809EFB0; // find for maxplayers
 			break;
 		}
 	}

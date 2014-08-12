@@ -41,6 +41,7 @@ enum eSAMPVersion
 	SAMP_VERSION_03Z,
 	SAMP_VERSION_03Z_R2_2,
 	SAMP_VERSION_03Z_R3,
+	SAMP_VERSION_03Z_R4,
 
 	SAMP_VERSION_SKIPPED,
 };
@@ -53,6 +54,7 @@ public:
 	static DWORD			FUNC_Logprintf_03Z;
 	static DWORD			FUNC_Logprintf_03ZR2_2;
 	static DWORD			FUNC_Logprintf_03ZR3;
+	static DWORD			FUNC_Logprintf_03ZR4;
 
 	// Pointers
 	static DWORD			VAR_ppNetGame;

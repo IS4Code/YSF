@@ -82,6 +82,11 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		version = SAMP_VERSION_03Z_R3;
 		strcpy(szVersion, "0.3z R3");
 	}
+	else if(logprintf == (logprintf_t)CAddress::FUNC_Logprintf_03ZR4)
+	{
+		version = SAMP_VERSION_03Z_R4;
+		strcpy(szVersion, "0.3z R4");
+	}
 
 	// If not unknown, then initalize things
 	if(version != SAMP_VERSION_UNKNOWN)
