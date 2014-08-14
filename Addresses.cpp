@@ -59,7 +59,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	ADDR_RECEIVE_HOOKPOS =						FindPattern("\x8B\x4E\x10\x8A\x01\x3C\x16\x74\x10\x83\x7E", "xx?xxxx??xx"); // R2-2: 0x458A20
 	asd =										FindPattern("\x75\x53\x8B\x81\x19\x23\x00\x00\x85\xC0", "xxxx????xx");
 
-	logprintf("ADDR_RECEIVE_HOOKPOS: %x", asd);
+	//logprintf("ADDR_RECEIVE_HOOKPOS: %x", asd);
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:

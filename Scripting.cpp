@@ -1469,6 +1469,42 @@ static cell AMX_NATIVE_CALL n_HidePlayerForPlayer( AMX* amx, cell* params )
 	return 1;
 }
 
+// native SetPlayerChatBubbleForPlayer(forplayerid, playerid, text[], color, Float:drawdistance, expiretime);
+static cell AMX_NATIVE_CALL n_SetPlayerChatBubbleForPlayer( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(6, "SetPlayerChatBubbleForPlayer");
+
+	int forplayerid = (int)params[1];
+	if(!IsPlayerConnected(forplayerid)) return 0;
+
+	int playerid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	int color = (int)params[3];
+	float drawdistance = amx_ctof(params[4]);
+	int expiretime = (int)params[5];
+
+	char *str;
+	amx_StrParam(amx, params[6], str);
+	if(str)
+	{
+		BYTE len = strlen(str);
+		RakNet::BitStream bs;
+		bs.Write((WORD)playerid);
+		bs.Write(color);
+		bs.Write(drawdistance);
+		bs.Write(expiretime);
+		bs.Write(len);
+		bs.Write(str, len);
+		pRakServer->RPC(&RPC_ChatBubble, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	}
+	return 0;
+}
+
 // native SetPlayerVersion(playerid, version[];
 static cell AMX_NATIVE_CALL n_SetPlayerVersion( AMX* amx, cell* params )
 {
@@ -4845,7 +4881,7 @@ static cell AMX_NATIVE_CALL n_FIXED_DestroyVehicle( AMX* amx, cell* params )
 	// If unknown server version
 	if(!pServer)
 		return 0;
-
+#ifdef adasdas
 	WORD vehicleid = params[1];
 	cell ret = pDestroyVehicle(amx, params);
 	if(ret)
@@ -4881,7 +4917,8 @@ static cell AMX_NATIVE_CALL n_FIXED_DestroyVehicle( AMX* amx, cell* params )
 		}
 
 	}
-	return ret;
+#endif
+	return 1;
 }
 
 static cell AMX_NATIVE_CALL n_FIXED_DestroyObject( AMX* amx, cell* params )
@@ -4961,6 +4998,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SendBulletData",					n_SendBulletData }, // R6
 	{ "ShowPlayerForPlayer",			n_ShowPlayerForPlayer }, // R8
 	{ "HidePlayerForPlayer",			n_HidePlayerForPlayer }, // R8
+	{ "SetPlayerChatBubbleForPlayer",	n_SetPlayerChatBubbleForPlayer},
 	{ "SetPlayerVersion",				n_SetPlayerVersion }, // R9
 	{ "IsPlayerSpawned",				n_IsPlayerSpawned }, // R9
 

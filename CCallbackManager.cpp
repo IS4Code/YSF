@@ -1,5 +1,5 @@
 #include <list>
-#include "SDK\plugin.h"
+#include "SDK/plugin.h"
 #include "CCallbackManager.h"
 
 std::list<AMX *> CCallbackManager::m_listAMX;

@@ -22,6 +22,7 @@ int RPC_StopFlashGangZone = 0x55;
 int RPC_RemovePlayerAttachedObject = 0x71;
 int RPC_WorldPlayerAdd = 32;
 int RPC_WorldPlayerRemove = 163;
+int RPC_ChatBubble = 0x3B;
 
 int RPC_UpdateScoresPingsIPs = 0x9B;
 int RPC_PickedUpPickup = 0x83;

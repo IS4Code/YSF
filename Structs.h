@@ -180,9 +180,9 @@ class CAimSyncData
 		CVector			vecFront;				// 0x0001 - 0x000D
 		CVector			vecPosition;			// 0x000D - 0x0019
 		float			fZAim;					// 0x0019 - 0x001D
-		BYTE			byteWeaponState;	// 0x001D - 0x001E
-		//BYTE			byteCameraZoom : 6;
-		BYTE			byteAspectRatio;		// 0x001E - 0x001F
+		BYTE			byteWeaponState : 6;	// 0x001D - 0x001E
+		BYTE			byteCameraZoom : 2;
+		BYTE			unk;		// 0x001E - 0x001F
 		// Size = 0x1F
 };
 #pragma pack(pop)
@@ -222,7 +222,8 @@ class CPassengerSyncData
 {
 	public:
 		WORD			wVehicleId;				// 0x005E - 0x0060
-		BYTE			byteSeatId;				// 0x0060 - 0x0061
+		BYTE			byteSeatFlags : 7;
+		BYTE			byteDriveBy : 1;
 		BYTE			bytePlayerWeapon;		// 0x0061 - 0x0062
 		BYTE			bytePlayerHealth;		// 0x0062 - 0x0063
 		BYTE			bytePlayerArmour;		// 0x0063 - 0x0064
