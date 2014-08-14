@@ -1501,6 +1501,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerChatBubbleForPlayer( AMX* amx, cell* para
 		bs.Write(len);
 		bs.Write(str, len);
 		pRakServer->RPC(&RPC_ChatBubble, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+		return 1;
 	}
 	return 0;
 }
