@@ -11,6 +11,7 @@
 #include "Inlines.h"
 #include "Utils.h"
 #include "CCallbackManager.h"
+#include "CPickupPool.h"
 
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
@@ -167,6 +168,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 			// Recreate GangZone pool
 			pNetGame->pGangZonePool = new CGangZonePool();
+			pNetGame->pPickupPool = new CPickupPool();
 
 			// Re-init some RPCs
 			InitRPCs();
@@ -385,22 +387,9 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 	return AMX_ERR_NONE;
 }
 
-BYTE g_Ticks = 0;
-
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
 	if(!pServer) return;
 
-	if(++g_Ticks == 20)
-	{
-		g_Ticks = 0;
-		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
-		{
-			CPlayerData *pPlayerPointer = pPlayerData[playerid];
-			if(!pPlayerPointer) continue;
-
-			// Process player
-			pPlayerPointer->Process();
-		}
-	}
+	pServer->Process();
 }

@@ -52,6 +52,9 @@
     <ClCompile Include="CCallbackManager.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="CPickupPool.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDK\amx\amx.h">
@@ -111,6 +114,9 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="CCallbackManager.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CPickupPool.h">
       <Filter>Server</Filter>
     </ClInclude>
   </ItemGroup>

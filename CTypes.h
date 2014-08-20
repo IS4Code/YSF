@@ -12,5 +12,9 @@ typedef float               FLOAT;
 
 #ifndef MAX_PATH
 	#define MAX_PATH          260
-	typedef unsigned char *PCHAR;
 #endif
+/*
+#ifndef PCHAR
+typedef unsigned char *PCHAR;
+#endif
+*/

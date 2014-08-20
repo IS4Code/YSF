@@ -33,6 +33,22 @@ bool CServer::RemovePlayer(int playerid)
 	return 0;
 }
 
+void CServer::Process()
+{
+	if(++m_iTicks == 10)
+	{
+		m_iTicks = 0;
+		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
+		{
+			CPlayerData *pPlayerPointer = pPlayerData[playerid];
+			if(!pPlayerPointer) continue;
+
+			// Process player
+			pPlayerPointer->Process();
+		}
+	}
+}
+
 bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayerid)
 {
 	//logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);

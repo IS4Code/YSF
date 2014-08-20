@@ -13,6 +13,8 @@ public:
 	bool AddPlayer(int playerid);
 	bool RemovePlayer(int playerid);
 
+	void Process();
+
 	bool OnPlayerStreamIn(unsigned short playerid, unsigned short forplayerid);
 	bool OnPlayerStreamOut(unsigned short playerid, unsigned short forplayerid);
 
@@ -24,6 +26,8 @@ public:
 private:
 	float m_fGravity;
 	unsigned char m_byteWeather;
+	
+	int m_iTicks;
 };
 
 #endif

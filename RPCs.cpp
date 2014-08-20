@@ -1,5 +1,6 @@
 #include "main.h"
 #include "Structs.h"
+#include "CCallbackManager.h"
 
 int RPC_Gravity = 0x92;
 int RPC_Weather = 0x98;
@@ -113,6 +114,46 @@ void Death(RPCParameters* rpcParams)
 	*/
 }
 
+void PickedUpPickup(RPCParameters* rpcParams)
+{
+	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
+
+	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
+	int pickupid;
+
+	// Just for security..
+	if(!IsPlayerConnected(playerid)) return;
+
+	bsData.Read(pickupid);
+
+	// Find pickup in player client side pickuppool
+	PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.find(pickupid);
+	if(p != pPlayerData[playerid]->ClientPlayerPickups.end())
+	{
+		// If global pickup
+		if(p->second->byteType == 0)
+		{
+			// Find global pickup ID by player pickup pointer
+			WORD pickupid = pNetGame->pPickupPool->FindPickup(p->second);
+			if(pickupid != 0xFFFF)
+			{
+				CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);
+			}
+		}
+		else
+		{
+			for(PickupMap::iterator p2 = pPlayerData[playerid]->PlayerPickups.begin(); p2 != pPlayerData[playerid]->PlayerPickups.end(); p2++)
+			{
+				if(p2->second == p->second)
+				{
+					CCallbackManager::OnPlayerPickedUpPlayerPickup(playerid, (WORD)p2->first);
+					break;
+				}
+			}
+		}
+	}
+}
+
 void InitRPCs()
 {
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
@@ -120,4 +161,7 @@ void InitRPCs()
 
 //	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
 //	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
+
+	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickedUpPickup);
 }

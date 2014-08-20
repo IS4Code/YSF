@@ -38,6 +38,7 @@
 #include "CVector.h"
 #include "CTypes.h"
 #include "CGangZonePool.h"
+#include "CPickupPool.h"
 #include "SDK/amx/amx.h"
 #include <map>
 
@@ -694,22 +695,24 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-typedef struct Pickup_t // size 0x14
+class CPickup // sizeof = 0x14
 {
+public:
 	int	iModel;
 	int	iType;
-	CVector		vecPos;
-} tPickup;
+	CVector	vecPos;
+	BYTE byteType;
+};
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CPickupPool
+class CPickupPool_
 {
 public:
-	tPickup			m_Pickup[ MAX_PICKUPS ];			// + 0x0000
+	CPickup			m_Pickup[ MAX_PICKUPS ];			// + 0x0000
 	BOOL			m_bActive[ MAX_PICKUPS ];			// + 0xA000
-	int		m_iWorld[ MAX_PICKUPS ];		// + 0xC000
-	int		m_iPickupCount;
+	int				m_iWorld[ MAX_PICKUPS ];		// + 0xC000
+	int				m_iPickupCount;
 };
 #pragma pack(pop)
 

@@ -112,6 +112,7 @@
     <ClCompile Include="CCallbackManager.cpp" />
     <ClCompile Include="CGangZonePool.cpp" />
     <ClCompile Include="CModelSizes.cpp" />
+    <ClCompile Include="CPickupPool.cpp" />
     <ClCompile Include="CPlayerData.cpp" />
     <ClCompile Include="CServer.cpp" />
     <ClCompile Include="Hooks.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="CCallbackManager.h" />
     <ClInclude Include="CGangZonePool.h" />
     <ClInclude Include="CModelSizes.h" />
+    <ClInclude Include="CPickupPool.h" />
     <ClInclude Include="CPlayerData.h" />
     <ClInclude Include="CServer.h" />
     <ClInclude Include="CTypes.h" />

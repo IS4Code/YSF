@@ -3,6 +3,7 @@
 
 //#include "CServer.h"
 #include "Structs.h"
+#include <bitset>
 
 #define MAX_PLAYERS					500
 #define MAX_OBJECTS					1000
@@ -48,6 +49,8 @@
 
 class CGangZone;
 
+typedef std::map<int, CPickup*> PickupMap;
+
 class CPlayerData
 {
 public:
@@ -69,7 +72,6 @@ public:
 
 	WORD wPlayerID;
 	bool bObjectsRemoved;
-	int iPlayerPickupCount;
 	float fGravity;
 	BYTE byteWeather;
 	bool bWidescreen;
@@ -89,6 +91,14 @@ public:
 	bool bIsGangZoneFlashing[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneColor[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneFlashColor[MAX_GANG_ZONES];
+
+	// Pickpus - clientside (global/player)
+	PickupMap ClientPlayerPickups;
+	std::bitset<MAX_PICKUPS> bClientPickupSlots;
+
+	// Pickups - per-player
+	PickupMap PlayerPickups;
+	std::bitset<MAX_PICKUPS> bPlayerPickup;
 
 	bool bUpdateScoresPingsDisabled;
 	bool bFakePingToggle;

@@ -1,5 +1,7 @@
 #include "main.h"
+#include "CPlayerData.h"
 #include "Utils.h"
+#include <map>
 #include "CCallbackManager.h"
 
 #ifndef WIN32
@@ -35,14 +37,15 @@ CPlayerData::CPlayerData( WORD playerid )
 
 	wPlayerID = playerid;
 	bObjectsRemoved = false;
-	iPlayerPickupCount = 0;
 	fGravity = pServer->GetGravity();
 	byteWeather = pServer->GetWeather();
 	bWidescreen = false;
 
 	// Fix for GetPlayerColor
 	if(pNetGame->pPlayerPool->pPlayer[playerid])
+	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->iNickNameColor = playercolors[playerid % 100];
+	}
 
 	fBounds[0] = 20000.0f;
 	fBounds[1] = -20000.0f;
@@ -60,6 +63,9 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
 	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
 	memset(bIsGangZoneFlashing, false, sizeof(bIsGangZoneFlashing));
+
+	// Pickpus
+	ClientPlayerPickups.clear();
 
 	bUpdateScoresPingsDisabled = false;
 	bFakePingToggle = false;
