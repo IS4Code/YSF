@@ -19,4 +19,6 @@ void TickCountLoad();
 
 #endif
 
+float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);
+
 #endif

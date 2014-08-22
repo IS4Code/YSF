@@ -1,6 +1,7 @@
 #include "main.h"
 #include "Structs.h"
 #include "CCallbackManager.h"
+#include "Utils.h"
 
 int RPC_Gravity = 0x92;
 int RPC_Weather = 0x98;
@@ -130,8 +131,12 @@ void PickedUpPickup(RPCParameters* rpcParams)
 	PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.find(pickupid);
 	if(p != pPlayerData[playerid]->ClientPlayerPickups.end())
 	{
+		// 99% - fake pickup RPC
+		if(GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &p->second->vecPos) > 15.0)
+			return;
+
 		// If global pickup
-		if(p->second->byteType == 0)
+		if(p->second->type == GLOBAL)
 		{
 			// Find global pickup ID by player pickup pointer
 			WORD pickupid = pNetGame->pPickupPool->FindPickup(p->second);

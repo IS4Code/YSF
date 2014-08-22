@@ -87,14 +87,15 @@ public:
 	WORD wClientSideGlobalZoneID[MAX_GANG_ZONES];
 	WORD wClientSidePlayerZoneID[MAX_GANG_ZONES];
 
-	bool bInGangZone[MAX_GANG_ZONES];
-	bool bIsGangZoneFlashing[MAX_GANG_ZONES];
+	std::bitset<MAX_GANG_ZONES> bInGangZone;
+	std::bitset<MAX_GANG_ZONES> bIsGangZoneFlashing;
 	DWORD dwClientSideZoneColor[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneFlashColor[MAX_GANG_ZONES];
 
 	// Pickpus - clientside (global/player)
 	PickupMap ClientPlayerPickups;
 	std::bitset<MAX_PICKUPS> bClientPickupSlots;
+	std::bitset<MAX_PICKUPS> bClientPickupStreamedIn;
 
 	// Pickups - per-player
 	PickupMap PlayerPickups;

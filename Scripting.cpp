@@ -4459,11 +4459,14 @@ static cell AMX_NATIVE_CALL n_IsPickupStreamedIn( AMX* amx, cell* params )
 	CHECK_PARAMS(2, "IsPickupStreamedIn");
 
 	int playerid = (int)params[1];
-	int pickupid = (int)params[2];
+	int id = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(pickupid < 0 || pickupid >= MAX_PICKUPS) return 0;
+	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
-	return pNetGame->pPlayerPool->pPlayer[playerid]->bPickupStreamedIn[pickupid];
+	CPickup *pPickup = pNetGame->pPickupPool->FindPickup(id);
+	if(!pPickup) return 0;
+
+	return pNetGame->pPickupPool->IsStreamed(playerid, pPickup);
 }
 
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
@@ -4536,22 +4539,28 @@ static cell AMX_NATIVE_CALL n_GetPickupVirtualWorld( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "GetPickupVirtualWorld");
 
-	return 0;
+	int id = (int)params[1];
+	if(id < 0 || id >= MAX_PICKUPS) return 0;
+
+	CPickup *pPickup = pNetGame->pPickupPool->FindPickup(id);
+	if(!pPickup) return 0;
+
+	return pPickup->iWorld;
 }
 
-// CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z);
+// CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 static cell AMX_NATIVE_CALL n_CreatePlayerPickup( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(6, "CreatePlayerPickup");
+	CHECK_PARAMS(7, "CreatePlayerPickup");
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	return pNetGame->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])));
+	return pNetGame->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])), (int)params[7]);
 }
 
 // native DestroyPlayerPickup(playerid, pickupid);
@@ -4609,7 +4618,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerPickupStreamedIn( AMX* amx, cell* params )
 	CPickup *pPickup = pNetGame->pPickupPool->FindPickup(playerid, id);
 	if(!pPickup) return 0;
 
-	return 0;
+	return pNetGame->pPickupPool->IsStreamed(playerid, pPickup);
 }
 
 // native GetPlayerPickupPos(playerid, pickupid, &Float:fX, &Float:fY, &Float:fZ);
@@ -4696,7 +4705,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerPickupVirtualWorld( AMX* amx, cell* param
 	CPickup *pPickup = pNetGame->pPickupPool->FindPickup(playerid, id);
 	if(!pPickup) return 0;
 
-	return 0;
+	return pPickup->iWorld;
 }
 
 // RakServer functions //
@@ -5043,13 +5052,13 @@ static cell AMX_NATIVE_CALL n_FIXED_DestroyPlayerObject( AMX* amx, cell* params 
 	return ret;
 }
 
-// native CreatePickup(model, type, Float:X, Float:Y, Float:Z);
+// native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 
 static cell AMX_NATIVE_CALL n_CreatePickup(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(6, "CreatePickup");
 
-	return pNetGame->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])));
+	return pNetGame->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
 }
 
 static cell AMX_NATIVE_CALL n_DestroyPickup(AMX *amx, cell *params)

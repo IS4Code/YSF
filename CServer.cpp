@@ -4,6 +4,7 @@ CServer::CServer()
 {
 	m_fGravity = 0.008f;
 	m_byteWeather = 10;
+	m_iTicks = 0;
 }
 
 CServer::~CServer()
@@ -45,6 +46,11 @@ void CServer::Process()
 
 			// Process player
 			pPlayerPointer->Process();
+		}
+
+		if(pNetGame)
+		{
+			pNetGame->pPickupPool->Process();
 		}
 	}
 }

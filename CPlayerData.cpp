@@ -59,10 +59,9 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(wClientSideGlobalZoneID, 0xFFFF, sizeof(wClientSideGlobalZoneID));
 	memset(wClientSidePlayerZoneID, 0xFFFF, sizeof(wClientSidePlayerZoneID));
 
-	memset(bInGangZone, false, sizeof(bInGangZone));
 	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
 	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
-	memset(bIsGangZoneFlashing, false, sizeof(bIsGangZoneFlashing));
+//	memset(bIsGangZoneFlashing, false, sizeof(bIsGangZoneFlashing));
 
 	// Pickpus
 	ClientPlayerPickups.clear();

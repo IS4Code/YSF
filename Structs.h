@@ -695,17 +695,6 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CPickup // sizeof = 0x14
-{
-public:
-	int	iModel;
-	int	iType;
-	CVector	vecPos;
-	BYTE byteType;
-};
-#pragma pack(pop)
-
-#pragma pack(push, 1)
 class CPickupPool_
 {
 public:

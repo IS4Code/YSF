@@ -31,3 +31,12 @@ int GetTickCount()
 }
 
 #endif
+
+float GetDistance3D(CVector *vecPosition, CVector *_vecPosition)
+{
+	// Get the distance between the two vectors
+	float fSX = (_vecPosition->fX - vecPosition->fX) * (_vecPosition->fX - vecPosition->fX);
+	float fSY = (_vecPosition->fY - vecPosition->fY) * (_vecPosition->fY - vecPosition->fY);
+	float fSZ = (_vecPosition->fZ - vecPosition->fZ) * (_vecPosition->fZ - vecPosition->fZ);
+	return ((float)sqrt(fSX + fSY + fSZ));	
+}
