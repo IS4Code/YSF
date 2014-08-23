@@ -311,7 +311,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			/*
 			if(pNetGame->pVehiclePool->pVehicle[500]) 
 			{
-				CSAMPVehicle *pVeh = pNetGame->pVehiclePool->pVehicle[500];
+				CVehicle *pVeh = pNetGame->pVehiclePool->pVehicle[500];
 				//logprintf("col: %d, %d, int: %d, respawn: %d", pNetGame->pVehiclePool->pVehicle[500]->color1, pNetGame->pVehiclePool->pVehicle[500]->color2, pNetGame->pVehiclePool->pVehicle[500]->interior, pNetGame->pVehiclePool->pVehicle[500]->respawndelay);
 				//logprintf("spawn: %f, %f, %f", pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fX, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fY, pNetGame->pVehiclePool->pVehicle[500]->vecSpawnPos.fZ);
 				//logprintf("plate: %s, occ: %d, respawn: %d, lastdriver: %d", pVeh->szNumberplate, pVeh->vehOccupiedTick, pVeh->vehRespawnTick, pVeh->wLastDriverID);

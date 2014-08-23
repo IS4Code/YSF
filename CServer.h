@@ -20,9 +20,6 @@ public:
 
 	void SetGravity(float fGravity);
 	float GetGravity(void);
-
-	void SetWeather(unsigned char byteWeather);
-	unsigned char GetWeather(void);
 private:
 	float m_fGravity;
 	unsigned char m_byteWeather;

@@ -579,7 +579,7 @@ typedef struct VEHPARAM_EX // sizeof = 7
 } VEHPARAM_EX;
 
 #pragma pack(push, 1)
-class CSAMPVehicle
+class CVehicle
 {
 	public:
 		CVector			vecPosition;		// 0 - 12
@@ -618,7 +618,7 @@ class CVehiclePool
 		BOOL				bVehicleSlotState[MAX_VEHICLES];	// 0 - 8000
 		BYTE				modelsUsed[212];					// 8000 - 8212
 		int					byteVirtualWorld[MAX_VEHICLES];		// 8212 - 0x3F54
-		CSAMPVehicle		*pVehicle[MAX_VEHICLES];			// 0x3F54 - 0x5E94
+		CVehicle			*pVehicle[MAX_VEHICLES];			// 0x3F54 - 0x5E94
 };
 #pragma pack(pop)
 

@@ -35,7 +35,6 @@
 
 extern int RPC_Gravity;
 extern int RPC_Weather;
-extern int RPC_DeathMessage;
 extern int RPC_Explosion;
 extern int RPC_CreatePickup;
 extern int RPC_DestroyPickup;
@@ -44,7 +43,6 @@ extern int RPC_CreateObject;
 extern int RPC_DestroyObject;
 extern int RPC_AttachObject;
 extern int RPC_Widescreen;
-extern int RPC_WorldBounds;
 extern int RPC_ShowGangZone;
 extern int RPC_HideGangZone;
 extern int RPC_FlashGangZone;

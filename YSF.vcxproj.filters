@@ -7,6 +7,9 @@
     <Filter Include="Server">
       <UniqueIdentifier>{c29c9218-2572-432d-bb07-174472b78b52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Server\Pools">
+      <UniqueIdentifier>{8fd2f6e0-9650-4d64-b0dc-bc9cdeda0058}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SDK\amxplugin.cpp">
@@ -37,9 +40,6 @@
     <ClCompile Include="Addresses.cpp">
       <Filter>Server</Filter>
     </ClCompile>
-    <ClCompile Include="CGangZonePool.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="CModelSizes.cpp">
       <Filter>Server</Filter>
     </ClCompile>
@@ -52,8 +52,11 @@
     <ClCompile Include="CCallbackManager.cpp">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="CGangZonePool.cpp">
+      <Filter>Server\Pools</Filter>
+    </ClCompile>
     <ClCompile Include="CPickupPool.cpp">
-      <Filter>Server</Filter>
+      <Filter>Server\Pools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,9 +101,6 @@
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="CTypes.h" />
-    <ClInclude Include="CGangZonePool.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="Hooks.h">
       <Filter>Server</Filter>
     </ClInclude>
@@ -116,8 +116,11 @@
     <ClInclude Include="CCallbackManager.h">
       <Filter>Server</Filter>
     </ClInclude>
+    <ClInclude Include="CGangZonePool.h">
+      <Filter>Server\Pools</Filter>
+    </ClInclude>
     <ClInclude Include="CPickupPool.h">
-      <Filter>Server</Filter>
+      <Filter>Server\Pools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

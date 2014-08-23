@@ -181,27 +181,3 @@ float CServer::GetGravity(void)
 {
 	return m_fGravity;
 }
-
-void CServer::SetWeather(BYTE byteWeather)
-{
-	// Update console
-	char szWeather[8];
-	sprintf(szWeather, "%d", byteWeather);
-	SetServerRule("weather", szWeather);
-
-	// Minden játékos idõjárása átállítása arra, amire a szerver idõjárást beállítottuk
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
-	{
-		if(pPlayerData[i])
-			pPlayerData[i]->byteWeather = byteWeather; 
-	}
-	
-	RakNet::BitStream bs;
-	bs.Write(byteWeather);
-	pRakServer->RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true, 0);
-}
-
-BYTE CServer::GetWeather(void)
-{
-	return m_byteWeather;
-}

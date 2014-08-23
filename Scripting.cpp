@@ -60,6 +60,7 @@ AMX_NATIVE
 	pDestroyObject,
 	pDestroyPlayerObject,
 	pSetPlayerWorldBounds,
+	pSetWeather,
 	pSetPlayerWeather;
 
 //----------------------------------------------------
@@ -964,18 +965,13 @@ static cell AMX_NATIVE_CALL n_FIXED_SetWeather( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "SetWeather");
 
-	pServer->SetWeather((BYTE)params[1]);
-	return 1;
-}
-
-// native GetWeather();
-static cell AMX_NATIVE_CALL n_FIXED_GetWeather( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	return pServer->GetWeather();
+	cell ret = pSetWeather(amx, params);
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		if(IsPlayerConnected(i))
+			pPlayerData[i]->byteWeather = (BYTE)params[1]; 
+	}
+	return ret;
 }
 
 // native SetPlayerWeather(playerid, weatherid);
@@ -2506,7 +2502,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleCab( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 	
-	CSAMPVehicle *pVeh;
+	CVehicle *pVeh;
 	for(WORD i = 0; i != MAX_VEHICLES; i++)
 	{
 		pVeh = pNetGame->pVehiclePool->pVehicle[i];
@@ -5120,7 +5116,6 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SetPlayerTeamForPlayer",			n_SetPlayerTeamForPlayer }, // R5 - Experimental - needs testing - tested, should be OK
 	{ "GetPlayerTeamForPlayer",			n_GetPlayerTeamForPlayer }, // R5
 	{ "GetPlayerWeather",				n_GetPlayerWeather },
-	{ "GetWeather",						n_FIXED_GetWeather },
 	{ "GetPlayerWorldBounds",			n_GetPlayerWorldBounds },
 	{ "TogglePlayerWidescreen",			n_TogglePlayerWidescreen },
 	{ "IsPlayerWidescreenToggled",		n_IsPlayerWidescreenToggled },
@@ -5358,7 +5353,7 @@ int InitScripting(AMX *amx)
 		Redirect(amx, "AttachPlayerObjectToPlayer", (uint64_t)n_FIXED_AttachPlayerObjectToPlayer, 0);
 		Redirect(amx, "SetGravity", (uint64_t)n_FIXED_SetGravity, 0);
 		Redirect(amx, "GetGravity", (uint64_t)n_FIXED_GetGravity, 0);
-		Redirect(amx, "SetWeather", (uint64_t)n_FIXED_SetWeather, 0);
+		Redirect(amx, "SetWeather", (uint64_t)n_FIXED_SetWeather, &pSetWeather);
 		Redirect(amx, "SetPlayerWeather", (uint64_t)n_FIXED_SetPlayerWeather, &pSetPlayerWeather);
 		Redirect(amx, "SetPlayerWorldBounds", (uint64_t)n_FIXED_SetPlayerWorldBounds, &pSetPlayerWorldBounds);
 
