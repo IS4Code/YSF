@@ -5,11 +5,13 @@ CServer::CServer()
 	m_fGravity = 0.008f;
 	m_byteWeather = 10;
 	m_iTicks = 0;
+
+	memset(pPlayerData, NULL, MAX_PLAYERS);
 }
 
 CServer::~CServer()
 {
-	for(ushort i = 0; i != MAX_PLAYERS; i++)
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
 		RemovePlayer(i);
 }
 
@@ -41,11 +43,19 @@ void CServer::Process()
 		m_iTicks = 0;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 		{
-			CPlayerData *pPlayerPointer = pPlayerData[playerid];
-			if(!pPlayerPointer) continue;
+			if(!pPlayerData[playerid] && pNetGame->pPlayerPool->pPlayer[playerid])
+			{
+				AddPlayer(playerid);
+			}
+			else if(pPlayerData[playerid] && !pNetGame->pPlayerPool->pPlayer[playerid])
+			{
+				RemovePlayer(playerid);
+			}
 
+			if(!IsPlayerConnected(playerid)) continue;
+			
 			// Process player
-			pPlayerPointer->Process();
+			pPlayerData[playerid]->Process();
 		}
 
 		if(pNetGame)
@@ -168,7 +178,7 @@ void CServer::SetGravity(float fGravity)
 	// Minden játékos gravitációja átállítása arra, amire a szerver gravitációját beállítottuk
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
-		if(pPlayerData[i])
+		if(IsPlayerConnected(i))
 			pPlayerData[i]->fGravity = fGravity; 
 	}
 	

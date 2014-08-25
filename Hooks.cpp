@@ -45,6 +45,7 @@
 	#include <limits.h>
 	#include <string.h>
 	#include <algorithm>
+	#include <unistd.h>
 #endif
 #include "Inlines.h"
 

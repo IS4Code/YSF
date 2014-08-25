@@ -20,9 +20,11 @@ public:
 
 	void SetGravity(float fGravity);
 	float GetGravity(void);
+
+	unsigned char m_byteWeather;
 private:
 	float m_fGravity;
-	unsigned char m_byteWeather;
+	
 	
 	int m_iTicks;
 };

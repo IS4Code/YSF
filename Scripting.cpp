@@ -966,6 +966,8 @@ static cell AMX_NATIVE_CALL n_FIXED_SetWeather( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "SetWeather");
 
 	cell ret = pSetWeather(amx, params);
+	pServer->m_byteWeather = (BYTE)params[1];
+
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		if(IsPlayerConnected(i))
@@ -3744,6 +3746,7 @@ static cell AMX_NATIVE_CALL n_FIXED_AttachPlayerObjectToPlayer( AMX* amx, cell* 
 // native YSF_AddPlayer(playerid);
 static cell AMX_NATIVE_CALL n_YSF_AddPlayer( AMX* amx, cell* params )
 {
+/*
 	// If unknown server version
 	if(!pServer)
 		return 0;
@@ -3763,11 +3766,14 @@ static cell AMX_NATIVE_CALL n_YSF_AddPlayer( AMX* amx, cell* params )
 	if(ret)
 		pNetGame->pPickupPool->InitializeForPlayer(playerid);
 	return ret;
+*/
+	return 1;
 }
 
 // native YSF_RemovePlayer(playerid);
 static cell AMX_NATIVE_CALL n_YSF_RemovePlayer( AMX* amx, cell* params )
 {
+/*
 	// If unknown server version
 	if(!pServer)
 		return 0;
@@ -3776,7 +3782,8 @@ static cell AMX_NATIVE_CALL n_YSF_RemovePlayer( AMX* amx, cell* params )
 	
 	//logprintf("YSF_RemovePlayer - connected: %d, raknet geci: %d", pNetGame->pPlayerPool->bIsPlayerConnected[(int)params[1]], pRakServer->GetPlayerIDFromIndex((int)params[1]).binaryAddress);
 	int playerid = (int)params[1];
-	return pServer->RemovePlayer(playerid);
+*/
+	return 1;
 }
 
 // native YSF_StreamIn(playerid, forplayerid);
@@ -4957,15 +4964,15 @@ static cell AMX_NATIVE_CALL n_GetColSphereOffset( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "GetColSphereOffset");
 
-	CVector *vecOffset = GetColSphereOffset((int)params[1]);
+	CVector vecOffset = GetColSphereOffset((int)params[1]);
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(vecOffset->fX);
+	*cptr = amx_ftoc(vecOffset.fX);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(vecOffset->fY);
+	*cptr = amx_ftoc(vecOffset.fY);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(vecOffset->fZ);
+	*cptr = amx_ftoc(vecOffset.fZ);
 	return 1;
 }
 

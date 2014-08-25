@@ -6,6 +6,6 @@
 
 ushort GetColCount(void);
 float GetColSphereRadius(int objectmodel);
-CVector *GetColSphereOffset(int objectmodel);
+CVector GetColSphereOffset(int objectmodel);
 
 #endif

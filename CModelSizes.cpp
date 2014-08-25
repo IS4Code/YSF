@@ -3764,11 +3764,11 @@ float GetColSphereRadius(int objectmodel)
 	return 0.0;
 }
 
-CVector* GetColSphereOffset(int objectmodel)
+CVector GetColSphereOffset(int objectmodel)
 {
 	if (0 <= objectmodel && objectmodel < GetColCount())
 	{
-		return &CVector((float)MODELS_gColOffset[objectmodel][0], (float)MODELS_gColOffset[objectmodel][1], (float)MODELS_gColOffset[objectmodel][2]);
+		return CVector((float)MODELS_gColOffset[objectmodel][0], (float)MODELS_gColOffset[objectmodel][1], (float)MODELS_gColOffset[objectmodel][2]);
 	}
-	return &CVector(0.0f, 0.0f, 0.0f);
+	return CVector(0.0f, 0.0f, 0.0f);
 }

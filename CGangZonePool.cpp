@@ -63,9 +63,9 @@ void CGangZonePool::Delete(WORD wZone)
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		// Skip not connected players
-		if(!pPlayerData[i]) continue;
+		if(!IsPlayerConnected(i)) continue;
 
-		this->HideForPlayer(i, wZone);
+		HideForPlayer(i, wZone);
 	}
 	delete pGangZone[wZone];
 	pGangZone[wZone] = NULL;
@@ -73,7 +73,7 @@ void CGangZonePool::Delete(WORD wZone)
 
 void CGangZonePool::Delete(WORD playerid, WORD wZone)
 {
-	this->HideForPlayer(playerid, wZone, true);
+	HideForPlayer(playerid, wZone, true);
 	delete pPlayerData[playerid]->pPlayerZone[wZone];
 	pPlayerData[playerid]->pPlayerZone[wZone] = NULL;
 }
@@ -123,7 +123,7 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 	for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 	{
 		// Skip not connected players
-		if(!pPlayerData[playerid]) continue;
+		if(!IsPlayerConnected(playerid)) continue;
 
 		WORD i = 0;
 		CGangZone *pZone = NULL;
@@ -163,6 +163,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 			if(pPlayerData[playerid]->wClientSideGlobalZoneID[i] == wZone) break;
 			i++;
 		}
+		if(i == MAX_GANG_ZONES) return;
 
 		pPlayerData[playerid]->wClientSideGlobalZoneID[i] = 0xFFFF;
 	}
@@ -173,6 +174,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 			if(pPlayerData[playerid]->wClientSidePlayerZoneID[i] == wZone) break;
 			i++;
 		}
+		if(i == MAX_GANG_ZONES) return;
 
 		pPlayerData[playerid]->wClientSidePlayerZoneID[i] = 0xFFFF;
 	}
@@ -194,9 +196,9 @@ void CGangZonePool::HideForAll(WORD wZone)
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		// Skip not connected players
-		if(!pPlayerData[i]) continue;
+		if(!IsPlayerConnected(i)) continue;
 
-		this->HideForPlayer(i, wZone);
+		HideForPlayer(i, wZone);
 	}
 }
 
@@ -237,9 +239,9 @@ void CGangZonePool::FlashForAll(WORD wZone, DWORD dwColor)
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		// Skip not connected players
-		if(!pPlayerData[i]) continue;
+		if(!IsPlayerConnected(i)) continue;
 
-		this->FlashForPlayer(i, wZone, dwColor);
+		FlashForPlayer(i, wZone, dwColor);
 	}
 }
 
@@ -279,8 +281,8 @@ void CGangZonePool::StopFlashForAll(WORD wZone)
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		// Skip not connected players
-		if(!pPlayerData[i]) continue;
+		if(!IsPlayerConnected(i)) continue;
 
-		this->StopFlashForPlayer(i, wZone);
+		StopFlashForPlayer(i, wZone);
 	}
 }

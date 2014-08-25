@@ -127,10 +127,10 @@ int UnLoadFilterscript(char * name)
 
 bool IsPlayerConnected(int playerid)
 {
-	if(playerid >= MAX_PLAYERS)
+	if(playerid < 0 || playerid >= MAX_PLAYERS)
 		return false;
 
-	return pPlayerData[playerid] != NULL;
+	return pPlayerData[playerid] != NULL && pNetGame->pPlayerPool->pPlayer != NULL;
 }
 
 int set_amxstring(AMX *amx, cell amx_addr, const char *source, int max)
