@@ -33,7 +33,7 @@
 #include "main.h"
 #include "BitStream.h"
 #include "RPCs.h"
-#include "Inlines.h"
+#include "amxfunctions.h"
 #include "Utils.h"
 
 #ifdef WIN32
@@ -500,7 +500,7 @@ static cell AMX_NATIVE_CALL n_SetMaxPlayers(AMX *amx, cell *params)
 	int maxplayers = (int)params[1];
 	if(maxplayers < 1 || maxplayers > MAX_PLAYERS) return 0;
 
-	SetServerRuleInt("maxplayers", maxplayers);
+	CSAMPFunctions::SetIntVariable("maxplayers", maxplayers);
 	return 1;
 }
 
@@ -514,7 +514,7 @@ static cell AMX_NATIVE_CALL n_SetMaxNPCs(AMX *amx, cell *params)
 	int maxnpcs = (int)params[1];
 	if(maxnpcs < 1 || maxnpcs > MAX_PLAYERS) return 0;
 
-	SetServerRuleInt("maxnpc", maxnpcs);
+	CSAMPFunctions::SetIntVariable("maxnpc", maxnpcs);
 	return 1;
 }
 
@@ -548,7 +548,7 @@ static cell AMX_NATIVE_CALL n_LoadFilterScript(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if(name)
 	{
-		return LoadFilterscript(name);
+		return CSAMPFunctions::LoadFilterscript(name);
 	}
 	return 0;
 }
@@ -567,7 +567,7 @@ static cell AMX_NATIVE_CALL n_UnLoadFilterScript(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if(name)
 	{
-		return UnLoadFilterscript(name);
+		return CSAMPFunctions::UnLoadFilterscript(name);
 	}
 	return 0;
 }
@@ -603,7 +603,7 @@ static cell AMX_NATIVE_CALL n_AddServerRule(AMX *amx, cell *params)
 	amx_StrParam(amx, params[2], value);
 	if (name && value)
 	{
-		AddServerRule(name, value, (int)params[3]);
+		CSAMPFunctions::AddStringVariable(name, (int)params[3], value, NULL);
 		return 1;
 	}
 	return 0;
@@ -623,7 +623,7 @@ static cell AMX_NATIVE_CALL n_SetServerRule(AMX *amx, cell *params)
 	amx_StrParam(amx, params[2], value);
 	if (name && value)
 	{
-		SetServerRule(name, value);
+		CSAMPFunctions::SetStringVariable(name, value);
 		return 1;
 	}
 	return 0;
@@ -642,7 +642,7 @@ static cell AMX_NATIVE_CALL n_SetServerRuleInt(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		SetServerRuleInt(name, (int)params[2]);
+		CSAMPFunctions::SetIntVariable(name, (int)params[2]);
 		return 1;
 	}
 	return 0;
@@ -680,7 +680,7 @@ static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		ModifyFlag(name, (int)params[2]);
+		CSAMPFunctions::ModifyVariableFlags(name, (int)params[2]);
 		return 1;
 	}
 	return 0;
@@ -1543,6 +1543,22 @@ static cell AMX_NATIVE_CALL n_IsPlayerSpawned( AMX* amx, cell* params )
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bSpawned;
+}
+
+// native SpawnForWorld(playerid);
+static cell AMX_NATIVE_CALL n_SpawnForWorld(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "SpawnForWorld");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	CSAMPFunctions::SpawnPlayer(playerid);
+	return 1;
 }
 
 // Scoreboard manipulation
@@ -4996,7 +5012,6 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 	return set_amxstring(amx, params[2], GetWeaponName((BYTE)params[1]), params[3]);
 }
 
-
 // native DestroyVehicle(vehicleid);
 static cell AMX_NATIVE_CALL n_FIXED_DestroyVehicle( AMX* amx, cell* params )
 {
@@ -5138,6 +5153,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SetPlayerChatBubbleForPlayer",	n_SetPlayerChatBubbleForPlayer}, // R10
 	{ "SetPlayerVersion",				n_SetPlayerVersion }, // R9
 	{ "IsPlayerSpawned",				n_IsPlayerSpawned }, // R9
+	{ "SpawnForWorld",					n_SpawnForWorld }, // R10
 
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			n_GetPlayerSirenState },

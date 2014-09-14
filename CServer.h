@@ -7,7 +7,7 @@ class RakServer;
 class CServer
 {
 public:
-	CServer();
+	CServer(eSAMPVersion version);
 	~CServer();
 
 	bool AddPlayer(int playerid);
@@ -21,11 +21,12 @@ public:
 	void SetGravity(float fGravity);
 	float GetGravity(void);
 
+	eSAMPVersion GetVersion() { return m_Version; }
+
 	unsigned char m_byteWeather;
 private:
+	eSAMPVersion m_Version;
 	float m_fGravity;
-	
-	
 	int m_iTicks;
 };
 

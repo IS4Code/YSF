@@ -10,6 +10,9 @@
     <Filter Include="Server\Pools">
       <UniqueIdentifier>{8fd2f6e0-9650-4d64-b0dc-bc9cdeda0058}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Server\Utils">
+      <UniqueIdentifier>{44086549-ee70-4f22-bc51-ce86e81fa8bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SDK\amxplugin.cpp">
@@ -28,9 +31,6 @@
     <ClCompile Include="Hooks.cpp">
       <Filter>Server</Filter>
     </ClCompile>
-    <ClCompile Include="Inlines.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="Scripting.cpp">
       <Filter>Server</Filter>
     </ClCompile>
@@ -43,12 +43,6 @@
     <ClCompile Include="CModelSizes.cpp">
       <Filter>Server</Filter>
     </ClCompile>
-    <ClCompile Include="CPlayerData.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
     <ClCompile Include="CCallbackManager.cpp">
       <Filter>Server</Filter>
     </ClCompile>
@@ -57,6 +51,18 @@
     </ClCompile>
     <ClCompile Include="CPickupPool.cpp">
       <Filter>Server\Pools</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Server\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayerData.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="amxfunctions.cpp">
+      <Filter>Server\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -85,9 +91,6 @@
     <ClInclude Include="BitStream.h">
       <Filter>Server</Filter>
     </ClInclude>
-    <ClInclude Include="CVector.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="RPCs.h">
       <Filter>Server</Filter>
     </ClInclude>
@@ -97,20 +100,11 @@
     <ClInclude Include="Structs.h">
       <Filter>Server</Filter>
     </ClInclude>
-    <ClInclude Include="Inlines.h">
-      <Filter>Server</Filter>
-    </ClInclude>
     <ClInclude Include="CTypes.h" />
     <ClInclude Include="Hooks.h">
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="CModelSizes.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="CPlayerData.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
       <Filter>Server</Filter>
     </ClInclude>
     <ClInclude Include="CCallbackManager.h">
@@ -121,6 +115,21 @@
     </ClInclude>
     <ClInclude Include="CPickupPool.h">
       <Filter>Server\Pools</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Server\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CVector.h">
+      <Filter>Server\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayerData.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="amxfunctions.h">
+      <Filter>Server\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

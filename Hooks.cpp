@@ -47,21 +47,10 @@
 	#include <algorithm>
 	#include <unistd.h>
 #endif
-#include "Inlines.h"
 
 #ifndef PAGESIZE
 	#define PAGESIZE (4096)
 #endif
-
-//typedef void far            *LPVOID;
-
-AddServerRule_t g_pCConsole__AddRule = 0;
-SetServerRule_t g_pCConsole__SetRule = 0;
-SetServerRuleInt_t g_pCConsole__SetRuleInt = 0;
-RemoveServerRule_t g_pCConsole__RemoveRule = 0;
-ModifyFlag_t g_pCConsole__MFlag = 0;
-LoadFS_t g_pCFilterscript__LoadFS_t = 0;
-UnLoadFS_t g_pCFilterscript__UnLoadFS_t = 0;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -144,56 +133,6 @@ DWORD FindPattern(char *pattern, char *mask)
 	return 0;
 }
 
-
-// From "amx.c", part of the PAWN language runtime:
-// http://code.google.com/p/pawnscript/source/browse/trunk/amx/amx.c
-
-#define USENAMETABLE(hdr) \
-	((hdr)->defsize==sizeof(AMX_FUNCSTUBNT))
-
-#define NUMENTRIES(hdr,field,nextfield) \
-	(unsigned)(((hdr)->nextfield - (hdr)->field) / (hdr)->defsize)
-
-#define GETENTRY(hdr,table,index) \
-	(AMX_FUNCSTUB *)((unsigned char*)(hdr) + (unsigned)(hdr)->table + (unsigned)index*(hdr)->defsize)
-
-#define GETENTRYNAME(hdr,entry) \
-	(USENAMETABLE(hdr) ? \
-		(char *)((unsigned char*)(hdr) + (unsigned)((AMX_FUNCSTUBNT*)(entry))->nameofs) : \
-		((AMX_FUNCSTUB*)(entry))->name)
-
-void Redirect(AMX * amx, char const * const from, ucell to, AMX_NATIVE * store)
-{
-	int
-		num,
-		idx;
-	// Operate on the raw AMX file, don't use the amx_ functions to avoid issues
-	// with the fact that we've not actually finished initialisation yet.  Based
-	// VERY heavilly on code from "amx.c" in the PAWN runtime library.
-	AMX_HEADER *
-		hdr = (AMX_HEADER *)amx->base;
-	AMX_FUNCSTUB *
-		func;
-	num = NUMENTRIES(hdr, natives, libraries);
-	//logprintf("Redirect 1");
-	for (idx = 0; idx != num; ++idx)
-	{
-		func = GETENTRY(hdr, natives, idx);
-		//logprintf("Redirect 2 \"%s\" \"%s\"", from, GETENTRYNAME(hdr, func));
-		if (!strcmp(from, GETENTRYNAME(hdr, func)))
-		{
-			//logprintf("Redirect 3");
-			// Intercept the call!
-			if (store)
-			{
-				*store = (AMX_NATIVE)func->address;
-			}
-			func->address = to;
-			break;
-		}
-	}
-}
-
 ///////////////////////////////////////////////////////////////
 // Hooks //
 ///////////////////////////////////////////////////////////////
@@ -231,19 +170,7 @@ bool YSF_ContainsInvalidChars(char * szString)
 }
 
 void GetAddresses()
-{
-	DWORD temp;
-
-	// Console for adding rules.
-	POINTER_TO_MEMBER(g_pCConsole__AddRule, CAddress::FUNC_CConsole_AddStringVariable, AddServerRule_t);
-	POINTER_TO_MEMBER(g_pCConsole__SetRule, CAddress::FUNC_CConsole_SetStringVariable, SetServerRule_t);
-	POINTER_TO_MEMBER(g_pCConsole__SetRuleInt, CAddress::FUNC_CConsole_SetIntVariable, SetServerRuleInt_t);
-//	POINTER_TO_MEMBER(g_pCConsole__RemoveRule, CONSOLE_REMOVE_RULE_0341, RemoveServerRule_t);
-	POINTER_TO_MEMBER(g_pCConsole__MFlag, CAddress::FUNC_CConsole_ModifyVariableFlags, ModifyFlag_t);
-
-	POINTER_TO_MEMBER(g_pCFilterscript__LoadFS_t, CAddress::FUNC_CFilterscripts_LoadFilterscript, LoadFS_t);
-	POINTER_TO_MEMBER(g_pCFilterscript__UnLoadFS_t, CAddress::FUNC_CFilterscripts_UnLoadFilterscript, UnLoadFS_t);
-	 
+{	 
 	// Unlock restart wait time
 	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
 

@@ -423,16 +423,16 @@ class CPlayer
 		BOOL					bEditAttachedObject;// 9061
 		WORD					wDialogID;			// 9065
 		CPlayerTextDraw*		pTextdraw;			// 9067
-		CPlayerText3DLabels*	p3DText;
-		WORD					wPlayerId;			// 0x2373 - 0x2375 
-		int						iUpdateState;		// 0x2375 - 0x2379 
-		DWORD					dwLastSyncTick;
-		CAttachedObject			attachedObject[MAX_ATTACHED_OBJECTS];
-		BOOL					attachedObjectSlot[MAX_ATTACHED_OBJECTS];
-		BOOL					bHasAimSync;		// 0x25AD - 0x25B1
-		BOOL					bHasTrailerSync;	// 0x25B1 - 0x25B5
-		BOOL					bHasUnoccupiedSync;	// 0x25B5 - 0x25B9
-		BYTE					byteState;			// 0x25B9 - 0x25BA
+		CPlayerText3DLabels*	p3DText;			// 9071
+		WORD					wPlayerId;			// 9075
+		int						iUpdateState;		// 9079
+		DWORD					dwLastSyncTick;		// 9083
+		CAttachedObject			attachedObject[MAX_ATTACHED_OBJECTS]; // 9087
+		BOOL					attachedObjectSlot[MAX_ATTACHED_OBJECTS]; // 9607
+		BOOL					bHasAimSync;		// 9645
+		BOOL					bHasTrailerSync;	// 9649
+		BOOL					bHasUnoccupiedSync;	// 9653
+		BYTE					byteState;			// 9657
 		CVector					vecCPPos;			// 9658	- 9670
 		float					fCPSize;			// 9670 - 9674
 		BOOL					bIsInCP;			// 9674 - 9678
@@ -445,13 +445,12 @@ class CPlayer
 		WORD					wSkillLevel[11];	// 9715
 		int						iLastMarkerUpdate;	// 9737 - 9741
 		PLAYER_SPAWN_INFO		spawn;				// 9741 - 9787
-		BOOL					bReadyToSpawn;		// 0x263B - 0x263F - 9787
-		BYTE					byteWantedLevel;
-		BYTE					byteFightingStyle;
-		//PAD(pad8, 2);								// 0x263F - 0x2641
-		BYTE					byteSeatId;			// 0x2641 - 0x2642
-		WORD					wVehicleId;			// 0x2642 - 0x2644
-		DWORD					iNickNameColor;
+		BOOL					bReadyToSpawn;		// 9787
+		BYTE					byteWantedLevel;	// 9791
+		BYTE					byteFightingStyle;  // 9792
+		BYTE					byteSeatId;			// 9793
+		WORD					wVehicleId;			// 9794
+		DWORD					iNickNameColor;		// 9798
 		BOOL					bShowCheckpoint;
 		BOOL					bShowRaceCheckpoint;
 		//PAD(pad9, 12);								// 0x2644 - 0x2650
@@ -495,7 +494,7 @@ class CPlayerPool // sizeof = 99520
 		DWORD				dwScore[MAX_PLAYERS];					// 2012 - 4012
 		DWORD				dwMoney[MAX_PLAYERS];					// 4012 - 6012
 		DWORD				dwDrunkLevel[MAX_PLAYERS];				// 6012 - 8012
-		DWORD				dwUnk[MAX_PLAYERS];						// 8012 - 10012
+		DWORD				dwLastScoreUpdate[MAX_PLAYERS];			// 8012 - 10012
 		char				szSerial[MAX_PLAYERS][0x65];			// 10012 - 60512								
 		char				szVersion[MAX_PLAYERS][29];
 		BOOL				bIsPlayerConnected[MAX_PLAYERS];		// 0x12504 - 0x12CD4 - 75012

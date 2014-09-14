@@ -92,7 +92,7 @@
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <OutputFile>C:\Program Files (x86)\Rockstar Games\GTA San Andreas\SERVER\plugins\YSF.dll</OutputFile>
+      <OutputFile>C:\Users\Ati\Desktop\SERVER\plugins\YSF.dll</OutputFile>
       <ModuleDefinitionFile>YSF.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -107,6 +107,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Addresses.cpp" />
+    <ClCompile Include="amxfunctions.cpp" />
     <ClCompile Include="BitStream.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -116,8 +117,8 @@
     <ClCompile Include="CPickupPool.cpp" />
     <ClCompile Include="CPlayerData.cpp" />
     <ClCompile Include="CServer.cpp" />
+    <ClCompile Include="Functions.cpp" />
     <ClCompile Include="Hooks.cpp" />
-    <ClCompile Include="Inlines.cpp" />
     <ClCompile Include="RPCs.cpp" />
     <ClCompile Include="Scripting.cpp" />
     <ClCompile Include="SDK\amxplugin.cpp">
@@ -133,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Addresses.h" />
+    <ClInclude Include="amxfunctions.h" />
     <ClInclude Include="BitStream.h" />
     <ClInclude Include="CCallbackManager.h" />
     <ClInclude Include="CGangZonePool.h" />
@@ -142,8 +144,8 @@
     <ClInclude Include="CServer.h" />
     <ClInclude Include="CTypes.h" />
     <ClInclude Include="CVector.h" />
+    <ClInclude Include="Functions.h" />
     <ClInclude Include="Hooks.h" />
-    <ClInclude Include="Inlines.h" />
     <ClInclude Include="RPCs.h" />
     <ClInclude Include="Scripting.h" />
     <ClInclude Include="SDK\amx\amx.h" />

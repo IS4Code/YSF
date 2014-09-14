@@ -16,6 +16,9 @@
 #include "RPCs.h"
 #include "Scripting.h"
 #include "CModelSizes.h"
+#include "Functions.h"
+#include "Utils.h"
+#include "amxfunctions.h"
 
 // Defines
 #define CON_VARFLAG_DEBUG		1

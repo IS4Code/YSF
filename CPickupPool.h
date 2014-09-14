@@ -20,7 +20,7 @@ enum ePickupType : BYTE
 class CPickup 
 {
 public:
-	CPickup::CPickup(int model, int type, CVector pos, int world, ePickupType pickuptype)
+	CPickup(int model, int type, CVector pos, int world, ePickupType pickuptype)
 	{
 		this->iModel = model;
 		this->iType = type;
@@ -28,6 +28,8 @@ public:
 		this->iWorld = world;
 		this->type = pickuptype;
 	}
+
+	~CPickup();
 
 	int	iModel;
 	int	iType;

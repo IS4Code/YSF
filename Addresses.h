@@ -65,14 +65,16 @@ public:
 	static DWORD			VAR_pRestartWaitTime;
 
 	// Functions
-	static DWORD			FUNC_CConsole_AddStringVariable;
-	static DWORD			FUNC_CConsole_SetStringVariable;
-	static DWORD			FUNC_CConsole_SetIntVariable;
-	static DWORD			FUNC_CConsole_ModifyVariableFlags;
+	static DWORD			FUNC_CConsole__AddStringVariable;
+	static DWORD			FUNC_CConsole__SetStringVariable;
+	static DWORD			FUNC_CConsole__SetIntVariable;
+	static DWORD			FUNC_CConsole__ModifyVariableFlags;
 
-	static DWORD			FUNC_CFilterscripts_LoadFilterscript;
-	static DWORD			FUNC_CFilterscripts_UnLoadFilterscript;
+	static DWORD			FUNC_CFilterscripts__LoadFilterscript;
+	static DWORD			FUNC_CFilterscripts__UnLoadFilterscript;
 	static DWORD			FUNC_ContainsInvalidChars;
+
+	static DWORD			FUNC_CPlayer__SpawnForWorld;
 
 	// Others
 	static DWORD			ADDR_CNetGame_GMX_GangZoneDelete;

@@ -1,12 +1,17 @@
 #include "main.h"
 
-CServer::CServer()
+CServer::CServer(eSAMPVersion version)
 {
 	m_fGravity = 0.008f;
 	m_byteWeather = 10;
 	m_iTicks = 0;
 
 	memset(pPlayerData, NULL, MAX_PLAYERS);
+	
+	// Initialize addresses
+	CAddress::Initialize(version);
+	// Initialize SAMP Function
+	CSAMPFunctions::Initialize();
 }
 
 CServer::~CServer()
@@ -173,7 +178,7 @@ void CServer::SetGravity(float fGravity)
 	// Update console
 	char szGravity[16];
 	sprintf(szGravity, "%f", fGravity);
-	SetServerRule("gravity", szGravity);
+	CSAMPFunctions::SetStringVariable("gravity", szGravity);
 
 	// Minden játékos gravitációja átállítása arra, amire a szerver gravitációját beállítottuk
 	for(WORD i = 0; i != MAX_PLAYERS; i++)

@@ -15,7 +15,14 @@ CGangZonePool::CGangZonePool()
 
 CGangZonePool::~CGangZonePool()
 {
-
+	for (WORD i = 0; i != MAX_GANG_ZONES; i++)
+	{
+		if (pGangZone[i])
+		{
+			delete pGangZone[i];
+			pGangZone[i] = NULL;
+		}
+	}
 }
 
 WORD CGangZonePool::New(float fMinX, float fMinY, float fMaxX, float fMaxY)

@@ -10,6 +10,11 @@ CPickupPool::CPickupPool() : m_bStreamingEnabled(1)
 
 }
 
+CPickupPool::~CPickupPool()
+{
+
+}
+
 void CPickupPool::InitializeForPlayer(WORD playerid)
 {
 	int count = 0;
@@ -43,7 +48,7 @@ int CPickupPool::New(int modelid, int type, CVector vecPos, int world)
 		m_Pickups.insert(PickupMap::value_type(slot, pPickup));
 		m_bPickupSlots.set(slot, true);
 
-		logprintf("createpickup ret: %d", slot);
+		//logprintf("createpickup ret: %d", slot);
 		// Send RPC for each player
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{

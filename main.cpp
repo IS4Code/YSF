@@ -8,10 +8,10 @@
 #include "main.h"
 #include <fstream>
 #include "CGangZonePool.h"
-#include "Inlines.h"
 #include "Utils.h"
 #include "CCallbackManager.h"
 #include "CPickupPool.h"
+#include "CPlayerData.h"
 
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
@@ -67,7 +67,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 
 	// Check server version
 	eSAMPVersion version = SAMP_VERSION_UNKNOWN;
-	char szVersion[16];
+	char szVersion[64];
 	if(logprintf == (logprintf_t)CAddress::FUNC_Logprintf_03Z)
 	{
 		version = SAMP_VERSION_03Z;
@@ -89,20 +89,28 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		strcpy(szVersion, "0.3z R4");
 	}
 
-	// If not unknown, then initalize things
-	if(version != SAMP_VERSION_UNKNOWN)
+	if (!CFGLoad("YSF_noversioncheck", 0, 0))
 	{
-		CAddress::Initialize(version);
-
-		// Create server instance
-		pServer = new CServer();
+		if (version != SAMP_VERSION_UNKNOWN)
+		{
+			// Create server instance
+			pServer = new CServer(version);
+		}
+		else
+		{
+			logprintf("Error: Unknown " OS_NAME " server version\n");
+			return true;
+		}
 	}
 	else
 	{
-		logprintf("Error: Unknown " OS_NAME " server version\n");
-		return true;
+		version = SAMP_VERSION_03Z_R4;
+		strcpy(szVersion, "version check skipped");
+		
+		// Create server instance
+		pServer = new CServer(version);
 	}
-
+	
 	InstallPreHooks();
 
 	logprintf("\n");
@@ -130,6 +138,9 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 
 	delete pNetGame->pGangZonePool;
 	pNetGame->pGangZonePool = NULL;
+
+	delete pNetGame->pPickupPool;
+	pNetGame->pPickupPool = NULL;
 
 	delete pServer;
 	pServer = NULL;
