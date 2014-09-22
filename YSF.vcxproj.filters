@@ -13,6 +13,9 @@
     <Filter Include="Server\Utils">
       <UniqueIdentifier>{44086549-ee70-4f22-bc51-ce86e81fa8bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="subhook">
+      <UniqueIdentifier>{34054bf8-4290-477d-ab71-40ff2586c4b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SDK\amxplugin.cpp">
@@ -63,6 +66,9 @@
     </ClCompile>
     <ClCompile Include="amxfunctions.cpp">
       <Filter>Server\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="subhook\subhook.c">
+      <Filter>subhook</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="amxfunctions.h">
       <Filter>Server\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="subhook\subhook.h">
+      <Filter>subhook</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

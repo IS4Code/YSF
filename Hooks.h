@@ -20,8 +20,7 @@ void AssemblyRedirect(void * from, void * to, char * ret);
 bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask);
 DWORD FindPattern(char *pattern, char *mask);
 
-bool YSF_ContainsInvalidChars(char * szString);
-void GetAddresses();
+bool HOOK_ContainsInvalidChars(char * szString);
 void InstallPreHooks();
 
 #endif
