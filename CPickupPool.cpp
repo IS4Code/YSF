@@ -48,7 +48,7 @@ int CPickupPool::New(int modelid, int type, CVector vecPos, int world)
 		m_Pickups.insert(PickupMap::value_type(slot, pPickup));
 		m_bPickupSlots.set(slot, true);
 
-		//logprintf("createpickup ret: %d", slot);
+		logprintf("createpickup ret: %d", slot);
 		// Send RPC for each player
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
@@ -63,7 +63,7 @@ int CPickupPool::New(int modelid, int type, CVector vecPos, int world)
 				if(!pPlayerData[i]->bClientPickupSlots[x])
 				{
 					freeslot = x;
-					//logprintf("freeslot pickup %d - playerid: %d", x, i);
+					logprintf("freeslot pickup %d - playerid: %d", x, i);
 					break;
 				}
 			}
@@ -102,7 +102,7 @@ int CPickupPool::New(WORD playerid, int modelid, int type, CVector vecPos, int w
 		if(!pPlayerData[playerid]->bClientPickupSlots[x])
 		{
 			freeslot = x;
-			//logprintf("freeslot player pickup %d - playerid: %d", x, playerid);
+			logprintf("freeslot player pickup %d - playerid: %d", x, playerid);
 			break;
 		}
 	}
@@ -179,7 +179,7 @@ void CPickupPool::Destroy(WORD playerid, int pickupid)
 	it = pPlayerData[playerid]->PlayerPickups.erase(it);
 }
 
-void CPickupPool::ShowPickup(int &pickupid, WORD &playerid, CPickup &pPickup)
+void CPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup pPickup)
 {
 	RakNet::BitStream bsPickup;
 	bsPickup.Write(pickupid);
@@ -191,7 +191,7 @@ void CPickupPool::ShowPickup(int &pickupid, WORD &playerid, CPickup &pPickup)
 	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 }
 
-void CPickupPool::HidePickup(int &pickupid, WORD &playerid)
+void CPickupPool::HidePickup(int pickupid, WORD playerid)
 {
 	RakNet::BitStream bsPickup;
 	bsPickup.Write(pickupid);

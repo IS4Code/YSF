@@ -61,6 +61,7 @@ class CGangZonePool;
 #define	INVALID_PLAYER_ID			65535
 #define	MAX_FILTER_SCRIPTS			16
 
+
 #define WEAPON_BRASSKNUCKLE				1
 #define WEAPON_GOLFCLUB					2
 #define WEAPON_NITESTICK				3
@@ -301,13 +302,13 @@ public:
 
 #define MAX_PVARS               800
 #define MAX_PVAR_NAME			40
-
+/*
 // PVar enumeration
 #define PLAYER_VARTYPE_NONE		0
 #define PLAYER_VARTYPE_INT		1
 #define PLAYER_VARTYPE_STRING	2
 #define PLAYER_VARTYPE_FLOAT	3
-
+*/
 typedef struct PVAR_DATA_t
 {
 #pragma pack( 1 )

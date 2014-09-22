@@ -48,15 +48,6 @@ void CServer::Process()
 		m_iTicks = 0;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 		{
-			if(!pPlayerData[playerid] && pNetGame->pPlayerPool->pPlayer[playerid])
-			{
-				AddPlayer(playerid);
-			}
-			else if(pPlayerData[playerid] && !pNetGame->pPlayerPool->pPlayer[playerid])
-			{
-				RemovePlayer(playerid);
-			}
-
 			if(!IsPlayerConnected(playerid)) continue;
 			
 			// Process player
@@ -70,7 +61,7 @@ void CServer::Process()
 	}
 }
 
-bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayerid)
+bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 {
 	//logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);
@@ -137,7 +128,7 @@ bool CServer::OnPlayerStreamIn(unsigned short playerid, unsigned short forplayer
 	return 1;
 }
 
-bool CServer::OnPlayerStreamOut(unsigned short playerid, unsigned short forplayerid)
+bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 {
 	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);

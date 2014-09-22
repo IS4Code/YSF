@@ -5,15 +5,15 @@
 #include "Structs.h"
 #include <bitset>
 
-#define MAX_PLAYERS					500
-#define MAX_OBJECTS					1000
-#define MAX_GANG_ZONES				1024
-#define MAX_PICKUPS					4096
-#define	MAX_TEXT_DRAWS				2048
-#define	MAX_PLAYER_TEXT_DRAWS		256
-#define	MAX_3DTEXT_GLOBAL			1024
-#define MAX_MENUS					128
-#define INVALID_PLAYER_ID			65535
+//#define MAX_PLAYERS					500
+//#define MAX_OBJECTS					1000
+//#define MAX_GANG_ZONES				1024
+//#define MAX_PICKUPS					4096
+//#define	MAX_TEXT_DRAWS				2048
+//#define	MAX_PLAYER_TEXT_DRAWS		256
+//#define	MAX_3DTEXT_GLOBAL			1024
+//#define MAX_MENUS					128
+//#define INVALID_PLAYER_ID			65535
 #define MAX_FILTER_SCRIPTS			16
 
 #define PLAYER_STATE_NONE						0
@@ -26,7 +26,7 @@
 #define PLAYER_STATE_WASTED						7
 #define PLAYER_STATE_SPAWNED					8
 #define PLAYER_STATE_SPECTATING					9
-
+/*
 #define UPDATE_TYPE_NONE		0
 #define UPDATE_TYPE_ONFOOT		1
 #define UPDATE_TYPE_INCAR		2
@@ -46,7 +46,7 @@
 #define SPECIAL_ACTION_USECELLPHONE		11
 #define SPECIAL_ACTION_SITTING			12
 #define SPECIAL_ACTION_STOPUSECELLPHONE 13
-
+*/
 class CGangZone;
 
 typedef std::map<int, CPickup*> PickupMap;

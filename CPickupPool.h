@@ -29,8 +29,6 @@ public:
 		this->type = pickuptype;
 	}
 
-	~CPickup();
-
 	int	iModel;
 	int	iType;
 	CVector	vecPos;
@@ -62,8 +60,8 @@ public:
 	void SetStreamingEnabled(bool enabled);
 	bool IsStreamingEnabled(void);
 private:
-	void ShowPickup(int &pickupid, WORD &playerid, CPickup &pPickup);
-	void HidePickup(int &pickupid, WORD &playerid);
+	void ShowPickup(int pickupid, WORD playerid, CPickup pPickup);
+	void HidePickup(int pickupid, WORD playerid);
 
 	PickupMap m_Pickups;
 	std::bitset<4096> m_bPickupSlots;

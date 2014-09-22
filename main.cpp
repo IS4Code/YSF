@@ -12,9 +12,12 @@
 #include "CCallbackManager.h"
 #include "CPickupPool.h"
 #include "CPlayerData.h"
+#include "Scripting.h"
 
 #include "SDK/amx/amx.h"
 #include "SDK/plugincommon.h"
+
+#include "subhook/subhook.h"
 
 #ifdef LINUX
 	#include <cstring>
@@ -110,7 +113,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		// Create server instance
 		pServer = new CServer(version);
 	}
-	
+
 	InstallPreHooks();
 
 	logprintf("\n");
@@ -400,7 +403,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
-	if(!pServer) return;
+	if (!pServer) return;
 
 	pServer->Process();
 }
