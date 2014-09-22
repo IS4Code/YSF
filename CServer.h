@@ -4,8 +4,6 @@
 class CNetGame;
 class RakServer;
 
-#include "CTypes.h"
-
 class CServer
 {
 public:
@@ -17,8 +15,8 @@ public:
 
 	void Process();
 
-	bool OnPlayerStreamIn(WORD playerid, WORD forplayerid);
-	bool OnPlayerStreamOut(WORD playerid, WORD forplayerid);
+	bool OnPlayerStreamIn(unsigned short playerid, unsigned short forplayerid);
+	bool OnPlayerStreamOut(unsigned short playerid, unsigned short forplayerid);
 
 	void SetGravity(float fGravity);
 	float GetGravity(void);

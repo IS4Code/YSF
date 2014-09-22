@@ -1,4 +1,4 @@
-﻿/*  
+/*  
  *  Version: MPL 1.1
  *  
  *  The contents of this file are subject to the Mozilla Public License Version 
@@ -726,7 +726,7 @@ static cell AMX_NATIVE_CALL n_IsValidNickName(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		return !HOOK_ContainsInvalidChars(name);
+		return !YSF_ContainsInvalidChars(name);
 	}
 	return 0;
 }
@@ -964,7 +964,7 @@ static cell AMX_NATIVE_CALL n_FIXED_SetWeather( AMX* amx, cell* params )
 		return 0;
 
 	CHECK_PARAMS(1, "SetWeather");
-	/*
+
 	cell ret = pSetWeather(amx, params);
 	pServer->m_byteWeather = (BYTE)params[1];
 
@@ -974,8 +974,6 @@ static cell AMX_NATIVE_CALL n_FIXED_SetWeather( AMX* amx, cell* params )
 			pPlayerData[i]->byteWeather = (BYTE)params[1]; 
 	}
 	return ret;
-	*/
-	return 1;
 }
 
 // native SetPlayerWeather(playerid, weatherid);
@@ -983,17 +981,14 @@ static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWeather( AMX* amx, cell* params )
 {
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
-	/*
+
 	cell ret = pSetPlayerWeather(amx, params);
 	if(ret)
 	{
 		// Update stored values
 		pPlayerData[playerid]->byteWeather = (BYTE)params[2];
 	}
-	
 	return ret;
-*/	
-	return 1;
 }
 
 // native GetPlayerWeather(playerid);
@@ -1016,7 +1011,7 @@ static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWorldBounds( AMX* amx, cell* params
 {
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
-	/*
+
 	cell ret = pSetPlayerWorldBounds(amx, params);
 	if(ret)
 	{
@@ -1027,8 +1022,6 @@ static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWorldBounds( AMX* amx, cell* params
 		pPlayerData[playerid]->fBounds[3] = amx_ctof(params[5]);
 	}
 	return ret;
-	*/
-	return 1;
 }
 
 // native TogglePlayerWidescreen(playerid, bool:set);
@@ -3769,6 +3762,7 @@ static cell AMX_NATIVE_CALL n_FIXED_AttachPlayerObjectToPlayer( AMX* amx, cell* 
 // native YSF_AddPlayer(playerid);
 static cell AMX_NATIVE_CALL n_YSF_AddPlayer( AMX* amx, cell* params )
 {
+/*
 	// If unknown server version
 	if(!pServer)
 		return 0;
@@ -3788,11 +3782,14 @@ static cell AMX_NATIVE_CALL n_YSF_AddPlayer( AMX* amx, cell* params )
 	if(ret)
 		pNetGame->pPickupPool->InitializeForPlayer(playerid);
 	return ret;
+*/
+	return 1;
 }
 
 // native YSF_RemovePlayer(playerid);
 static cell AMX_NATIVE_CALL n_YSF_RemovePlayer( AMX* amx, cell* params )
 {
+/*
 	// If unknown server version
 	if(!pServer)
 		return 0;
@@ -3801,6 +3798,7 @@ static cell AMX_NATIVE_CALL n_YSF_RemovePlayer( AMX* amx, cell* params )
 	
 	//logprintf("YSF_RemovePlayer - connected: %d, raknet geci: %d", pNetGame->pPlayerPool->bIsPlayerConnected[(int)params[1]], pRakServer->GetPlayerIDFromIndex((int)params[1]).binaryAddress);
 	int playerid = (int)params[1];
+*/
 	return 1;
 }
 
@@ -5371,66 +5369,38 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ 0,								0 }
 };
 
-AMX_NATIVE_INFO RedirectNatives[] =
-{
-	// File
-	{ "AttachPlayerObjectToPlayer", n_FIXED_AttachPlayerObjectToPlayer },
-	{ "SetGravity", n_FIXED_SetGravity },
-	{ "GetGravity", n_FIXED_GetGravity },
-	{ "SetWeather", n_FIXED_SetWeather },
-	{ "SetPlayerWeather", n_FIXED_SetPlayerWeather },
-	{ "SetPlayerWorldBounds", n_FIXED_SetPlayerWorldBounds},
-
-	{ "GangZoneCreate", n_YSF_GangZoneCreate},
-	{ "GangZoneDestroy", n_YSF_GangZoneDestroy },
-	{ "GangZoneShowForPlayer", n_YSF_GangZoneShowForPlayer },
-	{ "GangZoneHideForPlayer", n_YSF_GangZoneHideForPlayer },
-	{ "GangZoneShowForAll", n_YSF_GangZoneShowForAll },
-	{ "GangZoneHideForAll", n_YSF_GangZoneHideForAll },
-
-	{ "GangZoneFlashForPlayer", n_YSF_GangZoneFlashForPlayer },
-	{ "GangZoneFlashForAll", n_YSF_GangZoneFlashForAll },
-	{ "GangZoneStopFlashForPlayer", n_YSF_GangZoneStopFlashForPlayer },
-	{ "GangZoneStopFlashForAll", n_YSF_GangZoneStopFlashForAll },
-
-	{ "CreatePickup", n_CreatePickup },
-	{ "AddStaticPickup", n_CreatePickup },
-	{ "DestroyPickup", n_DestroyPickup }
-};
-
 int InitScripting(AMX *amx)
 {
-	/*
 	if(pServer)
 	{
-		Redirect(amx, "AttachPlayerObjectToPlayer", (ucell)n_FIXED_AttachPlayerObjectToPlayer, 0);
-		Redirect(amx, "SetGravity", (ucell)n_FIXED_SetGravity, 0);
-		Redirect(amx, "GetGravity", (ucell)n_FIXED_GetGravity, 0);
-		Redirect(amx, "SetWeather", (ucell)n_FIXED_SetWeather, &pSetWeather);
-		Redirect(amx, "SetPlayerWeather", (ucell)n_FIXED_SetPlayerWeather, &pSetPlayerWeather);
-		Redirect(amx, "SetPlayerWorldBounds", (ucell)n_FIXED_SetPlayerWorldBounds, &pSetPlayerWorldBounds);
+		Redirect(amx, "AttachPlayerObjectToPlayer", (uint64_t)n_FIXED_AttachPlayerObjectToPlayer, 0);
+		Redirect(amx, "SetGravity", (uint64_t)n_FIXED_SetGravity, 0);
+		Redirect(amx, "GetGravity", (uint64_t)n_FIXED_GetGravity, 0);
+		Redirect(amx, "SetWeather", (uint64_t)n_FIXED_SetWeather, &pSetWeather);
+		Redirect(amx, "SetPlayerWeather", (uint64_t)n_FIXED_SetPlayerWeather, &pSetPlayerWeather);
+		Redirect(amx, "SetPlayerWorldBounds", (uint64_t)n_FIXED_SetPlayerWorldBounds, &pSetPlayerWorldBounds);
 
-		Redirect(amx, "GangZoneCreate", (ucell)n_YSF_GangZoneCreate, 0);
-		Redirect(amx, "GangZoneDestroy", (ucell)n_YSF_GangZoneDestroy, 0);
-		Redirect(amx, "GangZoneShowForPlayer", (ucell)n_YSF_GangZoneShowForPlayer, 0);
-		Redirect(amx, "GangZoneHideForPlayer", (ucell)n_YSF_GangZoneHideForPlayer, 0);
-		Redirect(amx, "GangZoneShowForAll", (ucell)n_YSF_GangZoneShowForAll, 0);
-		Redirect(amx, "GangZoneHideForAll", (ucell)n_YSF_GangZoneHideForAll, 0);
+		Redirect(amx, "GangZoneCreate", (uint64_t)n_YSF_GangZoneCreate, 0);
+		Redirect(amx, "GangZoneDestroy", (uint64_t)n_YSF_GangZoneDestroy, 0);
+		Redirect(amx, "GangZoneShowForPlayer", (uint64_t)n_YSF_GangZoneShowForPlayer, 0);
+		Redirect(amx, "GangZoneHideForPlayer", (uint64_t)n_YSF_GangZoneHideForPlayer, 0);
+		Redirect(amx, "GangZoneShowForAll", (uint64_t)n_YSF_GangZoneShowForAll, 0);
+		Redirect(amx, "GangZoneHideForAll", (uint64_t)n_YSF_GangZoneHideForAll, 0);
 
-		Redirect(amx, "GangZoneFlashForPlayer", (ucell)n_YSF_GangZoneFlashForPlayer, 0);
-		Redirect(amx, "GangZoneFlashForAll", (ucell)n_YSF_GangZoneFlashForAll, 0);
-		Redirect(amx, "GangZoneStopFlashForPlayer", (ucell)n_YSF_GangZoneStopFlashForPlayer, 0);
-		Redirect(amx, "GangZoneStopFlashForAll", (ucell)n_YSF_GangZoneStopFlashForAll, 0);
+		Redirect(amx, "GangZoneFlashForPlayer", (uint64_t)n_YSF_GangZoneFlashForPlayer, 0);
+		Redirect(amx, "GangZoneFlashForAll", (uint64_t)n_YSF_GangZoneFlashForAll, 0);
+		Redirect(amx, "GangZoneStopFlashForPlayer", (uint64_t)n_YSF_GangZoneStopFlashForPlayer, 0);
+		Redirect(amx, "GangZoneStopFlashForAll", (uint64_t)n_YSF_GangZoneStopFlashForAll, 0);
 
-		Redirect(amx, "CreatePickup", (ucell)n_CreatePickup, 0);
-		Redirect(amx, "AddStaticPickup", (ucell)n_CreatePickup, 0);
-		Redirect(amx, "DestroyPickup", (ucell)n_DestroyPickup, 0);
+		Redirect(amx, "CreatePickup", (uint64_t)n_CreatePickup, 0);
+		Redirect(amx, "AddStaticPickup", (uint64_t)n_CreatePickup, 0);
+		Redirect(amx, "DestroyPickup", (uint64_t)n_DestroyPickup, 0);
 
-		//Redirect(amx, "DestroyVehicle", (ucell)n_FIXED_DestroyVehicle, &pDestroyObject);
-		//Redirect(amx, "DestroyObject", (ucell)n_FIXED_DestroyObject, &pDestroyVehicle);
-		//Redirect(amx, "DestroyPlayerObject", (ucell)n_FIXED_DestroyPlayerObject, &pDestroyPlayerObject);
+		//Redirect(amx, "DestroyVehicle", (uint64_t)n_FIXED_DestroyVehicle, &pDestroyObject);
+		//Redirect(amx, "DestroyObject", (uint64_t)n_FIXED_DestroyObject, &pDestroyVehicle);
+		//Redirect(amx, "DestroyPlayerObject", (uint64_t)n_FIXED_DestroyPlayerObject, &pDestroyPlayerObject);
 	}
-	*/
-	Redirect(amx, "GetWeaponName", (ucell)n_FIXED_GetWeaponName, 0);
+
+	Redirect(amx, "GetWeaponName", (uint64_t)n_FIXED_GetWeaponName, 0);
 	return amx_Register(amx, YSINatives, -1);
 }

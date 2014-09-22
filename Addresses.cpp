@@ -31,7 +31,6 @@ DWORD CAddress::FUNC_CConsole__ModifyVariableFlags = NULL;
 DWORD CAddress::FUNC_CFilterscripts__LoadFilterscript = NULL;
 DWORD CAddress::FUNC_CFilterscripts__UnLoadFilterscript = NULL;
 DWORD CAddress::FUNC_ContainsInvalidChars = NULL;
-DWORD CAddress::FUNC_GetPacketID = NULL;
 
 DWORD CAddress::FUNC_CPlayer__SpawnForWorld = NULL;
 
@@ -58,13 +57,10 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
 	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
 	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x56\x8B\xF1\x8B\x86\x3B\x26\x00\x00\x85\xC0\x0F\x84", "xxxxx????xxxx");
-	FUNC_GetPacketID =							FindPattern("\x8B\x44\x24\x04\x85\xC0\x75\x03\x0C\xFF\xC3", "xxxxxxx???x");
 
 	ADDR_RECEIVE_HOOKPOS =						FindPattern("\x8B\x4E\x10\x8A\x01\x3C\x16\x74\x10\x83\x7E", "xx?xxxx??xx"); // R2-2: 0x458A20
 
-	//0x00488820
-
-	logprintf("FUNC_GetPacketID: %x", FUNC_GetPacketID);
+	logprintf("FUNC_CPlayer__SpawnForWorld: %x", FUNC_CPlayer__SpawnForWorld);
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:
@@ -81,11 +77,8 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	#else
 
 	// Thx for Mellnik
-	VAR_pRestartWaitTime = 						FindPattern("\x00\x00\x40\x41\xFF\xFF\xFF\xFF", "xxxxxxxx");
-
 	FUNC_CConsole__AddStringVariable = 			FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\x85\xF6\x74\x00\x89\x34\x24", "xxxxxxx?xx?xxx?xxx");
 	FUNC_CConsole__SetStringVariable =			FindPattern("\x55\x89\xE5\x83\xEC\x00\x89\x75\x00\x8B\x45\x00\x89\x7D\x00\x8B\x7D\x00\x89\x5D\x00\x89\x44\x24\x00\x8B\x45\x00", "xxxxx?xx?xx?xx?xx?xx?xxx?xx?");
-	FUNC_CConsole__SetIntVariable = 			FindPattern("\x83\x38\x00\x74\x00\xC9\xC3", "xx?x?xx") - 0x1C;
 	FUNC_CConsole__ModifyVariableFlags =		FindPattern("\x89\x04\x24\xE8\x00\x00\x00\x00\x85\xC0\x89\xC2\x74\x00\x8B\x45\x00", "xxxx????xxxxx?xx?") - 0x10;
 	 
 	FUNC_CFilterscripts__LoadFilterscript =		FindPattern("\x89\x7D\x00\x8B\x45\x00\x8B\x7D\x00\x89\x5D\x00\x89\x44\x24\x00", "xx?xx?xx?xx?xxx?") - 0x9;
@@ -93,8 +86,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
 	FUNC_ContainsInvalidChars =					FindPattern("\x53\x8B\x5D\x00\x0F\xB6\x0B\x84\xC9\x74\x00\x66\x90", "xxx?xxxxxx?xx") - 0x3;
-
-	logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
+	/*
 	logprintf("FUNC_CConsole__AddStringVariable: %X", FUNC_CConsole__AddStringVariable);
 	logprintf("FUNC_CConsole__SetStringVariable: %X", FUNC_CConsole__SetStringVariable);
 	logprintf("FUNC_CConsole__SetIntVariable: %X", FUNC_CConsole__ModifyVariableFlags);
@@ -104,7 +96,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	logprintf("FUNC_CFilterscripts__UnLoadFilterscript: %X", FUNC_CFilterscripts__UnLoadFilterscript);
 
 	logprintf("FUNC_ContainsInvalidChars: %X", FUNC_ContainsInvalidChars);
-	
+	*/
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:
@@ -135,15 +127,10 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		{
 			VAR_pRestartWaitTime =						0x81514E0; // 12.0
 			FUNC_CConsole__SetIntVariable =				0x809EFB0; // find for maxplayers
-			FUNC_CPlayer__SpawnForWorld = 				0x080CB160; // find for OnPlayerSpawn
-			FUNC_GetPacketID =							0x080A9610;
 			break;
 		}
 	}
 	#endif
-
-	// Unlock restart wait time
-	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
 
 #ifdef WIN32
 	// Disable GangZonePool deletion at GMX

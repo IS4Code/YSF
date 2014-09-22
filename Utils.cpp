@@ -226,7 +226,6 @@ BYTE GetWeaponSlot(BYTE weaponid)
 // Load an entry from server.cfg.
 int CFGLoad(char const * const name, char * const dest, size_t dlen)
 {
-/*
 	std::ifstream
 		f("server.cfg");
 	int
@@ -263,6 +262,4 @@ int CFGLoad(char const * const name, char * const dest, size_t dlen)
 		f.close();
 	}
 	return ret;
-	*/
-	return 0;
 }

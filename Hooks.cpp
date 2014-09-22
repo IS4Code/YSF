@@ -48,17 +48,9 @@
 	#include <unistd.h>
 #endif
 
-#include "subhook/subhook.h"
-
 #ifndef PAGESIZE
 	#define PAGESIZE (4096)
 #endif
-
-extern void *pAMXFunctions;
-
-static SubHook Namecheck_hook;
-static SubHook amx_Register_hook;
-static SubHook GetPacketID_hook;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -144,12 +136,12 @@ DWORD FindPattern(char *pattern, char *mask)
 ///////////////////////////////////////////////////////////////
 // Hooks //
 ///////////////////////////////////////////////////////////////
-
-// Custom name check
+char gContainsInvalidCharsAssembly[5];
 std::vector <char> gValidNameCharacters;
 
-bool HOOK_ContainsInvalidChars(char * szString)
+bool YSF_ContainsInvalidChars(char * szString)
 {
+	int i = 0;
 	bool bIllegal = false;
 
 	while(*szString) 
@@ -171,120 +163,204 @@ bool HOOK_ContainsInvalidChars(char * szString)
 			{
 				return true;
 			}
+
 		}
 	}
 	return false;
 }
 
-// amx_Register hook for redirect natives
-bool g_bNativesHooked;
+void GetAddresses()
+{	 
+	// Unlock restart wait time
+	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
 
-static void HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
-{
-	SubHook::ScopedRemove remove(&amx_Register_hook);
-
-	if (!g_bNativesHooked)
-	{
-		int i = 0;
-		while (nativelist[i].name)
-		{
-			int x = 0;
-			while (RedirectNatives[x].name)
-			{
-				if (!strcmp(nativelist[i].name, RedirectNatives[x].name))
-				{
-					if (!g_bNativesHooked) g_bNativesHooked = true;
-					nativelist[i].func = RedirectNatives[x].func;
-				}
-				x++;
-			}
-			i++;
-		}
-	}
-
-	amx_Register(amx, nativelist, number);
+	// Custom name check
+	AssemblyRedirect((void *)CAddress::FUNC_ContainsInvalidChars, (void *)YSF_ContainsInvalidChars, gContainsInvalidCharsAssembly);
 }
 
-// GetPacketID hook
-BYTE GetPacketID(Packet *p)
-{
-	if (p == 0) return 255;
+unsigned long rakNet_receive_hook_return;
+Packet *rakNet_receive_hook_pktptr;
+unsigned char rakNet_receive_hook_packetid;
 
-	if ((unsigned char)p->data[0] == 36) 
-	{
-		assert(p->length > sizeof(unsigned char) + sizeof(unsigned long));
-		return (unsigned char)p->data[sizeof(unsigned char) + sizeof(unsigned long)];
-	}
-	else return (unsigned char)p->data[0];
+void installJump(unsigned long addr, void *func)
+{
+#ifdef WIN32
+	unsigned long dwOld;
+	VirtualProtect((LPVOID)addr, 5, PAGE_EXECUTE_READWRITE, &dwOld);
+#else
+	int pagesize = sysconf(_SC_PAGE_SIZE);
+	void *unpraddr = (void *)(((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize;
+	mprotect(unpraddr, pagesize, PROT_WRITE);
+#endif
+	*(unsigned char *)addr = 0xE9;
+	*(unsigned long *)((unsigned long)addr + 0x1) = (unsigned long)func - (unsigned long)addr - 5;
+#ifdef WIN32
+	VirtualProtect((LPVOID)addr, 5, dwOld, &dwOld);
+#else
+	mprotect(unpraddr, pagesize, PROT_READ | PROT_EXEC);
+#endif
 }
 
 bool IsPlayerUpdatePacket(unsigned char packetId)
 {
-	return (packetId == ID_PLAYER_SYNC || packetId == ID_VEHICLE_SYNC || packetId == ID_PASSENGER_SYNC || packetId == ID_SPECTATOR_SYNC);
+	if(packetId == ID_PLAYER_SYNC || packetId == ID_VEHICLE_SYNC || packetId == ID_PASSENGER_SYNC || packetId == ID_SPECTATOR_SYNC)
+		return true;
+	else
+		return false;
 }
 
-static BYTE HOOK_GetPacketID(Packet *p)
+void ProcessPacket()
 {
-	SubHook::ScopedRemove remove(&GetPacketID_hook);
+#ifndef WIN32
+	logprintf("ProcessPacket %x, %x", rakNet_receive_hook_pktptr, rakNet_receive_hook_packetid);
+#endif
+	PlayerIndex playerIndex = rakNet_receive_hook_pktptr->playerIndex;
+	unsigned char packetId = rakNet_receive_hook_packetid;
 
-	BYTE packetId = GetPacketID(p);
-	WORD playerid = p->playerIndex;
+	// invalid
+	if(playerIndex < 0 || playerIndex > MAX_PLAYERS)
+		return;
 
-	//logprintf("packetid: %d, playeird: %d", packetId, playerid);
-
-	if (!IsPlayerConnected(playerid)) return 0xFF;
-
-	// AFK
-	if (IsPlayerUpdatePacket(packetId))
+	//SYSTEMTIME time;
+	//GetLocalTime(&time);
+	/*
+	if(packetId == ID_PLAYER_SYNC)
 	{
-		if (pNetGame->pPlayerPool->pPlayer[playerid]->byteState != 0 && pNetGame->pPlayerPool->pPlayer[playerid]->byteState != 7)
-		{
-			pPlayerData[playerid]->dwLastUpdateTick = GetTickCount();
-			pPlayerData[playerid]->bEverUpdated = true;
-		}
-	}
-
-	if (packetId == ID_PLAYER_SYNC)
-	{
-		//logprintf("ID_PLAYER_SYNC");
-		RakNet::BitStream bsData(p->data, p->length, false);
+		logprintf("ID_PLAYER_SYNC");
+		RakNet::BitStream bsData( rakNet_receive_hook_pktptr->data, rakNet_receive_hook_pktptr->length / 8, false );
+		BYTE bytePacketID;
 		CSyncData pSyncData;
 
-		bsData.SetReadOffset(8);
+		bsData.Read(bytePacketID);
 		bsData.Read((char*)&pSyncData, sizeof(pSyncData));
 
-		//logprintf("health: %d, weapon: %d, specialaction: %d", pSyncData.byteHealth, pSyncData.byteWeapon, pSyncData.byteSpecialAction);
-
-		if (pSyncData.byteWeapon == 44 || pSyncData.byteWeapon == 45)
+		if(pSyncData.byteWeapon == 44 || pSyncData.byteWeapon == 45)
 		{
 			pSyncData.byteWeapon = 0;
-			//logprintf("nightvision");
+			logprintf("nightvision");
 		}
 	}
+	*/
 
-	if (packetId == ID_BULLET_SYNC)
+	//AFK
+	if(IsPlayerUpdatePacket(packetId) && pPlayerData[playerIndex])
 	{
-		RakNet::BitStream bsData(p->data, p->length, false);
-		BULLET_SYNC_DATA pBulletSync;
-
-		bsData.SetReadOffset(8);
-		bsData.Read((char*)&pBulletSync, sizeof(pBulletSync));
-
-		if (pBulletSync.vecCenterOfHit.fX < -20000.0 || pBulletSync.vecCenterOfHit.fX > 20000.0 ||
-			pBulletSync.vecCenterOfHit.fY < -20000.0 || pBulletSync.vecCenterOfHit.fY > 20000.0 ||
-			pBulletSync.vecCenterOfHit.fZ < -20000.0 || pBulletSync.vecCenterOfHit.fZ > 20000.0)
+		if(pNetGame->pPlayerPool->bIsPlayerConnected[playerIndex] && pNetGame->pPlayerPool->pPlayer[playerIndex]->byteState != 0 && pNetGame->pPlayerPool->pPlayer[playerIndex]->byteState != 7)
 		{
-			logprintf("bullet crasher detected. id = %d", playerid);
-			return 0xFF;
+			pPlayerData[playerIndex]->dwLastUpdateTick = GetTickCount();
+			pPlayerData[playerIndex]->bEverUpdated = true;
 		}
-
 	}
-	return packetId;
+
+	//logprintf("[%02d:%02d:%02d.%03d] Incoming packet - playerIndex: %d | packetId: %d", time.wHour, time.wMinute, time.wSecond, time.wMilliseconds, playerIndex, packetId);
+}
+
+#ifdef WIN32
+unsigned char _declspec(naked) RakNet_Receive_Hook(void)
+#else
+unsigned char /*__attribute__((naked))*/ RakNet_Receive_Hook ( void )
+#endif
+{
+#ifdef WIN32
+	_asm
+	{
+		mov ecx, dword ptr [esi+0x10]
+		mov al, byte ptr [ecx]
+		/*
+		push eax
+		mov eax, dword ptr [edi]
+		add eax, 8
+		mov pInternelRakServer, eax
+		pop eax
+		*/
+		mov rakNet_receive_hook_packetid, al
+		mov rakNet_receive_hook_pktptr, esi
+
+		pushad
+	}
+#else
+
+	// hax cos the naked doesn't work :s
+	__asm(
+	".intel_syntax noprefix\n"
+		"add esp, 8\n"
+		"pop ebp\n"
+	".att_syntax\n");
+	/*
+	__asm(
+	".intel_syntax noprefix\n"
+		"push eax\n"
+		"mov eax, dword ptr [ebp+8]\n"
+		"mov eax, dword ptr [eax]\n"
+		"mov pInternelRakServer, eax\n"
+		"pop eax\n"
+	".att_syntax\n");
+	*/
+	__asm(
+	".intel_syntax noprefix\n"
+		"mov rakNet_receive_hook_packetid, al\n"
+		"mov rakNet_receive_hook_pktptr, ebx\n"
+		"pushad\n"
+	".att_syntax\n");
+
+#endif
+
+	ProcessPacket();
+
+#ifdef WIN32
+	_asm
+	{
+		popad
+
+		push eax
+		mov eax, CAddress::ADDR_RECEIVE_HOOKPOS
+		add eax, 5
+		mov rakNet_receive_hook_return, eax
+		pop eax
+
+		jmp rakNet_receive_hook_return
+	}
+#else
+	__asm(
+	".intel_syntax noprefix\n"
+		"popad\n"
+
+		"push eax\n"
+	".att_syntax\n"
+	);
+
+	__asm(
+	".intel_syntax noprefix\n"
+		"mov eax, %0\n"
+	".att_syntax\n"
+		:
+		: "r"(CAddress::ADDR_RECEIVE_HOOKPOS)
+	);
+
+	__asm(
+	".intel_syntax noprefix\n"
+		"add eax, 8\n"
+		"mov rakNet_receive_hook_return, eax\n"
+		"pop eax\n"
+
+		"movzx eax, al\n"
+		"cmp eax, 0x0D8\n"
+
+		"jmp dword ptr [rakNet_receive_hook_return]\n"
+	".att_syntax\n"
+	);
+#endif
+}
+
+void InstallRakNetReceiveHook()
+{
+	installJump(CAddress::ADDR_RECEIVE_HOOKPOS, (void*)RakNet_Receive_Hook);
 }
 
 void InstallPreHooks()
 {
-	Namecheck_hook.Install((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
-	amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
-	GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);	
+	GetAddresses();
+#ifdef WIN32
+	InstallRakNetReceiveHook();
+#endif
 }

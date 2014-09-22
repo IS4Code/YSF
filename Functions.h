@@ -13,14 +13,8 @@ typedef bool(__thiscall *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscri
 
 typedef void(__thiscall *CPlayer__SpawnForWorld_t)(void *pPlayer);
 #else
-typedef void(*CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);
-typedef void(*CConsole__SetStringVariable_t)(void *pConsole, char *szRule, char *szString);
-typedef void(*CConsole__SetIntVariable_t)(void *pConsole, char *szRule, int value);
-typedef void(*CConsole__ModifyVariableFlags_t)(void *pConsole, char *szRule, int value);
-             
-typedef bool(*CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, char *szName);
-typedef bool(*CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
-             
+typedef void(*CConsole__AddStringVariable_t)(void *pConsole, char * rule, int flags, char *szString, void *changefunc);
+
 typedef void(*CPlayer__SpawnForWorld_t)(void *pPlayer);
 #endif
 

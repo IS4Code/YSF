@@ -73,7 +73,6 @@ public:
 	static DWORD			FUNC_CFilterscripts__LoadFilterscript;
 	static DWORD			FUNC_CFilterscripts__UnLoadFilterscript;
 	static DWORD			FUNC_ContainsInvalidChars;
-	static DWORD			FUNC_GetPacketID;
 
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
 
