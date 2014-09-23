@@ -23,12 +23,15 @@ public:
 	void SetGravity(float fGravity);
 	float GetGravity(void);
 
-	eSAMPVersion GetVersion() { return m_Version; }
+	void SetWeather(BYTE byteWeather);
+	BYTE GetWeather(void);
 
-	unsigned char m_byteWeather;
+	eSAMPVersion GetVersion() { return m_Version; }
+	
 private:
 	eSAMPVersion m_Version;
 	float m_fGravity;
+	unsigned char m_byteWeather;
 	int m_iTicks;
 };
 

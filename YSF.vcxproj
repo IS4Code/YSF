@@ -65,7 +65,7 @@
       <DisableSpecificWarnings>4995;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <OutputFile>C:\Program Files (x86)\Rockstar Games\GTA San Andreas\SERVER\plugins\YSF.dll</OutputFile>
+      <OutputFile>C:\Users\Ati\Desktop\SERVER\plugins\YSF.dll</OutputFile>
       <ModuleDefinitionFile>YSF.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>

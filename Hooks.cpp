@@ -177,7 +177,7 @@ bool HOOK_ContainsInvalidChars(char * szString)
 }
 
 // amx_Register hook for redirect natives
-bool g_bNativesHooked;
+bool g_bNativesHooked = false;  
 
 static void HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 {
@@ -188,13 +188,18 @@ static void HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		int i = 0;
 		while (nativelist[i].name)
 		{
+			logprintf("native %s", nativelist[i].name);
 			int x = 0;
-			while (RedirectNatives[x].name)
+			
+			while (RedirecedtNatives[x].name)
 			{
-				if (!strcmp(nativelist[i].name, RedirectNatives[x].name))
+				logprintf("asdasd %s", RedirecedtNatives[x].name);
+				if (!strcmp(nativelist[i].name, RedirecedtNatives[x].name))
 				{
 					if (!g_bNativesHooked) g_bNativesHooked = true;
-					nativelist[i].func = RedirectNatives[x].func;
+				
+					logprintf("native: %s, %s", nativelist[i].name, RedirecedtNatives[x].name);
+					nativelist[i].func = RedirecedtNatives[x].func;
 				}
 				x++;
 			}
@@ -285,6 +290,8 @@ static BYTE HOOK_GetPacketID(Packet *p)
 void InstallPreHooks()
 {
 	Namecheck_hook.Install((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
+	
+	logprintf("adress of hook: %X", (void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)));
 	amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 	GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);	
 }

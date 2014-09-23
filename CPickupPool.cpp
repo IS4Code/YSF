@@ -48,7 +48,7 @@ int CPickupPool::New(int modelid, int type, CVector vecPos, int world)
 		m_Pickups.insert(PickupMap::value_type(slot, pPickup));
 		m_bPickupSlots.set(slot, true);
 
-		logprintf("createpickup ret: %d", slot);
+		//logprintf("createpickup ret: %d", slot);
 		// Send RPC for each player
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
@@ -63,7 +63,7 @@ int CPickupPool::New(int modelid, int type, CVector vecPos, int world)
 				if(!pPlayerData[i]->bClientPickupSlots[x])
 				{
 					freeslot = x;
-					logprintf("freeslot pickup %d - playerid: %d", x, i);
+					//logprintf("freeslot pickup %d - playerid: %d", x, i);
 					break;
 				}
 			}

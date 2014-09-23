@@ -38,7 +38,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	wPlayerID = playerid;
 	bObjectsRemoved = false;
 	fGravity = pServer->GetGravity();
-	byteWeather = pServer->m_byteWeather;
+	byteWeather = pServer->GetWeather();
 	bWidescreen = false;
 
 	// Fix for GetPlayerColor

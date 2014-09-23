@@ -66,5 +66,6 @@ enum
 #endif
 
 int InitScripting(AMX *amx);
-extern AMX_NATIVE_INFO RedirectNatives[];
+
+extern AMX_NATIVE_INFO RedirecedtNatives[];
 #endif

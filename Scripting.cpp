@@ -1,4 +1,4 @@
-﻿/*  
+/*  
  *  Version: MPL 1.1
  *  
  *  The contents of this file are subject to the Mozilla Public License Version 
@@ -54,14 +54,6 @@
 
 // extern
 typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
-
-AMX_NATIVE
-	pDestroyVehicle,
-	pDestroyObject,
-	pDestroyPlayerObject,
-	pSetPlayerWorldBounds,
-	pSetWeather,
-	pSetPlayerWeather;
 
 //----------------------------------------------------
 #ifdef WIN32
@@ -964,35 +956,29 @@ static cell AMX_NATIVE_CALL n_FIXED_SetWeather( AMX* amx, cell* params )
 		return 0;
 
 	CHECK_PARAMS(1, "SetWeather");
-	/*
-	cell ret = pSetWeather(amx, params);
-	pServer->m_byteWeather = (BYTE)params[1];
 
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
-	{
-		if(IsPlayerConnected(i))
-			pPlayerData[i]->byteWeather = (BYTE)params[1]; 
-	}
-	return ret;
-	*/
+	pServer->SetWeather((BYTE)params[1]);
 	return 1;
 }
 
 // native SetPlayerWeather(playerid, weatherid);
-static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWeather( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWeather(AMX* amx, cell* params)
 {
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetPlayerWeather");
+
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0;
-	/*
-	cell ret = pSetPlayerWeather(amx, params);
-	if(ret)
-	{
-		// Update stored values
-		pPlayerData[playerid]->byteWeather = (BYTE)params[2];
-	}
-	
-	return ret;
-*/	
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	// Update stored values
+	pPlayerData[playerid]->byteWeather = (BYTE)params[2];
+
+	RakNet::BitStream bs;
+	bs.Write(pPlayerData[playerid]->byteWeather);
+	pRakServer->RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -1012,22 +998,29 @@ static cell AMX_NATIVE_CALL n_GetPlayerWeather( AMX* amx, cell* params )
 }
 
 // native SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
-static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWorldBounds( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWorldBounds(AMX* amx, cell* params)
 {
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(5, "SetPlayerWorldBounds");
+
 	int playerid = (int)params[1];
-	if(!IsPlayerConnected(playerid)) return 0;
-	/*
-	cell ret = pSetPlayerWorldBounds(amx, params);
-	if(ret)
-	{
-		// Update stored values
-		pPlayerData[playerid]->fBounds[0] = amx_ctof(params[2]);
-		pPlayerData[playerid]->fBounds[1] = amx_ctof(params[3]);
-		pPlayerData[playerid]->fBounds[2] = amx_ctof(params[4]);
-		pPlayerData[playerid]->fBounds[3] = amx_ctof(params[5]);
-	}
-	return ret;
-	*/
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	// Update stored values
+	pPlayerData[playerid]->fBounds[0] = amx_ctof(params[2]);
+	pPlayerData[playerid]->fBounds[1] = amx_ctof(params[3]);
+	pPlayerData[playerid]->fBounds[2] = amx_ctof(params[4]);
+	pPlayerData[playerid]->fBounds[3] = amx_ctof(params[5]);
+
+	RakNet::BitStream bs;
+	bs.Write(pPlayerData[playerid]->fBounds[0]);
+	bs.Write(pPlayerData[playerid]->fBounds[1]);
+	bs.Write(pPlayerData[playerid]->fBounds[2]);
+	bs.Write(pPlayerData[playerid]->fBounds[3]);
+	pRakServer->RPC(&RPC_WorldBounds, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -5014,66 +5007,7 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 	return set_amxstring(amx, params[2], GetWeaponName((BYTE)params[1]), params[3]);
 }
 
-// native DestroyVehicle(vehicleid);
-static cell AMX_NATIVE_CALL n_FIXED_DestroyVehicle( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-#ifdef adasdas
-	WORD vehicleid = params[1];
-	cell ret = pDestroyVehicle(amx, params);
-	if(ret)
-	{
-		CObject *pObject;
-		// Remove every global object
-		for(WORD i; i != MAX_OBJECTS; i++)
-		{
-			pObject = pNetGame->pObjectPool->m_pObjects[i];
-			if(!pObject) continue;
-
-			//if(pObject->wAttachedVehicleID == vehicleid)
-				// DestroyObject()
-		}
-
-		// Remove every player object
-		for(WORD x; x != MAX_PLAYERS; x++)
-		{
-			for(WORD i; i != MAX_OBJECTS; i++)
-			{
-				if(!IsPlayerConnected(x)) continue;
-
-				pObject = pNetGame->pObjectPool->m_pPlayerObjects[x][i];
-				if(!pObject) continue;
-
-				if(pObject->wAttachedVehicleID == vehicleid)
-				{
-					cell id = i;
-					//logprintf("destroy id: %d, frontamx: %d", id, pAMXList.front());
-					//pDestroyObject(pAMXList.front(), &id);
-				}
-			}
-		}
-
-	}
-#endif
-	return 1;
-}
-
-static cell AMX_NATIVE_CALL n_FIXED_DestroyObject( AMX* amx, cell* params )
-{
-	cell ret = pDestroyObject(amx, params);
-	return ret;
-}
-
-static cell AMX_NATIVE_CALL n_FIXED_DestroyPlayerObject( AMX* amx, cell* params )
-{
-	cell ret = pDestroyPlayerObject(amx, params);
-	return ret;
-}
-
 // native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
-
 static cell AMX_NATIVE_CALL n_CreatePickup(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(6, "CreatePickup");
@@ -5371,7 +5305,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ 0,								0 }
 };
 
-AMX_NATIVE_INFO RedirectNatives[] =
+AMX_NATIVE_INFO RedirecedtNatives[] =
 {
 	// File
 	{ "AttachPlayerObjectToPlayer", n_FIXED_AttachPlayerObjectToPlayer },
@@ -5379,9 +5313,9 @@ AMX_NATIVE_INFO RedirectNatives[] =
 	{ "GetGravity", n_FIXED_GetGravity },
 	{ "SetWeather", n_FIXED_SetWeather },
 	{ "SetPlayerWeather", n_FIXED_SetPlayerWeather },
-	{ "SetPlayerWorldBounds", n_FIXED_SetPlayerWorldBounds},
+	{ "SetPlayerWorldBounds", n_FIXED_SetPlayerWorldBounds },
 
-	{ "GangZoneCreate", n_YSF_GangZoneCreate},
+	{ "GangZoneCreate", n_YSF_GangZoneCreate },
 	{ "GangZoneDestroy", n_YSF_GangZoneDestroy },
 	{ "GangZoneShowForPlayer", n_YSF_GangZoneShowForPlayer },
 	{ "GangZoneHideForPlayer", n_YSF_GangZoneHideForPlayer },
@@ -5395,42 +5329,12 @@ AMX_NATIVE_INFO RedirectNatives[] =
 
 	{ "CreatePickup", n_CreatePickup },
 	{ "AddStaticPickup", n_CreatePickup },
-	{ "DestroyPickup", n_DestroyPickup }
+	{ "DestroyPickup", n_DestroyPickup },
+
+	{ "GetWeaponName", n_FIXED_GetWeaponName }
 };
 
 int InitScripting(AMX *amx)
 {
-	/*
-	if(pServer)
-	{
-		Redirect(amx, "AttachPlayerObjectToPlayer", (ucell)n_FIXED_AttachPlayerObjectToPlayer, 0);
-		Redirect(amx, "SetGravity", (ucell)n_FIXED_SetGravity, 0);
-		Redirect(amx, "GetGravity", (ucell)n_FIXED_GetGravity, 0);
-		Redirect(amx, "SetWeather", (ucell)n_FIXED_SetWeather, &pSetWeather);
-		Redirect(amx, "SetPlayerWeather", (ucell)n_FIXED_SetPlayerWeather, &pSetPlayerWeather);
-		Redirect(amx, "SetPlayerWorldBounds", (ucell)n_FIXED_SetPlayerWorldBounds, &pSetPlayerWorldBounds);
-
-		Redirect(amx, "GangZoneCreate", (ucell)n_YSF_GangZoneCreate, 0);
-		Redirect(amx, "GangZoneDestroy", (ucell)n_YSF_GangZoneDestroy, 0);
-		Redirect(amx, "GangZoneShowForPlayer", (ucell)n_YSF_GangZoneShowForPlayer, 0);
-		Redirect(amx, "GangZoneHideForPlayer", (ucell)n_YSF_GangZoneHideForPlayer, 0);
-		Redirect(amx, "GangZoneShowForAll", (ucell)n_YSF_GangZoneShowForAll, 0);
-		Redirect(amx, "GangZoneHideForAll", (ucell)n_YSF_GangZoneHideForAll, 0);
-
-		Redirect(amx, "GangZoneFlashForPlayer", (ucell)n_YSF_GangZoneFlashForPlayer, 0);
-		Redirect(amx, "GangZoneFlashForAll", (ucell)n_YSF_GangZoneFlashForAll, 0);
-		Redirect(amx, "GangZoneStopFlashForPlayer", (ucell)n_YSF_GangZoneStopFlashForPlayer, 0);
-		Redirect(amx, "GangZoneStopFlashForAll", (ucell)n_YSF_GangZoneStopFlashForAll, 0);
-
-		Redirect(amx, "CreatePickup", (ucell)n_CreatePickup, 0);
-		Redirect(amx, "AddStaticPickup", (ucell)n_CreatePickup, 0);
-		Redirect(amx, "DestroyPickup", (ucell)n_DestroyPickup, 0);
-
-		//Redirect(amx, "DestroyVehicle", (ucell)n_FIXED_DestroyVehicle, &pDestroyObject);
-		//Redirect(amx, "DestroyObject", (ucell)n_FIXED_DestroyObject, &pDestroyVehicle);
-		//Redirect(amx, "DestroyPlayerObject", (ucell)n_FIXED_DestroyPlayerObject, &pDestroyPlayerObject);
-	}
-	*/
-	Redirect(amx, "GetWeaponName", (ucell)n_FIXED_GetWeaponName, 0);
 	return amx_Register(amx, YSINatives, -1);
 }
