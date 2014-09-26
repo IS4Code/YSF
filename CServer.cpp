@@ -71,7 +71,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
 		return 0;
 
-	if(!pPlayerData[playerid] || !pPlayerData[forplayerid])
+	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
@@ -137,7 +137,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
 		return 0;
 
-	if(!pPlayerData[playerid] || !pPlayerData[forplayerid])
+	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
@@ -195,7 +195,7 @@ void CServer::SetWeather(BYTE byteWeather)
 	sprintf(szWeather, "%d", byteWeather);
 	CSAMPFunctions::SetStringVariable("weather", szWeather);
 
-	// Minden játékos id?járása átállítása arra, amire a szerver id?járást beállítottuk
+	// Minden játékos idõjárása átállítása arra, amire a szerver idõjárást beállítottuk
 	for (WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		if (IsPlayerConnected(i))

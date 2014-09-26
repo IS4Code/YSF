@@ -76,12 +76,11 @@ public:
 	static DWORD			FUNC_GetPacketID;
 
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
+	static DWORD			FUNC_ProcessQueryPacket;
 
 	// Others
 	static DWORD			ADDR_CNetGame_GMX_GangZoneDelete;
-
-	// Receive hook
-	static DWORD			ADDR_RECEIVE_HOOKPOS;
+	static DWORD			ADDR_CNetGame_GMX_PckupDelete;
 };
 
 extern std::vector <char> gValidNameCharacters;

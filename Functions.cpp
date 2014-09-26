@@ -11,6 +11,8 @@ CFilterscripts__UnLoadFilterscript_t	CSAMPFunctions::pfn__CFilterscripts__UnLoad
 
 CPlayer__SpawnForWorld_t				CSAMPFunctions::pfn__CPlayer__SpawnForWorld = NULL;
 
+ProcessQueryPacket_t					CSAMPFunctions::pfn__ProcessQueryPacket = NULL;
+
 void CSAMPFunctions::Initialize()
 {
 	pfn__CConsole__AddStringVariable = (CConsole__AddStringVariable_t)(CAddress::FUNC_CConsole__AddStringVariable);
@@ -22,6 +24,8 @@ void CSAMPFunctions::Initialize()
 	pfn__CFilterscripts__UnLoadFilterscript = (CFilterscripts__UnLoadFilterscript_t)(CAddress::FUNC_CFilterscripts__UnLoadFilterscript);
 
 	pfn__CPlayer__SpawnForWorld = (CPlayer__SpawnForWorld_t)(CAddress::FUNC_CPlayer__SpawnForWorld);
+
+	pfn__ProcessQueryPacket = (ProcessQueryPacket_t)(CAddress::FUNC_ProcessQueryPacket);
 }
 
 void CSAMPFunctions::AddStringVariable(char *szRule, int flags, char *szString, void *changefunc)
@@ -57,4 +61,9 @@ bool CSAMPFunctions::UnLoadFilterscript(char *szName)
 void CSAMPFunctions::SpawnPlayer(int playerid)
 {
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
+}
+
+int CSAMPFunctions::ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s)
+{
+	return pfn__ProcessQueryPacket(binaryAddress, port, data, length, s);
 }

@@ -803,7 +803,7 @@ class CNetGame
 		CPickupPool				*pPickupPool;
 		CObjectPool				*pObjectPool;			// 0x0010 - 0x0014
 		CMenuPool				*pMenuPool;				// 24
-		CTextDrawPool			*pTextDrawPool;			//28
+		CTextDrawPool			*pTextDrawPool;			// 28
 		C3DTextPool				*p3DTextPool;			// 32
 		CGangZonePool			*pGangZonePool;			// 36 - 40
 		int						iCurrentGameModeIndex;	// 40 - 44

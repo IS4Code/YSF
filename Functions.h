@@ -12,6 +12,8 @@ typedef bool(__thiscall *CFilterscripts__LoadFilterscript_t)(void *pFilterscript
 typedef bool(__thiscall *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
 
 typedef void(__thiscall *CPlayer__SpawnForWorld_t)(void *pPlayer);
+
+typedef int (__thiscall *ProcessQueryPacket_t)(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s);
 #else
 typedef void(*CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);
 typedef void(*CConsole__SetStringVariable_t)(void *pConsole, char *szRule, char *szString);
@@ -22,6 +24,8 @@ typedef bool(*CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, char 
 typedef bool(*CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
              
 typedef void(*CPlayer__SpawnForWorld_t)(void *pPlayer);
+
+typedef int (*ProcessQueryPacket_t)(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s);
 #endif
 
 class CSAMPFunctions
@@ -38,6 +42,7 @@ public:
 	static bool		UnLoadFilterscript(char *szName);
 	
 	static void		SpawnPlayer(int iPlayerId);
+	static int		ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s);
 
 	// Function
 	// Rules
@@ -50,6 +55,8 @@ public:
 	static CFilterscripts__UnLoadFilterscript_t		pfn__CFilterscripts__UnLoadFilterscript;
 	// Player
 	static CPlayer__SpawnForWorld_t					pfn__CPlayer__SpawnForWorld;
+	// Query
+	static ProcessQueryPacket_t						pfn__ProcessQueryPacket;
 };
 
 #endif

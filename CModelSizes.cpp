@@ -3750,23 +3750,23 @@ double MODELS_gColRadius[19902] =
 			{   0.000000,    0.000000,    0.000000}, {   0.000000,    0.000000,    0.000000}, {   0.000000,    0.000000,    0.000000}, {   0.000000,    0.000000,    0.000000}, {   0.000000,    0.000000,    0.000000}, {   0.000000,    0.000000,   -0.648438}
 		};
 
-ushort GetColCount(void)
+WORD CModelSizes::GetColCount(void)
 {
 	return sizeof(MODELS_gColRadius) / sizeof(MODELS_gColRadius[0]);
 }
 
-float GetColSphereRadius(int objectmodel)
+float CModelSizes::GetColSphereRadius(int objectmodel)
 {
-	if (0 <= objectmodel && objectmodel < GetColCount())
+	if (0 <= objectmodel && objectmodel < CModelSizes::GetColCount())
 	{
 		return (float)MODELS_gColRadius[objectmodel];
 	}
 	return 0.0;
 }
 
-CVector GetColSphereOffset(int objectmodel)
+CVector CModelSizes::GetColSphereOffset(int objectmodel)
 {
-	if (0 <= objectmodel && objectmodel < GetColCount())
+	if (0 <= objectmodel && objectmodel < CModelSizes::GetColCount())
 	{
 		return CVector((float)MODELS_gColOffset[objectmodel][0], (float)MODELS_gColOffset[objectmodel][1], (float)MODELS_gColOffset[objectmodel][2]);
 	}

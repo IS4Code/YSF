@@ -33,6 +33,7 @@
 
 #include "main.h"
 #include "Utils.h"
+#include "CCallbackManager.h"
 
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN
@@ -59,6 +60,8 @@ extern void *pAMXFunctions;
 static SubHook Namecheck_hook;
 static SubHook amx_Register_hook;
 static SubHook GetPacketID_hook;
+static SubHook logprintf_hook;
+static SubHook query_hook;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -188,17 +191,17 @@ static void HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		int i = 0;
 		while (nativelist[i].name)
 		{
-			logprintf("native %s", nativelist[i].name);
+			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
 			
 			while (RedirecedtNatives[x].name)
 			{
-				logprintf("asdasd %s", RedirecedtNatives[x].name);
+				//logprintf("asdasd %s", RedirecedtNatives[x].name);
 				if (!strcmp(nativelist[i].name, RedirecedtNatives[x].name))
 				{
 					if (!g_bNativesHooked) g_bNativesHooked = true;
 				
-					logprintf("native: %s, %s", nativelist[i].name, RedirecedtNatives[x].name);
+					//logprintf("native: %s, %s", nativelist[i].name, RedirecedtNatives[x].name);
 					nativelist[i].func = RedirecedtNatives[x].func;
 				}
 				x++;
@@ -237,56 +240,81 @@ static BYTE HOOK_GetPacketID(Packet *p)
 
 	//logprintf("packetid: %d, playeird: %d", packetId, playerid);
 
-	if (!IsPlayerConnected(playerid)) return 0xFF;
-
-	// AFK
-	if (IsPlayerUpdatePacket(packetId))
+	if (IsPlayerConnected(playerid))
 	{
-		if (pNetGame->pPlayerPool->pPlayer[playerid]->byteState != 0 && pNetGame->pPlayerPool->pPlayer[playerid]->byteState != 7)
+		// AFK
+		if (IsPlayerUpdatePacket(packetId))
 		{
-			pPlayerData[playerid]->dwLastUpdateTick = GetTickCount();
-			pPlayerData[playerid]->bEverUpdated = true;
-		}
-	}
-
-	if (packetId == ID_PLAYER_SYNC)
-	{
-		//logprintf("ID_PLAYER_SYNC");
-		RakNet::BitStream bsData(p->data, p->length, false);
-		CSyncData pSyncData;
-
-		bsData.SetReadOffset(8);
-		bsData.Read((char*)&pSyncData, sizeof(pSyncData));
-
-		//logprintf("health: %d, weapon: %d, specialaction: %d", pSyncData.byteHealth, pSyncData.byteWeapon, pSyncData.byteSpecialAction);
-
-		if (pSyncData.byteWeapon == 44 || pSyncData.byteWeapon == 45)
-		{
-			pSyncData.byteWeapon = 0;
-			//logprintf("nightvision");
-		}
-	}
-
-	if (packetId == ID_BULLET_SYNC)
-	{
-		RakNet::BitStream bsData(p->data, p->length, false);
-		BULLET_SYNC_DATA pBulletSync;
-
-		bsData.SetReadOffset(8);
-		bsData.Read((char*)&pBulletSync, sizeof(pBulletSync));
-
-		if (pBulletSync.vecCenterOfHit.fX < -20000.0 || pBulletSync.vecCenterOfHit.fX > 20000.0 ||
-			pBulletSync.vecCenterOfHit.fY < -20000.0 || pBulletSync.vecCenterOfHit.fY > 20000.0 ||
-			pBulletSync.vecCenterOfHit.fZ < -20000.0 || pBulletSync.vecCenterOfHit.fZ > 20000.0)
-		{
-			logprintf("bullet crasher detected. id = %d", playerid);
-			return 0xFF;
+			if (pNetGame->pPlayerPool->pPlayer[playerid]->byteState != 0 && pNetGame->pPlayerPool->pPlayer[playerid]->byteState != 7)
+			{
+				pPlayerData[playerid]->dwLastUpdateTick = GetTickCount();
+				pPlayerData[playerid]->bEverUpdated = true;
+			}
 		}
 
+		if (packetId == ID_PLAYER_SYNC)
+		{
+			//logprintf("ID_PLAYER_SYNC");
+			RakNet::BitStream bsData(p->data, p->length, false);
+			CSyncData pSyncData;
+
+			bsData.SetReadOffset(8);
+			bsData.Read((char*)&pSyncData, sizeof(pSyncData));
+
+			//logprintf("health: %d, weapon: %d, specialaction: %d", pSyncData.byteHealth, pSyncData.byteWeapon, pSyncData.byteSpecialAction);
+
+			if (pSyncData.byteWeapon == 44 || pSyncData.byteWeapon == 45)
+			{
+				pSyncData.byteWeapon = 0;
+				//logprintf("nightvision");
+			}
+		}
+
+		if (packetId == ID_BULLET_SYNC)
+		{
+			RakNet::BitStream bsData(p->data, p->length, false);
+			BULLET_SYNC_DATA pBulletSync;
+
+			bsData.SetReadOffset(8);
+			bsData.Read((char*)&pBulletSync, sizeof(pBulletSync));
+
+			if (pBulletSync.vecCenterOfHit.fX < -20000.0 || pBulletSync.vecCenterOfHit.fX > 20000.0 ||
+				pBulletSync.vecCenterOfHit.fY < -20000.0 || pBulletSync.vecCenterOfHit.fY > 20000.0 ||
+				pBulletSync.vecCenterOfHit.fZ < -20000.0 || pBulletSync.vecCenterOfHit.fZ > 20000.0)
+			{
+				logprintf("bullet crasher detected. id = %d", playerid);
+				return 0xFF;
+			}
+		}
 	}
 	return packetId;
 }
 
+static void HOOK_logprintf(const char *msg, ...)
+{
+	SubHook::ScopedRemove remove(&logprintf_hook);
+
+	char fmat[1024];
+	va_list arguments;
+	va_start(arguments, msg);
+	vsnprintf(fmat, sizeof(fmat), msg, arguments);
+	va_end(arguments);
+
+	CCallbackManager::OnServerMessage(fmat);
+
+	logprintf("%s", fmat);
+}
+/*
+static int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s)
+{
+	SubHook::ScopedRemove remove(&GetPacketID_hook);
+
+	CCallbackManager::OnRemoteRCONLogin(binaryAddress, port, "asdad");
+
+	logprintf("binaddr: %d, port: %d, len: %d, socket: %d", binaryAddress, port, length, s);
+	return CSAMPFunctions::ProcessQueryPacket(binaryAddress, port, data, length, s);
+}
+*/
 void InstallPreHooks()
 {
 	Namecheck_hook.Install((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
@@ -294,4 +322,6 @@ void InstallPreHooks()
 	logprintf("adress of hook: %X", (void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)));
 	amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 	GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);	
+	logprintf_hook.Install((void*)logprintf, (void*)HOOK_logprintf);	
+	//query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);	
 }

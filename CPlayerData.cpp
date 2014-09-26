@@ -115,7 +115,7 @@ void CPlayerData::Process(void)
 	// Process AFK detection
 #ifdef WIN32
 	DWORD dwTickCount = GetTickCount();
-
+	/*
 	if(bEverUpdated)
 	{
 		if(bAFKState == false && dwTickCount - dwLastUpdateTick > AFK_ACCURACY)
@@ -132,6 +132,7 @@ void CPlayerData::Process(void)
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 	}
+	*/
 #endif
 	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
 	{

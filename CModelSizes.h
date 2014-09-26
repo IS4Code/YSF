@@ -4,8 +4,10 @@
 #include "CTypes.h"
 #include "CVector.h"
 
-ushort GetColCount(void);
-float GetColSphereRadius(int objectmodel);
-CVector GetColSphereOffset(int objectmodel);
-
+namespace CModelSizes
+{
+	WORD GetColCount(void);
+	float GetColSphereRadius(int objectmodel);
+	CVector GetColSphereOffset(int objectmodel);
+}
 #endif

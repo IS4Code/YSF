@@ -34,12 +34,11 @@ DWORD CAddress::FUNC_ContainsInvalidChars = NULL;
 DWORD CAddress::FUNC_GetPacketID = NULL;
 
 DWORD CAddress::FUNC_CPlayer__SpawnForWorld = NULL;
+DWORD CAddress::FUNC_ProcessQueryPacket = NULL;
 
 // Others
 DWORD CAddress::ADDR_CNetGame_GMX_GangZoneDelete = NULL;
-
-// Receive hook
-DWORD CAddress::ADDR_RECEIVE_HOOKPOS = NULL;
+DWORD CAddress::ADDR_CNetGame_GMX_PckupDelete = NULL;
 
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
@@ -55,16 +54,19 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	FUNC_CFilterscripts__LoadFilterscript =		FindPattern("\x8B\x44\x24\x04\x81\xEC\x04\x01\x00\x00", "xxxxxxxxxx");
 	FUNC_CFilterscripts__UnLoadFilterscript =	FindPattern("\xCC\x51\x53\x8B\x5C\x24\x0C\x55\x56\x57\x89", "xxxxxxxxxxx") + 0x1;
 
-	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
 	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
-	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x56\x8B\xF1\x8B\x86\x3B\x26\x00\x00\x85\xC0\x0F\x84", "xxxxx????xxxx");
 	FUNC_GetPacketID =							FindPattern("\x8B\x44\x24\x04\x85\xC0\x75\x03\x0C\xFF\xC3", "xxxxxxx???x");
+	
+	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x56\x8B\xF1\x8B\x86\x3B\x26\x00\x00\x85\xC0\x0F\x84", "xxxxx????xxxx");
+	FUNC_ProcessQueryPacket =					FindPattern("\x83\xEC\x24\x53\x55\x56\x57\x8B\x7C\x24", "xxxxxxxxxx");
 
-	ADDR_RECEIVE_HOOKPOS =						FindPattern("\x8B\x4E\x10\x8A\x01\x3C\x16\x74\x10\x83\x7E", "xx?xxxx??xx"); // R2-2: 0x458A20
-
+	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
+	ADDR_CNetGame_GMX_PckupDelete =				FindPattern("\x83\xC4\x04\x89\x5E\x10", "xxxxxx") - 0x8;
 	//0x00488820
 
-	logprintf("FUNC_GetPacketID: %x", FUNC_GetPacketID);
+	logprintf("ADDR_CNetGame_GMX_GangZoneDelete: %x", ADDR_CNetGame_GMX_GangZoneDelete); // 00492660
+	logprintf("ADDR_CNetGame_GMX_PckupDelete: %x", ADDR_CNetGame_GMX_PckupDelete); // 0048A059
+
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_03Z:
@@ -111,24 +113,18 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		{
 			VAR_pRestartWaitTime =						0x8150130;
 			FUNC_CConsole__SetIntVariable =				0x809ECE0;
-
-			ADDR_RECEIVE_HOOKPOS =						0x80ACC0F;							
 			break;
 		}
 		case SAMP_VERSION_03Z_R2_2:
 		{
 			VAR_pRestartWaitTime =						0x8150B60;
 			FUNC_CConsole__SetIntVariable =				0x809EEB0;
-
-			ADDR_RECEIVE_HOOKPOS =						NULL;
 			break;
 		}
 		case SAMP_VERSION_03Z_R3:
 		{
 			VAR_pRestartWaitTime =						0x81512F0;
 			FUNC_CConsole__SetIntVariable =				0x809EFB0;
-
-			ADDR_RECEIVE_HOOKPOS =						0x080AD1FF;
 			break;
 		}
 		case SAMP_VERSION_03Z_R4:
@@ -137,6 +133,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			FUNC_CConsole__SetIntVariable =				0x809EFB0; // find for maxplayers
 			FUNC_CPlayer__SpawnForWorld = 				0x080CB160; // find for OnPlayerSpawn
 			FUNC_GetPacketID =							0x080A9610;
+			FUNC_ProcessQueryPacket =					0x080A9610;
 			break;
 		}
 	}
@@ -149,5 +146,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	// Disable GangZonePool deletion at GMX
 	Unlock((void*)ADDR_CNetGame_GMX_GangZoneDelete, 2); // jz      short loc_489DC8 -> change to jnz      short loc_489DC8
 	*(BYTE*)(ADDR_CNetGame_GMX_GangZoneDelete) = 0x75;	// jnz
+
+	// Disable PickupPool deletion at GMX
+	Unlock((void*)ADDR_CNetGame_GMX_PckupDelete, 2); // jz      short loc_489DC8 -> change to jnz      short loc_489DC8
+	*(BYTE*)(ADDR_CNetGame_GMX_PckupDelete) = 0x75;	// jnz
 #endif
 }

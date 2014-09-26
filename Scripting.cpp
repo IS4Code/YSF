@@ -58,7 +58,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 //----------------------------------------------------
 #ifdef WIN32
 	// native ffind(const pattern[], filename[], len, &idx);
-	static cell AMX_NATIVE_CALL n_ffind(AMX *amx, cell *params)
+	static cell AMX_NATIVE_CALL Natives::ffind(AMX *amx, cell *params)
 	{
 		// Find a file, idx determines which one of a number of matches to use
 		CHECK_PARAMS(4, "ffind");
@@ -110,7 +110,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 	}
 	
 	// native dfind(const pattern[], filename[], len, &idx);
-	static cell AMX_NATIVE_CALL n_dfind(AMX *amx, cell *params)
+	static cell AMX_NATIVE_CALL Natives::dfind(AMX *amx, cell *params)
 	{
 		// Find a directory, idx determines which one of a number of matches to use
 		// Identical to ffind in all but 1 line
@@ -163,7 +163,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 	}
 #else
 	// native ffind(const pattern[], filename[], len, &idx);
-	static cell AMX_NATIVE_CALL n_ffind(AMX *amx, cell *params)
+	static cell AMX_NATIVE_CALL Natives::ffind(AMX *amx, cell *params)
 	{
 		// Find a file, idx determines which one of a number of matches to use
 		CHECK_PARAMS(4, "dfind");
@@ -265,7 +265,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 	}
 	
 	// native dfind(const pattern[], filename[], len, &idx);
-	static cell AMX_NATIVE_CALL n_dfind(AMX *amx, cell *params)
+	static cell AMX_NATIVE_CALL Natives::dfind(AMX *amx, cell *params)
 	{
 		// Find a file, idx determines which one of a number of matches to use
 		CHECK_PARAMS(4, "ffind");
@@ -368,7 +368,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 #endif
 
 // native dcreate(const name[]);
-static cell AMX_NATIVE_CALL n_dcreate(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::dcreate(AMX *amx, cell *params)
 {
 	// Creates a directory
 	CHECK_PARAMS(1, "dcreate");
@@ -395,7 +395,7 @@ static cell AMX_NATIVE_CALL n_dcreate(AMX *amx, cell *params)
 }
 
 // native frename(const oldname[], const newname[]);
-static cell AMX_NATIVE_CALL n_frename(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::frename(AMX *amx, cell *params)
 {
 	// Creates a directory
 	CHECK_PARAMS(2, "frename");
@@ -420,7 +420,7 @@ static cell AMX_NATIVE_CALL n_frename(AMX *amx, cell *params)
 }
 
 // native drename(const oldname[], const newname[]);
-static cell AMX_NATIVE_CALL n_drename(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::drename(AMX *amx, cell *params)
 {
 	// Creates a directory
 	CHECK_PARAMS(2, "drename");
@@ -459,7 +459,7 @@ static cell AMX_NATIVE_CALL n_drename(AMX *amx, cell *params)
 }
 
 // native SetModeRestartTime(Float:time);
-static cell AMX_NATIVE_CALL n_SetModeRestartTime(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::SetModeRestartTime(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -471,7 +471,7 @@ static cell AMX_NATIVE_CALL n_SetModeRestartTime(AMX *amx, cell *params)
 }
 
 // native Float:GetModeRestartTime();
-static cell AMX_NATIVE_CALL n_GetModeRestartTime(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetModeRestartTime(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -483,7 +483,7 @@ static cell AMX_NATIVE_CALL n_GetModeRestartTime(AMX *amx, cell *params)
 }
 
 // native SetMaxPlayers(maxplayers);
-static cell AMX_NATIVE_CALL n_SetMaxPlayers(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::SetMaxPlayers(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -497,7 +497,7 @@ static cell AMX_NATIVE_CALL n_SetMaxPlayers(AMX *amx, cell *params)
 }
 
 // native SetMaxNPCs(maxnpcs);
-static cell AMX_NATIVE_CALL n_SetMaxNPCs(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::SetMaxNPCs(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -511,7 +511,7 @@ static cell AMX_NATIVE_CALL n_SetMaxNPCs(AMX *amx, cell *params)
 }
 
 // native SetPlayerAdmin(playerid, bool:admin);
-static cell AMX_NATIVE_CALL n_SetPlayerAdmin(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::SetPlayerAdmin(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -527,7 +527,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerAdmin(AMX *amx, cell *params)
 }
 
 // native LoadFilterScript(scriptname[]);
-static cell AMX_NATIVE_CALL n_LoadFilterScript(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::LoadFilterScript(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -546,7 +546,7 @@ static cell AMX_NATIVE_CALL n_LoadFilterScript(AMX *amx, cell *params)
 }
 
 // UnLoadFilterScript(scriptname[]);
-static cell AMX_NATIVE_CALL n_UnLoadFilterScript(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::UnLoadFilterScript(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -565,13 +565,13 @@ static cell AMX_NATIVE_CALL n_UnLoadFilterScript(AMX *amx, cell *params)
 }
 
 // native GetFilterScriptCount();
-static cell AMX_NATIVE_CALL n_GetFilterScriptCount(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetFilterScriptCount(AMX *amx, cell *params)
 {
 	return pNetGame->pFilterScriptPool->m_iFilterScriptCount;
 }
 
 // native GetFilterScriptName(id, name[], len = sizeof(name));
-static cell AMX_NATIVE_CALL n_GetFilterScriptName(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetFilterScriptName(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(3, "GetFilterScriptName");
 
@@ -582,7 +582,7 @@ static cell AMX_NATIVE_CALL n_GetFilterScriptName(AMX *amx, cell *params)
 }
 
 // native AddServerRule(name[], value[], flags = CON_VARFLAG_RULE);
-static cell AMX_NATIVE_CALL n_AddServerRule(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::AddServerRule(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -602,7 +602,7 @@ static cell AMX_NATIVE_CALL n_AddServerRule(AMX *amx, cell *params)
 }
 
 // native SetServerRule(name[], value[]);
-static cell AMX_NATIVE_CALL n_SetServerRule(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::SetServerRule(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -622,7 +622,7 @@ static cell AMX_NATIVE_CALL n_SetServerRule(AMX *amx, cell *params)
 }
 
 // native SetServerRuleInt(name[], value);
-static cell AMX_NATIVE_CALL n_SetServerRuleInt(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::SetServerRuleInt(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -641,7 +641,7 @@ static cell AMX_NATIVE_CALL n_SetServerRuleInt(AMX *amx, cell *params)
 }
 
 // native RemoveServerRule(name[]);
-static cell AMX_NATIVE_CALL n_RemoveServerRule(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::RemoveServerRule(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -660,7 +660,7 @@ static cell AMX_NATIVE_CALL n_RemoveServerRule(AMX *amx, cell *params)
 }
 
 // native ModifyFlag(name[], flags);
-static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::ModifyFlag(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -680,7 +680,7 @@ static cell AMX_NATIVE_CALL n_ModifyFlag(AMX *amx, cell *params)
 
 // native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, 
 //		&limitplayermarkers, &vehiclefriendlyfire, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
-static cell AMX_NATIVE_CALL n_GetServerSettings(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetServerSettings(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -706,7 +706,7 @@ static cell AMX_NATIVE_CALL n_GetServerSettings(AMX *amx, cell *params)
 }
 
 // native IsValidNickName(name[]);
-static cell AMX_NATIVE_CALL n_IsValidNickName(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::IsValidNickName(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -724,7 +724,7 @@ static cell AMX_NATIVE_CALL n_IsValidNickName(AMX *amx, cell *params)
 }
 
 // native AllowNickNameCharacter(character, bool:allow);
-static cell AMX_NATIVE_CALL n_AllowNickNameCharacter(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::AllowNickNameCharacter(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -757,7 +757,7 @@ static cell AMX_NATIVE_CALL n_AllowNickNameCharacter(AMX *amx, cell *params)
 }
 
 // native IsNickNameCharacterAllowed(character);
-static cell AMX_NATIVE_CALL n_IsNickNameCharacterAllowed(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::IsNickNameCharacterAllowed(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -771,7 +771,7 @@ static cell AMX_NATIVE_CALL n_IsNickNameCharacterAllowed(AMX *amx, cell *params)
 /////////////// Timers
 
 // native GetAvailableClasses();
-static cell AMX_NATIVE_CALL n_GetAvailableClasses(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetAvailableClasses(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -781,7 +781,7 @@ static cell AMX_NATIVE_CALL n_GetAvailableClasses(AMX *amx, cell *params)
 }
 
 // native GetPlayerClass(classid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
-static cell AMX_NATIVE_CALL n_GetPlayerClass(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetPlayerClass(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -811,7 +811,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerClass(AMX *amx, cell *params)
 }
 
 // native EditPlayerClass(classid, teamid, modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
-static cell AMX_NATIVE_CALL n_EditPlayerClass(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::EditPlayerClass(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -838,7 +838,7 @@ static cell AMX_NATIVE_CALL n_EditPlayerClass(AMX *amx, cell *params)
 }
 
 // native GetActiveTimers();
-static cell AMX_NATIVE_CALL n_GetActiveTimers(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetActiveTimers(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -848,7 +848,7 @@ static cell AMX_NATIVE_CALL n_GetActiveTimers(AMX *amx, cell *params)
 }
 
 // native SetGravity(Float:gravity);
-static cell AMX_NATIVE_CALL n_FIXED_SetGravity( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::FIXED_SetGravity( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -861,7 +861,7 @@ static cell AMX_NATIVE_CALL n_FIXED_SetGravity( AMX* amx, cell* params )
 }
 
 // native Float:GetGravity();
-static cell AMX_NATIVE_CALL n_FIXED_GetGravity( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::FIXED_GetGravity( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -872,7 +872,7 @@ static cell AMX_NATIVE_CALL n_FIXED_GetGravity( AMX* amx, cell* params )
 }
 
 // native SetPlayerGravity(playerid, Float:gravity);
-static cell AMX_NATIVE_CALL n_SetPlayerGravity( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetPlayerGravity( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -893,7 +893,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerGravity( AMX* amx, cell* params )
 }
 
 // native Float:GetPlayerGravity(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerGravity( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerGravity( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -908,7 +908,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerGravity( AMX* amx, cell* params )
 }
 
 // native SetPlayerTeamForPlayer(forplayerid, playerid, teamid);
-static cell AMX_NATIVE_CALL n_SetPlayerTeamForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetPlayerTeamForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -932,7 +932,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerTeamForPlayer( AMX* amx, cell* params )
 }
 
 // native GetPlayerTeamForPlayer(forplayerid, playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerTeamForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerTeamForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -949,7 +949,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerTeamForPlayer( AMX* amx, cell* params )
 }
 
 // native SetWeather(weatherid);
-static cell AMX_NATIVE_CALL n_FIXED_SetWeather( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::FIXED_SetWeather( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -962,7 +962,7 @@ static cell AMX_NATIVE_CALL n_FIXED_SetWeather( AMX* amx, cell* params )
 }
 
 // native SetPlayerWeather(playerid, weatherid);
-static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWeather(AMX* amx, cell* params)
+static cell AMX_NATIVE_CALL Natives::FIXED_SetPlayerWeather(AMX* amx, cell* params)
 {
 	// If unknown server version
 	if (!pServer)
@@ -983,7 +983,7 @@ static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWeather(AMX* amx, cell* params)
 }
 
 // native GetPlayerWeather(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerWeather( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerWeather( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -998,7 +998,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerWeather( AMX* amx, cell* params )
 }
 
 // native SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
-static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWorldBounds(AMX* amx, cell* params)
+static cell AMX_NATIVE_CALL Natives::FIXED_SetPlayerWorldBounds(AMX* amx, cell* params)
 {
 	// If unknown server version
 	if (!pServer)
@@ -1025,7 +1025,7 @@ static cell AMX_NATIVE_CALL n_FIXED_SetPlayerWorldBounds(AMX* amx, cell* params)
 }
 
 // native TogglePlayerWidescreen(playerid, bool:set);
-static cell AMX_NATIVE_CALL n_TogglePlayerWidescreen( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TogglePlayerWidescreen( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1046,7 +1046,7 @@ static cell AMX_NATIVE_CALL n_TogglePlayerWidescreen( AMX* amx, cell* params )
 }
 
 // native IsPlayerWidescreenToggled(playerid);
-static cell AMX_NATIVE_CALL n_IsPlayerWidescreenToggled( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerWidescreenToggled( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1062,7 +1062,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerWidescreenToggled( AMX* amx, cell* params 
 }
 
 // native GetSpawnInfo(playerid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
-static cell AMX_NATIVE_CALL n_GetSpawnInfo( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetSpawnInfo( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1092,7 +1092,7 @@ static cell AMX_NATIVE_CALL n_GetSpawnInfo( AMX* amx, cell* params )
 }
 
 // native GetPlayerSkillLevel(playerid, skill);
-static cell AMX_NATIVE_CALL n_GetPlayerSkillLevel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerSkillLevel( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1110,7 +1110,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerSkillLevel( AMX* amx, cell* params )
 }
 
 // native GetPlayerCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fSize);
-static cell AMX_NATIVE_CALL n_GetPlayerCheckpoint( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerCheckpoint( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1135,7 +1135,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerCheckpoint( AMX* amx, cell* params )
 }
 
 // native GetPlayerRaceCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fNextX, &Float:fNextY, &fNextZ, &Float:fSize);
-static cell AMX_NATIVE_CALL n_GetPlayerRaceCheckpoint( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerRaceCheckpoint( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1167,7 +1167,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerRaceCheckpoint( AMX* amx, cell* params )
 }
 
 // native GetPlayerWorldBounds(playerid, &Float:x_max, &Float:x_min, &Float:y_max, &Float:y_min);
-static cell AMX_NATIVE_CALL n_GetPlayerWorldBounds( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerWorldBounds( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1192,7 +1192,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerWorldBounds( AMX* amx, cell* params )
 }
 
 // native IsPlayerInModShop(playerid);
-static cell AMX_NATIVE_CALL n_IsPlayerInModShop( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerInModShop( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1207,7 +1207,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerInModShop( AMX* amx, cell* params )
 }
 
 // native GetPlayerSirenState(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerSirenState( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerSirenState( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1224,7 +1224,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerSirenState( AMX* amx, cell* params )
 }
 
 // native GetPlayerLandingGearState(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerLandingGearState( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerLandingGearState( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1241,7 +1241,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerLandingGearState( AMX* amx, cell* params 
 }
 
 // native GetPlayerHydraReactorAngle(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerHydraReactorAngle( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerHydraReactorAngle( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1258,7 +1258,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerHydraReactorAngle( AMX* amx, cell* params
 }
 
 // native Float:GetPlayerTrainSpeed(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerTrainSpeed( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerTrainSpeed( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1275,7 +1275,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerTrainSpeed( AMX* amx, cell* params )
 }
 
 // native Float:GetPlayerZAim(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerZAim( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerZAim( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1290,7 +1290,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerZAim( AMX* amx, cell* params )
 }
 
 // native GetPlayerSurfingOffsets(playerid, &Float:fOffsetX, &Float:fOffsetY, &Float:fOffsetZ);
-static cell AMX_NATIVE_CALL n_GetPlayerSurfingOffsets( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingOffsets( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1314,7 +1314,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerSurfingOffsets( AMX* amx, cell* params )
 }
 
 // native GetPlayerRotationQuat(playerid, &Float:w, &Float:x, &Float:y, &Float:z);
-static cell AMX_NATIVE_CALL n_GetPlayerRotationQuat( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerRotationQuat( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1340,7 +1340,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerRotationQuat( AMX* amx, cell* params )
 }
 
 // native GetPlayerDialogID(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerDialogID( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerDialogID( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1355,7 +1355,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerDialogID( AMX* amx, cell* params )
 }
 
 // native GetPlayerSpectateID(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerSpectateID( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateID( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1370,7 +1370,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerSpectateID( AMX* amx, cell* params )
 }
 
 // native GetPlayerSpectateType(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerSpectateType( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateType( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1385,7 +1385,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerSpectateType( AMX* amx, cell* params )
 }
 
 // native SendBulletData(sender, hitid, hittype, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
-static cell AMX_NATIVE_CALL n_SendBulletData( AMX* amx, cell* params ) 
+static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params ) 
 {
 	// If unknown server version
 	if(!pServer)
@@ -1426,7 +1426,7 @@ static cell AMX_NATIVE_CALL n_SendBulletData( AMX* amx, cell* params )
 }
 
 // native ShowPlayerForPlayer(forplayerid, playerid);
-static cell AMX_NATIVE_CALL n_ShowPlayerForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::ShowPlayerForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1447,7 +1447,7 @@ static cell AMX_NATIVE_CALL n_ShowPlayerForPlayer( AMX* amx, cell* params )
 }
 
 // native HidePlayerForPlayer(forplayerid, playerid);
-static cell AMX_NATIVE_CALL n_HidePlayerForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::HidePlayerForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1468,7 +1468,7 @@ static cell AMX_NATIVE_CALL n_HidePlayerForPlayer( AMX* amx, cell* params )
 }
 
 // native SetPlayerChatBubbleForPlayer(forplayerid, playerid, text[], color, Float:drawdistance, expiretime);
-static cell AMX_NATIVE_CALL n_SetPlayerChatBubbleForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1505,7 +1505,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerChatBubbleForPlayer( AMX* amx, cell* para
 }
 
 // native SetPlayerVersion(playerid, version[];
-static cell AMX_NATIVE_CALL n_SetPlayerVersion( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetPlayerVersion( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1531,7 +1531,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerVersion( AMX* amx, cell* params )
 }
 
 // native IsPlayerSpawned(playerid);
-static cell AMX_NATIVE_CALL n_IsPlayerSpawned( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerSpawned( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1546,7 +1546,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerSpawned( AMX* amx, cell* params )
 }
 
 // native SpawnForWorld(playerid);
-static cell AMX_NATIVE_CALL n_SpawnForWorld(AMX* amx, cell* params)
+static cell AMX_NATIVE_CALL Natives::SpawnForWorld(AMX* amx, cell* params)
 {
 	// If unknown server version
 	if (!pServer)
@@ -1563,7 +1563,7 @@ static cell AMX_NATIVE_CALL n_SpawnForWorld(AMX* amx, cell* params)
 
 // Scoreboard manipulation
 // native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
-static cell AMX_NATIVE_CALL n_TogglePlayerScoresPingsUpdate(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::TogglePlayerScoresPingsUpdate(AMX *amx, cell *params)
 {
 	if(!pServer) return 0;
 
@@ -1579,7 +1579,7 @@ static cell AMX_NATIVE_CALL n_TogglePlayerScoresPingsUpdate(AMX *amx, cell *para
 }
 
 // native TogglePlayerFakePing(playerid, bool:toggle);
-static cell AMX_NATIVE_CALL n_TogglePlayerFakePing(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::TogglePlayerFakePing(AMX *amx, cell *params)
 {
 	if(!pServer) return 0;
 
@@ -1595,7 +1595,7 @@ static cell AMX_NATIVE_CALL n_TogglePlayerFakePing(AMX *amx, cell *params)
 }
 
 // native SetPlayerFakePing(playerid, ping);
-static cell AMX_NATIVE_CALL n_SetPlayerFakePing(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::SetPlayerFakePing(AMX *amx, cell *params)
 {
 	if(!pServer) return 0;
 
@@ -1611,7 +1611,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerFakePing(AMX *amx, cell *params)
 }
 
 // native IsPlayerPaused(playerid);
-static cell AMX_NATIVE_CALL n_IsPlayerPaused(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::IsPlayerPaused(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "IsPlayerPaused");
 
@@ -1623,7 +1623,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerPaused(AMX *amx, cell *params)
 }
 
 // native GetPlayerPausedTime(playerid);
-static cell AMX_NATIVE_CALL n_GetPlayerPausedTime(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetPlayerPausedTime(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "GetPlayerPausedTime");
 
@@ -1637,7 +1637,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerPausedTime(AMX *amx, cell *params)
 
 // Objects - global
 // native GetObjectModel(objectid);
-static cell AMX_NATIVE_CALL n_GetObjectModel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetObjectModel( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1653,7 +1653,7 @@ static cell AMX_NATIVE_CALL n_GetObjectModel( AMX* amx, cell* params )
 }
 
 // native Float:GetObjectDrawDistance(objectid);
-static cell AMX_NATIVE_CALL n_GetObjectDrawDistance( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetObjectDrawDistance( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1669,7 +1669,7 @@ static cell AMX_NATIVE_CALL n_GetObjectDrawDistance( AMX* amx, cell* params )
 }
 
 // native Float:SetObjectMoveSpeed(objectid, Float:fSpeed);
-static cell AMX_NATIVE_CALL n_SetObjectMoveSpeed( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetObjectMoveSpeed( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1686,7 +1686,7 @@ static cell AMX_NATIVE_CALL n_SetObjectMoveSpeed( AMX* amx, cell* params )
 }
 
 // native Float:GetObjectMoveSpeed(objectid);
-static cell AMX_NATIVE_CALL n_GetObjectMoveSpeed( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetObjectMoveSpeed( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1702,7 +1702,7 @@ static cell AMX_NATIVE_CALL n_GetObjectMoveSpeed( AMX* amx, cell* params )
 }
 
 // native GetObjectTarget(objectid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_GetObjectTarget( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetObjectTarget( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1726,7 +1726,7 @@ static cell AMX_NATIVE_CALL n_GetObjectTarget( AMX* amx, cell* params )
 }
 
 // native GetObjectAttachedData(objectid, &vehicleid, &objectid);
-static cell AMX_NATIVE_CALL n_GetObjectAttachedData( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetObjectAttachedData( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1749,7 +1749,7 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedData( AMX* amx, cell* params )
 }
 
 // native GetObjectAttachedOffset(objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
-static cell AMX_NATIVE_CALL n_GetObjectAttachedOffset( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetObjectAttachedOffset( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1780,7 +1780,7 @@ static cell AMX_NATIVE_CALL n_GetObjectAttachedOffset( AMX* amx, cell* params )
 }
 
 // native IsObjectMaterialSlotUsed(objectid, materialindex); // Return values: 1 = material, 2 = material text
-static cell AMX_NATIVE_CALL n_IsObjectMaterialSlotUsed( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsObjectMaterialSlotUsed( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1811,7 +1811,7 @@ static cell AMX_NATIVE_CALL n_IsObjectMaterialSlotUsed( AMX* amx, cell* params )
 }
 
 // native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
-static cell AMX_NATIVE_CALL n_GetObjectMaterial( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetObjectMaterial( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1846,12 +1846,12 @@ static cell AMX_NATIVE_CALL n_GetObjectMaterial( AMX* amx, cell* params )
 	set_amxstring(amx, params[6], pObject->Material[i].szMaterialTexture, params[7]); // texturenamelen = sizeof(txdnamelen),
 
 	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = (cell)pObject->Material[i].dwMaterialColor; // materialcolor
+	*cptr = ABGR_ARGB(pObject->Material[i].dwMaterialColor); // materialcolor
 	return 1;
 }
 
 // native GetObjectMaterialText(objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
-static cell AMX_NATIVE_CALL n_GetObjectMaterialText( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetObjectMaterialText( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1901,7 +1901,7 @@ static cell AMX_NATIVE_CALL n_GetObjectMaterialText( AMX* amx, cell* params )
 }
 
 // native GetPlayerObjectModel(playerid, objectid);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectModel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerObjectModel( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1920,7 +1920,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectModel( AMX* amx, cell* params )
 }
 
 // native Float:GetPlayerObjectDrawDistance(playerid, objectid);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectDrawDistance( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerObjectDrawDistance( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1939,7 +1939,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectDrawDistance( AMX* amx, cell* param
 }
 
 // native Float:SetPlayerObjectMoveSpeed(playerid, objectid, Float:fSpeed);
-static cell AMX_NATIVE_CALL n_SetPlayerObjectMoveSpeed( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetPlayerObjectMoveSpeed( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1959,7 +1959,7 @@ static cell AMX_NATIVE_CALL n_SetPlayerObjectMoveSpeed( AMX* amx, cell* params )
 }
 
 // native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectMoveSpeed( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMoveSpeed( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1978,7 +1978,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectMoveSpeed( AMX* amx, cell* params )
 }
 
 // native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectTarget( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerObjectTarget( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2005,7 +2005,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectTarget( AMX* amx, cell* params )
 }
 
 // native GetPlayerObjectAttachedData(playerid, objectid, &vehicleid, &objectid);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedData( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2030,7 +2030,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedData( AMX* amx, cell* param
 }
 
 // native GetPlayerObjectAttachedOffset(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedOffset( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2063,7 +2063,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectAttachedOffset( AMX* amx, cell* par
 }
 
 // native IsPlayerObjectMaterialSlotUsed(playerid, objectid, materialindex); // Return values: 1 = material, 2 = material text
-static cell AMX_NATIVE_CALL n_IsPlayerObjectMaterialSlotUsed( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerObjectMaterialSlotUsed( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2096,7 +2096,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerObjectMaterialSlotUsed( AMX* amx, cell* pa
 
 
 // native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterial( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterial( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2132,12 +2132,12 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterial( AMX* amx, cell* params )
 	set_amxstring(amx, params[7], pObject->Material[i].szMaterialTexture, params[8]); // texturenamelen = sizeof(txdnamelen),
 
 	amx_GetAddr(amx, params[9], &cptr);
-	*cptr = (cell)pObject->Material[i].dwMaterialColor; // materialcolor
+	*cptr = ABGR_ARGB(pObject->Material[i].dwMaterialColor); // materialcolor
 	return 1;
 }
 
 // native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
-static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterialText( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2187,7 +2187,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerObjectMaterialText( AMX* amx, cell* param
 }
 
 // native GetPlayerAttachedObject(playerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
-static cell AMX_NATIVE_CALL n_GetPlayerAttachedObject( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerAttachedObject( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2238,7 +2238,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerAttachedObject( AMX* amx, cell* params )
 }
 
 // native IsPlayerEditingObject(playerid);
-static cell AMX_NATIVE_CALL n_IsPlayerEditingObject( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerEditingObject( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2253,7 +2253,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerEditingObject( AMX* amx, cell* params )
 }
 
 // native IsPlayerEditingAttachedObject(playerid);
-static cell AMX_NATIVE_CALL n_IsPlayerEditingAttachedObject( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerEditingAttachedObject( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2269,7 +2269,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerEditingAttachedObject( AMX* amx, cell* par
 
 // Vehicle functions
 // native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
-static cell AMX_NATIVE_CALL n_GetVehicleSpawnInfo( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2300,7 +2300,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleSpawnInfo( AMX* amx, cell* params )
 }
 
 // native GetVehicleColor(vehicleid, &color1, &color2);
-static cell AMX_NATIVE_CALL n_GetVehicleColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleColor( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2323,7 +2323,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleColor( AMX* amx, cell* params )
 }
 
 // native GetVehiclePaintjob(vehicleid);
-static cell AMX_NATIVE_CALL n_GetVehiclePaintjob( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehiclePaintjob( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2341,7 +2341,7 @@ static cell AMX_NATIVE_CALL n_GetVehiclePaintjob( AMX* amx, cell* params )
 }
 
 // native GetVehicleInterior(vehicleid);
-static cell AMX_NATIVE_CALL n_GetVehicleInterior( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleInterior( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2359,7 +2359,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleInterior( AMX* amx, cell* params )
 }
 
 // native GetVehicleNumberPlate(vehicleid, plate[], len = sizeof(plate));
-static cell AMX_NATIVE_CALL n_GetVehicleNumberPlate( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleNumberPlate( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2377,7 +2377,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleNumberPlate( AMX* amx, cell* params )
 }
 
 // native SetVehicleRespawnDelay(vehicleid, delay);
-static cell AMX_NATIVE_CALL n_SetVehicleRespawnDelay( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnDelay( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2396,7 +2396,7 @@ static cell AMX_NATIVE_CALL n_SetVehicleRespawnDelay( AMX* amx, cell* params )
 }
 
 // native GetVehicleRespawnDelay(vehicleid);
-static cell AMX_NATIVE_CALL n_GetVehicleRespawnDelay( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnDelay( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2414,7 +2414,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleRespawnDelay( AMX* amx, cell* params )
 }
 
 // native SetVehicleOccupiedTick(vehicleid, ticks);
-static cell AMX_NATIVE_CALL n_SetVehicleOccupiedTick( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetVehicleOccupiedTick( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2433,7 +2433,7 @@ static cell AMX_NATIVE_CALL n_SetVehicleOccupiedTick( AMX* amx, cell* params )
 }
 
 // native GetVehicleOccupiedTick(vehicleid);
-static cell AMX_NATIVE_CALL n_GetVehicleOccupiedTick( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleOccupiedTick( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2451,7 +2451,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleOccupiedTick( AMX* amx, cell* params )
 }
 
 // native SetVehicleRespawnTick(vehicleid, ticks);
-static cell AMX_NATIVE_CALL n_SetVehicleRespawnTick( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnTick( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2470,7 +2470,7 @@ static cell AMX_NATIVE_CALL n_SetVehicleRespawnTick( AMX* amx, cell* params )
 }
 
 // native GetVehicleRespawnTick(vehicleid);
-static cell AMX_NATIVE_CALL n_GetVehicleRespawnTick( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnTick( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2488,7 +2488,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleRespawnTick( AMX* amx, cell* params )
 }
 
 // native GetVehicleLastDriver(vehicleid);
-static cell AMX_NATIVE_CALL n_GetVehicleLastDriver( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleLastDriver( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2506,7 +2506,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleLastDriver( AMX* amx, cell* params )
 }
 
 // native GetVehicleCab(vehicleid);
-static cell AMX_NATIVE_CALL n_GetVehicleCab( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetVehicleCab( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2533,7 +2533,7 @@ static cell AMX_NATIVE_CALL n_GetVehicleCab( AMX* amx, cell* params )
 }
 
 // native HasVehicleBeenOccupied(vehicleid);
-static cell AMX_NATIVE_CALL n_HasVehicleBeenOccupied( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::HasVehicleBeenOccupied( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2551,7 +2551,7 @@ static cell AMX_NATIVE_CALL n_HasVehicleBeenOccupied( AMX* amx, cell* params )
 }
 
 // native SetVehicleBeenOccupied(vehicleid, occupied);
-static cell AMX_NATIVE_CALL n_SetVehicleBeenOccupied( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetVehicleBeenOccupied( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2570,7 +2570,7 @@ static cell AMX_NATIVE_CALL n_SetVehicleBeenOccupied( AMX* amx, cell* params )
 }
 
 // native IsVehicleOccupied(vehicleid);
-static cell AMX_NATIVE_CALL n_IsVehicleOccupied( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsVehicleOccupied( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2594,7 +2594,7 @@ static cell AMX_NATIVE_CALL n_IsVehicleOccupied( AMX* amx, cell* params )
 }
 
 // native IsVehicleDead(vehicleid);
-static cell AMX_NATIVE_CALL n_IsVehicleDead( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsVehicleDead( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2613,7 +2613,7 @@ static cell AMX_NATIVE_CALL n_IsVehicleDead( AMX* amx, cell* params )
 
 // Gangzone functions
 // native IsValidGangZone(zoneid);
-static cell AMX_NATIVE_CALL n_IsValidGangZone( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsValidGangZone( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "IsValidGangZone");
 	
@@ -2624,7 +2624,7 @@ static cell AMX_NATIVE_CALL n_IsValidGangZone( AMX* amx, cell* params )
 }
 
 // native IsGangZoneVisibleForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_IsGangZoneVisibleForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsGangZoneVisibleForPlayer( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsGangZoneVisibleForPlayer");
 	
@@ -2639,7 +2639,7 @@ static cell AMX_NATIVE_CALL n_IsGangZoneVisibleForPlayer( AMX* amx, cell* params
 }
 
 // native GangZoneGetColorForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_GangZoneGetColorForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GangZoneGetColorForPlayer( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GangZoneGetColorForPlayer");
 	
@@ -2659,7 +2659,7 @@ static cell AMX_NATIVE_CALL n_GangZoneGetColorForPlayer( AMX* amx, cell* params 
 }
 
 // native GangZoneGetFlashColorForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_GangZoneGetFlashColorForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GangZoneGetFlashColorForPlayer( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GangZoneGetFlashColorForPlayer");
 	
@@ -2679,7 +2679,7 @@ static cell AMX_NATIVE_CALL n_GangZoneGetFlashColorForPlayer( AMX* amx, cell* pa
 }
 
 // native IsGangZoneFlashingForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_IsGangZoneFlashingForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsGangZoneFlashingForPlayer( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsGangZoneFlashingForPlayer");
 	
@@ -2699,7 +2699,7 @@ static cell AMX_NATIVE_CALL n_IsGangZoneFlashingForPlayer( AMX* amx, cell* param
 }
 
 // native IsPlayerInGangZone(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_IsPlayerInGangZone( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerInGangZone( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsPlayerInGangZone");
 	
@@ -2719,7 +2719,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerInGangZone( AMX* amx, cell* params )
 }
 
 // native GangZoneGetPos(zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
-static cell AMX_NATIVE_CALL n_GangZoneGetPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GangZoneGetPos( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2746,7 +2746,7 @@ static cell AMX_NATIVE_CALL n_GangZoneGetPos( AMX* amx, cell* params )
 
 // Textdraw functions
 // native IsValidTextDraw(textdrawid);
-static cell AMX_NATIVE_CALL n_IsValidTextDraw( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsValidTextDraw( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "IsValidTextDraw");
 	
@@ -2757,7 +2757,7 @@ static cell AMX_NATIVE_CALL n_IsValidTextDraw( AMX* amx, cell* params )
 }
 
 // native IsTextDrawVisibleForPlayer(playerid, textdrawid);
-static cell AMX_NATIVE_CALL n_IsTextDrawVisibleForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsTextDrawVisibleForPlayer( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsTextDrawVisibleForPlayer");
 	
@@ -2773,7 +2773,7 @@ static cell AMX_NATIVE_CALL n_IsTextDrawVisibleForPlayer( AMX* amx, cell* params
 }
 
 // native TextDrawGetString(textdrawid, text[], len = sizeof(text));
-static cell AMX_NATIVE_CALL n_TextDrawGetString( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetString( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -2789,7 +2789,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetString( AMX* amx, cell* params )
 }
 
 // native TextDrawSetPos(textdrawid, Float:fX, Float:fY);
-static cell AMX_NATIVE_CALL n_TextDrawSetPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawSetPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "TextDrawPos");
 	
@@ -2805,7 +2805,7 @@ static cell AMX_NATIVE_CALL n_TextDrawSetPos( AMX* amx, cell* params )
 }
 
 // native TextDrawGetLetterSize(textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL n_TextDrawGetLetterSize( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetLetterSize( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "TextDrawGetLetterSize");
 	
@@ -2824,7 +2824,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetLetterSize( AMX* amx, cell* params )
 }
 
 // native TextDrawGetFontSize(textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL n_TextDrawGetFontSize( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetFontSize( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "TextDrawGetFontSize");
 	
@@ -2843,7 +2843,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetFontSize( AMX* amx, cell* params )
 }
 
 // native TextDrawGetPos(textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL n_TextDrawGetPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "TextDrawGetPos");
 	
@@ -2862,7 +2862,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPos( AMX* amx, cell* params )
 }
 
 // native TextDrawGetColor(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawGetColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetColor");
 	
@@ -2876,7 +2876,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetColor( AMX* amx, cell* params )
 }
 
 // native TextDrawGetBoxColor(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawGetBoxColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetBoxColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetBoxColor");
 	
@@ -2890,7 +2890,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetBoxColor( AMX* amx, cell* params )
 }
 
 // native TextDrawGetBackgroundColor(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawGetBackgroundColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetBackgroundColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetBackgroundColor");
 	
@@ -2904,7 +2904,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetBackgroundColor( AMX* amx, cell* params
 }
 
 // native TextDrawGetShadow(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawGetShadow( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetShadow( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetShadow");
 	
@@ -2918,7 +2918,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetShadow( AMX* amx, cell* params )
 }
 
 // native TextDrawGetOutline(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawGetOutline( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetOutline( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetOutline");
 	
@@ -2932,7 +2932,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetOutline( AMX* amx, cell* params )
 }
 
 // native TextDrawGetFont(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawGetFont( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetFont( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetOutline");
 	
@@ -2946,7 +2946,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetFont( AMX* amx, cell* params )
 }
 
 // native TextDrawIsBox(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawIsBox( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawIsBox( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawIsBox");
 	
@@ -2960,7 +2960,7 @@ static cell AMX_NATIVE_CALL n_TextDrawIsBox( AMX* amx, cell* params )
 }
 
 // native TextDrawIsProportional(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawIsProportional( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawIsProportional( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawIsProportional");
 	
@@ -2974,7 +2974,7 @@ static cell AMX_NATIVE_CALL n_TextDrawIsProportional( AMX* amx, cell* params )
 }
 
 // native TextDrawIsSelectable(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawIsSelectable( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawIsSelectable( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawIsSelectable");
 	
@@ -2988,7 +2988,7 @@ static cell AMX_NATIVE_CALL n_TextDrawIsSelectable( AMX* amx, cell* params )
 }
 
 // native TextDrawGetAlignment(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawGetAlignment( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetAlignment( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetAlignment");
 	
@@ -3007,7 +3007,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetAlignment( AMX* amx, cell* params )
 }
 
 // native TextDrawGetPreviewModel(textdrawid);
-static cell AMX_NATIVE_CALL n_TextDrawGetPreviewModel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewModel( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetPreviewModel");
 	
@@ -3021,7 +3021,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPreviewModel( AMX* amx, cell* params )
 }
 
 // native TextDrawGetPreviewRot(textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
-static cell AMX_NATIVE_CALL n_TextDrawGetPreviewRot( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewRot( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(5, "TextDrawGetPreviewRot");
 	
@@ -3044,7 +3044,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPreviewRot( AMX* amx, cell* params )
 }
 
 // native TextDrawGetPreviewVehCol(textdrawid, &color1, &color2);
-static cell AMX_NATIVE_CALL n_TextDrawGetPreviewVehCol( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewVehCol( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "TextDrawGetPreviewVehCol");
 	
@@ -3064,7 +3064,7 @@ static cell AMX_NATIVE_CALL n_TextDrawGetPreviewVehCol( AMX* amx, cell* params )
 
 // Per-Player textdraws
 // native IsValidPlayerTextDraw(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_IsValidPlayerTextDraw( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsValidPlayerTextDraw( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsValidPlayerTextDraw");
 	
@@ -3079,7 +3079,7 @@ static cell AMX_NATIVE_CALL n_IsValidPlayerTextDraw( AMX* amx, cell* params )
 }
 
 // native IsPlayerTextDrawVisible(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_IsPlayerTextDrawVisible( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerTextDrawVisible( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsPlayerTextDrawVisible");
 	
@@ -3094,7 +3094,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerTextDrawVisible( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawGetString(playerid, PlayerText:textdrawid, text[], len = sizeof(text));
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetString( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetString( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetString");
 	
@@ -3112,7 +3112,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetString( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawSetPos(playerid, PlayerText:textdrawid, Float:fX, Float:fY);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawSetPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawSetPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "PlayerTextDrawSetPos");
 	
@@ -3131,7 +3131,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawSetPos( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawGetLetterSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetLetterSize( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetLetterSize( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetLetterSize");
 	
@@ -3153,7 +3153,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetLetterSize( AMX* amx, cell* param
 }
 
 // native PlayerTextDrawGetFontSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetFontSize( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetFontSize( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetFontSize");
 	
@@ -3175,7 +3175,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetFontSize( AMX* amx, cell* params 
 }
 
 // native PlayerTextDrawGetPos(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetPos");
 	
@@ -3197,7 +3197,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPos( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawGetColor(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetColor");
 	
@@ -3224,7 +3224,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetColor( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawGetBoxColor(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetBoxColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetBoxColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetBoxColor");
 	
@@ -3240,7 +3240,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetBoxColor( AMX* amx, cell* params 
 }
 
 // native PlayerTextDrawGetBackgroundCol(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetBackgroundCol( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetBackgroundCol( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetBackgroundCol");
 	
@@ -3256,7 +3256,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetBackgroundCol( AMX* amx, cell* pa
 }
 
 // native PlayerTextDrawGetShadow(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetShadow( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetShadow( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetShadow");
 	
@@ -3272,7 +3272,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetShadow( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawGetOutline(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetOutline( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetOutline( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetOutline");
 	
@@ -3288,7 +3288,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetOutline( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawGetFont(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetFont( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetFont( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetFont");
 	
@@ -3304,7 +3304,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetFont( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawIsBox(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawIsBox( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsBox( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsBox");
 	
@@ -3320,7 +3320,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawIsBox( AMX* amx, cell* params )
 }
 
 // native PlayerTextDrawIsProportional(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawIsProportional( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsProportional( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsProportional");
 	
@@ -3336,7 +3336,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawIsProportional( AMX* amx, cell* para
 }
 
 // native PlayerTextDrawIsSelectable(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawIsSelectable( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsSelectable( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsSelectable");
 	
@@ -3352,7 +3352,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawIsSelectable( AMX* amx, cell* params
 }
 
 // native PlayerTextDrawGetAlignment(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetAlignment( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetAlignment( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetAlignment");
 	
@@ -3373,7 +3373,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetAlignment( AMX* amx, cell* params
 }
 
 // native PlayerTextDrawGetPreviewModel(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewModel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewModel( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetPreviewModel");
 	
@@ -3389,7 +3389,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewModel( AMX* amx, cell* par
 }
 
 // native PlayerTextDrawGetPreviewRot(playerid, PlayerText:textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewRot( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewRot( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(6, "PlayerTextDrawGetPreviewRot");
 	
@@ -3415,7 +3415,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewRot( AMX* amx, cell* param
 }
 
 // native PlayerTextDrawGetPreviewVehCol(playerid, PlayerText:textdrawid, &color1, &color2);
-static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewVehCol( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewVehCol( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetPreviewVehCol");
 	
@@ -3438,7 +3438,7 @@ static cell AMX_NATIVE_CALL n_PlayerTextDrawGetPreviewVehCol( AMX* amx, cell* pa
 
 // 3D Text labels
 // native IsValid3DTextLabel(Text3D:id);
-static cell AMX_NATIVE_CALL n_IsValid3DTextLabel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsValid3DTextLabel( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "IsValid3DTextLabel");
 	
@@ -3449,7 +3449,7 @@ static cell AMX_NATIVE_CALL n_IsValid3DTextLabel( AMX* amx, cell* params )
 }
 
 // native Is3DTextLabelStreamedIn(playerid, Text3D:id);
-static cell AMX_NATIVE_CALL n_Is3DTextLabelStreamedIn( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::Is3DTextLabelStreamedIn( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "Is3DTextLabelStreamedIn");
 	
@@ -3463,7 +3463,7 @@ static cell AMX_NATIVE_CALL n_Is3DTextLabelStreamedIn( AMX* amx, cell* params )
 }
 
 // native Get3DTextLabelText(id, text[], len = sizeof(text));
-static cell AMX_NATIVE_CALL n_Get3DTextLabelText( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::Get3DTextLabelText( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3479,7 +3479,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelText( AMX* amx, cell* params )
 }
 
 // native Get3DTextLabelColor(id);
-static cell AMX_NATIVE_CALL n_Get3DTextLabelColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::Get3DTextLabelColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "Get3DTextLabelColor");
 	
@@ -3493,7 +3493,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelColor( AMX* amx, cell* params )
 }
 
 // native Get3DTextLabelPos(id, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_Get3DTextLabelPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::Get3DTextLabelPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "Get3DTextLabelPos");
 	
@@ -3514,7 +3514,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelPos( AMX* amx, cell* params )
 }
 
 // native Float:Get3DTextLabelDrawDistance(id);
-static cell AMX_NATIVE_CALL n_Get3DTextLabelDrawDistance( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::Get3DTextLabelDrawDistance( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "Get3DTextLabelDrawDistance");
 	
@@ -3528,7 +3528,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelDrawDistance( AMX* amx, cell* params
 }
 
 // native Get3DTextLabelLOS(id);
-static cell AMX_NATIVE_CALL n_Get3DTextLabelLOS( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::Get3DTextLabelLOS( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "Get3DTextLabelLOS");
 	
@@ -3542,7 +3542,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelLOS( AMX* amx, cell* params )
 }
 
 // native Get3DTextLabelVirtualWorld(id);
-static cell AMX_NATIVE_CALL n_Get3DTextLabelVirtualWorld( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::Get3DTextLabelVirtualWorld( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "Get3DTextLabelVirtualWorld");
 	
@@ -3556,7 +3556,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelVirtualWorld( AMX* amx, cell* params
 }
 
 // native Get3DTextLabelAttachedData(id, &attached_playerid, &attached_vehicleid);
-static cell AMX_NATIVE_CALL n_Get3DTextLabelAttachedData( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::Get3DTextLabelAttachedData( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "Get3DTextLabelAttachedData");
 	
@@ -3575,7 +3575,7 @@ static cell AMX_NATIVE_CALL n_Get3DTextLabelAttachedData( AMX* amx, cell* params
 }
 
 // native IsValidPlayer3DTextLabel(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL n_IsValidPlayer3DTextLabel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsValidPlayer3DTextLabel( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsValidPlayer3DTextLabel");
 	
@@ -3589,7 +3589,7 @@ static cell AMX_NATIVE_CALL n_IsValidPlayer3DTextLabel( AMX* amx, cell* params )
 }
 
 // native GetPlayer3DTextLabelText(playerid, PlayerText3D:id, text[], len = sizeof(text));
-static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelText( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelText( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3610,7 +3610,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelText( AMX* amx, cell* params )
 }
 
 // native GetPlayer3DTextLabelColor(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelColor");
 	
@@ -3627,7 +3627,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelColor( AMX* amx, cell* params 
 }
 
 // native GetPlayer3DTextLabelPos(playerid, PlayerText3D:id, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(5, "GetPlayer3DTextLabelPos");
 	
@@ -3651,7 +3651,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelPos( AMX* amx, cell* params )
 }
 
 // native Float:GetPlayer3DTextLabelDrawDist(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelDrawDist( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelDrawDist( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelDrawDist");
 	
@@ -3668,7 +3668,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelDrawDist( AMX* amx, cell* para
 }
 
 // native GetPlayer3DTextLabelLOS(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelLOS( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelLOS( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelLOS");
 	
@@ -3685,7 +3685,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelLOS( AMX* amx, cell* params )
 }
 
 // native GetPlayer3DTextLabelVirtualW(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelVirtualW( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelVirtualW( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelVirtualW");
 	
@@ -3702,7 +3702,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelVirtualW( AMX* amx, cell* para
 }
 
 // native GetPlayer3DTextLabelAttached(playerid, PlayerText3D:id, &attached_playerid, &attached_vehicleid);
-static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelAttached( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelAttached( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelAttached");
 	
@@ -3723,7 +3723,7 @@ static cell AMX_NATIVE_CALL n_GetPlayer3DTextLabelAttached( AMX* amx, cell* para
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL n_FIXED_AttachPlayerObjectToPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::FIXED_AttachPlayerObjectToPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3760,7 +3760,7 @@ static cell AMX_NATIVE_CALL n_FIXED_AttachPlayerObjectToPlayer( AMX* amx, cell* 
 }
 
 // native YSF_AddPlayer(playerid);
-static cell AMX_NATIVE_CALL n_YSF_AddPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_AddPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3784,7 +3784,7 @@ static cell AMX_NATIVE_CALL n_YSF_AddPlayer( AMX* amx, cell* params )
 }
 
 // native YSF_RemovePlayer(playerid);
-static cell AMX_NATIVE_CALL n_YSF_RemovePlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_RemovePlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3794,11 +3794,11 @@ static cell AMX_NATIVE_CALL n_YSF_RemovePlayer( AMX* amx, cell* params )
 	
 	//logprintf("YSF_RemovePlayer - connected: %d, raknet geci: %d", pNetGame->pPlayerPool->bIsPlayerConnected[(int)params[1]], pRakServer->GetPlayerIDFromIndex((int)params[1]).binaryAddress);
 	int playerid = (int)params[1];
-	return 1;
+	return pServer->RemovePlayer(playerid);
 }
 
 // native YSF_StreamIn(playerid, forplayerid);
-static cell AMX_NATIVE_CALL n_YSF_StreamIn( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_StreamIn( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3806,12 +3806,12 @@ static cell AMX_NATIVE_CALL n_YSF_StreamIn( AMX* amx, cell* params )
 
 	CHECK_PARAMS(2, "YSF_StreamIn");
 
-	pServer->OnPlayerStreamIn((unsigned short)params[1], (unsigned short)params[2]);
+	pServer->OnPlayerStreamIn((WORD)params[1], (WORD)params[2]);
 	return 1;
 }
 
 // native YSF_StreamOut(playerid, forplayerid);
-static cell AMX_NATIVE_CALL n_YSF_StreamOut( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_StreamOut( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3819,11 +3819,11 @@ static cell AMX_NATIVE_CALL n_YSF_StreamOut( AMX* amx, cell* params )
 
 	CHECK_PARAMS(2, "YSF_StreamOut");
 
-	pServer->OnPlayerStreamOut((unsigned short)params[1], (unsigned short)params[2]);
+	pServer->OnPlayerStreamOut((WORD)params[1], (WORD)params[2]);
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL n_YSF_GangZoneCreate(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(4, "GangZoneCreate");
 
@@ -3846,7 +3846,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneCreate(AMX *amx, cell *params)
 	return ret;
 }
 
-static cell AMX_NATIVE_CALL n_YSF_GangZoneDestroy(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneDestroy(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "GangZoneDestroy");
 
@@ -3858,7 +3858,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneDestroy(AMX *amx, cell *params)
 }
 
 // native YSF_GangZoneShowForPlayer(playerid, zone, color);
-static cell AMX_NATIVE_CALL n_YSF_GangZoneShowForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3879,7 +3879,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneShowForPlayer( AMX* amx, cell* params 
 }
 
 // native YSF_GangZoneHideForPlayer(playerid, zone);
-static cell AMX_NATIVE_CALL n_YSF_GangZoneHideForPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3899,7 +3899,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneHideForPlayer( AMX* amx, cell* params 
 }
 
 // native YSF_GangZoneShowForAll(zone, color);
-static cell AMX_NATIVE_CALL n_YSF_GangZoneShowForAll( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForAll( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3915,7 +3915,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneShowForAll( AMX* amx, cell* params )
 }
 
 // native YSF_GangZoneHideForAll(zone);
-static cell AMX_NATIVE_CALL n_YSF_GangZoneHideForAll( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForAll( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3930,7 +3930,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneHideForAll( AMX* amx, cell* params )
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL n_YSF_GangZoneFlashForPlayer(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForPlayer(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(3, "GangZoneFlashForPlayer");
 
@@ -3945,7 +3945,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneFlashForPlayer(AMX *amx, cell *params)
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL n_YSF_GangZoneFlashForAll(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForAll(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(2, "GangZoneFlashForAll");
 
@@ -3956,7 +3956,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneFlashForAll(AMX *amx, cell *params)
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL n_YSF_GangZoneStopFlashForPlayer(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForPlayer(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(2, "GangZoneStopFlashForPlayer");
 
@@ -3971,7 +3971,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneStopFlashForPlayer(AMX *amx, cell *par
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL n_YSF_GangZoneStopFlashForAll(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForAll(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "GangZoneStopFlashForAll");
 
@@ -3984,7 +3984,7 @@ static cell AMX_NATIVE_CALL n_YSF_GangZoneStopFlashForAll(AMX *amx, cell *params
 
 // Menu functions
 // native IsMenuDisabled(Menu:menuid);
-static cell AMX_NATIVE_CALL n_IsMenuDisabled( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsMenuDisabled( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "IsMenuDisabled");
 	
@@ -3998,7 +3998,7 @@ static cell AMX_NATIVE_CALL n_IsMenuDisabled( AMX* amx, cell* params )
 }
 
 // native IsMenuRowDisabled(Menu:menuid, row);
-static cell AMX_NATIVE_CALL n_IsMenuRowDisabled( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsMenuRowDisabled( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsMenuRowDisabled");
 	
@@ -4015,7 +4015,7 @@ static cell AMX_NATIVE_CALL n_IsMenuRowDisabled( AMX* amx, cell* params )
 }
 
 // native GetMenuColumns(menuid);
-static cell AMX_NATIVE_CALL n_GetMenuColumns( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetMenuColumns( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "GetMenuColumns");
 	
@@ -4029,7 +4029,7 @@ static cell AMX_NATIVE_CALL n_GetMenuColumns( AMX* amx, cell* params )
 }
 
 // native GetMenuItems(menuid, column);
-static cell AMX_NATIVE_CALL n_GetMenuItems( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetMenuItems( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GetMenuItems");
 	
@@ -4046,7 +4046,7 @@ static cell AMX_NATIVE_CALL n_GetMenuItems( AMX* amx, cell* params )
 }
 
 // native GetMenuPos(menuid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL n_GetMenuPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetMenuPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "GetMenuColumns");
 	
@@ -4068,7 +4068,7 @@ static cell AMX_NATIVE_CALL n_GetMenuPos( AMX* amx, cell* params )
 }
 
 // native GetMenuColumnWidth(menuid, column, &Float:fColumn1, &Float:fColumn2);
-static cell AMX_NATIVE_CALL n_GetMenuColumnWidth( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetMenuColumnWidth( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "GetMenuColumnWidth");
 	
@@ -4090,7 +4090,7 @@ static cell AMX_NATIVE_CALL n_GetMenuColumnWidth( AMX* amx, cell* params )
 }
 
 // native GetMenuColumnHeader(menuid, column, header[], len = sizeof(header));
-static cell AMX_NATIVE_CALL n_GetMenuColumnHeader( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetMenuColumnHeader( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "GetMenuColumnHeader");
 	
@@ -4107,7 +4107,7 @@ static cell AMX_NATIVE_CALL n_GetMenuColumnHeader( AMX* amx, cell* params )
 }
 
 // native GetMenuItem(menuid, column, itemid, item[], len = sizeof(item));
-static cell AMX_NATIVE_CALL n_GetMenuItem( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetMenuItem( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(5, "GetMenuItem");
 	
@@ -4127,7 +4127,7 @@ static cell AMX_NATIVE_CALL n_GetMenuItem( AMX* amx, cell* params )
 }
 
 // native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
-static cell AMX_NATIVE_CALL n_AttachPlayerObjectToObject( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4171,7 +4171,7 @@ static cell AMX_NATIVE_CALL n_AttachPlayerObjectToObject( AMX* amx, cell* params
 }
 
 // native CreatePlayerGangZone(playerid, Float:minx, Float:miny, Float:maxx, Float:maxy);
-static cell AMX_NATIVE_CALL n_CreatePlayerGangZone( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::CreatePlayerGangZone( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4202,7 +4202,7 @@ static cell AMX_NATIVE_CALL n_CreatePlayerGangZone( AMX* amx, cell* params )
 }
 
 // native PlayerGangZoneShow(playerid, zoneid, color);
-static cell AMX_NATIVE_CALL n_PlayerGangZoneShow( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerGangZoneShow( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4225,7 +4225,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneShow( AMX* amx, cell* params )
 }
 
 // native PlayerGangZoneHide(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_PlayerGangZoneHide( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerGangZoneHide( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4246,7 +4246,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneHide( AMX* amx, cell* params )
 }
 
 // native PlayerGangZoneFlash(playerid, zoneid, color);
-static cell AMX_NATIVE_CALL n_PlayerGangZoneFlash( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerGangZoneFlash( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4269,7 +4269,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneFlash( AMX* amx, cell* params )
 }
 
 // native PlayerGangZoneStopFlash(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_PlayerGangZoneStopFlash( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerGangZoneStopFlash( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4290,7 +4290,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneStopFlash( AMX* amx, cell* params )
 }
 
 // native PlayerGangZoneDestroy(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_PlayerGangZoneDestroy( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerGangZoneDestroy( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4308,7 +4308,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneDestroy( AMX* amx, cell* params )
 }
 
 // native IsValidPlayerGangZone(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_IsValidPlayerGangZone( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsValidPlayerGangZone( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsValidPlayerGangZone");
 	
@@ -4321,7 +4321,7 @@ static cell AMX_NATIVE_CALL n_IsValidPlayerGangZone( AMX* amx, cell* params )
 }
 
 // native IsPlayerInPlayerGangZone(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_IsPlayerInPlayerGangZone( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerInPlayerGangZone( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
@@ -4341,7 +4341,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerInPlayerGangZone( AMX* amx, cell* params )
 }
 
 // native PlayerGangZoneGetPos(playerid, zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
-static cell AMX_NATIVE_CALL n_PlayerGangZoneGetPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetPos( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4374,7 +4374,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneGetPos( AMX* amx, cell* params )
 }
 
 // native IsPlayerGangZoneVisible(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_IsPlayerGangZoneVisible( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneVisible( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
@@ -4389,7 +4389,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerGangZoneVisible( AMX* amx, cell* params )
 }
 
 // native PlayerGangZoneGetColor(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_PlayerGangZoneGetColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerGangZoneGetColor");
 	
@@ -4409,7 +4409,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneGetColor( AMX* amx, cell* params )
 }
 
 // native PlayerGangZoneGetFlashColor(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_PlayerGangZoneGetFlashColor( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetFlashColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "PlayerGangZoneGetFlashColor");
 	
@@ -4429,7 +4429,7 @@ static cell AMX_NATIVE_CALL n_PlayerGangZoneGetFlashColor( AMX* amx, cell* param
 }
 
 // native IsPlayerGangZoneFlashing(playerid, zoneid);
-static cell AMX_NATIVE_CALL n_IsPlayerGangZoneFlashing( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneFlashing( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsPlayerGangZoneFlashing");
 	
@@ -4449,7 +4449,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerGangZoneFlashing( AMX* amx, cell* params )
 }
 
 // native IsValidPickup(pickupid);
-static cell AMX_NATIVE_CALL n_IsValidPickup( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsValidPickup( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4464,7 +4464,7 @@ static cell AMX_NATIVE_CALL n_IsValidPickup( AMX* amx, cell* params )
 }
 
 // native IsPickupStreamedIn(playerid, pickupid);
-static cell AMX_NATIVE_CALL n_IsPickupStreamedIn( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPickupStreamedIn( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4484,7 +4484,7 @@ static cell AMX_NATIVE_CALL n_IsPickupStreamedIn( AMX* amx, cell* params )
 }
 
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_GetPickupPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPickupPos( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4509,7 +4509,7 @@ static cell AMX_NATIVE_CALL n_GetPickupPos( AMX* amx, cell* params )
 }
 
 // native GetPickupModel(pickupid);
-static cell AMX_NATIVE_CALL n_GetPickupModel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPickupModel( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4527,7 +4527,7 @@ static cell AMX_NATIVE_CALL n_GetPickupModel( AMX* amx, cell* params )
 }
 
 // native GetPickupType(pickupid);
-static cell AMX_NATIVE_CALL n_GetPickupType( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPickupType( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4545,7 +4545,7 @@ static cell AMX_NATIVE_CALL n_GetPickupType( AMX* amx, cell* params )
 }
 
 // native GetPickupVirtualWorld(pickupid);
-static cell AMX_NATIVE_CALL n_GetPickupVirtualWorld( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPickupVirtualWorld( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4563,7 +4563,7 @@ static cell AMX_NATIVE_CALL n_GetPickupVirtualWorld( AMX* amx, cell* params )
 }
 
 // CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
-static cell AMX_NATIVE_CALL n_CreatePlayerPickup( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::CreatePlayerPickup( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4578,7 +4578,7 @@ static cell AMX_NATIVE_CALL n_CreatePlayerPickup( AMX* amx, cell* params )
 }
 
 // native DestroyPlayerPickup(playerid, pickupid);
-static cell AMX_NATIVE_CALL n_DestroyPlayerPickup( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::DestroyPlayerPickup( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4599,7 +4599,7 @@ static cell AMX_NATIVE_CALL n_DestroyPlayerPickup( AMX* amx, cell* params )
 }
 
 // native IsValidPlayerPickup(playerid, pickupid);
-static cell AMX_NATIVE_CALL n_IsValidPlayerPickup( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsValidPlayerPickup( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4616,7 +4616,7 @@ static cell AMX_NATIVE_CALL n_IsValidPlayerPickup( AMX* amx, cell* params )
 }
 
 // native IsPlayerPickupStreamedIn(playerid, pickupid);
-static cell AMX_NATIVE_CALL n_IsPlayerPickupStreamedIn( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsPlayerPickupStreamedIn( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4636,7 +4636,7 @@ static cell AMX_NATIVE_CALL n_IsPlayerPickupStreamedIn( AMX* amx, cell* params )
 }
 
 // native GetPlayerPickupPos(playerid, pickupid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_GetPlayerPickupPos( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerPickupPos( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4663,7 +4663,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerPickupPos( AMX* amx, cell* params )
 }
 
 // native GetPlayerPickupModel(playerid, pickupid);
-static cell AMX_NATIVE_CALL n_GetPlayerPickupModel( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerPickupModel( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4683,7 +4683,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerPickupModel( AMX* amx, cell* params )
 }
 
 // native GetPlayerPickupType(playerid, pickupid);
-static cell AMX_NATIVE_CALL n_GetPlayerPickupType( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerPickupType( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4703,7 +4703,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerPickupType( AMX* amx, cell* params )
 }
 
 // native GetPlayerPickupVirtualWorld(playerid, pickupid);
-static cell AMX_NATIVE_CALL n_GetPlayerPickupVirtualWorld( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetPlayerPickupVirtualWorld( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4724,7 +4724,7 @@ static cell AMX_NATIVE_CALL n_GetPlayerPickupVirtualWorld( AMX* amx, cell* param
 
 // RakServer functions //
 // native ClearBanList();
-static cell AMX_NATIVE_CALL n_ClearBanList( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::ClearBanList( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4735,7 +4735,7 @@ static cell AMX_NATIVE_CALL n_ClearBanList( AMX* amx, cell* params )
 }
 
 // native IsBanned(_ip[]);
-static cell AMX_NATIVE_CALL n_IsBanned( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::IsBanned( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4749,7 +4749,7 @@ static cell AMX_NATIVE_CALL n_IsBanned( AMX* amx, cell* params )
 }
 
 // native SetTimeoutTime(playerid, time);
-static cell AMX_NATIVE_CALL n_SetTimeoutTime( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetTimeoutTime( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4766,7 +4766,7 @@ static cell AMX_NATIVE_CALL n_SetTimeoutTime( AMX* amx, cell* params )
 }
 
 // native SetMTUSize(size);
-static cell AMX_NATIVE_CALL n_SetMTUSize( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SetMTUSize( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4778,7 +4778,7 @@ static cell AMX_NATIVE_CALL n_SetMTUSize( AMX* amx, cell* params )
 }
 
 // native GetMTUSize();
-static cell AMX_NATIVE_CALL n_GetMTUSize( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetMTUSize( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4788,7 +4788,7 @@ static cell AMX_NATIVE_CALL n_GetMTUSize( AMX* amx, cell* params )
 }
 
 // native GetLocalIP(index, localip[], len = sizeof(localip));
-static cell AMX_NATIVE_CALL n_GetLocalIP( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetLocalIP( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4800,7 +4800,7 @@ static cell AMX_NATIVE_CALL n_GetLocalIP( AMX* amx, cell* params )
 }
 
 // native SendRPC(playerid, RPC, {Float,_}:...)
-static cell AMX_NATIVE_CALL n_SendRPC( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SendRPC( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4879,7 +4879,7 @@ static cell AMX_NATIVE_CALL n_SendRPC( AMX* amx, cell* params )
 }
 
 // native SendData(playerid, {Float,_}:...)
-static cell AMX_NATIVE_CALL n_SendData( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::SendData( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -4956,26 +4956,26 @@ static cell AMX_NATIVE_CALL n_SendData( AMX* amx, cell* params )
 }
 
 // native GetColCount();
-static cell AMX_NATIVE_CALL n_GetColCount( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetColCount( AMX* amx, cell* params )
 {
-	return GetColCount();
+	return CModelSizes::GetColCount();
 }
 
 // native Float:GetColSphereRadius(modelid);
-static cell AMX_NATIVE_CALL n_GetColSphereRadius( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetColSphereRadius( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "GetColSphereRadius");
 	
-	float fRet = GetColSphereRadius((int)params[1]);
+	float fRet = CModelSizes::GetColSphereRadius((int)params[1]);
 	return amx_ftoc(fRet);
 }
 
 // native GetColSphereOffset(modelid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL n_GetColSphereOffset( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetColSphereOffset( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "GetColSphereOffset");
 
-	CVector vecOffset = GetColSphereOffset((int)params[1]);
+	CVector vecOffset = CModelSizes::GetColSphereOffset((int)params[1]);
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -4988,15 +4988,15 @@ static cell AMX_NATIVE_CALL n_GetColSphereOffset( AMX* amx, cell* params )
 }
 
 // native GetWeaponSlot(weaponid);
-static cell AMX_NATIVE_CALL n_GetWeaponSlot( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::GetWeaponSlot( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "GetWeaponSlot");
 	
-	return GetWeaponSlot((BYTE)params[1]);
+	return ::GetWeaponSlot((BYTE)params[1]);
 }
 
 // native GetWeaponName(weaponid, weaponname[], len = sizeof(weaponname));
-static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::FIXED_GetWeaponName(AMX* amx, cell* params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -5008,14 +5008,14 @@ static cell AMX_NATIVE_CALL n_FIXED_GetWeaponName( AMX* amx, cell* params )
 }
 
 // native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
-static cell AMX_NATIVE_CALL n_CreatePickup(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::CreatePickup(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(6, "CreatePickup");
 
 	return pNetGame->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
 }
 
-static cell AMX_NATIVE_CALL n_DestroyPickup(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::DestroyPickup(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "DestroyPickup");
 	pNetGame->pPickupPool->Destroy((int)params[1]);
@@ -5026,312 +5026,312 @@ static cell AMX_NATIVE_CALL n_DestroyPickup(AMX *amx, cell *params)
 AMX_NATIVE_INFO YSINatives [] =
 {
 	// File
-	{"ffind",							n_ffind},
-	{"frename",							n_frename},
+	{"ffind",							Natives::ffind},
+	{"frename",							Natives::frename},
 	
 	// Directory
-	{"dfind",							n_dfind},
-	{"dcreate",							n_dcreate},
-	{"drename",							n_drename},
+	{"dfind",							Natives::dfind},
+	{"dcreate",							Natives::dcreate},
+	{"drename",							Natives::drename},
 
 	// Generic
-	{"SetModeRestartTime",				n_SetModeRestartTime},
-	{"GetModeRestartTime",				n_GetModeRestartTime},
-	{"SetMaxPlayers",					n_SetMaxPlayers}, // R8
-	{"SetMaxNPCs",						n_SetMaxNPCs}, // R8
+	{"SetModeRestartTime",				Natives::SetModeRestartTime},
+	{"GetModeRestartTime",				Natives::GetModeRestartTime},
+	{"SetMaxPlayers",					Natives::SetMaxPlayers}, // R8
+	{"SetMaxNPCs",						Natives::SetMaxNPCs}, // R8
 
-	{"SetPlayerAdmin",					n_SetPlayerAdmin},
-	{"LoadFilterScript",				n_LoadFilterScript},
-	{"UnLoadFilterScript",				n_UnLoadFilterScript},
-	{"GetFilterScriptCount",			n_GetFilterScriptCount},
-	{"GetFilterScriptName",				n_GetFilterScriptName},
+	{"SetPlayerAdmin",					Natives::SetPlayerAdmin},
+	{"LoadFilterScript",				Natives::LoadFilterScript},
+	{"UnLoadFilterScript",				Natives::UnLoadFilterScript},
+	{"GetFilterScriptCount",			Natives::GetFilterScriptCount},
+	{"GetFilterScriptName",				Natives::GetFilterScriptName},
 
-	{"AddServerRule",					n_AddServerRule},
-	{"SetServerRule",					n_SetServerRule},
-	{"SetServerRuleInt",				n_SetServerRuleInt},
-	{"RemoveServerRule",				n_RemoveServerRule}, // Doesn't work!
-	{"ModifyFlag",						n_ModifyFlag},
+	{"AddServerRule",					Natives::AddServerRule},
+	{"SetServerRule",					Natives::SetServerRule},
+	{"SetServerRuleInt",				Natives::SetServerRuleInt},
+	{"RemoveServerRule",				Natives::RemoveServerRule}, // Doesn't work!
+	{"ModifyFlag",						Natives::ModifyFlag},
 
 	// Server settings
-	{"GetServerSettings",				n_GetServerSettings},
+	{"GetServerSettings",				Natives::GetServerSettings},
 
 	// Nick name
-	{"IsValidNickName",					n_IsValidNickName},	// R8
-	{"AllowNickNameCharacter",			n_AllowNickNameCharacter}, // R7
-	{"IsNickNameCharacterAllowed",		n_IsNickNameCharacterAllowed}, // R7
+	{"IsValidNickName",					Natives::IsValidNickName},	// R8
+	{"AllowNickNameCharacter",			Natives::AllowNickNameCharacter}, // R7
+	{"IsNickNameCharacterAllowed",		Natives::IsNickNameCharacterAllowed}, // R7
 
 	// Player classes
-	{ "GetAvailableClasses",			n_GetAvailableClasses}, // R6
-	{ "GetPlayerClass",					n_GetPlayerClass}, // R6
-	{ "EditPlayerClass",				n_EditPlayerClass}, // R6
+	{ "GetAvailableClasses",			Natives::GetAvailableClasses}, // R6
+	{ "GetPlayerClass",					Natives::GetPlayerClass}, // R6
+	{ "EditPlayerClass",				Natives::EditPlayerClass}, // R6
 	
 	// Timers
-	{ "GetActiveTimers",				n_GetActiveTimers}, // R8
+	{ "GetActiveTimers",				Natives::GetActiveTimers}, // R8
 
 	// Special
-	{ "SetPlayerGravity",				n_SetPlayerGravity },
-	{ "GetPlayerGravity",				n_GetPlayerGravity },
-	{ "SetPlayerTeamForPlayer",			n_SetPlayerTeamForPlayer }, // R5 - Experimental - needs testing - tested, should be OK
-	{ "GetPlayerTeamForPlayer",			n_GetPlayerTeamForPlayer }, // R5
-	{ "GetPlayerWeather",				n_GetPlayerWeather },
-	{ "GetPlayerWorldBounds",			n_GetPlayerWorldBounds },
-	{ "TogglePlayerWidescreen",			n_TogglePlayerWidescreen },
-	{ "IsPlayerWidescreenToggled",		n_IsPlayerWidescreenToggled },
-	{ "GetSpawnInfo",					n_GetSpawnInfo }, // R8
-	{ "GetPlayerSkillLevel",			n_GetPlayerSkillLevel }, // R3
-	{ "GetPlayerCheckpoint",			n_GetPlayerCheckpoint }, // R4
-	{ "GetPlayerRaceCheckpoint",		n_GetPlayerRaceCheckpoint }, // R4
-	{ "GetPlayerWorldBounds",			n_GetPlayerWorldBounds }, // R5
-	{ "IsPlayerInModShop",				n_IsPlayerInModShop }, // R4
-	{ "SendBulletData",					n_SendBulletData }, // R6
-	{ "ShowPlayerForPlayer",			n_ShowPlayerForPlayer }, // R8
-	{ "HidePlayerForPlayer",			n_HidePlayerForPlayer }, // R8
-	{ "SetPlayerChatBubbleForPlayer",	n_SetPlayerChatBubbleForPlayer}, // R10
-	{ "SetPlayerVersion",				n_SetPlayerVersion }, // R9
-	{ "IsPlayerSpawned",				n_IsPlayerSpawned }, // R9
-	{ "SpawnForWorld",					n_SpawnForWorld }, // R10
+	{ "SetPlayerGravity",				Natives::SetPlayerGravity },
+	{ "GetPlayerGravity",				Natives::GetPlayerGravity },
+	{ "SetPlayerTeamForPlayer",			Natives::SetPlayerTeamForPlayer }, // R5 - Experimental - needs testing - tested, should be OK
+	{ "GetPlayerTeamForPlayer",			Natives::GetPlayerTeamForPlayer }, // R5
+	{ "GetPlayerWeather",				Natives::GetPlayerWeather },
+	{ "GetPlayerWorldBounds",			Natives::GetPlayerWorldBounds },
+	{ "TogglePlayerWidescreen",			Natives::TogglePlayerWidescreen },
+	{ "IsPlayerWidescreenToggled",		Natives::IsPlayerWidescreenToggled },
+	{ "GetSpawnInfo",					Natives::GetSpawnInfo }, // R8
+	{ "GetPlayerSkillLevel",			Natives::GetPlayerSkillLevel }, // R3
+	{ "GetPlayerCheckpoint",			Natives::GetPlayerCheckpoint }, // R4
+	{ "GetPlayerRaceCheckpoint",		Natives::GetPlayerRaceCheckpoint }, // R4
+	{ "GetPlayerWorldBounds",			Natives::GetPlayerWorldBounds }, // R5
+	{ "IsPlayerInModShop",				Natives::IsPlayerInModShop }, // R4
+	{ "SendBulletData",					Natives::SendBulletData }, // R6
+	{ "ShowPlayerForPlayer",			Natives::ShowPlayerForPlayer }, // R8
+	{ "HidePlayerForPlayer",			Natives::HidePlayerForPlayer }, // R8
+	{ "SetPlayerChatBubbleForPlayer",	Natives::SetPlayerChatBubbleForPlayer}, // R10
+	{ "SetPlayerVersion",				Natives::SetPlayerVersion }, // R9
+	{ "IsPlayerSpawned",				Natives::IsPlayerSpawned }, // R9
+	{ "SpawnForWorld",					Natives::SpawnForWorld }, // R10
 
 	// Special things from syncdata
-	{ "GetPlayerSirenState",			n_GetPlayerSirenState },
-	{ "GetPlayerLandingGearState",		n_GetPlayerLandingGearState },
-	{ "GetPlayerHydraReactorAngle",		n_GetPlayerHydraReactorAngle },
-	{ "GetPlayerTrainSpeed",			n_GetPlayerTrainSpeed },
-	{ "GetPlayerZAim",					n_GetPlayerZAim },
-	{ "GetPlayerSurfingOffsets",		n_GetPlayerSurfingOffsets },
-	{ "GetPlayerRotationQuat",			n_GetPlayerRotationQuat }, // R3
-	{ "GetPlayerDialogID",				n_GetPlayerDialogID }, // R8
-	{ "GetPlayerSpectateID",			n_GetPlayerSpectateID }, // R8
-	{ "GetPlayerSpectateType",			n_GetPlayerSpectateType }, // R8
+	{ "GetPlayerSirenState",			Natives::GetPlayerSirenState },
+	{ "GetPlayerLandingGearState",		Natives::GetPlayerLandingGearState },
+	{ "GetPlayerHydraReactorAngle",		Natives::GetPlayerHydraReactorAngle },
+	{ "GetPlayerTrainSpeed",			Natives::GetPlayerTrainSpeed },
+	{ "GetPlayerZAim",					Natives::GetPlayerZAim },
+	{ "GetPlayerSurfingOffsets",		Natives::GetPlayerSurfingOffsets },
+	{ "GetPlayerRotationQuat",			Natives::GetPlayerRotationQuat }, // R3
+	{ "GetPlayerDialogID",				Natives::GetPlayerDialogID }, // R8
+	{ "GetPlayerSpectateID",			Natives::GetPlayerSpectateID }, // R8
+	{ "GetPlayerSpectateType",			Natives::GetPlayerSpectateType }, // R8
 
 	// Scoreboard manipulation
-	{ "TogglePlayerScoresPingsUpdate",	n_TogglePlayerScoresPingsUpdate }, // R8
-	{ "TogglePlayerFakePing",			n_TogglePlayerFakePing }, // R8
-	{ "SetPlayerFakePing",				n_SetPlayerFakePing }, // R8
+	{ "TogglePlayerScoresPingsUpdate",	Natives::TogglePlayerScoresPingsUpdate }, // R8
+	{ "TogglePlayerFakePing",			Natives::TogglePlayerFakePing }, // R8
+	{ "SetPlayerFakePing",				Natives::SetPlayerFakePing }, // R8
 	
 	// AFK
-	{ "IsPlayerPaused",					n_IsPlayerPaused },
-	{ "GetPlayerPausedTime",			n_GetPlayerPausedTime },
+	{ "IsPlayerPaused",					Natives::IsPlayerPaused },
+	{ "GetPlayerPausedTime",			Natives::GetPlayerPausedTime },
 	
 	// Objects get - global
-	{"GetObjectModel",					n_GetObjectModel},
-	{"GetObjectDrawDistance",			n_GetObjectDrawDistance},
-	{"SetObjectMoveSpeed",				n_SetObjectMoveSpeed}, // R6
-	{"GetObjectMoveSpeed",				n_GetObjectMoveSpeed}, // R6
-	{"GetObjectTarget",					n_GetObjectTarget}, // R6
-	{"GetObjectAttachedData",			n_GetObjectAttachedData},
-	{"GetObjectAttachedOffset",			n_GetObjectAttachedOffset},
-	{"IsObjectMaterialSlotUsed",		n_IsObjectMaterialSlotUsed}, // R6
-	{"GetObjectMaterial",				n_GetObjectMaterial}, // R6
-	{"GetObjectMaterialText",			n_GetObjectMaterialText}, // R6
+	{"GetObjectModel",					Natives::GetObjectModel},
+	{"GetObjectDrawDistance",			Natives::GetObjectDrawDistance},
+	{"SetObjectMoveSpeed",				Natives::SetObjectMoveSpeed}, // R6
+	{"GetObjectMoveSpeed",				Natives::GetObjectMoveSpeed}, // R6
+	{"GetObjectTarget",					Natives::GetObjectTarget}, // R6
+	{"GetObjectAttachedData",			Natives::GetObjectAttachedData},
+	{"GetObjectAttachedOffset",			Natives::GetObjectAttachedOffset},
+	{"IsObjectMaterialSlotUsed",		Natives::IsObjectMaterialSlotUsed}, // R6
+	{"GetObjectMaterial",				Natives::GetObjectMaterial}, // R6
+	{"GetObjectMaterialText",			Natives::GetObjectMaterialText}, // R6
 
 	// Objects get - player
-	{"GetPlayerObjectModel",			n_GetPlayerObjectModel},
-	{"GetPlayerObjectDrawDistance",		n_GetPlayerObjectDrawDistance},
-	{"SetPlayerObjectMoveSpeed",		n_SetPlayerObjectMoveSpeed}, // R6
-	{"GetPlayerObjectMoveSpeed",		n_GetPlayerObjectMoveSpeed}, // R6
-	{"GetPlayerObjectTarget",			n_GetPlayerObjectTarget}, // R6
-	{"GetPlayerObjectAttachedData",		n_GetPlayerObjectAttachedData},
-	{"GetPlayerObjectAttachedOffset",	n_GetPlayerObjectAttachedOffset},
-	{"IsPlayerObjectMaterialSlotUsed",	n_IsPlayerObjectMaterialSlotUsed}, // R6
-	{"GetPlayerObjectMaterial",			n_GetPlayerObjectMaterial}, // R6
-	{"GetPlayerObjectMaterialText",		n_GetPlayerObjectMaterialText}, // R6
+	{"GetPlayerObjectModel",			Natives::GetPlayerObjectModel},
+	{"GetPlayerObjectDrawDistance",		Natives::GetPlayerObjectDrawDistance},
+	{"SetPlayerObjectMoveSpeed",		Natives::SetPlayerObjectMoveSpeed}, // R6
+	{"GetPlayerObjectMoveSpeed",		Natives::GetPlayerObjectMoveSpeed}, // R6
+	{"GetPlayerObjectTarget",			Natives::GetPlayerObjectTarget}, // R6
+	{"GetPlayerObjectAttachedData",		Natives::GetPlayerObjectAttachedData},
+	{"GetPlayerObjectAttachedOffset",	Natives::GetPlayerObjectAttachedOffset},
+	{"IsPlayerObjectMaterialSlotUsed",	Natives::IsPlayerObjectMaterialSlotUsed}, // R6
+	{"GetPlayerObjectMaterial",			Natives::GetPlayerObjectMaterial}, // R6
+	{"GetPlayerObjectMaterialText",		Natives::GetPlayerObjectMaterialText}, // R6
 
 	// special - for attached objects
-	{"GetPlayerAttachedObject",			n_GetPlayerAttachedObject}, // R3
-	{"IsPlayerEditingObject",			n_IsPlayerEditingObject}, // R9 - do not reset after player quit from editing
-	{"IsPlayerEditingAttachedObject",	n_IsPlayerEditingAttachedObject}, // R9 - do not reset after player quit from editing
+	{"GetPlayerAttachedObject",			Natives::GetPlayerAttachedObject}, // R3
+	{"IsPlayerEditingObject",			Natives::IsPlayerEditingObject}, // R9 - do not reset after player quit from editing
+	{"IsPlayerEditingAttachedObject",	Natives::IsPlayerEditingAttachedObject}, // R9 - do not reset after player quit from editing
 	
 	// Vehicle functions
-	{"GetVehicleSpawnInfo",				n_GetVehicleSpawnInfo},
-	{"GetVehicleColor",					n_GetVehicleColor},
-	{"GetVehiclePaintjob",				n_GetVehiclePaintjob},
-	{"GetVehicleInterior",				n_GetVehicleInterior},
-	{"GetVehicleNumberPlate",			n_GetVehicleNumberPlate},
-	{"SetVehicleRespawnDelay",			n_SetVehicleRespawnDelay},
-	{"GetVehicleRespawnDelay",			n_GetVehicleRespawnDelay},
-	{"SetVehicleOccupiedTick",			n_SetVehicleOccupiedTick}, // R6
-	{"GetVehicleOccupiedTick",			n_GetVehicleOccupiedTick},
-	{"SetVehicleRespawnTick",			n_SetVehicleRespawnTick},
-	{"GetVehicleRespawnTick",			n_GetVehicleRespawnTick},
-	{"GetVehicleLastDriver",			n_GetVehicleLastDriver},
-	{"GetVehicleCab",					n_GetVehicleCab}, // R9
-	{"HasVehicleBeenOccupied",			n_HasVehicleBeenOccupied}, // R9
-	{"SetVehicleBeenOccupied",			n_SetVehicleBeenOccupied}, // R9
-	{"IsVehicleOccupied",				n_IsVehicleOccupied}, // R9
-	{"IsVehicleDead",					n_IsVehicleDead}, // R9
+	{"GetVehicleSpawnInfo",				Natives::GetVehicleSpawnInfo},
+	{"GetVehicleColor",					Natives::GetVehicleColor},
+	{"GetVehiclePaintjob",				Natives::GetVehiclePaintjob},
+	{"GetVehicleInterior",				Natives::GetVehicleInterior},
+	{"GetVehicleNumberPlate",			Natives::GetVehicleNumberPlate},
+	{"SetVehicleRespawnDelay",			Natives::SetVehicleRespawnDelay},
+	{"GetVehicleRespawnDelay",			Natives::GetVehicleRespawnDelay},
+	{"SetVehicleOccupiedTick",			Natives::SetVehicleOccupiedTick}, // R6
+	{"GetVehicleOccupiedTick",			Natives::GetVehicleOccupiedTick},
+	{"SetVehicleRespawnTick",			Natives::SetVehicleRespawnTick},
+	{"GetVehicleRespawnTick",			Natives::GetVehicleRespawnTick},
+	{"GetVehicleLastDriver",			Natives::GetVehicleLastDriver},
+	{"GetVehicleCab",					Natives::GetVehicleCab}, // R9
+	{"HasVehicleBeenOccupied",			Natives::HasVehicleBeenOccupied}, // R9
+	{"SetVehicleBeenOccupied",			Natives::SetVehicleBeenOccupied}, // R9
+	{"IsVehicleOccupied",				Natives::IsVehicleOccupied}, // R9
+	{"IsVehicleDead",					Natives::IsVehicleDead}, // R9
 
 	// Gangzone - Global
-	{"IsValidGangZone",					n_IsValidGangZone},
-	{"IsPlayerInGangZone",				n_IsPlayerInGangZone},
-	{"IsGangZoneVisibleForPlayer",		n_IsGangZoneVisibleForPlayer},
-	{"GangZoneGetColorForPlayer",		n_GangZoneGetColorForPlayer},
-	{"GangZoneGetFlashColorForPlayer",	n_GangZoneGetFlashColorForPlayer},
-	{"IsGangZoneFlashingForPlayer",		n_IsGangZoneFlashingForPlayer}, // R6
-	{"GangZoneGetPos",					n_GangZoneGetPos},
+	{"IsValidGangZone",					Natives::IsValidGangZone},
+	{"IsPlayerInGangZone",				Natives::IsPlayerInGangZone},
+	{"IsGangZoneVisibleForPlayer",		Natives::IsGangZoneVisibleForPlayer},
+	{"GangZoneGetColorForPlayer",		Natives::GangZoneGetColorForPlayer},
+	{"GangZoneGetFlashColorForPlayer",	Natives::GangZoneGetFlashColorForPlayer},
+	{"IsGangZoneFlashingForPlayer",		Natives::IsGangZoneFlashingForPlayer}, // R6
+	{"GangZoneGetPos",					Natives::GangZoneGetPos},
 
 	// Gangzone - Player
-	{ "CreatePlayerGangZone",			n_CreatePlayerGangZone },
-	{ "PlayerGangZoneDestroy",			n_PlayerGangZoneDestroy },
-	{ "PlayerGangZoneShow",				n_PlayerGangZoneShow },
-	{ "PlayerGangZoneHide",				n_PlayerGangZoneHide },
-	{ "PlayerGangZoneFlash",			n_PlayerGangZoneFlash},
-	{ "PlayerGangZoneStopFlash",		n_PlayerGangZoneStopFlash },
-	{ "IsValidPlayerGangZone",			n_IsValidPlayerGangZone },
-	{ "IsPlayerInPlayerGangZone",		n_IsPlayerInPlayerGangZone },
-	{ "IsPlayerGangZoneVisible",		n_IsPlayerGangZoneVisible },
-	{ "PlayerGangZoneGetColor",			n_PlayerGangZoneGetColor },
-	{ "PlayerGangZoneGetFlashColor",	n_PlayerGangZoneGetFlashColor },
-	{ "IsPlayerGangZoneFlashing",		n_IsPlayerGangZoneFlashing }, // R6
-	{ "PlayerGangZoneGetPos",			n_PlayerGangZoneGetPos },
+	{ "CreatePlayerGangZone",			Natives::CreatePlayerGangZone },
+	{ "PlayerGangZoneDestroy",			Natives::PlayerGangZoneDestroy },
+	{ "PlayerGangZoneShow",				Natives::PlayerGangZoneShow },
+	{ "PlayerGangZoneHide",				Natives::PlayerGangZoneHide },
+	{ "PlayerGangZoneFlash",			Natives::PlayerGangZoneFlash},
+	{ "PlayerGangZoneStopFlash",		Natives::PlayerGangZoneStopFlash },
+	{ "IsValidPlayerGangZone",			Natives::IsValidPlayerGangZone },
+	{ "IsPlayerInPlayerGangZone",		Natives::IsPlayerInPlayerGangZone },
+	{ "IsPlayerGangZoneVisible",		Natives::IsPlayerGangZoneVisible },
+	{ "PlayerGangZoneGetColor",			Natives::PlayerGangZoneGetColor },
+	{ "PlayerGangZoneGetFlashColor",	Natives::PlayerGangZoneGetFlashColor },
+	{ "IsPlayerGangZoneFlashing",		Natives::IsPlayerGangZoneFlashing }, // R6
+	{ "PlayerGangZoneGetPos",			Natives::PlayerGangZoneGetPos },
 
 	// Textdraw functions
-	{"IsValidTextDraw",					n_IsValidTextDraw},
-	{"IsTextDrawVisibleForPlayer",		n_IsTextDrawVisibleForPlayer},
-	{"TextDrawGetString",				n_TextDrawGetString},
-	{"TextDrawSetPos",					n_TextDrawSetPos},
-	{"TextDrawGetLetterSize",			n_TextDrawGetLetterSize},
-	{"TextDrawGetFontSize",				n_TextDrawGetFontSize},
-	{"TextDrawGetPos",					n_TextDrawGetPos},
-	{"TextDrawGetColor",				n_TextDrawGetColor},
-	{"TextDrawGetBoxColor",				n_TextDrawGetBoxColor},
-	{"TextDrawGetBackgroundColor",		n_TextDrawGetBackgroundColor},
-	{"TextDrawGetShadow",				n_TextDrawGetShadow},
-	{"TextDrawGetOutline",				n_TextDrawGetOutline},
-	{"TextDrawGetFont",					n_TextDrawGetFont},
-	{"TextDrawIsBox",					n_TextDrawIsBox},
-	{"TextDrawIsProportional",			n_TextDrawIsProportional},
-	{"TextDrawIsSelectable",			n_TextDrawIsSelectable}, // R6
-	{"TextDrawGetAlignment",			n_TextDrawGetAlignment},
-	{"TextDrawGetPreviewModel",			n_TextDrawGetPreviewModel},
-	{"TextDrawGetPreviewRot",			n_TextDrawGetPreviewRot},
-	{"TextDrawGetPreviewVehCol",		n_TextDrawGetPreviewVehCol},
+	{"IsValidTextDraw",					Natives::IsValidTextDraw},
+	{"IsTextDrawVisibleForPlayer",		Natives::IsTextDrawVisibleForPlayer},
+	{"TextDrawGetString",				Natives::TextDrawGetString},
+	{"TextDrawSetPos",					Natives::TextDrawSetPos},
+	{"TextDrawGetLetterSize",			Natives::TextDrawGetLetterSize},
+	{"TextDrawGetFontSize",				Natives::TextDrawGetFontSize},
+	{"TextDrawGetPos",					Natives::TextDrawGetPos},
+	{"TextDrawGetColor",				Natives::TextDrawGetColor},
+	{"TextDrawGetBoxColor",				Natives::TextDrawGetBoxColor},
+	{"TextDrawGetBackgroundColor",		Natives::TextDrawGetBackgroundColor},
+	{"TextDrawGetShadow",				Natives::TextDrawGetShadow},
+	{"TextDrawGetOutline",				Natives::TextDrawGetOutline},
+	{"TextDrawGetFont",					Natives::TextDrawGetFont},
+	{"TextDrawIsBox",					Natives::TextDrawIsBox},
+	{"TextDrawIsProportional",			Natives::TextDrawIsProportional},
+	{"TextDrawIsSelectable",			Natives::TextDrawIsSelectable}, // R6
+	{"TextDrawGetAlignment",			Natives::TextDrawGetAlignment},
+	{"TextDrawGetPreviewModel",			Natives::TextDrawGetPreviewModel},
+	{"TextDrawGetPreviewRot",			Natives::TextDrawGetPreviewRot},
+	{"TextDrawGetPreviewVehCol",		Natives::TextDrawGetPreviewVehCol},
 
 	// Per-Player Textdraw functions - R4
-	{"IsValidPlayerTextDraw",			n_IsValidPlayerTextDraw},
-	{"IsPlayerTextDrawVisible",			n_IsPlayerTextDrawVisible},
-	{"PlayerTextDrawGetString",			n_PlayerTextDrawGetString},
-	{"PlayerTextDrawSetPos",			n_PlayerTextDrawSetPos},
-	{"PlayerTextDrawGetLetterSize",		n_PlayerTextDrawGetLetterSize},
-	{"PlayerTextDrawGetFontSize",		n_PlayerTextDrawGetFontSize},
-	{"PlayerTextDrawGetPos",			n_PlayerTextDrawGetPos},
-	{"PlayerTextDrawGetColor",			n_PlayerTextDrawGetColor},
-	{"PlayerTextDrawGetBoxColor",		n_PlayerTextDrawGetBoxColor},
-	{"PlayerTextDrawGetBackgroundCol",	n_PlayerTextDrawGetBackgroundCol},
-	{"PlayerTextDrawGetShadow",			n_PlayerTextDrawGetShadow},
-	{"PlayerTextDrawGetOutline",		n_PlayerTextDrawGetOutline},
-	{"PlayerTextDrawGetFont",			n_PlayerTextDrawGetFont},
-	{"PlayerTextDrawIsBox",				n_PlayerTextDrawIsBox},
-	{"PlayerTextDrawIsProportional",	n_PlayerTextDrawIsProportional},
-	{"PlayerTextDrawIsSelectable",		n_PlayerTextDrawIsSelectable}, // R6
-	{"PlayerTextDrawGetAlignment",		n_PlayerTextDrawGetAlignment},
-	{"PlayerTextDrawGetPreviewModel",	n_PlayerTextDrawGetPreviewModel},
-	{"PlayerTextDrawGetPreviewRot",		n_PlayerTextDrawGetPreviewRot},
-	{"PlayerTextDrawGetPreviewVehCol",	n_PlayerTextDrawGetPreviewVehCol},
+	{"IsValidPlayerTextDraw",			Natives::IsValidPlayerTextDraw},
+	{"IsPlayerTextDrawVisible",			Natives::IsPlayerTextDrawVisible},
+	{"PlayerTextDrawGetString",			Natives::PlayerTextDrawGetString},
+	{"PlayerTextDrawSetPos",			Natives::PlayerTextDrawSetPos},
+	{"PlayerTextDrawGetLetterSize",		Natives::PlayerTextDrawGetLetterSize},
+	{"PlayerTextDrawGetFontSize",		Natives::PlayerTextDrawGetFontSize},
+	{"PlayerTextDrawGetPos",			Natives::PlayerTextDrawGetPos},
+	{"PlayerTextDrawGetColor",			Natives::PlayerTextDrawGetColor},
+	{"PlayerTextDrawGetBoxColor",		Natives::PlayerTextDrawGetBoxColor},
+	{"PlayerTextDrawGetBackgroundCol",	Natives::PlayerTextDrawGetBackgroundCol},
+	{"PlayerTextDrawGetShadow",			Natives::PlayerTextDrawGetShadow},
+	{"PlayerTextDrawGetOutline",		Natives::PlayerTextDrawGetOutline},
+	{"PlayerTextDrawGetFont",			Natives::PlayerTextDrawGetFont},
+	{"PlayerTextDrawIsBox",				Natives::PlayerTextDrawIsBox},
+	{"PlayerTextDrawIsProportional",	Natives::PlayerTextDrawIsProportional},
+	{"PlayerTextDrawIsSelectable",		Natives::PlayerTextDrawIsSelectable}, // R6
+	{"PlayerTextDrawGetAlignment",		Natives::PlayerTextDrawGetAlignment},
+	{"PlayerTextDrawGetPreviewModel",	Natives::PlayerTextDrawGetPreviewModel},
+	{"PlayerTextDrawGetPreviewRot",		Natives::PlayerTextDrawGetPreviewRot},
+	{"PlayerTextDrawGetPreviewVehCol",	Natives::PlayerTextDrawGetPreviewVehCol},
 
 	// 3D Text
-	{"IsValid3DTextLabel",				n_IsValid3DTextLabel}, // R4
-	{"Is3DTextLabelStreamedIn",			n_Is3DTextLabelStreamedIn}, // R9
-	{"Get3DTextLabelText",				n_Get3DTextLabelText},
-	{"Get3DTextLabelColor",				n_Get3DTextLabelColor},
-	{"Get3DTextLabelPos",				n_Get3DTextLabelPos},
-	{"Get3DTextLabelDrawDistance",		n_Get3DTextLabelDrawDistance},
-	{"Get3DTextLabelLOS",				n_Get3DTextLabelLOS},
-	{"Get3DTextLabelVirtualWorld",		n_Get3DTextLabelVirtualWorld},
-	{"Get3DTextLabelAttachedData",		n_Get3DTextLabelAttachedData},
+	{"IsValid3DTextLabel",				Natives::IsValid3DTextLabel}, // R4
+	{"Is3DTextLabelStreamedIn",			Natives::Is3DTextLabelStreamedIn}, // R9
+	{"Get3DTextLabelText",				Natives::Get3DTextLabelText},
+	{"Get3DTextLabelColor",				Natives::Get3DTextLabelColor},
+	{"Get3DTextLabelPos",				Natives::Get3DTextLabelPos},
+	{"Get3DTextLabelDrawDistance",		Natives::Get3DTextLabelDrawDistance},
+	{"Get3DTextLabelLOS",				Natives::Get3DTextLabelLOS},
+	{"Get3DTextLabelVirtualWorld",		Natives::Get3DTextLabelVirtualWorld},
+	{"Get3DTextLabelAttachedData",		Natives::Get3DTextLabelAttachedData},
 
 	// Per-Player 3D Text
-	{"IsValidPlayer3DTextLabel",		n_IsValidPlayer3DTextLabel}, // R4
-	{"GetPlayer3DTextLabelText",		n_GetPlayer3DTextLabelText}, // R4
-	{"GetPlayer3DTextLabelColor",		n_GetPlayer3DTextLabelColor}, // R4
-	{"GetPlayer3DTextLabelPos",			n_GetPlayer3DTextLabelPos}, // R4
-	{"GetPlayer3DTextLabelDrawDist",	n_GetPlayer3DTextLabelDrawDist},
-	{"GetPlayer3DTextLabelLOS",			n_GetPlayer3DTextLabelLOS}, // R4
-	{"GetPlayer3DTextLabelVirtualW",	n_GetPlayer3DTextLabelVirtualW}, // R4
-	{"GetPlayer3DTextLabelAttached",	n_GetPlayer3DTextLabelAttached}, // R9
+	{"IsValidPlayer3DTextLabel",		Natives::IsValidPlayer3DTextLabel}, // R4
+	{"GetPlayer3DTextLabelText",		Natives::GetPlayer3DTextLabelText}, // R4
+	{"GetPlayer3DTextLabelColor",		Natives::GetPlayer3DTextLabelColor}, // R4
+	{"GetPlayer3DTextLabelPos",			Natives::GetPlayer3DTextLabelPos}, // R4
+	{"GetPlayer3DTextLabelDrawDist",	Natives::GetPlayer3DTextLabelDrawDist},
+	{"GetPlayer3DTextLabelLOS",			Natives::GetPlayer3DTextLabelLOS}, // R4
+	{"GetPlayer3DTextLabelVirtualW",	Natives::GetPlayer3DTextLabelVirtualW}, // R4
+	{"GetPlayer3DTextLabelAttached",	Natives::GetPlayer3DTextLabelAttached}, // R9
 
 	// Menus
-	{"IsMenuDisabled",					n_IsMenuDisabled}, // R5 
-	{"IsMenuRowDisabled",				n_IsMenuRowDisabled}, // R5
-	{"GetMenuColumns",					n_GetMenuColumns},
-	{"GetMenuItems",					n_GetMenuItems},
-	{"GetMenuPos",						n_GetMenuPos},
-	{"GetMenuColumnWidth",				n_GetMenuColumnWidth},
-	{"GetMenuColumnHeader",				n_GetMenuColumnHeader},
-	{"GetMenuItem",						n_GetMenuItem},
+	{"IsMenuDisabled",					Natives::IsMenuDisabled}, // R5 
+	{"IsMenuRowDisabled",				Natives::IsMenuRowDisabled}, // R5
+	{"GetMenuColumns",					Natives::GetMenuColumns},
+	{"GetMenuItems",					Natives::GetMenuItems},
+	{"GetMenuPos",						Natives::GetMenuPos},
+	{"GetMenuColumnWidth",				Natives::GetMenuColumnWidth},
+	{"GetMenuColumnHeader",				Natives::GetMenuColumnHeader},
+	{"GetMenuItem",						Natives::GetMenuItem},
 	
 	// Pickups - Global
-	{ "IsValidPickup",					n_IsValidPickup }, // R10
-	{ "IsPickupStreamedIn",				n_IsPickupStreamedIn }, // R10
-	{ "GetPickupPos",					n_GetPickupPos }, // R10
-	{ "GetPickupModel",					n_GetPickupModel }, // R10
-	{ "GetPickupType",					n_GetPickupType }, // R10
-	{ "GetPickupVirtualWorld",			n_GetPickupVirtualWorld }, // R10
+	{ "IsValidPickup",					Natives::IsValidPickup }, // R10
+	{ "IsPickupStreamedIn",				Natives::IsPickupStreamedIn }, // R10
+	{ "GetPickupPos",					Natives::GetPickupPos }, // R10
+	{ "GetPickupModel",					Natives::GetPickupModel }, // R10
+	{ "GetPickupType",					Natives::GetPickupType }, // R10
+	{ "GetPickupVirtualWorld",			Natives::GetPickupVirtualWorld }, // R10
 	
 	// Pickups - Per-player
-	{ "CreatePlayerPickup",				n_CreatePlayerPickup}, // R10
-	{ "DestroyPlayerPickup",			n_DestroyPlayerPickup }, // R10
-	{ "IsValidPlayerPickup",			n_IsValidPlayerPickup }, // R10
-	{ "IsPlayerPickupStreamedIn",		n_IsPlayerPickupStreamedIn }, // R10
-	{ "GetPlayerPickupPos",				n_GetPlayerPickupPos }, // R10
-	{ "GetPlayerPickupModel",			n_GetPlayerPickupModel }, // R10
-	{ "GetPlayerPickupType",			n_GetPlayerPickupType }, // R10
-	{ "GetPlayerPickupVirtualWorld",	n_GetPlayerPickupVirtualWorld }, // R10
+	{ "CreatePlayerPickup",				Natives::CreatePlayerPickup}, // R10
+	{ "DestroyPlayerPickup",			Natives::DestroyPlayerPickup }, // R10
+	{ "IsValidPlayerPickup",			Natives::IsValidPlayerPickup }, // R10
+	{ "IsPlayerPickupStreamedIn",		Natives::IsPlayerPickupStreamedIn }, // R10
+	{ "GetPlayerPickupPos",				Natives::GetPlayerPickupPos }, // R10
+	{ "GetPlayerPickupModel",			Natives::GetPlayerPickupModel }, // R10
+	{ "GetPlayerPickupType",			Natives::GetPlayerPickupType }, // R10
+	{ "GetPlayerPickupVirtualWorld",	Natives::GetPlayerPickupVirtualWorld }, // R10
 
 	// RakServer functions
-	{ "ClearBanList",					n_ClearBanList },
-	{ "IsBanned",						n_IsBanned },
+	{ "ClearBanList",					Natives::ClearBanList },
+	{ "IsBanned",						Natives::IsBanned },
 
-	{ "SetTimeoutTime",					n_SetTimeoutTime },
-	//{ "SetMTUSize",						n_SetMTUSize },
-	{ "GetMTUSize",						n_GetMTUSize },
-	{ "GetLocalIP",						n_GetLocalIP },
+	{ "SetTimeoutTime",					Natives::SetTimeoutTime },
+	//{ "SetMTUSize",					Natives::SetMTUSize },
+	{ "GetMTUSize",						Natives::GetMTUSize },
+	{ "GetLocalIP",						Natives::GetLocalIP },
 	
-	{ "SendRPC",						n_SendRPC },
-	{ "SendData",						n_SendData },
+	{ "SendRPC",						Natives::SendRPC },
+	{ "SendData",						Natives::SendData },
 
-	{ "YSF_AddPlayer",					n_YSF_AddPlayer },
-	{ "YSF_RemovePlayer",				n_YSF_RemovePlayer },
-	{ "YSF_StreamIn",					n_YSF_StreamIn },
-	{ "YSF_StreamOut",					n_YSF_StreamOut },
+	{ "YSF_AddPlayer",					Natives::YSF_AddPlayer },
+	{ "YSF_RemovePlayer",				Natives::YSF_RemovePlayer },
+	{ "YSF_StreamIn",					Natives::YSF_StreamIn },
+	{ "YSF_StreamOut",					Natives::YSF_StreamOut },
 
-	{ "AttachPlayerObjectToObject",		n_AttachPlayerObjectToObject },
+	{ "AttachPlayerObjectToObject",		Natives::AttachPlayerObjectToObject },
 
 	// Other
-	{"GetColCount",						n_GetColCount},
-	{"GetColSphereRadius",				n_GetColSphereRadius},
-	{"GetColSphereOffset",				n_GetColSphereOffset},
+	{"GetColCount",						Natives::GetColCount},
+	{"GetColSphereRadius",				Natives::GetColSphereRadius},
+	{"GetColSphereOffset",				Natives::GetColSphereOffset},
 
-	{"GetWeaponSlot",					n_GetWeaponSlot},
+	{"GetWeaponSlot",					Natives::GetWeaponSlot},
 	{ 0,								0 }
 };
 
 AMX_NATIVE_INFO RedirecedtNatives[] =
 {
 	// File
-	{ "AttachPlayerObjectToPlayer", n_FIXED_AttachPlayerObjectToPlayer },
-	{ "SetGravity", n_FIXED_SetGravity },
-	{ "GetGravity", n_FIXED_GetGravity },
-	{ "SetWeather", n_FIXED_SetWeather },
-	{ "SetPlayerWeather", n_FIXED_SetPlayerWeather },
-	{ "SetPlayerWorldBounds", n_FIXED_SetPlayerWorldBounds },
-
-	{ "GangZoneCreate", n_YSF_GangZoneCreate },
-	{ "GangZoneDestroy", n_YSF_GangZoneDestroy },
-	{ "GangZoneShowForPlayer", n_YSF_GangZoneShowForPlayer },
-	{ "GangZoneHideForPlayer", n_YSF_GangZoneHideForPlayer },
-	{ "GangZoneShowForAll", n_YSF_GangZoneShowForAll },
-	{ "GangZoneHideForAll", n_YSF_GangZoneHideForAll },
-
-	{ "GangZoneFlashForPlayer", n_YSF_GangZoneFlashForPlayer },
-	{ "GangZoneFlashForAll", n_YSF_GangZoneFlashForAll },
-	{ "GangZoneStopFlashForPlayer", n_YSF_GangZoneStopFlashForPlayer },
-	{ "GangZoneStopFlashForAll", n_YSF_GangZoneStopFlashForAll },
-
-	{ "CreatePickup", n_CreatePickup },
-	{ "AddStaticPickup", n_CreatePickup },
-	{ "DestroyPickup", n_DestroyPickup },
-
-	{ "GetWeaponName", n_FIXED_GetWeaponName }
+	{ "AttachPlayerObjectToPlayer",		Natives::FIXED_AttachPlayerObjectToPlayer },
+	{ "SetGravity",						Natives::FIXED_SetGravity },
+	{ "GetGravity",						Natives::FIXED_GetGravity },
+	{ "SetWeather",						Natives::FIXED_SetWeather },
+	{ "SetPlayerWeather",				Natives::FIXED_SetPlayerWeather },
+	{ "SetPlayerWorldBounds",			Natives::FIXED_SetPlayerWorldBounds },
+	
+	{ "GangZoneCreate",					Natives::YSF_GangZoneCreate },
+	{ "GangZoneDestroy",				Natives::YSF_GangZoneDestroy },
+	{ "GangZoneShowForPlayer",			Natives::YSF_GangZoneShowForPlayer },
+	{ "GangZoneHideForPlayer",			Natives::YSF_GangZoneHideForPlayer },
+	{ "GangZoneShowForAll",				Natives::YSF_GangZoneShowForAll },
+	{ "GangZoneHideForAll",				Natives::YSF_GangZoneHideForAll },
+								
+	{ "GangZoneFlashForPlayer",			Natives::YSF_GangZoneFlashForPlayer },
+	{ "GangZoneFlashForAll",			Natives::YSF_GangZoneFlashForAll },
+	{ "GangZoneStopFlashForPlayer",		Natives::YSF_GangZoneStopFlashForPlayer },
+	{ "GangZoneStopFlashForAll",		Natives::YSF_GangZoneStopFlashForAll },
+		
+	{ "CreatePickup",					Natives::CreatePickup },
+	{ "AddStaticPickup",				Natives::CreatePickup },
+	{ "DestroyPickup",					Natives::DestroyPickup },
+	
+	{ "GetWeaponName",					Natives::FIXED_GetWeaponName }
 };
 
 int InitScripting(AMX *amx)

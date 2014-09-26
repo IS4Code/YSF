@@ -23,7 +23,10 @@ public:
 	static void	OnPlayerPickedUpPickup(WORD playerid, WORD pickupid);
 	static void	OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid);
 
-	static std::list<AMX *>		m_listAMX;
+	static void OnServerMessage(char* message);
+	static void OnRemoteRCONLogin(unsigned int binaryAddress, unsigned short port, char* password);
+
+	static std::vector<AMX *>		m_vecAMX;
 };
 
 #endif
