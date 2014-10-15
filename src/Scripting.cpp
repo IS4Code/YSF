@@ -5339,7 +5339,9 @@ AMX_NATIVE_INFO RedirecedtNatives[] =
 	{ "AddStaticPickup",				Natives::CreatePickup },
 	{ "DestroyPickup",					Natives::DestroyPickup },
 	
-	{ "GetWeaponName",					Natives::FIXED_GetWeaponName }
+	{ "GetWeaponName",					Natives::FIXED_GetWeaponName },
+
+	{ 0,								0 }
 };
 
 int InitScripting(AMX *amx)
