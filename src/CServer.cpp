@@ -10,6 +10,7 @@
 #ifndef WIN32
 	#include <cstring>
 #endif
+#include <stdio.h>
 
 CServer::CServer(eSAMPVersion version)
 {

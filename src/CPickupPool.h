@@ -3,10 +3,9 @@
 
 #include "CTypes.h"
 #include "CVector.h"
-//#include "Structs.h"
 #include <vector>
 #include <bitset>
-#include <unordered_map>
+#include <cstddef>
 
 enum ePickupType : BYTE
 {
@@ -14,7 +13,7 @@ enum ePickupType : BYTE
 	PLAYER
 };
 
-class CPickup 
+class CPickup
 {
 public:
 	CPickup(int model, int type, CVector pos, int world, ePickupType pickuptype)
@@ -33,7 +32,13 @@ public:
 	ePickupType type;
 };
 
+#ifdef _WIN32 // xD.. C++11 doesn't like BitStream.h/.cpp on linux
+#include <unordered_map>
 typedef std::unordered_map<int, CPickup*> PickupMap;
+#else
+#include <map>
+typedef std::map<int, CPickup*> PickupMap;
+#endif
 
 class CPickupPool
 {

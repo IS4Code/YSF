@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 Zeex
+/* Copyright (c) 2012-2014 Zeex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-void *subhook_unprotect(void *address, size_t size) {
+void *subhook_unlock(void *address, size_t size) {
 	intptr_t pagesize;
 
 	pagesize = sysconf(_SC_PAGESIZE);

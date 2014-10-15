@@ -169,7 +169,7 @@ bool HOOK_ContainsInvalidChars(char * szString)
 // amx_Register hook for redirect natives
 bool g_bNativesHooked = false;  
 
-static void HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
+int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 {
 	SubHook::ScopedRemove remove(&amx_Register_hook);
 
@@ -197,7 +197,7 @@ static void HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		}
 	}
 
-	amx_Register(amx, nativelist, number);
+	return amx_Register(amx, nativelist, number);
 }
 
 // GetPacketID hook
@@ -238,7 +238,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				pPlayerData[playerid]->bEverUpdated = true;
 			}
 		}
-
+		/* Doesn't work - tested :(
 		if (packetId == ID_PLAYER_SYNC)
 		{
 			//logprintf("ID_PLAYER_SYNC");
@@ -256,7 +256,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				//logprintf("nightvision");
 			}
 		}
-
+		*/
 		if (packetId == ID_BULLET_SYNC)
 		{
 			RakNet::BitStream bsData(p->data, p->length, false);

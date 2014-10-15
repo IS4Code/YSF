@@ -3,7 +3,7 @@
 
 // Thx to OrMisicL - from FCNPC
 #include <vector>
-#include "SDK/plugin.h"
+#include "sdk/plugin.h"
 #include "CTypes.h"
 
 class CCallbackManager

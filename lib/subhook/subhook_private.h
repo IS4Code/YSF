@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 Zeex
+/* Copyright (c) 2012-2014 Zeex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,6 @@ struct subhook {
 	void *dst;
 };
 
-void *subhook_unprotect(void *address, size_t size);
+void *subhook_unlock(void *address, size_t size);
 
 #endif /* SUBHOOK_PRIVATE_H */

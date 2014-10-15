@@ -32,7 +32,7 @@
 
 #include "Scripting.h"
 
-#include <raknet\BitStream.h>
+#include <raknet/BitStream.h>
 #include "RPCs.h"
 #include "amxfunctions.h"
 #include "Utils.h"

@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2013 Zeex
+/* Copyright (c) 2012-2014 Zeex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -71,10 +71,10 @@
 
 #if !defined SUBHOOK_EXPORT
 	#if defined SUBHOOK_WINDOWS
-		#if defined SUBHOOK_IMPLEMENTATION
+		#if !defined SUBHOOK_IMPLEMENTATION
 			#define SUBHOOK_EXPORT SUBHOOK_EXTERN __declspec(dllexport)
 		#else
-	#define SUBHOOK_EXPORT SUBHOOK_EXTERN __declspec(dllexport)
+			#define SUBHOOK_EXPORT SUBHOOK_EXTERN __declspec(dllimport)
 		#endif
 	#elif defined SUBHOOK_LINUX
 		#if defined SUBHOOK_IMPLEMENTATION
@@ -136,6 +136,9 @@ public:
 		subhook_remove(hook_);
 		subhook_free(hook_);
 	}
+
+	void SetSrc(void *src) { subhook_set_src(hook_, src); }
+	void SetDst(void *dst) { subhook_set_dst(hook_, dst); }
 
 	void *GetSrc() { return subhook_get_src(hook_); }
 	void *GetDst() { return subhook_get_dst(hook_); }

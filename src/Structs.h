@@ -34,7 +34,7 @@
 #define __YSF_STRUCTS
 
 #include "CServer.h"
-#include <raknet\BitStream.h>
+#include <raknet/BitStream.h>
 #include "CVector.h"
 #include "CTypes.h"
 #include "CGangZonePool.h"
