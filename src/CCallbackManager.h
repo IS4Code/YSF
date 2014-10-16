@@ -18,6 +18,7 @@ public:
 	static void	OnPlayerEnterPlayerGangZone(WORD playerid, WORD zoneid);
 	static void	OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid);
 	static void	OnPlayerPauseStateChange(WORD playerid, bool pausestate);
+	static void	OnPlayerStatsAndWeaponsUpdate(WORD playerid);
 
 	// Default SAMP Callbakcs
 	static void	OnPlayerPickedUpPickup(WORD playerid, WORD pickupid);

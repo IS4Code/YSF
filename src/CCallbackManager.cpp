@@ -170,6 +170,21 @@ void CCallbackManager::OnRemoteRCONLogin(unsigned int binaryAddress, unsigned sh
 	*/
 }
 
+void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
+{
+	int idx = -1;
+	for (std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if (!amx_FindPublic(*iter, "OnPlayerStatsAndWeaponsUpdate", &idx))
+		{
+			amx_Push(*iter, playerid);
+
+			amx_Exec(*iter, NULL, idx);
+		}
+	}
+}
+
+
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 {
 	if (playerid >= 0 && playerid < MAX_PLAYERS)

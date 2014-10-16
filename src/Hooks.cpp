@@ -257,6 +257,13 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			}
 		}
 		*/
+
+		// Stats and weapons update
+		if (packetId == ID_STATS_UPDATE || packetId == ID_WEAPONS_UPDATE)
+		{
+			CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
+		}
+
 		if (packetId == ID_BULLET_SYNC)
 		{
 			RakNet::BitStream bsData(p->data, p->length, false);
