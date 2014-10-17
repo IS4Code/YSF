@@ -38,6 +38,7 @@ DWORD CAddress::FUNC_GetPacketID = NULL;
 
 DWORD CAddress::FUNC_CPlayer__SpawnForWorld = NULL;
 DWORD CAddress::FUNC_ProcessQueryPacket = NULL;
+DWORD CAddress::FUNC_format_amxstring = NULL;
 
 // Others
 DWORD CAddress::ADDR_CNetGame_GMX_GangZoneDelete = NULL;
@@ -66,6 +67,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
 	ADDR_CNetGame_GMX_PckupDelete =				FindPattern("\x83\xC4\x04\x89\x5E\x10", "xxxxxx") - 0x8;
 	//0x00488820
+
+	FUNC_format_amxstring = 0x0046ED90;
+
 
 	logprintf("ADDR_CNetGame_GMX_GangZoneDelete: %x", ADDR_CNetGame_GMX_GangZoneDelete); // 00492660
 	logprintf("ADDR_CNetGame_GMX_PckupDelete: %x", ADDR_CNetGame_GMX_PckupDelete); // 0048A059

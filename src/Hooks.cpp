@@ -41,6 +41,7 @@
 #include "Scripting.h"
 #include "Structs.h"
 #include "CPlayerData.h"
+#include "Functions.h"
 
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN
@@ -294,21 +295,30 @@ static void HOOK_logprintf(const char *msg, ...)
 	vsnprintf(fmat, sizeof(fmat), msg, arguments);
 	va_end(arguments);
 
-	logprintf(fmat);
-
 	CCallbackManager::OnServerMessage(fmat);
-}
-/*
-static int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s)
-{
-	SubHook::ScopedRemove remove(&GetPacketID_hook);
 
-	CCallbackManager::OnRemoteRCONLogin(binaryAddress, port, "asdad");
+	logprintf(fmat);
+}
+
+int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char *data, int length, unsigned int s)
+{
+	SubHook::ScopedRemove remove(&query_hook);
+
+	//CCallbackManager::OnRemoteRCONLogin(binaryAddress, port, "asdad");
 
 	logprintf("binaddr: %d, port: %d, len: %d, socket: %d", binaryAddress, port, length, s);
+	/*
+	int i = 0;
+	while (data[i])
+	{
+		logprintf("char: %c", data[i]);
+		i++;
+	}
+	*/
+
 	return CSAMPFunctions::ProcessQueryPacket(binaryAddress, port, data, length, s);
 }
-*/
+
 void InstallPreHooks()
 {
 	Namecheck_hook.Install((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
@@ -317,5 +327,5 @@ void InstallPreHooks()
 	amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 	GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
 	logprintf_hook.Install((void*)logprintf, (void*)HOOK_logprintf);	
-	//query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);	
+	//query_hook.Install((void*)0x00492660, (void*)HOOK_ProcessQueryPacket);
 }

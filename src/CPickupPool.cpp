@@ -138,15 +138,16 @@ void CPickupPool::Destroy(int pickupid)
 			// Skip unconnected players
 			if(!IsPlayerConnected(i)) continue;
 
+			bool bRestart = false;
 			for (PickupMap::iterator p = pPlayerData[i]->ClientPlayerPickups.begin(); p != pPlayerData[i]->ClientPlayerPickups.end(); p++)
 			{
+				bRestart = false;
 				if(p->second == it->second)
 				{
 					if(!m_bStreamingEnabled) HidePickup((int)p->first, i);
 
 					pPlayerData[i]->bClientPickupSlots.set(p->first, false);
-					pPlayerData[i]->ClientPlayerPickups.erase(p++);
-					break;
+					pPlayerData[i]->ClientPlayerPickups.erase(p);
 				}
 			}
 		}
@@ -154,7 +155,8 @@ void CPickupPool::Destroy(int pickupid)
 
 	// And finaly, remove pickup from server pool
 	m_bPickupSlots.set(pickupid, false);
-	 m_Pickups.erase(it);
+	SAFE_DELETE(it->second);
+	m_Pickups.erase(it);
 }
 
 void CPickupPool::Destroy(WORD playerid, int pickupid)
@@ -163,22 +165,26 @@ void CPickupPool::Destroy(WORD playerid, int pickupid)
 	PickupMap::iterator it = pPlayerData[playerid]->PlayerPickups.find(pickupid);
 	if(it != pPlayerData[playerid]->PlayerPickups.end())
 	{
-		for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
+		bool bRestart = false;
+		for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); bRestart ? (it = pPlayerData[playerid]->ClientPlayerPickups.begin()) : (it++))
 		{
+			bRestart = false;
 			if(p->second == it->second)
 			{
 				if(!m_bStreamingEnabled) HidePickup((int)p->first, playerid);
 
 				pPlayerData[playerid]->bClientPickupSlots.set(p->first, false);
-				pPlayerData[playerid]->ClientPlayerPickups.erase(p++);
-				break;
+				pPlayerData[playerid]->ClientPlayerPickups.erase(p);
+
+				// And finaly, remove pickup from server pool
+				pPlayerData[playerid]->bPlayerPickup.set(pickupid, false);
+				SAFE_DELETE(it->second);
+				pPlayerData[playerid]->PlayerPickups.erase(it);
+
+				bRestart = true;
 			}
 		}
 	}
-
-	// And finaly, remove pickup from server pool
-	pPlayerData[playerid]->bPlayerPickup.set(pickupid, false);
-	pPlayerData[playerid]->PlayerPickups.erase(it);
 }
 
 void CPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup pPickup)

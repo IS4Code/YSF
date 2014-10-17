@@ -1380,6 +1380,36 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateType( AMX* amx, cell* para
 	return pNetGame->pPlayerPool->pPlayer[playerid]->byteSpectateType;
 }
 
+// native GetPlayerLastSyncedVehicleID(playerid);
+static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedVehicleID(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPlayerLastSyncedVehicleID");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wVehicleId;
+}
+
+// native GetPlayerLastSyncedTrailerID(playerid);
+static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedTrailerID(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPlayerLastSyncedTrailerID");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->trailerSyncData.wTrailerID;
+}
+
 // native SendBulletData(sender, hitid, hittype, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
 static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params ) 
 {
@@ -5029,9 +5059,29 @@ static cell AMX_NATIVE_CALL Natives::SetPickupStreamingEnabled(AMX *amx, cell *p
 	return 1;
 }
 
+#ifdef sdasdasd
+// original funckció így néz ki:
+// char* format_amxstring(AMX *amx, cell *params, int parm, int &len)
+
+typedef char *(__thiscall *FUNC_format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
+
+static cell AMX_NATIVE_CALL tesztgeci(AMX *amx, cell *params)
+{
+	/*
+	FUNC_format_amxstring_t pfn_formatstr = (FUNC_format_amxstring_t)0x0046ED90;
+
+	int len;
+	char *ret = pfn_formatstr(amx, params, 1, len);
+	std::printf("%s", ret);
+	*/
+	return 1;
+}
+#endif
+
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
 {
+//	{ "tesztgeci", tesztgeci },
 	// File
 	{"ffind",							Natives::ffind},
 	{"frename",							Natives::frename},
@@ -5109,6 +5159,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerDialogID",				Natives::GetPlayerDialogID }, // R8
 	{ "GetPlayerSpectateID",			Natives::GetPlayerSpectateID }, // R8
 	{ "GetPlayerSpectateType",			Natives::GetPlayerSpectateType }, // R8
+	{ "GetPlayerLastSyncedVehicleID",	Natives::GetPlayerLastSyncedVehicleID }, // R10
+	{ "GetPlayerLastSyncedTrailerID",	Natives::GetPlayerLastSyncedTrailerID }, // R10
 
 	// Scoreboard manipulation
 	{ "TogglePlayerScoresPingsUpdate",	Natives::TogglePlayerScoresPingsUpdate }, // R8
@@ -5339,7 +5391,8 @@ AMX_NATIVE_INFO RedirecedtNatives[] =
 	{ "AddStaticPickup",				Natives::CreatePickup },
 	{ "DestroyPickup",					Natives::DestroyPickup },
 	
-	{ "GetWeaponName",					Natives::FIXED_GetWeaponName }
+	{ "GetWeaponName",					Natives::FIXED_GetWeaponName },
+	{0,0}
 };
 
 int InitScripting(AMX *amx)

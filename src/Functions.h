@@ -1,6 +1,8 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
+#include <sdk/plugin.h>
+
 #ifdef _WIN32
 
 typedef void(__thiscall *CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);
@@ -13,7 +15,9 @@ typedef bool(__thiscall *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscri
 
 typedef void(__thiscall *CPlayer__SpawnForWorld_t)(void *pPlayer);
 
-//typedef int (__thiscall *ProcessQueryPacket_t)(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s);
+typedef int(__thiscall *ProcessQueryPacket_t)(unsigned int binaryAddress, unsigned short port, char *data, int length, unsigned int s);
+typedef char *(__thiscall *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
+
 #else
 typedef void(*CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);
 typedef void(*CConsole__SetStringVariable_t)(void *pConsole, char *szRule, char *szString);
@@ -25,7 +29,8 @@ typedef bool(*CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, cha
              
 typedef void(*CPlayer__SpawnForWorld_t)(void *pPlayer);
 
-//typedef int (*ProcessQueryPacket_t)(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s);
+typedef int (*ProcessQueryPacket_t)(unsigned int binaryAddress, unsigned short port, char* data, int length, unsigned int s);
+typedef char *(*format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
 #endif
 
 class CSAMPFunctions
@@ -42,7 +47,8 @@ public:
 	static bool		UnLoadFilterscript(char *szName);
 	
 	static void		SpawnPlayer_(int iPlayerId);
-	//static int		ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s);
+	static int		ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char *data, int length, unsigned int s);
+	static char*	format_amxstring(AMX *amx, cell *params, int parm, int &len);
 
 	// Function
 	// Rules
@@ -56,7 +62,8 @@ public:
 	// Player
 	static CPlayer__SpawnForWorld_t					pfn__CPlayer__SpawnForWorld;
 	// Query
-	//static ProcessQueryPacket_t						pfn__ProcessQueryPacket;
+	static ProcessQueryPacket_t						pfn__ProcessQueryPacket;
+	static format_amxstring_t						pfn__format_amxstring;
 };
 
 #endif

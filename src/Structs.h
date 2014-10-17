@@ -462,9 +462,9 @@ class CPlayer
 		BYTE					byteSeatId;			// 9793
 		WORD					wVehicleId;			// 9794
 		DWORD					iNickNameColor;		// 9798
-		BOOL					bShowCheckpoint;
-		BOOL					bShowRaceCheckpoint;
-		//PAD(pad9, 12);								// 0x2644 - 0x2650
+		BOOL					bShowCheckpoint;	// 9799
+		BOOL					bShowRaceCheckpoint; // 9800
+		//PAD(pad9, 12);							// 0x2644 - 0x2650
 		int						iInteriorId;		// 0x2650 - 0x2654
 		WORD					wWeaponAmmo[12];	// 0x2654 - 0x266C
 		PAD(pad10, 28);								// 0x266C - 0x2688
@@ -473,17 +473,17 @@ class CPlayer
 		BYTE					byteWeaponshotWeapon;// 9877 - 9878
 		WORD					wTargetId;			// 9878 - 9880
 		DWORD					dwLastShotTick;		// 9880
-		BYTE					byteLastShotWeapon;		// 9884
-		CVector vecBulletStart;
-		CVector vecHitTarget;
-		CVector vecCenterOfHit;
+		BYTE					byteLastShotWeapon;	// 9884
+		CVector					vecBulletStart;		// 9885	- 9897
+		CVector					vecHitTarget;		// 9897 - 9909
+		CVector					vecCenterOfHit;		// 9909 - 9921
 		WORD					wMayebLastShotPLayer;	// 9921	
-		BYTE					wMaybeLastShotType;			// 9923
+		BYTE					wMaybeLastShotType;	// 9923
 		BYTE					m_byteTime;			// 9924
 		float					m_fGameTime;		// 9925 - 9929
 		BYTE					byteSpectateType;	// 9929 - 9930
 		DWORD					wSpectateID;		// 9930 - 9934
-		DWORD					dwLastStreaming;
+		DWORD					dwLastStreaming;	// 9934 - 9938
 		DWORD					dwNPCRecordingType;	// 9938 - 9942
 		FILE					*pRecordingFile;	// 9942 - 9946
 		DWORD					dwFirstNPCWritingTime; // 9946 - 9950 

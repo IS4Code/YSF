@@ -79,6 +79,7 @@ public:
 
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
 	static DWORD			FUNC_ProcessQueryPacket;
+	static DWORD			FUNC_format_amxstring;
 
 	// Others
 	static DWORD			ADDR_CNetGame_GMX_GangZoneDelete;

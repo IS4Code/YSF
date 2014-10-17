@@ -6,6 +6,7 @@
 #include <vector>
 #include <bitset>
 #include <cstddef>
+#include "main.h"
 
 enum ePickupType : BYTE
 {

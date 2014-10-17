@@ -154,7 +154,16 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 // The AmxLoad() function gets called when a new gamemode or
 // filterscript gets loaded with the server. In here we register
 // the native functions we like to add to the scripts.
+/*
+static SubHook RakPeer_Start;
 
+static int HOOK_RakPeer__Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0)
+{
+	SubHook::ScopedRemove remove(&RakPeer_Start);
+
+	return pRakServer->Start(AllowedPlayers, depreciated, threadSleepTimer, port, forceHostAddress);
+}
+*/
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx) 
 {
 	CCallbackManager::RegisterAMX(amx);

@@ -111,8 +111,10 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetPlayerDialogID(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL GetPlayerSpectateID(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL GetPlayerSpectateType(AMX *amx, cell *params); // R8
+	static cell AMX_NATIVE_CALL GetPlayerLastSyncedVehicleID(AMX *amx, cell *params); // R10
+	static cell AMX_NATIVE_CALL GetPlayerLastSyncedTrailerID(AMX *amx, cell *params); // R10
 
-	static cell AMX_NATIVE_CALL TogglePlayerScoresPingsUpdate(AMX *amx, cell *params); // R
+	static cell AMX_NATIVE_CALL TogglePlayerScoresPingsUpdate(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL TogglePlayerFakePing(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL SetPlayerFakePing(AMX *amx, cell *params); // R8
 

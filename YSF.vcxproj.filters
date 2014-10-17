@@ -42,9 +42,6 @@
     <ClCompile Include="src\CServer.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Functions.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -78,6 +75,9 @@
     <ClCompile Include="src\Hooks.cpp">
       <Filter>src\Hooks</Filter>
     </ClCompile>
+    <ClCompile Include="src\Functions.cpp">
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\amxfunctions.h">
@@ -99,9 +99,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\CServer.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Functions.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\main.h">
@@ -138,6 +135,9 @@
       <Filter>src\Hooks</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\Functions.h">
+      <Filter>src\Hooks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="YSF.def" />
