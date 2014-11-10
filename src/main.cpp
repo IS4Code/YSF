@@ -199,6 +199,15 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
+			if (pNetGame->pPlayerPool->bIsPlayerConnected[0])
+			{
+				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[0];
+				for(int i = 0; i != 12; i++)
+				{
+					logprintf("weapon: %d - %d, %d", i, pPlayer->byteWeaponId[i], pPlayer->wWeaponAmmo[i]);
+				}
+			}
+
 			//logprintf("weather: %d, gravity: %f, bLimitGlobalChatRadius: %d, cjwalk: %d", pNetGame->byteWeather, pNetGame->fGravity, pNetGame->bLimitGlobalChatRadius, pNetGame->bUseCJWalk);
 #ifdef pina
 			logprintf("infernus used: %d", pNetGame->pVehiclePool->modelsUsed[11]);

@@ -12,10 +12,6 @@
 #ifndef __CVector_H
 #define __CVector_H
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #include <math.h>
 
 #define FLOAT_EPSILON 0.0001f
@@ -42,7 +38,6 @@ public:
 		this->fY = 0;
 		this->fZ = 0;
 	};
-	
 	
 	CVector ( float fX, float fY, float fZ) 
 	{ 

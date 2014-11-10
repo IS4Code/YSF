@@ -3,6 +3,7 @@
 
 class CNetGame;
 class RakServer;
+struct Packet;
 
 #include "CTypes.h"
 #include "Addresses.h"
@@ -34,6 +35,10 @@ public:
 	void AllowNickNameCharacter(char character, bool enable);
 	bool IsNickNameCharacterAllowed(char character);
 	bool IsValidNick(char *szName);
+
+	void Packet_WeaponsUpdate(Packet *p);
+	void Packet_StatsUpdate(Packet *p);
+
 private:
 	eSAMPVersion m_Version;
 	float m_fGravity;

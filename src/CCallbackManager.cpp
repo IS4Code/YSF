@@ -183,8 +183,7 @@ void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
 		}
 	}
 }
-
-
+/*
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 {
 	if (playerid >= 0 && playerid < MAX_PLAYERS)
@@ -197,7 +196,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 	}
 	return true;
 }
-/*
+
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerDisconnect(int playerid, int reason)
 {
 	pServer->RemovePlayer(playerid);

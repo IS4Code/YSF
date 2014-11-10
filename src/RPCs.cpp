@@ -130,13 +130,19 @@ void PickedUpPickup(RPCParameters* rpcParams)
 
 	bsData.Read(pickupid);
 
+	logprintf("pickup playerid %d, pickupid: %d", playerid, pickupid);
+
 	// Find pickup in player client side pickuppool
 	PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.find(pickupid);
 	if(p != pPlayerData[playerid]->ClientPlayerPickups.end())
 	{
+		logprintf("pos: %f, %f, %f", p->second->vecPos.fX, p->second->vecPos.fY, p->second->vecPos.fZ);
 		// 99% - fake pickup RPC
-		if(GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &p->second->vecPos) > 15.0)
+		if (GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &p->second->vecPos) > 15.0)
+		{
+			logprintf("fakepickup %d", pickupid);
 			return;
+		}
 
 		// If global pickup
 		if(p->second->type == GLOBAL)
@@ -162,17 +168,26 @@ void PickedUpPickup(RPCParameters* rpcParams)
 	}
 }
 
+void CheckResponse(RPCParameters* rpcParams)
+{
+	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+	logprintf("responsee te faszom");
+}
+
 void InitRPCs()
 {
-	logprintf("regrpc 1 %X", pRakServer);
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
-	logprintf("regrpc 2");
-//	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
-	logprintf("regrpc 3");
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
 
 //	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
 //	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
 
-//	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
-//	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickedUpPickup);
+	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickedUpPickup);
+/*
+	int pina = 0x53;
+	pRakServer->UnregisterAsRemoteProcedureCall(&pina);
+	pRakServer->RegisterAsRemoteProcedureCall(&pina, CheckResponse);
+	*/
 }

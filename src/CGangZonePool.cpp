@@ -7,7 +7,7 @@
 #include "RPCs.h"
 #include "Utils.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 	#include <string.h>
 #endif
 

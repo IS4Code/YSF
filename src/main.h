@@ -21,7 +21,7 @@ extern logprintf_t logprintf;
 #define CON_VARFLAG_READONLY	2
 #define CON_VARFLAG_RULE		4
 
-#ifdef WIN32
+#ifdef _WIN32
 	#define OS_NAME			"Windows"
 #else
 	#define OS_NAME			"Linux"

@@ -8,8 +8,11 @@
 #include "main.h"
 #include <map>
 
-#ifndef WIN32
+#ifndef _WIN32
 	#include <string.h>
+#else
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 #endif
 
 CPlayerData::CPlayerData( WORD playerid )
@@ -117,7 +120,6 @@ bool CPlayerData::DestroyObject(WORD objectid)
 void CPlayerData::Process(void)
 {
 	// Process AFK detection
-#ifdef WIN32
 	DWORD dwTickCount = GetTickCount();
 	
 	if(bEverUpdated)
@@ -136,8 +138,8 @@ void CPlayerData::Process(void)
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 	}
-#endif
 
+	// Process gangzones
 	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
 	{
 		// If zone id is unused client side, then continue

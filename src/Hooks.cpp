@@ -174,7 +174,7 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 {
 	SubHook::ScopedRemove remove(&amx_Register_hook);
 
-	if (!g_bNativesHooked)
+	if (!g_bNativesHooked && pServer)
 	{
 		int i = 0;
 		while (nativelist[i].name)
@@ -239,6 +239,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				pPlayerData[playerid]->bEverUpdated = true;
 			}
 		}
+
 		/* Doesn't work - tested :(
 		if (packetId == ID_PLAYER_SYNC)
 		{
@@ -260,11 +261,18 @@ static BYTE HOOK_GetPacketID(Packet *p)
 		*/
 
 		// Stats and weapons update
-		if (packetId == ID_STATS_UPDATE || packetId == ID_WEAPONS_UPDATE)
+		if (packetId == ID_STATS_UPDATE)
 		{
-			CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
+			pServer->Packet_StatsUpdate(p);
+			return 0xFF;
 		}
-
+		/*
+		if (packetId == ID_WEAPONS_UPDATE)
+		{
+			pServer->Packet_WeaponsUpdate(p);
+			return 0xFF;
+		}
+		*/
 		if (packetId == ID_BULLET_SYNC)
 		{
 			RakNet::BitStream bsData(p->data, p->length, false);
@@ -277,7 +285,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				pBulletSync.vecCenterOfHit.fY < -20000.0 || pBulletSync.vecCenterOfHit.fY > 20000.0 ||
 				pBulletSync.vecCenterOfHit.fZ < -20000.0 || pBulletSync.vecCenterOfHit.fZ > 20000.0)
 			{
-				logprintf("bullet crasher detected. id = %d", playerid);
+				//logprintf("bullet crasher detected. id = %d", playerid);
 				return 0xFF;
 			}
 		}
@@ -321,11 +329,12 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 void InstallPreHooks()
 {
-	Namecheck_hook.Install((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
-	
-	logprintf("adress of hook: %X", (void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)));
-	amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
-	GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
+	if (pServer)
+	{
+		Namecheck_hook.Install((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
+		amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
+		GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
+	}
 	logprintf_hook.Install((void*)logprintf, (void*)HOOK_logprintf);	
 	//query_hook.Install((void*)0x00492660, (void*)HOOK_ProcessQueryPacket);
 }

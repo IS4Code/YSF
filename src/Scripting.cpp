@@ -843,6 +843,25 @@ static cell AMX_NATIVE_CALL Natives::GetActiveTimers(AMX *amx, cell *params)
 	return pNetGame->pScriptTimers->m_dwTimerCount;
 }
 
+// native SendInvalidPlayerSync(playerid) - raksamp versions will crash
+static cell AMX_NATIVE_CALL Natives::SendInvalidPlayerSync(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "SendInvalidPlayerSync");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	RakNet::BitStream bs;
+	bs.Write(65530);
+
+	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false);
+	return 1;
+}
+
 // native SetGravity(Float:gravity);
 static cell AMX_NATIVE_CALL Natives::FIXED_SetGravity( AMX* amx, cell* params )
 {
@@ -1105,6 +1124,21 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSkillLevel( AMX* amx, cell* params
 	return pNetGame->pPlayerPool->pPlayer[playerid]->wSkillLevel[skillid];
 }
 
+// native IsPlayerCheckpointActive(playerid);
+static cell AMX_NATIVE_CALL Natives::IsPlayerCheckpointActive(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsPlayerCheckpointActive");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bShowCheckpoint;
+}
+
 // native GetPlayerCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fSize);
 static cell AMX_NATIVE_CALL Natives::GetPlayerCheckpoint( AMX* amx, cell* params )
 {
@@ -1128,6 +1162,21 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerCheckpoint( AMX* amx, cell* params
 	amx_GetAddr(amx, params[5], &cptr);
 	*cptr = amx_ftoc(pNetGame->pPlayerPool->pPlayer[playerid]->fCPSize);
 	return 1;
+}
+
+// native IsPlayerRaceCheckpointActive(playerid);
+static cell AMX_NATIVE_CALL Natives::IsPlayerRaceCheckpointActive(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsPlayerRaceCheckpointActive");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bShowRaceCheckpoint;
 }
 
 // native GetPlayerRaceCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fNextX, &Float:fNextY, &fNextZ, &Float:fSize);
@@ -1550,7 +1599,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerVersion( AMX* amx, cell* params )
 	{
 		pNetGame->pPlayerPool->szVersion[playerid][0] = NULL;
 		strcpy(pNetGame->pPlayerPool->szVersion[playerid], version);
-		logprintf("2");
+		logprintf("2 - %s", pNetGame->pPlayerPool->szVersion[playerid]);
 		return 1;
 	}
 	return 0;
@@ -3792,6 +3841,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_AddPlayer( AMX* amx, cell* params )
 	if(!pServer)
 		return 0;
 	
+	// We only allow to call this function from gamemode
+	if (&pNetGame->pGameModePool->m_amx != amx) return 0;
+
 	CHECK_PARAMS(1, "YSF_AddPlayer");
 
 	int playerid = (int)params[1];
@@ -3806,7 +3858,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AddPlayer( AMX* amx, cell* params )
 	// Initialize pickups
 	if(ret)
 		pNetGame->pPickupPool->InitializeForPlayer(playerid);
-	return 1;
+	return ret;
 }
 
 // native YSF_RemovePlayer(playerid);
@@ -3815,6 +3867,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_RemovePlayer( AMX* amx, cell* params )
 	// If unknown server version
 	if(!pServer)
 		return 0;
+
+	// We only allow to call this function from gamemode
+	if (&pNetGame->pGameModePool->m_amx != amx) return 0;
 
 	CHECK_PARAMS(1, "YSF_RemovePlayer");
 	
@@ -3831,6 +3886,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_StreamIn( AMX* amx, cell* params )
 	if(!pServer)
 		return 0;
 
+	// We only allow to call this function from gamemode
+	if (&pNetGame->pGameModePool->m_amx != amx) return 0;
+
 	CHECK_PARAMS(2, "YSF_StreamIn");
 
 	pServer->OnPlayerStreamIn((WORD)params[1], (WORD)params[2]);
@@ -3843,6 +3901,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_StreamOut( AMX* amx, cell* params )
 	// If unknown server version
 	if(!pServer)
 		return 0;
+
+	// We only allow to call this function from gamemode
+	if (&pNetGame->pGameModePool->m_amx != amx) return 0;
 
 	CHECK_PARAMS(2, "YSF_StreamOut");
 
@@ -5034,6 +5095,21 @@ static cell AMX_NATIVE_CALL Natives::FIXED_GetWeaponName(AMX* amx, cell* params)
 	return set_amxstring(amx, params[2], CUtils::GetWeaponName_((BYTE)params[1]), params[3]);
 }
 
+// native IsPlayerConnected(playerid);
+static cell AMX_NATIVE_CALL Natives::FIXED_IsPlayerConnected(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsPlayerConnected");
+
+	int playerid = (int)params[1];
+	if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;
+}
+
 // native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 static cell AMX_NATIVE_CALL Natives::CreatePickup(AMX *amx, cell *params)
 {
@@ -5081,7 +5157,6 @@ static cell AMX_NATIVE_CALL tesztgeci(AMX *amx, cell *params)
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
 {
-//	{ "tesztgeci", tesztgeci },
 	// File
 	{"ffind",							Natives::ffind},
 	{"frename",							Natives::frename},
@@ -5125,6 +5200,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	// Timers
 	{ "GetActiveTimers",				Natives::GetActiveTimers}, // R8
 
+	// RakSAMP crash
+	{ "SendInvalidPlayerSync",			Natives::SendInvalidPlayerSync }, // R10
+
 	// Special
 	{ "SetPlayerGravity",				Natives::SetPlayerGravity },
 	{ "GetPlayerGravity",				Natives::GetPlayerGravity },
@@ -5136,7 +5214,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "IsPlayerWidescreenToggled",		Natives::IsPlayerWidescreenToggled },
 	{ "GetSpawnInfo",					Natives::GetSpawnInfo }, // R8
 	{ "GetPlayerSkillLevel",			Natives::GetPlayerSkillLevel }, // R3
+	{ "IsPlayerCheckpointActive",		Natives::IsPlayerCheckpointActive }, // R10
 	{ "GetPlayerCheckpoint",			Natives::GetPlayerCheckpoint }, // R4
+	{ "IsPlayerRaceCheckpointActive",	Natives::IsPlayerRaceCheckpointActive }, // R10
 	{ "GetPlayerRaceCheckpoint",		Natives::GetPlayerRaceCheckpoint }, // R4
 	{ "GetPlayerWorldBounds",			Natives::GetPlayerWorldBounds }, // R5
 	{ "IsPlayerInModShop",				Natives::IsPlayerInModShop }, // R4
@@ -5392,7 +5472,8 @@ AMX_NATIVE_INFO RedirecedtNatives[] =
 	{ "DestroyPickup",					Natives::DestroyPickup },
 	
 	{ "GetWeaponName",					Natives::FIXED_GetWeaponName },
-	{0,0}
+	{ "IsPlayerConnected",				Natives::FIXED_IsPlayerConnected },
+	{ 0,								0 }
 };
 
 int InitScripting(AMX *amx)

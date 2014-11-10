@@ -65,7 +65,7 @@ public:
 	void SetStreamingEnabled(bool enabled);
 	bool IsStreamingEnabled(void);
 private:
-	void ShowPickup(int pickupid, WORD playerid, CPickup pPickup);
+	void ShowPickup(int pickupid, WORD playerid, CPickup *pPickup);
 	void HidePickup(int pickupid, WORD playerid);
 
 	PickupMap m_Pickups;

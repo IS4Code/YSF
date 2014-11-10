@@ -26,7 +26,7 @@ void CPickupPool::InitializeForPlayer(WORD playerid)
 		pPlayerData[playerid]->bClientPickupSlots.set(count, 1);
 		
 		// If streaming is disabled, show pickup for player
-		if(!m_bStreamingEnabled) ShowPickup(count, playerid, *p->second);
+		if(!m_bStreamingEnabled) ShowPickup(count, playerid, p->second);
 		count++;
 	}
 }
@@ -75,7 +75,11 @@ int CPickupPool::New(int modelid, int type, CVector vecPos, int world)
 			pPlayerData[i]->bClientPickupSlots.set(freeslot, 1);
 
 			// If streaming is disabled, show pickup for player
-			if(!m_bStreamingEnabled) ShowPickup(freeslot, i, *pPickup);
+			if(!m_bStreamingEnabled)
+			{
+				ShowPickup(freeslot, i, pPickup);
+				//pPlayerData[i]->bClientPickupStreamedIn[freeslot] = true;
+			}
 		}
 		return slot;
 	}
@@ -104,7 +108,7 @@ int CPickupPool::New(WORD playerid, int modelid, int type, CVector vecPos, int w
 		if(!pPlayerData[playerid]->bClientPickupSlots[x])
 		{
 			freeslot = x;
-			logprintf("freeslot player pickup %d - playerid: %d", x, playerid);
+			//logprintf("freeslot player pickup %d - playerid: %d", x, playerid);
 			break;
 		}
 	}
@@ -122,7 +126,11 @@ int CPickupPool::New(WORD playerid, int modelid, int type, CVector vecPos, int w
 	pPlayerData[playerid]->bClientPickupSlots.set(freeslot, true);
 
 	// If streaming is disabled, show pickup for player
-	if(!m_bStreamingEnabled) ShowPickup(freeslot, playerid, *pPickup);
+	if(!m_bStreamingEnabled)
+	{
+		ShowPickup(freeslot, playerid, pPickup);
+		//pPlayerData[playerid]->bClientPickupStreamedIn[freeslot] = true;
+	}
 	return slot;
 }
 
@@ -138,25 +146,27 @@ void CPickupPool::Destroy(int pickupid)
 			// Skip unconnected players
 			if(!IsPlayerConnected(i)) continue;
 
-			bool bRestart = false;
 			for (PickupMap::iterator p = pPlayerData[i]->ClientPlayerPickups.begin(); p != pPlayerData[i]->ClientPlayerPickups.end(); p++)
 			{
-				bRestart = false;
 				if(p->second == it->second)
 				{
-					if(!m_bStreamingEnabled) HidePickup((int)p->first, i);
+					//logprintf("destroy pickup: playerid: %d, pickup %d, clientside: %d - pos: %f, %f, %f", i, pickupid, p->first, p->second->vecPos.fX, p->second->vecPos.fY, p->second->vecPos.fZ);
+
+					HidePickup((int)p->first, i);
+					pPlayerData[i]->bClientPickupStreamedIn[p->first] = false;
 
 					pPlayerData[i]->bClientPickupSlots.set(p->first, false);
 					pPlayerData[i]->ClientPlayerPickups.erase(p);
+					break;
 				}
 			}
 		}
-	}
 
-	// And finaly, remove pickup from server pool
-	m_bPickupSlots.set(pickupid, false);
-	SAFE_DELETE(it->second);
-	m_Pickups.erase(it);
+		// And finaly, remove pickup from server pool
+		m_bPickupSlots.set(pickupid, false);
+		SAFE_DELETE(it->second);
+		m_Pickups.erase(it);
+	}
 }
 
 void CPickupPool::Destroy(WORD playerid, int pickupid)
@@ -165,13 +175,11 @@ void CPickupPool::Destroy(WORD playerid, int pickupid)
 	PickupMap::iterator it = pPlayerData[playerid]->PlayerPickups.find(pickupid);
 	if(it != pPlayerData[playerid]->PlayerPickups.end())
 	{
-		bool bRestart = false;
-		for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); bRestart ? (it = pPlayerData[playerid]->ClientPlayerPickups.begin()) : (it++))
+		for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
 		{
-			bRestart = false;
 			if(p->second == it->second)
 			{
-				if(!m_bStreamingEnabled) HidePickup((int)p->first, playerid);
+				HidePickup((int)p->first, playerid);
 
 				pPlayerData[playerid]->bClientPickupSlots.set(p->first, false);
 				pPlayerData[playerid]->ClientPlayerPickups.erase(p);
@@ -181,21 +189,22 @@ void CPickupPool::Destroy(WORD playerid, int pickupid)
 				SAFE_DELETE(it->second);
 				pPlayerData[playerid]->PlayerPickups.erase(it);
 
-				bRestart = true;
+				pPlayerData[playerid]->bClientPickupStreamedIn[p->first] = false;
+				break;
 			}
 		}
 	}
 }
 
-void CPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup pPickup)
+void CPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup *pPickup)
 {
 	RakNet::BitStream bsPickup;
 	bsPickup.Write(pickupid);
-	bsPickup.Write(pPickup.iModel);
-	bsPickup.Write(pPickup.iType);
-	bsPickup.Write(pPickup.vecPos.fX);
-	bsPickup.Write(pPickup.vecPos.fY);
-	bsPickup.Write(pPickup.vecPos.fZ);
+	bsPickup.Write(pPickup->iModel);
+	bsPickup.Write(pPickup->iType);
+	bsPickup.Write(pPickup->vecPos.fX);
+	bsPickup.Write(pPickup->vecPos.fY);
+	bsPickup.Write(pPickup->vecPos.fZ);
 	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 }
 
@@ -213,7 +222,7 @@ bool CPickupPool::IsStreamed(WORD playerid, CPickup* pPickup)
 		if(p->second == pPickup)
 			return pPlayerData[playerid]->bClientPickupStreamedIn[p->first];
 	}
-	return 1;
+	return 0;
 }
 
 CPickup* CPickupPool::FindPickup(int pickupid)
@@ -272,15 +281,15 @@ void CPickupPool::Process(void)
 				{
 					if (pNetGame->pPlayerPool->dwVirtualWorld[playerid] == p->second->iWorld || p->second->iWorld == -1)
 					{
-						//logprintf("distance 1: %f - %d, world: %d", distance, playerid, p->second->iWorld);
+						//logprintf("streamin: %f - %d, world: %d (pickupid: %d)", distance, playerid, p->second->iWorld, p->first);
 						pPlayerData[playerid]->bClientPickupStreamedIn.set(p->first, true);
 
-						ShowPickup((int)p->first, playerid, *p->second);
+						ShowPickup((int)p->first, playerid, p->second);
 					}
 				}
-				else if ((distance > 300.0f || (pNetGame->pPlayerPool->dwVirtualWorld[playerid] != p->second->iWorld && p->second->iWorld != -1)) && pPlayerData[playerid]->bClientPickupStreamedIn[p->first])
+				else if ((distance >= 300.0f || (pNetGame->pPlayerPool->dwVirtualWorld[playerid] != p->second->iWorld && p->second->iWorld != -1)) && pPlayerData[playerid]->bClientPickupStreamedIn[p->first])
 				{
-					//logprintf("distance2: %f - %d", distance, playerid);
+					//logprintf("streamout: %f - %d (pickupid: %d)", distance, playerid, p->first);
 					pPlayerData[playerid]->bClientPickupStreamedIn.set(p->first, false);
 
 					HidePickup((int)p->first, playerid);

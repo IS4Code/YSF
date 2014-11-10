@@ -423,7 +423,7 @@ class CPlayer
 		CVector					vecPosition;		// 0x2321 - 0x232D
 		float					fHealth;			// 0x232D - 0x2331
 		float					fArmour;			// 0x2331 - 0x2335
-		float					fQuaternion[4];			// 0x2335 - 0x2345
+		float					fQuaternion[4];		// 0x2335 - 0x2345
 		float					fAngle;				// 0x2345 - 0x2349
 		CVector					vecVelocity;		// 0x2349 - 0x2355
 		WORD					wUDAnalog;			// 0x2355 - 0x2357
@@ -456,30 +456,29 @@ class CPlayer
 		WORD					wSkillLevel[11];	// 9715
 		int						iLastMarkerUpdate;	// 9737 - 9741
 		PLAYER_SPAWN_INFO		spawn;				// 9741 - 9787
-		BOOL					bReadyToSpawn;		// 9787
-		BYTE					byteWantedLevel;	// 9791
-		BYTE					byteFightingStyle;  // 9792
-		BYTE					byteSeatId;			// 9793
-		WORD					wVehicleId;			// 9794
-		DWORD					iNickNameColor;		// 9798
-		BOOL					bShowCheckpoint;	// 9799
-		BOOL					bShowRaceCheckpoint; // 9800
-		//PAD(pad9, 12);							// 0x2644 - 0x2650
-		int						iInteriorId;		// 0x2650 - 0x2654
-		WORD					wWeaponAmmo[12];	// 0x2654 - 0x266C
-		PAD(pad10, 28);								// 0x266C - 0x2688
+		BOOL					bReadyToSpawn;		// 9787 - 9791
+		BYTE					byteWantedLevel;	// 9791 - 9792
+		BYTE					byteFightingStyle;  // 9792 - 9793
+		BYTE					byteSeatId;			// 9793 - 9794
+		WORD					wVehicleId;			// 9794 - 9796
+		DWORD					iNickNameColor;		// 9796 - 9800
+		BOOL					bShowCheckpoint;	// 9800 - 9804
+		BOOL					bShowRaceCheckpoint;// 9804 - 9808
+		int						iInteriorId;		// 9808 - 9812
+		WORD					wWeaponAmmo[12];	// 9812 - 9836
+		PAD(pad10, 28);								// 9836 - 9864
 		BYTE					byteWeaponId[12];	// 9864 - 0x2688 - 0x2694
-		BYTE					byteWeaponID_unknown;	// 9876 - 9877
-		BYTE					byteWeaponshotWeapon;// 9877 - 9878
+		BYTE					byteWeaponID_unknown;// 9876 - 9877
+		BYTE					byteCurrentWeapon;	// 9877 - 9878
 		WORD					wTargetId;			// 9878 - 9880
-		DWORD					dwLastShotTick;		// 9880
-		BYTE					byteLastShotWeapon;	// 9884
+		DWORD					dwLastShotTick;		// 9880 - 9884
+		BYTE					byteLastShotWeapon;	// 9884 - 9885
 		CVector					vecBulletStart;		// 9885	- 9897
 		CVector					vecHitTarget;		// 9897 - 9909
 		CVector					vecCenterOfHit;		// 9909 - 9921
 		WORD					wMayebLastShotPLayer;	// 9921	
 		BYTE					wMaybeLastShotType;	// 9923
-		BYTE					m_byteTime;			// 9924
+		BYTE					m_byteTime;			// 9924 - 9925
 		float					m_fGameTime;		// 9925 - 9929
 		BYTE					byteSpectateType;	// 9929 - 9930
 		DWORD					wSpectateID;		// 9930 - 9934
@@ -822,7 +821,9 @@ class CNetGame
 		BOOL					unkasdasd;				// 52 - 56
 		CScriptTimers			*pScriptTimers;			// 56 - 60
 		RakServer				*pRak;					// 60 - 64
-		PAD(pad0, 12);
+		DWORD					dwSomethingTick;
+		DWORD					dwUnk;
+		DWORD					dwUnk1;
 		BOOL					bLanMode;				// 76
 		BOOL					bShowPlayerMarkers;		// 80
 		BYTE					byteShowNameTags;		// 84
@@ -845,7 +846,7 @@ class CNetGame
 		BYTE					bLimitPlayerMarkers;	// 116
 		float					fPlayerMarkesLimit;		// 117
 		BOOL					bVehicleFriendlyFire;	// 121
-#ifndef WIN32
+#ifndef _WIN32
 		double					dElapsedTime;			// size = 8
 #endif
 		int						iSpawnsAvailable;		// 125 - 129

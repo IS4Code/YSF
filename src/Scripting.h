@@ -79,6 +79,8 @@ namespace Natives
 
 	static cell AMX_NATIVE_CALL GetActiveTimers(AMX *amx, cell *params); // R8
 
+	static cell AMX_NATIVE_CALL SendInvalidPlayerSync(AMX *amx, cell *params); // R10
+
 	static cell AMX_NATIVE_CALL SetPlayerGravity(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerGravity(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetPlayerTeamForPlayer(AMX *amx, cell *params); // R5 - Exp
@@ -89,7 +91,9 @@ namespace Natives
 	static cell AMX_NATIVE_CALL IsPlayerWidescreenToggled(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetSpawnInfo(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL GetPlayerSkillLevel(AMX *amx, cell *params); // R3
+	static cell AMX_NATIVE_CALL IsPlayerCheckpointActive(AMX *amx, cell *params); // R10
 	static cell AMX_NATIVE_CALL GetPlayerCheckpoint(AMX *amx, cell *params); // R4
+	static cell AMX_NATIVE_CALL IsPlayerRaceCheckpointActive(AMX *amx, cell *params); // R10
 	static cell AMX_NATIVE_CALL GetPlayerRaceCheckpoint(AMX *amx, cell *params); // R4
 	static cell AMX_NATIVE_CALL GetPlayerWorldBounds(AMX *amx, cell *params); // R5
 	static cell AMX_NATIVE_CALL IsPlayerInModShop(AMX *amx, cell *params); // R4
@@ -321,6 +325,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SetPickupStreamingEnabled(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL FIXED_GetWeaponName(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL FIXED_IsPlayerConnected(AMX *amx, cell *params);
 };
 
 int InitScripting(AMX *amx);

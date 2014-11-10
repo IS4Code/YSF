@@ -2,12 +2,13 @@
 
 #include "Addresses.h"
 #include "CPlayerData.h"
+#include "CCallbackManager.h"
 #include "Functions.h"
 #include "RPCs.h"
 #include "Utils.h"
 #include "main.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 	#include <cstring>
 #endif
 #include <stdio.h>
@@ -55,7 +56,7 @@ bool CServer::RemovePlayer(int playerid)
 
 void CServer::Process()
 {
-	if(++m_iTicks == 10)
+	if(++m_iTicks == 5)
 	{
 		m_iTicks = 0;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
@@ -273,4 +274,72 @@ bool CServer::IsValidNick(char *szName)
 		}
 	}
 	return true;
+}
+
+//----------------------------------------------------
+
+void CServer::Packet_StatsUpdate(Packet *p)
+{
+	RakNet::BitStream bsStats((unsigned char*)p->data, p->length, false);
+	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
+	WORD playerid = p->playerIndex;
+	int money;
+	int drunklevel;
+//	BYTE bytePacketID;
+
+	bsStats.SetReadOffset(8);
+	bsStats.Read(money);
+	bsStats.Read(drunklevel);
+
+	if (!IsPlayerConnected(playerid)) return;
+	
+	pPlayerPool->dwMoney[playerid] = money;
+	pPlayerPool->dwDrunkLevel[playerid] = drunklevel;
+
+	CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
+}
+
+//----------------------------------------------------
+
+void CServer::Packet_WeaponsUpdate(Packet *p)
+{
+	RakNet::BitStream bsData((unsigned char*)p->data, p->length, false);
+	
+	WORD playerid = p->playerIndex;
+	BYTE byteLength = p->length;
+	if (byteLength > 3)
+		byteLength = (byteLength - 3) >> 2;
+
+	if (!IsPlayerConnected(playerid)) return;
+	printf("Original: %d New: %d\n", p->length, byteLength);
+
+	CPlayer* pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+	
+	WORD wTarget;
+	BYTE byteIndex;
+	BYTE byteWeapon;
+	WORD wordAmmo;
+
+	bsData.SetReadOffset(8);
+	bsData.Read(wTarget);
+	pPlayer->wTargetId = wTarget;
+	logprintf("targetid: %d, byteLenghth: %d", byteLength);
+
+	while (byteLength)
+	{
+		logprintf("byteLength: %d", byteLength);
+		bsData.Read(byteIndex);
+		bsData.Read(byteWeapon);
+		bsData.Read(wordAmmo);
+		logprintf("%u %u %i", byteIndex, byteWeapon, wordAmmo);
+		if (byteIndex < 13)
+		{
+			logprintf("%d %d %d", byteIndex, byteWeapon, wordAmmo);
+			pPlayer->wWeaponAmmo[byteIndex] = wordAmmo;
+			pPlayer->byteWeaponId[byteIndex] = byteWeapon;
+		}
+		byteLength--;
+	}
+
+	CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
 }
