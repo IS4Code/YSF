@@ -72,10 +72,9 @@ public:
 	} stObj[MAX_OBJECTS];
 
 	WORD wPlayerID;
-	bool bObjectsRemoved;
+	
 	float fGravity;
 	BYTE byteWeather;
-	bool bWidescreen;
 	float fBounds[4];
 
 	BYTE byteTeam;
@@ -102,12 +101,14 @@ public:
 	PickupMap PlayerPickups;
 	std::bitset<MAX_PICKUPS> bPlayerPickup;
 
-	bool bUpdateScoresPingsDisabled;
-	bool bFakePingToggle;
 	DWORD dwFakePingValue;
-
-	bool bAFKState;
-	bool bEverUpdated;
 	DWORD dwLastUpdateTick;
+
+	bool bObjectsRemoved : 1;
+	bool bWidescreen : 1;
+	bool bUpdateScoresPingsDisabled : 1;
+	bool bFakePingToggle : 1;
+	bool bAFKState : 1;
+	bool bEverUpdated : 1; 
 };
 #endif

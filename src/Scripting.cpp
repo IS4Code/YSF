@@ -843,7 +843,7 @@ static cell AMX_NATIVE_CALL Natives::GetActiveTimers(AMX *amx, cell *params)
 	return pNetGame->pScriptTimers->m_dwTimerCount;
 }
 
-// native SendInvalidPlayerSync(playerid) - raksamp versions will crash
+// native SendInvalidPlayerSync(playerid); - raksamp versions will crash
 static cell AMX_NATIVE_CALL Natives::SendInvalidPlayerSync(AMX *amx, cell *params)
 {
 	// If unknown server version
