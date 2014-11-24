@@ -77,9 +77,14 @@ CPlayerData::CPlayerData( WORD playerid )
 	bFakePingToggle = false;
 	dwFakePingValue = 0;
 
+	dwFPS = 0;
+	dwLastDrunkLevel = 0;
+
 	bAFKState = false;
 	bEverUpdated = false;
 	dwLastUpdateTick = false;
+
+	bHidden = false;
 }
 
 CPlayerData::~CPlayerData( void )
@@ -122,7 +127,8 @@ void CPlayerData::Process(void)
 	// Process AFK detection
 	DWORD dwTickCount = GetTickCount();
 	
-	if(bEverUpdated)
+	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
+	if (bEverUpdated && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_NONE && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_WASTED)
 	{
 		if(bAFKState == false && dwTickCount - dwLastUpdateTick > AFK_ACCURACY)
 		{

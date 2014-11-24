@@ -157,75 +157,93 @@ const char* CUtils::GetWeaponName_(BYTE weaponid)
 
 BYTE CUtils::GetWeaponSlot(BYTE weaponid)
 {
+	BYTE result; // eax@2
+
 	switch (weaponid)
 	{
-	case WEAPON_GOLFCLUB:
-	case WEAPON_NITESTICK:
-	case WEAPON_KNIFE:
-	case WEAPON_BAT:
-	case WEAPON_SHOVEL:
-	case WEAPON_POOLSTICK:
-	case WEAPON_KATANA:
-	case WEAPON_CHAINSAW:
-		return 1;
-
-	case WEAPON_COLT45:
-	case WEAPON_SILENCED:
-	case WEAPON_DEAGLE:
-		return 2;
-
-	case WEAPON_SHOTGUN:
-	case WEAPON_SAWEDOFF:
-	case WEAPON_SHOTGSPA:
-		return 3;
-
-	case WEAPON_UZI:
-	case WEAPON_MP5:
-	case WEAPON_TEC9:
-		return 4;
-
-	case WEAPON_AK47:
-	case WEAPON_M4:
-		return 5;
-
-	case WEAPON_RIFLE:
-	case WEAPON_SNIPER:
-		return 6;
-
-	case WEAPON_ROCKETLAUNCHER:
-	case WEAPON_HEATSEEKER:
-	case WEAPON_FLAMETHROWER:
-	case WEAPON_MINIGUN:
-		return 7;
-
-	case WEAPON_GRENADE:
-	case WEAPON_TEARGAS:
-	case WEAPON_MOLTOV:
-	case WEAPON_SATCHEL:
-		return 8;
-
-	case WEAPON_SPRAYCAN:
-	case WEAPON_FIREEXTINGUISHER:
-	case WEAPON_CAMERA:
-		return 9;
-
-	case WEAPON_DILDO:
-	case WEAPON_DILDO2:
-	case WEAPON_VIBRATOR:
-	case WEAPON_VIBRATOR2:
-	case WEAPON_FLOWER:
-	case WEAPON_CANE:
-		return 10;
-
+	case 0:
+	case 1:
+		result = 0;
+		break;
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+		result = 1;
+		break;
+	case 22:
+	case 23:
+	case 24:
+		result = 2;
+		break;
+	case 25:
+	case 26:
+	case 27:
+		result = 3;
+		break;
+	case 28:
+	case 29:
+	case 32:
+		result = 4;
+		break;
+	case 30:
+	case 31:
+		result = 5;
+		break;
+	case 33:
+	case 34:
+		result = 6;
+		break;
+	case 35:
+	case 36:
+	case 37:
+	case 38:
+		result = 7;
+		break;
+	case 16:
+	case 17:
+	case 18:
+	case 39:
+		result = 8;
+		break;
+	case 41:
+	case 42:
+	case 43:
+		result = 9;
+		break;
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+		result = 10;
+		break;
 	case 44:
 	case 45:
-	case WEAPON_PARACHUTE:
-		return 11;
-
-	case WEAPON_BOMB:
-		return 12;
+	case 46:
+		result = 11;
+		break;
+	case 40:
+		result = 12;
+		break;
+	default:
+		result = -1;
+		break;
 	}
-	return 0;
+	return result;
+}
+
+char *GetPlayerName(int playerid)
+{
+	if (!IsPlayerConnected(playerid)) return NULL;
+
+	// Get the player name pointer from memory.
+	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x134A4;
 }
 
 // Load an entry from server.cfg.

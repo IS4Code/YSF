@@ -103,6 +103,9 @@ public:
 
 	DWORD dwFakePingValue;
 	DWORD dwLastUpdateTick;
+	
+	DWORD dwFPS;
+	DWORD dwLastDrunkLevel;
 
 	bool bObjectsRemoved : 1;
 	bool bWidescreen : 1;
@@ -110,5 +113,6 @@ public:
 	bool bFakePingToggle : 1;
 	bool bAFKState : 1;
 	bool bEverUpdated : 1; 
+	bool bHidden : 1;
 };
 #endif

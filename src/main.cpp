@@ -18,6 +18,7 @@
 #include "CPickupPool.h"
 #include "CPlayerData.h"
 #include "Scripting.h"
+#include "Functions.h"
 
 #include <sdk/plugin.h>
 
@@ -164,6 +165,9 @@ static int HOOK_RakPeer__Start(unsigned short AllowedPlayers, unsigned int depre
 	return pRakServer->Start(AllowedPlayers, depreciated, threadSleepTimer, port, forceHostAddress);
 }
 */
+
+typedef std::map<std::string, ConsoleVariable_s*> StringConvarMap;
+
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx) 
 {
 	CCallbackManager::RegisterAMX(amx);
@@ -174,7 +178,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		if(!bFirst)
 		{
 			bFirst = true;
-			logprintf("AMXLoad2");
+			//logprintf("AMXLoad2");
 
 			// Get pNetGame
 			int (*pfn_GetNetGame)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_NETGAME];
@@ -192,22 +196,29 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 
 			// Recreate GangZone pool
 			pNetGame->pGangZonePool = new CGangZonePool();
-			pNetGame->pPickupPool = new CPickupPool();
 
+#ifdef NEW_PICKUP_SYSTEM
+			pNetGame->pPickupPool = new CPickupPool();
+#endif
 			// Re-init some RPCs
 			InitRPCs();
 		}
 		else
 		{
+			ConsoleVariable_s *pVar = CSAMPFunctions::FindVariable("version");
+
+			char *str = new char[28];
+			sprintf(str, "apadfsza");
+			pVar->VarPtr = str;
+
+			logprintf("pVar: %s", (char*)pVar->VarPtr);
+			/*
 			if (pNetGame->pPlayerPool->bIsPlayerConnected[0])
 			{
 				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[0];
-				for(int i = 0; i != 12; i++)
-				{
-					logprintf("weapon: %d - %d, %d", i, pPlayer->byteWeaponId[i], pPlayer->wWeaponAmmo[i]);
-				}
+				logprintf("driveby: %d, seatflags: %d", pPlayer->passengerSyncData.byteDriveBy, pPlayer->passengerSyncData.byteSeatFlags);
 			}
-
+			*/
 			//logprintf("weather: %d, gravity: %f, bLimitGlobalChatRadius: %d, cjwalk: %d", pNetGame->byteWeather, pNetGame->fGravity, pNetGame->bLimitGlobalChatRadius, pNetGame->bUseCJWalk);
 #ifdef pina
 			logprintf("infernus used: %d", pNetGame->pVehiclePool->modelsUsed[11]);

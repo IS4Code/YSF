@@ -117,11 +117,13 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetPlayerSpectateType(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL GetPlayerLastSyncedVehicleID(AMX *amx, cell *params); // R10
 	static cell AMX_NATIVE_CALL GetPlayerLastSyncedTrailerID(AMX *amx, cell *params); // R10
+	static cell AMX_NATIVE_CALL GetPlayerFPS(AMX *amx, cell *params); // R10
 
 	static cell AMX_NATIVE_CALL TogglePlayerScoresPingsUpdate(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL TogglePlayerFakePing(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL SetPlayerFakePing(AMX *amx, cell *params); // R8
-
+	static cell AMX_NATIVE_CALL TogglePlayerOnPlayerList(AMX *amx, cell *params); // R11
+	
 	static cell AMX_NATIVE_CALL IsPlayerPaused(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerPausedTime(AMX *amx, cell *params);
 
@@ -319,11 +321,11 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_GangZoneFlashForAll(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GangZoneStopFlashForPlayer(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GangZoneStopFlashForAll(AMX *amx, cell *params);
-
+	/*
 	static cell AMX_NATIVE_CALL CreatePickup(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL DestroyPickup(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetPickupStreamingEnabled(AMX *amx, cell *params);
-
+	*/
 	static cell AMX_NATIVE_CALL FIXED_GetWeaponName(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL FIXED_IsPlayerConnected(AMX *amx, cell *params);
 };

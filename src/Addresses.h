@@ -68,9 +68,9 @@ public:
 
 	// Functions
 	static DWORD			FUNC_CConsole__AddStringVariable;
-	static DWORD			FUNC_CConsole__SetStringVariable;
-	static DWORD			FUNC_CConsole__SetIntVariable;
-	static DWORD			FUNC_CConsole__ModifyVariableFlags;
+	static DWORD			FUNC_CConsole__FindVariable;	 
+	static DWORD			FUNC_CConsole__SendRules;
+	static DWORD			FUNC_CConsole__Execute;
 
 	static DWORD			FUNC_CFilterscripts__LoadFilterscript;
 	static DWORD			FUNC_CFilterscripts__UnLoadFilterscript;
@@ -79,6 +79,7 @@ public:
 
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
 	static DWORD			FUNC_ProcessQueryPacket;
+	static DWORD			FUNC_Packet_WeaponsUpdate;
 	static DWORD			FUNC_format_amxstring;
 
 	// Others

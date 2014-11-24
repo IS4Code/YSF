@@ -205,14 +205,14 @@ void CPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup *pPickup)
 	bsPickup.Write(pPickup->vecPos.fX);
 	bsPickup.Write(pPickup->vecPos.fY);
 	bsPickup.Write(pPickup->vecPos.fZ);
-	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 }
 
 void CPickupPool::HidePickup(int pickupid, WORD playerid)
 {
 	RakNet::BitStream bsPickup;
 	bsPickup.Write(pickupid);
-	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 }
 
 bool CPickupPool::IsStreamed(WORD playerid, CPickup* pPickup)
@@ -269,12 +269,12 @@ void CPickupPool::Process(void)
 {
 	if (m_bStreamingEnabled)
 	{
-		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
+		for (WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 		{
-			if(!IsPlayerConnected(playerid)) continue;
+			if (!IsPlayerConnected(playerid)) continue;
 			CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition;
 
-			for(PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
+			for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
 			{
 				float distance = GetDistance3D(vecPos, &p->second->vecPos);
 				if (distance < 300.0f && !pPlayerData[playerid]->bClientPickupStreamedIn[p->first])

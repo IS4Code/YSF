@@ -503,7 +503,7 @@ static cell AMX_NATIVE_CALL Natives::SetMaxPlayers(AMX *amx, cell *params)
 	int maxplayers = (int)params[1];
 	if(maxplayers < 1 || maxplayers > MAX_PLAYERS) return 0;
 
-	CSAMPFunctions::SetIntVariable("maxplayers", maxplayers);
+	pServer->SetIntVariable("maxplayers", maxplayers);
 	return 1;
 }
 
@@ -517,7 +517,7 @@ static cell AMX_NATIVE_CALL Natives::SetMaxNPCs(AMX *amx, cell *params)
 	int maxnpcs = (int)params[1];
 	if(maxnpcs < 1 || maxnpcs > MAX_PLAYERS) return 0;
 
-	CSAMPFunctions::SetIntVariable("maxnpc", maxnpcs);
+	pServer->SetIntVariable("maxnpc", maxnpcs);
 	return 1;
 }
 
@@ -626,7 +626,7 @@ static cell AMX_NATIVE_CALL Natives::SetServerRule(AMX *amx, cell *params)
 	amx_StrParam(amx, params[2], value);
 	if (name && value)
 	{
-		CSAMPFunctions::SetStringVariable(name, value);
+		pServer->SetStringVariable(name, value);
 		return 1;
 	}
 	return 0;
@@ -645,7 +645,7 @@ static cell AMX_NATIVE_CALL Natives::SetServerRuleInt(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		CSAMPFunctions::SetIntVariable(name, (int)params[2]);
+		pServer->SetIntVariable(name, (int)params[2]);
 		return 1;
 	}
 	return 0;
@@ -683,7 +683,7 @@ static cell AMX_NATIVE_CALL Natives::ModifyFlag(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		CSAMPFunctions::ModifyVariableFlags(name, (int)params[2]);
+		pServer->ModifyVariableFlags(name, (DWORD)params[2]);
 		return 1;
 	}
 	return 0;
@@ -1441,7 +1441,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedVehicleID(AMX* amx, cell
 	int playerid = (int)params[1];
 	if (!IsPlayerConnected(playerid)) return 0;
 
-	return pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wVehicleId;
+	return (cell)pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wVehicleId;
 }
 
 // native GetPlayerLastSyncedTrailerID(playerid);
@@ -1456,7 +1456,22 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedTrailerID(AMX* amx, cell
 	int playerid = (int)params[1];
 	if (!IsPlayerConnected(playerid)) return 0;
 
-	return pNetGame->pPlayerPool->pPlayer[playerid]->trailerSyncData.wTrailerID;
+	return pNetGame->pPlayerPool->pPlayer[playerid]->trailerSyncData.wTrailerID;  //* (WORD*)(((char*)pNetGame->pPlayerPool->pPlayer[playerid]) + 271);
+}
+
+// native GetPlayerFPS(playerid);
+static cell AMX_NATIVE_CALL Natives::GetPlayerFPS(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPlayerFPS");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	return pPlayerData[playerid]->dwFPS;
 }
 
 // native SendBulletData(sender, hitid, hittype, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
@@ -1682,6 +1697,21 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerFakePing(AMX *amx, cell *params)
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	pPlayerData[playerid]->dwFakePingValue = fakeping;
+	return 1;
+}
+
+// native TogglePlayerOnPlayerList(playerid, bool:toggle);
+static cell AMX_NATIVE_CALL Natives::TogglePlayerOnPlayerList(AMX *amx, cell *params)
+{
+	if (!pServer) return 0;
+
+	CHECK_PARAMS(2, "TogglePlayerOnPlayerList");
+
+	int playerid = (int)params[1];
+
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	pPlayerData[playerid]->bHidden = !(!!params[2]);
 	return 1;
 }
 
@@ -3855,9 +3885,11 @@ static cell AMX_NATIVE_CALL Natives::YSF_AddPlayer( AMX* amx, cell* params )
 
 	cell ret = pServer->AddPlayer(playerid);
 	
+#ifdef NEW_PICKUP_SYSTEM
 	// Initialize pickups
 	if(ret)
 		pNetGame->pPickupPool->InitializeForPlayer(playerid);
+#endif
 	return ret;
 }
 
@@ -4536,6 +4568,8 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneFlashing( AMX* amx, cell* p
 	return 0;
 }
 
+#ifdef NEW_PICKUP_SYSTEM
+
 // native IsValidPickup(pickupid);
 static cell AMX_NATIVE_CALL Natives::IsValidPickup( AMX* amx, cell* params )
 {
@@ -4810,6 +4844,121 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupVirtualWorld( AMX* amx, cell
 	return pPickup->iWorld;
 }
 
+#else
+
+// native IsValidPickup(pickupid);
+static cell AMX_NATIVE_CALL Natives::IsValidPickup(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsValidPickup");
+
+	int id = (int)params[1];
+	if (id < 0 || id >= MAX_PICKUPS)
+		return 0;
+
+	return pNetGame->pPickupPool->m_bActive[id];
+}
+
+// native IsPickupStreamedIn(playerid, pickupid);
+static cell AMX_NATIVE_CALL Natives::IsPickupStreamedIn(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "IsPickupStreamedIn");
+
+	int playerid = (int)params[1];
+	int pickupid = (int)params[2];
+	if (!IsPlayerConnected(playerid)) return 0;
+	if (pickupid < 0 || pickupid >= MAX_PICKUPS) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bPickupStreamedIn[pickupid];
+}
+
+// native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
+static cell AMX_NATIVE_CALL Natives::GetPickupPos(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(4, "GetPickupPos");
+
+	int id = (int)params[1];
+	if (id < 0 || id >= MAX_PICKUPS)
+		return 0;
+
+	if (!pNetGame->pPickupPool->m_bActive[id]) return 0;
+
+	cell* cptr;
+	amx_GetAddr(amx, params[2], &cptr);
+	*cptr = amx_ftoc(pNetGame->pPickupPool->m_Pickup[id].vecPos.fX);
+	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = amx_ftoc(pNetGame->pPickupPool->m_Pickup[id].vecPos.fY);
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = amx_ftoc(pNetGame->pPickupPool->m_Pickup[id].vecPos.fZ);
+	return 1;
+}
+
+// native GetPickupModel(pickupid);
+static cell AMX_NATIVE_CALL Natives::GetPickupModel(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPickupModel");
+
+	int id = (int)params[1];
+	if (id < 0 || id >= MAX_PICKUPS)
+		return 0;
+
+	if (!pNetGame->pPickupPool->m_bActive[id]) return 0;
+
+	return pNetGame->pPickupPool->m_Pickup[id].iModel;
+}
+
+// native GetPickupType(pickupid);
+static cell AMX_NATIVE_CALL Natives::GetPickupType(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPickupType");
+
+	int id = (int)params[1];
+	if (id < 0 || id >= MAX_PICKUPS)
+		return 0;
+
+	if (!pNetGame->pPickupPool->m_bActive[id]) return 0;
+
+	return pNetGame->pPickupPool->m_Pickup[id].iType;
+}
+
+// native GetPickupVirtualWorld(pickupid);
+static cell AMX_NATIVE_CALL Natives::GetPickupVirtualWorld(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPickupVirtualWorld");
+
+	int id = (int)params[1];
+	if (id < 0 || id >= MAX_PICKUPS)
+		return 0;
+
+	if (!pNetGame->pPickupPool->m_bActive[id]) return 0;
+
+	return pNetGame->pPickupPool->m_iWorld[id];
+}
+
+#endif
 // RakServer functions //
 // native ClearBanList();
 static cell AMX_NATIVE_CALL Natives::ClearBanList( AMX* amx, cell* params )
@@ -5110,6 +5259,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_IsPlayerConnected(AMX* amx, cell* par
 	return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;
 }
 
+#ifdef NEW_PICKUP_SYSTEM
 // native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 static cell AMX_NATIVE_CALL Natives::CreatePickup(AMX *amx, cell *params)
 {
@@ -5134,6 +5284,7 @@ static cell AMX_NATIVE_CALL Natives::SetPickupStreamingEnabled(AMX *amx, cell *p
 	pNetGame->pPickupPool->SetStreamingEnabled(!!params[1]);
 	return 1;
 }
+#endif
 
 #ifdef sdasdasd
 // original funckció így néz ki:
@@ -5241,12 +5392,14 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerSpectateType",			Natives::GetPlayerSpectateType }, // R8
 	{ "GetPlayerLastSyncedVehicleID",	Natives::GetPlayerLastSyncedVehicleID }, // R10
 	{ "GetPlayerLastSyncedTrailerID",	Natives::GetPlayerLastSyncedTrailerID }, // R10
+	{ "GetPlayerFPS", 					Natives::GetPlayerFPS},
 
 	// Scoreboard manipulation
 	{ "TogglePlayerScoresPingsUpdate",	Natives::TogglePlayerScoresPingsUpdate }, // R8
 	{ "TogglePlayerFakePing",			Natives::TogglePlayerFakePing }, // R8
 	{ "SetPlayerFakePing",				Natives::SetPlayerFakePing }, // R8
-	
+	{ "TogglePlayerOnPlayerList",		Natives::TogglePlayerOnPlayerList }, // R11
+
 	// AFK
 	{ "IsPlayerPaused",					Natives::IsPlayerPaused },
 	{ "GetPlayerPausedTime",			Natives::GetPlayerPausedTime },
@@ -5405,7 +5558,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPickupModel",					Natives::GetPickupModel }, // R10
 	{ "GetPickupType",					Natives::GetPickupType }, // R10
 	{ "GetPickupVirtualWorld",			Natives::GetPickupVirtualWorld }, // R10
-	
+#ifdef NEW_PICKUP_SYSTEM
 	// Pickups - Per-player
 	{ "CreatePlayerPickup",				Natives::CreatePlayerPickup}, // R10
 	{ "DestroyPlayerPickup",			Natives::DestroyPlayerPickup }, // R10
@@ -5415,7 +5568,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerPickupModel",			Natives::GetPlayerPickupModel }, // R10
 	{ "GetPlayerPickupType",			Natives::GetPlayerPickupType }, // R10
 	{ "GetPlayerPickupVirtualWorld",	Natives::GetPlayerPickupVirtualWorld }, // R10
-
+#endif
 	// RakServer functions
 	{ "ClearBanList",					Natives::ClearBanList },
 	{ "IsBanned",						Natives::IsBanned },
@@ -5441,7 +5594,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetColSphereOffset",				Natives::GetColSphereOffset},
 
 	{ "GetWeaponSlot",					Natives::GetWeaponSlot},
-	{ "SetPickupStreamingEnabled",		Natives::SetPickupStreamingEnabled },
+//	{ "SetPickupStreamingEnabled",		Natives::SetPickupStreamingEnabled },
 	{ 0,								0 }
 };
 
@@ -5466,11 +5619,11 @@ AMX_NATIVE_INFO RedirecedtNatives[] =
 	{ "GangZoneFlashForAll",			Natives::YSF_GangZoneFlashForAll },
 	{ "GangZoneStopFlashForPlayer",		Natives::YSF_GangZoneStopFlashForPlayer },
 	{ "GangZoneStopFlashForAll",		Natives::YSF_GangZoneStopFlashForAll },
-		
+	/*	
 	{ "CreatePickup",					Natives::CreatePickup },
 	{ "AddStaticPickup",				Natives::CreatePickup },
 	{ "DestroyPickup",					Natives::DestroyPickup },
-	
+	*/
 	{ "GetWeaponName",					Natives::FIXED_GetWeaponName },
 	{ "IsPlayerConnected",				Natives::FIXED_IsPlayerConnected },
 	{ 0,								0 }

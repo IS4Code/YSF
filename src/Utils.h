@@ -32,6 +32,7 @@ namespace CUtils
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);
 bool IsPlayerConnected(int playerid);
+char *GetPlayerName(int playerid);
 int CFGLoad(char const * const name, char * const dest, size_t dlen);
 
 #define ABGR_RGBA(color) (((DWORD)color & 0xff) << 24) | (((DWORD)(color >> 8) & 0xff) << 16) | (((DWORD)(color >> 16) & 0xff) << 8) | (color >> 24) & 0xff

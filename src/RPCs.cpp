@@ -117,16 +117,16 @@ void Death(RPCParameters* rpcParams)
 	}
 	*/
 }
-
+#ifdef NEW_PICKUP_SYSTEM
 void PickedUpPickup(RPCParameters* rpcParams)
 {
-	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
+	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
 
 	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
 	int pickupid;
 
 	// Just for security..
-	if(!IsPlayerConnected(playerid)) return;
+	if (!IsPlayerConnected(playerid)) return;
 
 	bsData.Read(pickupid);
 
@@ -134,7 +134,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 
 	// Find pickup in player client side pickuppool
 	PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.find(pickupid);
-	if(p != pPlayerData[playerid]->ClientPlayerPickups.end())
+	if (p != pPlayerData[playerid]->ClientPlayerPickups.end())
 	{
 		logprintf("pos: %f, %f, %f", p->second->vecPos.fX, p->second->vecPos.fY, p->second->vecPos.fZ);
 		// 99% - fake pickup RPC
@@ -145,20 +145,20 @@ void PickedUpPickup(RPCParameters* rpcParams)
 		}
 
 		// If global pickup
-		if(p->second->type == GLOBAL)
+		if (p->second->type == GLOBAL)
 		{
 			// Find global pickup ID by player pickup pointer
 			WORD pickupid = pNetGame->pPickupPool->FindPickup(p->second);
-			if(pickupid != 0xFFFF)
+			if (pickupid != 0xFFFF)
 			{
 				CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);
 			}
 		}
 		else
 		{
-			for(PickupMap::iterator p2 = pPlayerData[playerid]->PlayerPickups.begin(); p2 != pPlayerData[playerid]->PlayerPickups.end(); p2++)
+			for (PickupMap::iterator p2 = pPlayerData[playerid]->PlayerPickups.begin(); p2 != pPlayerData[playerid]->PlayerPickups.end(); p2++)
 			{
-				if(p2->second == p->second)
+				if (p2->second == p->second)
 				{
 					CCallbackManager::OnPlayerPickedUpPlayerPickup(playerid, (WORD)p2->first);
 					break;
@@ -167,13 +167,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 		}
 	}
 }
-
-void CheckResponse(RPCParameters* rpcParams)
-{
-	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
-
-	logprintf("responsee te faszom");
-}
+#endif
 
 void InitRPCs()
 {
@@ -182,12 +176,8 @@ void InitRPCs()
 
 //	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
 //	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
-
+#ifdef NEW_PICKUP_SYSTEM
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickedUpPickup);
-/*
-	int pina = 0x53;
-	pRakServer->UnregisterAsRemoteProcedureCall(&pina);
-	pRakServer->RegisterAsRemoteProcedureCall(&pina, CheckResponse);
-	*/
+#endif
 }

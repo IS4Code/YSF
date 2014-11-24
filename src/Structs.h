@@ -124,6 +124,23 @@ class CGangZonePool;
 typedef int                 INT;
 typedef unsigned int        UINT;
 
+enum CON_VARTYPE { CON_VARTYPE_FLOAT, CON_VARTYPE_INT, CON_VARTYPE_BOOL, CON_VARTYPE_STRING };
+
+#define CON_VARFLAG_DEBUG		1
+#define CON_VARFLAG_READONLY	2
+#define CON_VARFLAG_RULE		4	// Gets sent with a RULES query responce
+
+typedef void(*VARCHANGEFUNC)();
+
+struct ConsoleVariable_s
+{
+#pragma pack( 1 )
+	CON_VARTYPE VarType;
+	DWORD VarFlags;
+	void* VarPtr;
+	VARCHANGEFUNC VarChangeFunc;
+};
+
 #pragma pack(push, 1)
 typedef struct Text3DLabels_t  // size 0x21
 {
@@ -179,7 +196,7 @@ class CSyncData
 		CVector			vecSurfing;				// 0x00A8 - 0x00B4
 		WORD			wSurfingInfo;			// 0x00B4 - 0x00B6
 		int				iAnimationId;			// 0x00B6 - 0x00BA
-		// Size = 0x44
+		// Size = 68
 
 };
 #pragma pack(pop)
@@ -194,8 +211,8 @@ class CAimSyncData
 		float			fZAim;					// 0x0019 - 0x001D
 		BYTE			byteWeaponState : 6;	// 0x001D - 0x001E
 		BYTE			byteCameraZoom : 2;
-		BYTE			unk;		// 0x001E - 0x001F
-		// Size = 0x1F
+		BYTE			unk;					// 0x001E - 0x001F
+		// Size = 31
 };
 #pragma pack(pop)
 
@@ -216,15 +233,14 @@ class CVehicleSyncData
 		BYTE			bytePlayerArmour;		// 0x0054 - 0x0055
 		BYTE			bytePlayerWeapon;		// 0x0055 - 0x0056
 		BYTE			byteSirenState;			// 0x0056 - 0x0057
-		BYTE			byteGearState;
-		WORD			wTrailerID;
-        union
+		BYTE			byteGearState;			// 0x0057 -	0x0058
+		WORD			wTrailerID;				// 0x0058 - 0x005A
+        union									// 
         {
-                WORD			wHydraReactorAngle[2];                                   // + 0x003B
-                float           fTrainSpeed;                                                             // + 0x003B
+                WORD			wHydraReactorAngle[2];                       
+                float           fTrainSpeed;
         };
-		//PAD(pad0, 7);							// 0x0057 - 0x005E
-		// Size = 0x3F
+		// Size = 63
 
 };
 #pragma pack(pop)
@@ -243,8 +259,7 @@ class CPassengerSyncData
 		WORD			wLRAnalog;				// 0x0066 - 0x0068
 		WORD			wKeys;					// 0x0068 - 0x006A
 		CVector			vecPosition;			// 0x006A - 0x0076
-		// Size = 0x18
-
+		// Size = 24
 };
 #pragma pack(pop)
 
@@ -366,11 +381,12 @@ typedef struct TRAILER_SYNC_t // size 0x32
 {
 #pragma pack( 1 )
 
-	WORD wTrailerID;		// + 0x0000
+	WORD wTrailerID;				// + 0x0000
 	CVector	vecRoll;				// + 0x0002
 	CVector vecDirection;			// + 0x000E
 	CVector vecPosition;			// + 0x001A
 	CVector vecVelocity;			// + 0x0026
+	DWORD pad;
 } TRAILER_SYNC;
 
 typedef struct UNOCCUPIED_SYNC_t // size 0x43
@@ -397,14 +413,13 @@ typedef struct UNOCCUPIED_SYNC_t // size 0x43
 class CPlayer
 {
 	public:
-		CAimSyncData			aimSyncData;		// 0x0000 - 0x001F
-		CVehicleSyncData		vehicleSyncData;	// 0x001F - 0x005E
-		CPassengerSyncData		passengerSyncData;	// 0x005E - 0x0076
-		CSyncData				syncData;			// 0x0076 - 0x00BA
-		SPECTATING_SYNC			spectatingSyncData;					// + 0x00FC
-		TRAILER_SYNC			trailerSyncData;					// + 0x010E
-		UNOCCUPIED_SYNC			unoccupiedSyncData;					// + 0x0151
-		DWORD					padnemtommi;
+		CAimSyncData			aimSyncData;			// 0 - 31
+		CVehicleSyncData		vehicleSyncData;		// 31 - 94
+		CPassengerSyncData		passengerSyncData;		// 94 - 118
+		CSyncData				syncData;				// 118 - 186
+		UNOCCUPIED_SYNC			unoccupiedSyncData;		// 186 - 253
+		SPECTATING_SYNC			spectatingSyncData;		// 253 - 271
+		TRAILER_SYNC			trailerSyncData;		// 271 - 325
 		BYTE					byteStreamedIn[MAX_PLAYERS];	// 325 - 825
 		BYTE					byteVehicleStreamedIn[MAX_VEHICLES]; // 825 - 2825
 		BYTE					byteSomething[1000];			// 2825 - 3825
@@ -426,10 +441,10 @@ class CPlayer
 		float					fQuaternion[4];		// 0x2335 - 0x2345
 		float					fAngle;				// 0x2345 - 0x2349
 		CVector					vecVelocity;		// 0x2349 - 0x2355
-		WORD					wUDAnalog;			// 0x2355 - 0x2357
-		WORD					wLRAnalog;			// 0x2357 - 0x2359
-		DWORD					dwKeys;				// 0x2359 - 0x235D
-		DWORD					dwOldKeys;			// 0x235D - 0x2361
+		WORD					wUDAnalog;			// 9045
+		WORD					wLRAnalog;			// 9047
+		DWORD					dwKeys;				// 9049
+		DWORD					dwOldKeys;			// 9053
 		BOOL					bEditObject;		// 9057
 		BOOL					bEditAttachedObject;// 9061
 		WORD					wDialogID;			// 9065
@@ -506,14 +521,12 @@ class CPlayerPool // sizeof = 99520
 		DWORD				dwDrunkLevel[MAX_PLAYERS];				// 6012 - 8012
 		DWORD				dwLastScoreUpdate[MAX_PLAYERS];			// 8012 - 10012
 		char				szSerial[MAX_PLAYERS][0x65];			// 10012 - 60512								
-		char				szVersion[MAX_PLAYERS][29];
-		BOOL				bIsPlayerConnected[MAX_PLAYERS];		// 0x12504 - 0x12CD4 - 75012
-		CPlayer				*pPlayer[MAX_PLAYERS];					// 0x12CD4 - 0x134A4
-		char				szName[MAX_PLAYERS][MAX_PLAYER_NAME];	// 0x134A4 - 0x16384
-		PAD(pad3, 500);												// 0x16384 - 0x16578
-		BOOL				bIsAnAdmin[MAX_PLAYERS];				// 0x16578 - 0x1676C
-		PAD(pad4, 1500);
-		BOOL				bIsNPC[MAX_PLAYERS]; // 93512
+		char				szVersion[MAX_PLAYERS][29];				// 60512 - 75012
+		BOOL				bIsPlayerConnected[MAX_PLAYERS];		// 75012 - 77012
+		CPlayer				*pPlayer[MAX_PLAYERS];					// 77012 - 79012
+		char				szName[MAX_PLAYERS][25];				// 79012 - 91512
+		BOOL				bIsAnAdmin[MAX_PLAYERS];				// 91512 - 93512
+		BOOL				bIsNPC[MAX_PLAYERS];					// 93512 - 95512
 		
 };
 #pragma pack(pop)
@@ -704,17 +717,6 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-class CPickupPool_
-{
-public:
-	CPickup			m_Pickup[ MAX_PICKUPS ];			// + 0x0000
-	BOOL			m_bActive[ MAX_PICKUPS ];			// + 0xA000
-	int				m_iWorld[ MAX_PICKUPS ];		// + 0xC000
-	int				m_iPickupCount;
-};
-#pragma pack(pop)
-
-#pragma pack(push, 1)
 class CTextDrawPool
 {
 public:
@@ -802,6 +804,30 @@ public:
 #pragma pack(pop)
 
 #pragma pack(push, 1)
+typedef struct Pickup_t // size 0x14
+{
+	int	iModel;
+	int	iType;
+	CVector		vecPos;
+} tPickup;
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+class CPickupPool_
+{
+public:
+	tPickup			m_Pickup[MAX_PICKUPS];			// + 0x0000
+	BOOL			m_bActive[MAX_PICKUPS];			// + 0xA000
+	int		m_iWorld[MAX_PICKUPS];		// + 0xC000
+	int		m_iPickupCount;
+};
+#pragma pack(pop)
+
+#define GAMESTATE_STOPPED	 0
+#define GAMESTATE_RUNNING	 1
+#define GAMESTATE_RESTARTING 2
+
+#pragma pack(push, 1)
 class CNetGame
 {
 	public:
@@ -809,7 +835,7 @@ class CNetGame
 		CFilterScripts			*pFilterScriptPool;		// 0x0004 - 0x0008
 		CPlayerPool				*pPlayerPool;			// 0x0008 - 0x000C
 		CVehiclePool			*pVehiclePool;			// 0x000C - 0x0010
-		CPickupPool				*pPickupPool;
+		CPickupPool_			*pPickupPool;
 		CObjectPool				*pObjectPool;			// 0x0010 - 0x0014
 		CMenuPool				*pMenuPool;				// 24
 		CTextDrawPool			*pTextDrawPool;			// 28

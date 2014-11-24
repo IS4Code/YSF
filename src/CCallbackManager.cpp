@@ -8,6 +8,11 @@
 
 #include <vector>
 
+#ifdef _WIN32
+#include <winsock2.h>
+#else
+
+#endif
 std::vector<AMX *> CCallbackManager::m_vecAMX;
 
 void CCallbackManager::RegisterAMX(AMX *pAMX)
@@ -147,13 +152,13 @@ void CCallbackManager::OnServerMessage(char* message)
 	}
 }
 
-void CCallbackManager::OnRemoteRCONLogin(unsigned int binaryAddress, unsigned short port, char* password)
+bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, char* command)
 {
-/*
 	int idx = -1;
+	cell ret;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
-		if(!amx_FindPublic(*iter, "OnRemoteRCONLogin", &idx))
+		if(!amx_FindPublic(*iter, "OnRemoteRCONPacket", &idx))
 		{
 			cell amx_addr, *phys_addr;
 			
@@ -161,13 +166,17 @@ void CCallbackManager::OnRemoteRCONLogin(unsigned int binaryAddress, unsigned sh
 			in.s_addr = binaryAddress;
 			logprintf("asd %s", inet_ntoa(in));
 
+			amx_PushString(*iter, &amx_addr, &phys_addr, command, 0, 0);
 			amx_PushString(*iter, &amx_addr, &phys_addr, password, 0, 0);
 			amx_Push(*iter, port);
 			amx_PushString(*iter, &amx_addr, &phys_addr, inet_ntoa(in), 0, 0);
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
+			amx_Release(*iter, amx_addr);
+
+			if (!ret) return 0;
 		}
 	}
-	*/
+	return !!ret;
 }
 
 void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)

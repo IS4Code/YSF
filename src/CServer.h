@@ -36,9 +36,25 @@ public:
 	bool IsNickNameCharacterAllowed(char character);
 	bool IsValidNick(char *szName);
 
-	void Packet_WeaponsUpdate(Packet *p);
+	WORD GetMaxPlayers();
+	WORD GetPlayerCount();
+	WORD GetNPCCount();
+
 	void Packet_StatsUpdate(Packet *p);
 
+	char*	GetStringVariable(char *szRule);
+	void	SetStringVariable(char *szRule, char *szString);
+
+	float	GetFloatVariable(char *szRule);
+	void	SetFloatVariable(char *szRule, float value);
+
+	int		GetIntVariable(char *szRule);
+	void	SetIntVariable(char *szRule, int value);
+
+	bool	GetBoolVariable(char *szRule);
+	void	SetBoolVariable(char *szRule, bool value);
+
+	void	ModifyVariableFlags(char* pVarName, DWORD VarFlags);
 private:
 	eSAMPVersion m_Version;
 	float m_fGravity;

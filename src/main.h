@@ -28,7 +28,9 @@ extern logprintf_t logprintf;
 #endif
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R10 BETA"
+#define PROJECT_VERSION		"R11"
+
+//#define NEW_PICKUP_SYSTEM
 
 #define SAFE_DELETE(p)	{ if (p) { delete (p); (p) = NULL; } }
 
