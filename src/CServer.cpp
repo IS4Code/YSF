@@ -348,10 +348,7 @@ void CServer::SetStringVariable(char* pVarName, char* pString)
 	{
 		if (ConVar->VarType == CON_VARTYPE_STRING)
 		{
-			if (ConVar->VarPtr != NULL)
-				free(ConVar->VarPtr);
-
-			char* str = (char*)malloc(strlen(pString) + 1);
+			char* str = new char[strlen(pString) + 1];
 			strcpy(str, pString);
 			ConVar->VarPtr = str;
 		}

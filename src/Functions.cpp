@@ -14,7 +14,6 @@ CFilterscripts__UnLoadFilterscript_t	CSAMPFunctions::pfn__CFilterscripts__UnLoad
 
 CPlayer__SpawnForWorld_t				CSAMPFunctions::pfn__CPlayer__SpawnForWorld = NULL;
 
-ProcessQueryPacket_t					CSAMPFunctions::pfn__ProcessQueryPacket = NULL;
 Packet_WeaponsUpdate_t					CSAMPFunctions::pfn__Packet_WeaponsUpdate = NULL;
 
 format_amxstring_t						CSAMPFunctions::pfn__format_amxstring = NULL;
@@ -31,7 +30,6 @@ void CSAMPFunctions::Initialize()
 
 	pfn__CPlayer__SpawnForWorld = (CPlayer__SpawnForWorld_t)(CAddress::FUNC_CPlayer__SpawnForWorld);
 
-	pfn__ProcessQueryPacket = (ProcessQueryPacket_t)(CAddress::FUNC_ProcessQueryPacket);
 	pfn__Packet_WeaponsUpdate = (Packet_WeaponsUpdate_t)(CAddress::FUNC_Packet_WeaponsUpdate);
 
 	pfn__format_amxstring = (format_amxstring_t)(CAddress::FUNC_format_amxstring);
@@ -70,11 +68,6 @@ bool CSAMPFunctions::UnLoadFilterscript(char *szName)
 void CSAMPFunctions::SpawnPlayer_(int playerid)
 {
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
-}
-
-int CSAMPFunctions::ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char *data, int length, unsigned int s)
-{
-	return pfn__ProcessQueryPacket(binaryAddress, port, data, length, s);
 }
 
 void CSAMPFunctions::Packet_WeaponsUpdate(Packet *p)

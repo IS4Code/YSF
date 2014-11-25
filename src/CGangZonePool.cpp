@@ -208,7 +208,6 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 		pPlayerData[playerid]->wClientSidePlayerZoneID[i] = 0xFFFF;
 	}
 
-
 	pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0xFF;
 	pPlayerData[playerid]->dwClientSideZoneColor[i] = 0;
 	pPlayerData[playerid]->bInGangZone[i] = false;

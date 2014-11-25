@@ -205,13 +205,6 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
-			ConsoleVariable_s *pVar = CSAMPFunctions::FindVariable("version");
-
-			char *str = new char[28];
-			sprintf(str, "apadfsza");
-			pVar->VarPtr = str;
-
-			logprintf("pVar: %s", (char*)pVar->VarPtr);
 			/*
 			if (pNetGame->pPlayerPool->bIsPlayerConnected[0])
 			{

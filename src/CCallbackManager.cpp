@@ -155,7 +155,7 @@ void CCallbackManager::OnServerMessage(char* message)
 bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, char* command)
 {
 	int idx = -1;
-	cell ret;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if(!amx_FindPublic(*iter, "OnRemoteRCONPacket", &idx))
@@ -164,7 +164,6 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 			
 			in_addr in;
 			in.s_addr = binaryAddress;
-			logprintf("asd %s", inet_ntoa(in));
 
 			amx_PushString(*iter, &amx_addr, &phys_addr, command, 0, 0);
 			amx_PushString(*iter, &amx_addr, &phys_addr, password, 0, 0);

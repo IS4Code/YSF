@@ -52,9 +52,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	VAR_pRestartWaitTime =						FindPattern("\x00\x00\xC8\xC2\x00\x00", "xxxxxx") + 0x4;
  
 	FUNC_CConsole__AddStringVariable =			FindPattern("\x53\x56\x57\x8B\x7C\x24\x18\x85\xFF", "xxxxxxxxx");
-	FUNC_CConsole__FindVariable = 0x00486110;
-	FUNC_CConsole__SendRules = 0x00485DD0;
-	FUNC_CConsole__Execute = 0x00486350;
+	FUNC_CConsole__FindVariable =				FindPattern("\x8B\x84\x24\x30\x01\x00\x00\x53\x56\x57", "xxxxxxxxxx") - 0x1B;
+	FUNC_CConsole__SendRules =					FindPattern("\x81\xEC\x08\x04\x00\x00\x53\x55\x56\x57\x8B\xF9\x8B\x77\x04", "xx????xxxxxxxxx");
+	FUNC_CConsole__Execute =					FindPattern("\x55\x8B\xEC\x83\xE4\xF8\x81\xEC\x0C\x01\x00\x00", "xxxxxxxxxxxx");
 
 	FUNC_CFilterscripts__LoadFilterscript =		FindPattern("\x8B\x44\x24\x04\x81\xEC\x04\x01\x00\x00", "xxxxxxxxxx");
 	FUNC_CFilterscripts__UnLoadFilterscript =	FindPattern("\xCC\x51\x53\x8B\x5C\x24\x0C\x55\x56\x57\x89", "xxxxxxxxxxx") + 0x1;
@@ -71,9 +71,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	FUNC_format_amxstring = 0x0046ED90;
 
-	//logprintf("ADDR_CNetGame_GMX_GangZoneDelete: %x", ADDR_CNetGame_GMX_GangZoneDelete); // 00492660
-	//logprintf("ADDR_CNetGame_GMX_PckupDelete: %x", ADDR_CNetGame_GMX_PckupDelete); // 0048A059
-	//logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
+	//logprintf("FUNC_CConsole__FindVariable: %x", FUNC_CConsole__FindVariable); // 0x00486110
+	//logprintf("FUNC_CConsole__SendRules: %x", FUNC_CConsole__SendRules); // 0x00485DD0
+	//logprintf("FUNC_CConsole__Execute: %X", FUNC_CConsole__Execute); // 0x00486350
 
 	switch(sampVersion)
 	{
@@ -154,7 +154,8 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	#endif
 
 	// Unlock restart wait time
-	Unlock((void*)CAddress::VAR_pRestartWaitTime, 4);
+	if (VAR_pRestartWaitTime)
+		Unlock((void*)VAR_pRestartWaitTime, 4);
 
 #ifdef _WIN32
 	// Disable GangZonePool deletion at GMX

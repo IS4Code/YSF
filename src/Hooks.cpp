@@ -384,17 +384,15 @@ static void HOOK_logprintf(const char *msg, ...)
 }
 
 
-
 //----------------------------------------------------
-// int CheckQueryFlood()
+// bool CheckQueryFlood()
 // returns 1 if this query could flood
 // returns 0 otherwise
-
-DWORD dwLastQueryTick = 0;
-unsigned int lastBinAddr = 0;
-
-int CheckQueryFlood(unsigned int binaryAddress)
+bool CheckQueryFlood(unsigned int binaryAddress)
 {
+	static DWORD dwLastQueryTick = 0;
+	static unsigned int lastBinAddr = 0;
+
 	if (!dwLastQueryTick) {
 		dwLastQueryTick = (DWORD)GetTickCount();
 		lastBinAddr = binaryAddress;
@@ -747,7 +745,7 @@ void InstallPreHooks()
 		Namecheck_hook.Install((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
 		amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 		GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
+		query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
 	}
 	logprintf_hook.Install((void*)logprintf, (void*)HOOK_logprintf);	
-	query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
 }

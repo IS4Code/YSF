@@ -475,6 +475,8 @@ static cell AMX_NATIVE_CALL Natives::SetModeRestartTime(AMX *amx, cell *params)
 	if (!CAddress::VAR_pRestartWaitTime) return 0;
 
 	CHECK_PARAMS(1, "SetModeRestartTime");
+
+	if (!CAddress::VAR_pRestartWaitTime) return 0;
 	*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
 	return 1;
 }
@@ -606,8 +608,12 @@ static cell AMX_NATIVE_CALL Natives::AddServerRule(AMX *amx, cell *params)
 	amx_StrParam(amx, params[2], value);
 	if (name && value)
 	{
-		CSAMPFunctions::AddStringVariable(name, (int)params[3], value, NULL);
-		return 1;
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		if (ConVar == NULL)
+		{
+			CSAMPFunctions::AddStringVariable(name, (int)params[3], value, NULL);
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -626,8 +632,12 @@ static cell AMX_NATIVE_CALL Natives::SetServerRule(AMX *amx, cell *params)
 	amx_StrParam(amx, params[2], value);
 	if (name && value)
 	{
-		pServer->SetStringVariable(name, value);
-		return 1;
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		if (ConVar != NULL)
+		{
+			pServer->SetStringVariable(name, value);
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -645,7 +655,12 @@ static cell AMX_NATIVE_CALL Natives::SetServerRuleInt(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		pServer->SetIntVariable(name, (int)params[2]);
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		if (ConVar != NULL)
+		{
+			pServer->SetIntVariable(name, (int)params[2]);
+			return 1;
+		}
 		return 1;
 	}
 	return 0;
