@@ -43,9 +43,6 @@ void *pConsole = NULL;
 RakServer *pRakServer = NULL;
 CPlayerData *pPlayerData[MAX_PLAYERS];
 
-void **ppServer;
-void *pRakServer2 = NULL;
-
 //----------------------------------------------------------
 // The Support() function indicates what possibilities this
 // plugin has. The SUPPORTS_VERSION flag is required to check
@@ -121,20 +118,6 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	}
 
 	InstallPreHooks();
-
-#if defined __LINUX__
-	ppServer = *(void***)((char*)ppData[PLUGIN_DATA_CALLPUBLIC_FS] + 10);
-#else
-	ppServer = *(void***)((char*)ppData[PLUGIN_DATA_CALLPUBLIC_FS] + 1);
-#endif
-
-	if (pRakServer2 == (void*)0)
-	{
-		if (ppServer && *ppServer && *(void**)((char*)*ppServer + 0x3C) != (void*)0)
-		{
-			pRakServer2 = *(void**)((char*)*ppServer + 0x3C);
-		}
-	}
 
 	logprintf("\n");
 	logprintf(" ===============================\n");
