@@ -5,9 +5,12 @@
 #include "Structs.h"
 #include "CCallbackManager.h"
 #include "CPlayerData.h"
+#include "Functions.h"
 #include "Utils.h"
 
 #include <sdk/plugin.h>
+
+#define FUCK_SPAWN_PROTECTION
 
 int RPC_Gravity = 0x92;
 int RPC_Weather = 0x98;
@@ -31,6 +34,7 @@ int RPC_ChatBubble = 0x3B;
 
 int RPC_UpdateScoresPingsIPs = 0x9B;
 int RPC_PickedUpPickup = 0x83;
+int RPC_Spawn = 0x81;
 int RPC_Death = 0x35;
 
 void UpdateScoresPingsIPs(RPCParameters *rpcParams)
@@ -62,6 +66,32 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, HIGH_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
 }
 
+void Spawn(RPCParameters *rpcParams)
+{
+	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+	if (pNetGame->iGameState != GAMESTATE_RUNNING) return;
+
+	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
+	if (!IsPlayerConnected(playerid)) return;
+	CPlayer	*pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+	
+	// Sanity checks
+	if (!pPlayer->bHasSpawnInfo) return;
+	int iSpawnClass = pPlayer->spawn.iSkin;
+	if (iSpawnClass < 0 || iSpawnClass > 300) return;
+
+	// Call OnPlayerSpawn
+	CCallbackManager::OnPlayerSpawn(playerid);
+
+	// Reset all their sync attributes.
+	pPlayer->syncData.vecPosition = pPlayer->spawn.vecPos;
+	pPlayer->syncData.fQuaternionAngle =  pPlayer->spawn.fRotation;
+	pPlayer->vecPosition = pPlayer->spawn.vecPos;
+	pPlayer->wVehicleId = 0;
+
+	CSAMPFunctions::SpawnPlayer_(playerid);
+}
 
 void Death(RPCParameters* rpcParams)
 {
@@ -74,50 +104,42 @@ void Death(RPCParameters* rpcParams)
 	bsData.Read(reasonid);
 	bsData.Read(killerid);
 
-	if(playerid < 0 || playerid >= MAX_PLAYERS) 
+	if (!IsPlayerConnected(playerid))
 		return;
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 	
+	pPlayer->byteState = PLAYER_STATE_WASTED;
+
 	// If another player killed
 	if(IsPlayerConnected(killerid))
 	{
 		CPlayer *pKiller = pNetGame->pPlayerPool->pPlayer[killerid];
 
-		// If they doesn't streamed for each other, then won't call OnPlayerDeath
+		// If they aren't streamed for each other, then won't call OnPlayerDeath
 		logprintf("streamed: %d, %d", pKiller->byteStreamedIn[playerid], pPlayer->byteStreamedIn[killerid]);
 		if(!pKiller->byteStreamedIn[playerid] || !pPlayer->byteStreamedIn[killerid])
 			return;
 
-		//logprintf("syncdata: %d, reason: %d, health: %f", pKiller->syncData.byteWeapon, reasonid, pPlayer->fHealth);
+		logprintf("syncdata: %d, reason: %d, health: %f", pKiller->syncData.byteWeapon, reasonid, pPlayer->fHealth);
 		if( pKiller->syncData.byteWeapon != reasonid && reasonid <= 46 )// 46 = parachute
 			return;
-		else if( ( reasonid == 48 || reasonid == 49 ) && pKiller->byteState != 2 ) // 48 - carkill // 49 - helikill
+		else if( ( reasonid == 48 || reasonid == 49 ) && pKiller->byteState != PLAYER_STATE_DRIVER ) // 48 - carkill // 49 - helikill
 			return;
 
-		//logprintf("[kill] %s killed %s %s", pNetGame->pPlayerPool->szName[killerid], pNetGame->pPlayerPool->szName[playerid], GetWeaponName(reasonid));
+		if (pServer->GetIntVariable("chatlogging"))
+			logprintf("[kill] %s killed %s %s", GetPlayerName(killerid), GetPlayerName(playerid), CUtils::GetWeaponName_(reasonid));
 	}
 	else
 	{
-		//logprintf("[death] %s died %d", pNetGame->pPlayerPool->szName[playerid], reasonid);
+		if (pServer->GetIntVariable("chatlogging"))
+			logprintf("[death] %s died %d", GetPlayerName(playerid), reasonid);
 	}
-	/*
-	// Call OnPlayerDeath
-	int idx = -1;
-	for(std::list<AMX*>::iterator second = pAMXList.begin(); second != pAMXList.end(); ++second)
-	{
-		if(!amx_FindPublic(*second, "OnPlayerDeath", &idx))
-		{
-			amx_Push(*second, reasonid);
-			amx_Push(*second, killerid);
-			amx_Push(*second, playerid);
-
-			amx_Exec(*second, NULL, idx);
-		}
-	}
-	*/
+	
+	CCallbackManager::OnPlayerDeath(playerid, killerid, reasonid);
 }
-#ifdef NEW_PICKUP_SYSTEM
+
+
 void PickedUpPickup(RPCParameters* rpcParams)
 {
 	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
@@ -130,6 +152,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 
 	bsData.Read(pickupid);
 
+#ifdef NEW_PICKUP_SYSTEM
 	logprintf("pickup playerid %d, pickupid: %d", playerid, pickupid);
 
 	// Find pickup in player client side pickuppool
@@ -166,18 +189,35 @@ void PickedUpPickup(RPCParameters* rpcParams)
 			}
 		}
 	}
-}
+#else
+	if (pickupid >= 0 && pickupid < MAX_PICKUPS)
+	{
+		if (pNetGame->pPickupPool->m_bActive[pickupid])
+		{
+			if (GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &pNetGame->pPickupPool->m_Pickup[pickupid].vecPos) > 15.0)
+			{
+				logprintf("fakepickup %d", pickupid);
+				return;
+			}
+
+			CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);
+		}
+	}
 #endif
+}
 
 void InitRPCs()
 {
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
 
-//	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
-//	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
-#ifdef NEW_PICKUP_SYSTEM
+#ifdef FUCK_SPAWN_PROTECTION
+	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Spawn);
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Spawn, Spawn);
+#endif
+	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
+
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickedUpPickup);
-#endif
 }

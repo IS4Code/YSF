@@ -55,6 +55,7 @@ extern int RPC_ChatBubble;
 
 extern int RPC_UpdateScoresPingsIPs;
 extern int RPC_PickedUpPickup;
+extern int RPC_Spawn;
 extern int RPC_Death;
 
 void InitRPCs();

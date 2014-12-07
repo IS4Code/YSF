@@ -42,17 +42,22 @@ void CSAMPFunctions::AddStringVariable(char *szRule, int flags, char *szString, 
 
 ConsoleVariable_s* CSAMPFunctions::FindVariable(char *szRule)
 {
+	if (!CAddress::FUNC_CConsole__SendRules)
+		return NULL;
+
 	return pfn__CConsole__FindVariable(pConsole, szRule);
 }
 
 void CSAMPFunctions::SendRules(SOCKET s, char* data, const sockaddr_in* to, int tolen)
 {
-	pfn__CConsole__SendRules(pConsole, s, data, to, tolen);
+	if (CAddress::FUNC_CConsole__SendRules)
+		pfn__CConsole__SendRules(pConsole, s, data, to, tolen);
 }
 
 void CSAMPFunctions::Execute(char* pExecLine)
 {
-	pfn__CConsole__Execute(pConsole, pExecLine);
+	if (CAddress::FUNC_CConsole__Execute)
+		pfn__CConsole__Execute(pConsole, pExecLine);
 }
 
 bool CSAMPFunctions::LoadFilterscript(char *szName)

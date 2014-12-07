@@ -34,6 +34,7 @@
 #define SCRIPTING_H
 
 #include <sdk/plugin.h>
+#include "main.h"
 
 #define CHECK_PARAMS(m, n) \
 	if (params[0] != (m * 4)) \
@@ -321,11 +322,11 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_GangZoneFlashForAll(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GangZoneStopFlashForPlayer(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GangZoneStopFlashForAll(AMX *amx, cell *params);
-	/*
+#ifdef NEW_PICKUP_SYSTEM
 	static cell AMX_NATIVE_CALL CreatePickup(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL DestroyPickup(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetPickupStreamingEnabled(AMX *amx, cell *params);
-	*/
+#endif
 	static cell AMX_NATIVE_CALL FIXED_GetWeaponName(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL FIXED_IsPlayerConnected(AMX *amx, cell *params);
 };

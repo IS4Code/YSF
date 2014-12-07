@@ -23,18 +23,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-
 #include "subhook.h"
 #include "subhook_private.h"
-
-SUBHOOK_EXPORT void SUBHOOK_API subhook_set_src(subhook_t hook, void *src) {
-	hook->src = src;
-}
-
-SUBHOOK_EXPORT void SUBHOOK_API subhook_set_dst(subhook_t hook, void *dst) {
-	hook->dst = dst;
-}
 
 SUBHOOK_EXPORT void *SUBHOOK_API subhook_get_src(subhook_t hook) {
 	return hook->src;
@@ -42,6 +32,10 @@ SUBHOOK_EXPORT void *SUBHOOK_API subhook_get_src(subhook_t hook) {
 
 SUBHOOK_EXPORT void *SUBHOOK_API subhook_get_dst(subhook_t hook) {
 	return hook->dst;
+}
+
+SUBHOOK_EXPORT void *SUBHOOK_API subhook_get_trampoline(subhook_t hook) {
+	return hook->trampoline;
 }
 
 SUBHOOK_EXPORT int SUBHOOK_API subhook_is_installed(subhook_t hook) {

@@ -6,7 +6,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #else
-
+typedef int SOCKET;
 #endif
 
 struct Packet;
@@ -30,7 +30,7 @@ typedef char *(__thiscall *format_amxstring_t)(AMX *amx, cell *params, int parm,
 #else
 typedef void(*CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);
 typedef ConsoleVariable_s *(*CConsole__FindVariable_t)(void *pConsole, char *szRule);
-typedef void(*CConsole__SendRules_t)(void *pConsole, SOCKET s, char* data, const sockaddr_in* to, int tolen);
+typedef void(*CConsole__SendRules_t)(void *pConsole, SOCKET s, char* data, const struct sockaddr_in* to, int tolen);
 typedef void(*CConsole__Execute_t)(void *pConsole, char* pExecLine);
 
 typedef bool(*CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, char *szName);

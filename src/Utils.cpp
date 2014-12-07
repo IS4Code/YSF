@@ -13,7 +13,11 @@
 #include "CVector.h"
 #include "CPlayerData.h"
 
+#include <iostream>
 #include <fstream>
+#include <sstream>
+#include <iostream>
+
 #include <sdk/plugin.h>
 
 // Linux GetTickCount
@@ -246,43 +250,24 @@ char *GetPlayerName(int playerid)
 	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x134A4;
 }
 
-// Load an entry from server.cfg.
-int CFGLoad(char const * const name, char * const dest, size_t dlen)
+// Created by: https://github.com/Zeex/sampgdk/blob/master/plugins/unlimitedfs/unlimitedfs.cpp
+std::string GetServerCfgOption(const std::string &option)
 {
-	std::ifstream
-		f("server.cfg");
-	int
-		ret = 0,
-		len = strlen(name);
-	if (f.is_open())
+	std::string name, value;
+	std::string line;
+	std::fstream server_cfg("server.cfg");
+	if (server_cfg)
 	{
-		char
-			line[256];
-		f.clear();
-		while (!f.eof())
+		while (std::getline(server_cfg, line))
 		{
-			f.getline(line, 256);
-			if (f.fail())
+			std::stringstream ss(line);
+			ss >> name;
+			if (name == option)
 			{
-				goto CFGLoad_close;
-			}
-			// Does the line START with this text?  Anything other than the
-			// first character fails.
-			if (!strncmp(line, name, len) && line[len] <= ' ')
-			{
-				while (line[++len] <= ' ')
-				{
-					if (line[len] == '\0') goto CFGLoad_close;
-				}
-				// Skipped leading spaces, save the value.
-				if (dest) strncpy(dest, line + len, dlen);
-				ret = atoi(line + len);
-				goto CFGLoad_close;
+				ss >> value;
+				break;
 			}
 		}
-	CFGLoad_close:
-		// Yes, I used a label!  I needed to escape from a double loop.
-		f.close();
 	}
-	return ret;
+	return value;
 }

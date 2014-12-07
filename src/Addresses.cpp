@@ -148,6 +148,10 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		{
 			VAR_pRestartWaitTime =						0x81514E0; // 12.0
 			FUNC_Packet_WeaponsUpdate =					0x80AAC90;
+			FUNC_ProcessQueryPacket =					0x080D0EB0;
+			FUNC_CConsole__FindVariable =				0x809EA60; 
+			FUNC_CConsole__SendRules =					0x809E4C0;
+			FUNC_CConsole__Execute =					0x809EB40;
 			break;
 		}
 	}

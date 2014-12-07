@@ -11,14 +11,22 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #else
-
+#include <arpa/inet.h>
 #endif
 std::vector<AMX *> CCallbackManager::m_vecAMX;
 
 void CCallbackManager::RegisterAMX(AMX *pAMX)
 {
-	// Add the amx to the pointers list
-	m_vecAMX.push_back(pAMX);
+	// Add gamemode to the first position in vector
+	if (pNetGame && pNetGame->pGameModePool && &pNetGame->pGameModePool->m_amx == pAMX)
+	{
+		std::vector<AMX*>::iterator it = m_vecAMX.begin();
+		m_vecAMX.insert(it, pAMX);
+	}
+	else
+	{
+		m_vecAMX.push_back(pAMX);
+	}
 }
 
 void CCallbackManager::UnregisterAMX(AMX *pAMX)
@@ -34,6 +42,7 @@ void CCallbackManager::UnregisterAMX(AMX *pAMX)
 void CCallbackManager::OnPlayerEnterGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerEnterGangZone", &idx))
@@ -41,7 +50,9 @@ void CCallbackManager::OnPlayerEnterGangZone(WORD playerid, WORD zoneid)
 			amx_Push(*iter, zoneid);
 			amx_Push(*iter, playerid);
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
 		}
 	}
 }
@@ -49,6 +60,7 @@ void CCallbackManager::OnPlayerEnterGangZone(WORD playerid, WORD zoneid)
 void CCallbackManager::OnPlayerLeaveGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerLeaveGangZone", &idx))
@@ -56,7 +68,9 @@ void CCallbackManager::OnPlayerLeaveGangZone(WORD playerid, WORD zoneid)
 			amx_Push(*iter, zoneid);
 			amx_Push(*iter, playerid);
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
 		}
 	}
 }
@@ -64,6 +78,7 @@ void CCallbackManager::OnPlayerLeaveGangZone(WORD playerid, WORD zoneid)
 void CCallbackManager::OnPlayerEnterPlayerGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerEnterPlayerGangZone", &idx))
@@ -71,7 +86,9 @@ void CCallbackManager::OnPlayerEnterPlayerGangZone(WORD playerid, WORD zoneid)
 			amx_Push(*iter, zoneid);
 			amx_Push(*iter, playerid);
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
 		}
 	}
 }
@@ -79,6 +96,7 @@ void CCallbackManager::OnPlayerEnterPlayerGangZone(WORD playerid, WORD zoneid)
 void CCallbackManager::OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerLeavePlayerGangZone", &idx))
@@ -86,7 +104,9 @@ void CCallbackManager::OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid)
 			amx_Push(*iter, zoneid);
 			amx_Push(*iter, playerid);
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
 		}
 	}
 }
@@ -94,6 +114,7 @@ void CCallbackManager::OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid)
 void CCallbackManager::OnPlayerPauseStateChange(WORD playerid, bool pausestate)
 {
 	int idx = -1;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerPauseStateChange", &idx))
@@ -101,7 +122,45 @@ void CCallbackManager::OnPlayerPauseStateChange(WORD playerid, bool pausestate)
 			amx_Push(*iter, pausestate);
 			amx_Push(*iter, playerid);
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
+		}
+	}
+}
+
+void CCallbackManager::OnPlayerDeath(WORD playerid, WORD killerid, BYTE reason)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if (!amx_FindPublic(*iter, "OnPlayerDeath", &idx))
+		{
+			amx_Push(*iter, reason);
+			amx_Push(*iter, killerid);
+			amx_Push(*iter, playerid);
+
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
+		}
+	}
+}
+
+void CCallbackManager::OnPlayerSpawn(WORD playerid)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if (!amx_FindPublic(*iter, "OnPlayerSpawn", &idx))
+		{
+			amx_Push(*iter, playerid);
+
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
 		}
 	}
 }
@@ -109,14 +168,17 @@ void CCallbackManager::OnPlayerPauseStateChange(WORD playerid, bool pausestate)
 void CCallbackManager::OnPlayerPickedUpPickup(WORD playerid, WORD pickupid)
 {
 	int idx = -1;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerPickUpPickup", &idx))
 		{
-			amx_Push(*iter, pickupid);
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(pickupid));
+			amx_Push(*iter, static_cast<cell>(playerid));
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
 		}
 	}
 }
@@ -124,6 +186,7 @@ void CCallbackManager::OnPlayerPickedUpPickup(WORD playerid, WORD pickupid)
 void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid)
 {
 	int idx = -1;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerPickUpPlayerPickup", &idx))
@@ -131,7 +194,9 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 			amx_Push(*iter, pickupid);
 			amx_Push(*iter, playerid);
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return;
 		}
 	}
 }
@@ -139,6 +204,7 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 void CCallbackManager::OnServerMessage(char* message)
 {
 	int idx = -1;
+	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if (!amx_FindPublic(*iter, "OnServerMessage", &idx))
@@ -146,8 +212,10 @@ void CCallbackManager::OnServerMessage(char* message)
 			cell amx_addr, *phys_addr;
 			amx_PushString(*iter, &amx_addr, &phys_addr, message, 0, 0);
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
+
+			if (!ret) return;
 		}
 	}
 }
@@ -181,13 +249,14 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
 {
 	int idx = -1;
+	cell ret = 1;
 	for (std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
 	{
 		if (!amx_FindPublic(*iter, "OnPlayerStatsAndWeaponsUpdate", &idx))
 		{
 			amx_Push(*iter, playerid);
 
-			amx_Exec(*iter, NULL, idx);
+			amx_Exec(*iter, &ret, idx);
 		}
 	}
 }

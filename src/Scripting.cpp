@@ -1647,7 +1647,8 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerSpawned( AMX* amx, cell* params )
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	return pNetGame->pPlayerPool->pPlayer[playerid]->bSpawned;
+	int state = pNetGame->pPlayerPool->pPlayer[playerid]->byteState;
+	return (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED && state != PLAYER_STATE_SPAWNED);
 }
 
 // native SpawnForWorld(playerid);
@@ -5609,7 +5610,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetColSphereOffset",				Natives::GetColSphereOffset},
 
 	{ "GetWeaponSlot",					Natives::GetWeaponSlot},
-//	{ "SetPickupStreamingEnabled",		Natives::SetPickupStreamingEnabled },
+#ifdef NEW_PICKUP_SYSTEM
+	{ "SetPickupStreamingEnabled",		Natives::SetPickupStreamingEnabled },
+#endif
 	{ 0,								0 }
 };
 
@@ -5634,11 +5637,11 @@ AMX_NATIVE_INFO RedirecedtNatives[] =
 	{ "GangZoneFlashForAll",			Natives::YSF_GangZoneFlashForAll },
 	{ "GangZoneStopFlashForPlayer",		Natives::YSF_GangZoneStopFlashForPlayer },
 	{ "GangZoneStopFlashForAll",		Natives::YSF_GangZoneStopFlashForAll },
-	/*	
+#ifdef NEW_PICKUP_SYSTEM
 	{ "CreatePickup",					Natives::CreatePickup },
 	{ "AddStaticPickup",				Natives::CreatePickup },
 	{ "DestroyPickup",					Natives::DestroyPickup },
-	*/
+#endif
 	{ "GetWeaponName",					Natives::FIXED_GetWeaponName },
 	{ "IsPlayerConnected",				Natives::FIXED_IsPlayerConnected },
 	{ 0,								0 }

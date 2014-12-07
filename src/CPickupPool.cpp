@@ -7,6 +7,8 @@
 #include "RPCs.h"
 #include "Utils.h"
 
+#define MAX_PICKUP_DISTANCE	70.0f
+
 CPickupPool::CPickupPool() : m_bStreamingEnabled(1)
 {
 
@@ -198,6 +200,8 @@ void CPickupPool::Destroy(WORD playerid, int pickupid)
 
 void CPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup *pPickup)
 {
+	HidePickup(pickupid, playerid);
+
 	RakNet::BitStream bsPickup;
 	bsPickup.Write(pickupid);
 	bsPickup.Write(pPickup->iModel);
@@ -277,7 +281,7 @@ void CPickupPool::Process(void)
 			for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
 			{
 				float distance = GetDistance3D(vecPos, &p->second->vecPos);
-				if (distance < 300.0f && !pPlayerData[playerid]->bClientPickupStreamedIn[p->first])
+				if (distance < MAX_PICKUP_DISTANCE && !pPlayerData[playerid]->bClientPickupStreamedIn[p->first])
 				{
 					if (pNetGame->pPlayerPool->dwVirtualWorld[playerid] == p->second->iWorld || p->second->iWorld == -1)
 					{
@@ -287,7 +291,7 @@ void CPickupPool::Process(void)
 						ShowPickup((int)p->first, playerid, p->second);
 					}
 				}
-				else if ((distance >= 300.0f || (pNetGame->pPlayerPool->dwVirtualWorld[playerid] != p->second->iWorld && p->second->iWorld != -1)) && pPlayerData[playerid]->bClientPickupStreamedIn[p->first])
+				else if ((distance >= MAX_PICKUP_DISTANCE || (pNetGame->pPlayerPool->dwVirtualWorld[playerid] != p->second->iWorld && p->second->iWorld != -1)) && pPlayerData[playerid]->bClientPickupStreamedIn[p->first])
 				{
 					//logprintf("streamout: %f - %d (pickupid: %d)", distance, playerid, p->first);
 					pPlayerData[playerid]->bClientPickupStreamedIn.set(p->first, false);

@@ -433,7 +433,7 @@ class CPlayer
 		DWORD					bHasSetVehiclePos; // 8965
 		DWORD					dwSetVehiclePosTick; // 8969 - 8981
 		CVector					vecVehicleNewPos;	// 8981 - 8985
-		DWORD					bSpawned;			// 8985
+		DWORD					bHasSpawnInfo;			// 8985
 		BOOL					bUpdateKeys;		// 0x231D - 0x2321     // 8164
 		CVector					vecPosition;		// 0x2321 - 0x232D
 		float					fHealth;			// 0x232D - 0x2331
@@ -835,7 +835,11 @@ class CNetGame
 		CFilterScripts			*pFilterScriptPool;		// 0x0004 - 0x0008
 		CPlayerPool				*pPlayerPool;			// 0x0008 - 0x000C
 		CVehiclePool			*pVehiclePool;			// 0x000C - 0x0010
+#ifndef NEW_PICKUP_SYSTEM
 		CPickupPool_			*pPickupPool;
+#else
+		CPickupPool				*pPickupPool;
+#endif
 		CObjectPool				*pObjectPool;			// 0x0010 - 0x0014
 		CMenuPool				*pMenuPool;				// 24
 		CTextDrawPool			*pTextDrawPool;			// 28
@@ -1095,12 +1099,12 @@ struct Packet
 class RakServer
 {
 public:
-	~RakServer();
-	virtual bool Start( unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress=0 ); // 0
+	virtual ~RakServer();
+	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0;
 	virtual void InitializeSecurity( const char *privateKeyE, const char *privateKeyN ); // 4
 	virtual void DisableSecurity( void ); // 8
 	virtual void SetPassword( const char *_password );	// 12
-	virtual bool HasPassword( void );	// 16
+	//virtual bool HasPassword( void );	// 16
 	virtual void Disconnect( unsigned int blockDuration, unsigned char orderingChannel=0 );	// 20
 	virtual bool Send_ASD(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast); // 24
 	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);	// 28
@@ -1173,9 +1177,9 @@ public:
 class RakServer
 {
 public:
-	~RakServer();
-	virtual void _0();
-	virtual void _4();
+	virtual ~RakServer();
+	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0;
+	//virtual void _4();
 	virtual void _8();
 	virtual void _C();
 	virtual void _10();

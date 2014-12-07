@@ -56,6 +56,11 @@
 	#include <algorithm>
 	#include <unistd.h>
 	#include <cstdarg>
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#include <arpa/inet.h>
+
+	#define INVALID_SOCKET -1
 #endif
 
 #include "subhook/subhook.h"
@@ -351,7 +356,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 
 //----------------------------------------------------
 
-BOOL	bRconSocketReply = FALSE;
+bool	bRconSocketReply = false;
 
 SOCKET	cur_sock = INVALID_SOCKET;
 char*	cur_data = NULL;
@@ -410,6 +415,36 @@ bool CheckQueryFlood(unsigned int binaryAddress)
 }
 
 //----------------------------------------------------
+
+char* RemoveHexColorFromString(char *szMsg) // Thx to P3ti
+{
+/*
+	char szNonColorEmbeddedMsg[257];
+	int iNonColorEmbeddedMsgLen = 0;
+
+	for (size_t pos = 0; pos < strlen(szMsg) && szMsg[pos] != '\0'; pos++)
+	{
+		if (!((*(unsigned char*)(&szMsg[pos]) - 32) >= 0 && (*(unsigned char*)(&szMsg[pos]) - 32) < 224))
+			continue;
+
+		if (pos + 7 < strlen(szMsg))
+		{
+			if (szMsg[pos] == '{' && szMsg[pos + 7] == '}')
+			{
+				pos += 7;
+				continue;
+			}
+		}
+
+		szNonColorEmbeddedMsg[iNonColorEmbeddedMsgLen] = szMsg[pos];
+		iNonColorEmbeddedMsgLen++;
+	}
+	szNonColorEmbeddedMsg[iNonColorEmbeddedMsgLen] = 0;
+	return &szNonColorEmbeddedMsg[0];
+	*/
+	return szMsg;
+}
+
 
 int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s)
 {
@@ -537,11 +572,11 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						BYTE byteNameLen;
 						DWORD dwScore;
 
-						for (WORD r = 0; r<MAX_PLAYERS; r++)
+						for (WORD r = 0; r < MAX_PLAYERS; r++)
 						{
 							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
-								szName = GetPlayerName(r);
+								szName = RemoveHexColorFromString(GetPlayerName(r));
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);
@@ -583,7 +618,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						BYTE byteNameLen;
 						DWORD dwScore, dwPing;
 
-						for (WORD r = 0; r<MAX_PLAYERS; r++)
+						for (WORD r = 0; r < MAX_PLAYERS; r++)
 						{
 							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
@@ -678,10 +713,10 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						{
 							if (CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, szCommand))
 							{ 
-								bRconSocketReply = TRUE;
+								bRconSocketReply = true;
 								// Execute the command
 								CSAMPFunctions::Execute(szCommand);
-								bRconSocketReply = FALSE;
+								bRconSocketReply = false;
 							}
 						}
 
@@ -693,11 +728,11 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						in.s_addr = binaryAddress;
 						logprintf("BAD RCON ATTEMPT BY: %s", inet_ntoa(in));
 
-						bRconSocketReply = TRUE;
+						bRconSocketReply = true;
 						RconSocketReply("Invalid RCON password.");
-						bRconSocketReply = FALSE;
+						bRconSocketReply = false;
 
-						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, NULL);
+						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, "NULL");
 					}
 					free(szPassword);
 

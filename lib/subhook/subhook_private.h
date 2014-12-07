@@ -26,13 +26,16 @@
 #ifndef SUBHOOK_PRIVATE_H
 #define SUBHOOK_PRIVATE_H
 
+#include <stddef.h>
+
 struct subhook {
-	int unlocked  : 1;
-	int installed : 1;
+	int installed;
 	void *src;
 	void *dst;
+	void *code;
+	void *trampoline;
 };
 
-void *subhook_unlock(void *address, size_t size);
+void *subhook_unprotect(void *address, size_t size);
 
 #endif /* SUBHOOK_PRIVATE_H */

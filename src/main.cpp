@@ -42,6 +42,10 @@ CNetGame *pNetGame = NULL;
 void *pConsole = NULL;
 RakServer *pRakServer = NULL;
 CPlayerData *pPlayerData[MAX_PLAYERS];
+
+void **ppServer;
+void *pRakServer2 = NULL;
+
 //----------------------------------------------------------
 // The Support() function indicates what possibilities this
 // plugin has. The SUPPORTS_VERSION flag is required to check
@@ -94,7 +98,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		strcpy(szVersion, "0.3z R4");
 	}
 
-	if (!CFGLoad("YSF_noversioncheck", 0, 0))
+	if (GetServerCfgOption("YSF_noversioncheck") != "1")
 	{
 		if (version != SAMP_VERSION_UNKNOWN)
 		{
@@ -117,6 +121,20 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	}
 
 	InstallPreHooks();
+
+#if defined __LINUX__
+	ppServer = *(void***)((char*)ppData[PLUGIN_DATA_CALLPUBLIC_FS] + 10);
+#else
+	ppServer = *(void***)((char*)ppData[PLUGIN_DATA_CALLPUBLIC_FS] + 1);
+#endif
+
+	if (pRakServer2 == (void*)0)
+	{
+		if (ppServer && *ppServer && *(void**)((char*)*ppServer + 0x3C) != (void*)0)
+		{
+			pRakServer2 = *(void**)((char*)*ppServer + 0x3C);
+		}
+	}
 
 	logprintf("\n");
 	logprintf(" ===============================\n");
@@ -191,6 +209,13 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			// Get pRakServer
 			int (*pfn_GetRakServer)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_RAKSERVER];
 			pRakServer = (RakServer*)pfn_GetRakServer();
+
+			std::string port, bind, maxconnections;
+			port = GetServerCfgOption("port");
+			bind = GetServerCfgOption("bind");
+			maxconnections = GetServerCfgOption("maxconnections");
+
+			pRakServer->Start((!maxconnections.length()) ? (MAX_PLAYERS + 100) : atoi(maxconnections.c_str()), 0, pServer->GetIntVariable("sleep"), atoi(port.c_str()), (!bind.length()) ? NULL : bind.c_str());
 
 			//logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 
