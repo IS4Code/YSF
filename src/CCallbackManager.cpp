@@ -201,7 +201,7 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 	}
 }
 
-void CCallbackManager::OnServerMessage(char* message)
+bool CCallbackManager::OnServerMessage(char* message)
 {
 	int idx = -1;
 	cell ret = 1;
@@ -215,9 +215,10 @@ void CCallbackManager::OnServerMessage(char* message)
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
 
-			if (!ret) return;
+			if (!ret) return 0;
 		}
 	}
+	return !!ret;
 }
 
 bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, char* command)

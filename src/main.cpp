@@ -156,17 +156,6 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 // The AmxLoad() function gets called when a new gamemode or
 // filterscript gets loaded with the server. In here we register
 // the native functions we like to add to the scripts.
-/*
-static SubHook RakPeer_Start;
-
-static int HOOK_RakPeer__Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0)
-{
-	SubHook::ScopedRemove remove(&RakPeer_Start);
-
-	return pRakServer->Start(AllowedPlayers, depreciated, threadSleepTimer, port, forceHostAddress);
-}
-*/
-
 typedef std::map<std::string, ConsoleVariable_s*> StringConvarMap;
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx) 
@@ -198,7 +187,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			bind = GetServerCfgOption("bind");
 			maxconnections = GetServerCfgOption("maxconnections");
 
-			pRakServer->Start((!maxconnections.length()) ? (MAX_PLAYERS + 100) : atoi(maxconnections.c_str()), 0, pServer->GetIntVariable("sleep"), atoi(port.c_str()), (!bind.length()) ? NULL : bind.c_str());
+			pRakServer->Start((!maxconnections.length()) ? MAX_PLAYERS : atoi(maxconnections.c_str()), 0, 5, atoi(port.c_str()), (!bind.length()) ? NULL : bind.c_str());
 
 			//logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 

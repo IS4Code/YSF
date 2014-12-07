@@ -36,6 +36,7 @@ int RPC_UpdateScoresPingsIPs = 0x9B;
 int RPC_PickedUpPickup = 0x83;
 int RPC_Spawn = 0x81;
 int RPC_Death = 0x35;
+int RPC_DeathBroadcast = 0xA6;
 
 void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 {
@@ -63,7 +64,7 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 		}
 	}
 
-	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, HIGH_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
+	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, MEDIUM_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
 }
 
 void Spawn(RPCParameters *rpcParams)
@@ -89,6 +90,7 @@ void Spawn(RPCParameters *rpcParams)
 	pPlayer->syncData.fQuaternionAngle =  pPlayer->spawn.fRotation;
 	pPlayer->vecPosition = pPlayer->spawn.vecPos;
 	pPlayer->wVehicleId = 0;
+	pPlayer->byteState = PLAYER_STATE_SPAWNED;
 
 	CSAMPFunctions::SpawnPlayer_(playerid);
 }
@@ -108,8 +110,6 @@ void Death(RPCParameters* rpcParams)
 		return;
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-	
-	pPlayer->byteState = PLAYER_STATE_WASTED;
 
 	// If another player killed
 	if(IsPlayerConnected(killerid))
@@ -136,9 +136,14 @@ void Death(RPCParameters* rpcParams)
 			logprintf("[death] %s died %d", GetPlayerName(playerid), reasonid);
 	}
 	
+	bsData.Reset();
+	bsData.Write((WORD)playerid);
+	pRakServer->RPC(&RPC_DeathBroadcast, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), true, false);
+	
+	pPlayer->byteState = PLAYER_STATE_WASTED;
+
 	CCallbackManager::OnPlayerDeath(playerid, killerid, reasonid);
 }
-
 
 void PickedUpPickup(RPCParameters* rpcParams)
 {

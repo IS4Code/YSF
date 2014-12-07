@@ -918,7 +918,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerGravity( AMX* amx, cell* params )
 
 	RakNet::BitStream bs;
 	bs.Write(pPlayerData[playerid]->fGravity);
-	pRakServer->RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	pRakServer->RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -957,7 +957,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerTeamForPlayer( AMX* amx, cell* par
 	RakNet::BitStream bs;
 	bs.Write((WORD)playerid);	// playerid
 	bs.Write(team);				// teamid
-	pRakServer->RPC(&RPC_SetPlayerTeam, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	pRakServer->RPC(&RPC_SetPlayerTeam, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
@@ -1008,7 +1008,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_SetPlayerWeather(AMX* amx, cell* para
 
 	RakNet::BitStream bs;
 	bs.Write(pPlayerData[playerid]->byteWeather);
-	pRakServer->RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	pRakServer->RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -1050,7 +1050,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_SetPlayerWorldBounds(AMX* amx, cell* 
 	bs.Write(pPlayerData[playerid]->fBounds[1]);
 	bs.Write(pPlayerData[playerid]->fBounds[2]);
 	bs.Write(pPlayerData[playerid]->fBounds[3]);
-	pRakServer->RPC(&RPC_WorldBounds, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	pRakServer->RPC(&RPC_WorldBounds, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -1071,7 +1071,7 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerWidescreen( AMX* amx, cell* par
 
 	RakNet::BitStream bs;
 	bs.Write(set);
-	pRakServer->RPC(&RPC_Widescreen, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	pRakServer->RPC(&RPC_Widescreen, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -1547,7 +1547,7 @@ static cell AMX_NATIVE_CALL Natives::ShowPlayerForPlayer( AMX* amx, cell* params
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)playerid);
-	pRakServer->RPC(&RPC_WorldPlayerAdd, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	pRakServer->RPC(&RPC_WorldPlayerAdd, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
@@ -1568,7 +1568,7 @@ static cell AMX_NATIVE_CALL Natives::HidePlayerForPlayer( AMX* amx, cell* params
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)playerid);
-	pRakServer->RPC(&RPC_WorldPlayerRemove, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	pRakServer->RPC(&RPC_WorldPlayerRemove, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
@@ -1603,7 +1603,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cel
 		bs.Write(expiretime);
 		bs.Write(len);
 		bs.Write(str, len);
-		pRakServer->RPC(&RPC_ChatBubble, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+		pRakServer->RPC(&RPC_ChatBubble, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
 		return 1;
 	}
 	return 0;
@@ -1724,11 +1724,23 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerOnPlayerList(AMX *amx, cell *pa
 	CHECK_PARAMS(2, "TogglePlayerOnPlayerList");
 
 	int playerid = (int)params[1];
-
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	pPlayerData[playerid]->bHidden = !(!!params[2]);
 	return 1;
+}
+
+// native IsPlayerToggledOnPlayerList(playerid);
+static cell AMX_NATIVE_CALL Natives::IsPlayerToggledOnPlayerList(AMX *amx, cell *params)
+{
+	if (!pServer) return 0;
+
+	CHECK_PARAMS(1, "IsPlayerToggledOnPlayerList");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	return !pPlayerData[playerid]->bHidden;
 }
 
 // native IsPlayerPaused(playerid);
@@ -1737,7 +1749,6 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerPaused(AMX *amx, cell *params)
 	CHECK_PARAMS(1, "IsPlayerPaused");
 
 	int playerid = (int)params[1];
-
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pPlayerData[playerid]->bAFKState;
@@ -3876,7 +3887,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_AttachPlayerObjectToPlayer( AMX* amx,
 	bs.Write(amx_ctof(params[8]));
 	bs.Write(amx_ctof(params[9]));
 
-	pRakServer->RPC(&RPC_AttachObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	pRakServer->RPC(&RPC_AttachObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -4302,7 +4313,7 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	bs.Write(vecOffsetRot);	
 	bs.Write(byteSyncRot);
 	
-	pRakServer->RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
+	pRakServer->RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
 	return 1;
 }
 
@@ -5122,11 +5133,11 @@ static cell AMX_NATIVE_CALL Natives::SendRPC( AMX* amx, cell* params )
 	
 	if(bBroadcast)
 	{
-		pRakServer->RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true, 0);
+		pRakServer->RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
 	}
 	else
 	{
-		pRakServer->RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, playerId, 0, 0);
+		pRakServer->RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, playerId, 0, 0);
 	}
 	return 1;
 }
@@ -5415,6 +5426,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "TogglePlayerFakePing",			Natives::TogglePlayerFakePing }, // R8
 	{ "SetPlayerFakePing",				Natives::SetPlayerFakePing }, // R8
 	{ "TogglePlayerOnPlayerList",		Natives::TogglePlayerOnPlayerList }, // R11
+	{ "IsPlayerToggledOnPlayerList",	Natives::IsPlayerToggledOnPlayerList }, // R11
 
 	// AFK
 	{ "IsPlayerPaused",					Natives::IsPlayerPaused },

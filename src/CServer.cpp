@@ -115,7 +115,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
 			bs2.Write(300.0f); // fDrawDistance
 
-			pRakServer->RPC(&RPC_CreateObject, &bs2, HIGH_PRIORITY, RELIABLE_ORDERED, 2, forplayerId, 0, 0);
+			pRakServer->RPC(&RPC_CreateObject, &bs2, HIGH_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
 
 			// Attach created object to player
 			RakNet::BitStream bs;
@@ -130,7 +130,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fY);
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
 
-			pRakServer->RPC(&RPC_AttachObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, forplayerId, 0, 0);
+			pRakServer->RPC(&RPC_AttachObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
 			/*
 			logprintf("join, modelid: %d, %d, %f, %f, %f, %f, %f, %f",pObjectPool->m_pPlayerObjects[forplayerid][i]->m_iModel,
 				gAOData[forplayerid][i].AttachPlayerID,
@@ -194,7 +194,7 @@ void CServer::SetGravity_(float fGravity)
 	
 	RakNet::BitStream bs;
 	bs.Write(fGravity);
-	pRakServer->RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true, 0);
+	pRakServer->RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
 }
 
 float CServer::GetGravity_(void)
@@ -218,7 +218,7 @@ void CServer::SetWeather_(BYTE byteWeather)
 
 	RakNet::BitStream bs;
 	bs.Write(byteWeather);
-	pRakServer->RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true, 0);
+	pRakServer->RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
 }
 
 BYTE CServer::GetWeather_(void)

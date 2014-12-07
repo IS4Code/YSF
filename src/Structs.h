@@ -504,7 +504,6 @@ class CPlayer
 		PAD(unused, 9);								// 9950 - 9959
 		CPlayerVar*				pPlayerVars;		// 9959 - 9963
 		// Size = 9963
-
 };
 #pragma pack(pop)
 
@@ -527,7 +526,6 @@ class CPlayerPool // sizeof = 99520
 		char				szName[MAX_PLAYERS][25];				// 79012 - 91512
 		BOOL				bIsAnAdmin[MAX_PLAYERS];				// 91512 - 93512
 		BOOL				bIsNPC[MAX_PLAYERS];					// 93512 - 95512
-		
 };
 #pragma pack(pop)
 

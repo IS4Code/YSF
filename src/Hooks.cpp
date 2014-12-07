@@ -379,13 +379,11 @@ static void HOOK_logprintf(const char *msg, ...)
 	vsnprintf(buffer, sizeof(buffer), msg, arguments);
 	va_end(arguments);
 
-	CCallbackManager::OnServerMessage(buffer);
+	if(CCallbackManager::OnServerMessage(buffer))
+		logprintf(buffer);
 
-	logprintf(buffer);
 	if (bRconSocketReply) 
-	{
 		RconSocketReply(buffer);
-	}
 }
 
 

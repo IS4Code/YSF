@@ -118,7 +118,7 @@ bool CPlayerData::DestroyObject(WORD objectid)
 {
 	RakNet::BitStream bs;
 	bs.Write(objectid);
-	pRakServer->RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	pRakServer->RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
 	return 1;
 }
 
