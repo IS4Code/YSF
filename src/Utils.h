@@ -16,6 +16,7 @@
 #include "CTypes.h"
 #include <cstddef>
 #include <algorithm>
+#include <string>
 
 // Linux
 #ifndef _WIN32

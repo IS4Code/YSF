@@ -71,6 +71,11 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	FUNC_format_amxstring = 0x0046ED90;
 
+	DWORD iRealProcessNetworkPacket = FindPattern("\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x64\x89\x25\x00\x00\x00\x00\x81\xEC\x5C", "xxx????xxxxxxxxxxxxxxxxx");
+	logprintf("iRealProcessNetworkPacket  %x\n", iRealProcessNetworkPacket);
+
+	DWORD iSocketLayerSendTo = FindPattern("\x83\xEC\x10\x55\x8B\x6C\x24\x18\x83\xFD\xFF", "xxxxxxxxxxx");
+	logprintf("iSocketLayerSendTo  %x", iSocketLayerSendTo);
 	//logprintf("FUNC_CConsole__FindVariable: %x", FUNC_CConsole__FindVariable); // 0x00486110
 	//logprintf("FUNC_CConsole__SendRules: %x", FUNC_CConsole__SendRules); // 0x00485DD0
 	//logprintf("FUNC_CConsole__Execute: %X", FUNC_CConsole__Execute); // 0x00486350

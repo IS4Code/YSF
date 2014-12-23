@@ -10,8 +10,6 @@
 
 #include <sdk/plugin.h>
 
-#define FUCK_SPAWN_PROTECTION
-
 int RPC_Gravity = 0x92;
 int RPC_Weather = 0x98;
 int RPC_Explosion = 0x4F;
@@ -67,34 +65,6 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, MEDIUM_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
 }
 
-void Spawn(RPCParameters *rpcParams)
-{
-	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
-
-	if (pNetGame->iGameState != GAMESTATE_RUNNING) return;
-
-	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
-	if (!IsPlayerConnected(playerid)) return;
-	CPlayer	*pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-	
-	// Sanity checks
-	if (!pPlayer->bHasSpawnInfo) return;
-	int iSpawnClass = pPlayer->spawn.iSkin;
-	if (iSpawnClass < 0 || iSpawnClass > 300) return;
-
-	// Call OnPlayerSpawn
-	CCallbackManager::OnPlayerSpawn(playerid);
-
-	// Reset all their sync attributes.
-	pPlayer->syncData.vecPosition = pPlayer->spawn.vecPos;
-	pPlayer->syncData.fQuaternionAngle =  pPlayer->spawn.fRotation;
-	pPlayer->vecPosition = pPlayer->spawn.vecPos;
-	pPlayer->wVehicleId = 0;
-	pPlayer->byteState = PLAYER_STATE_SPAWNED;
-
-	CSAMPFunctions::SpawnPlayer_(playerid);
-}
-
 void Death(RPCParameters* rpcParams)
 {
 	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
@@ -117,11 +87,11 @@ void Death(RPCParameters* rpcParams)
 		CPlayer *pKiller = pNetGame->pPlayerPool->pPlayer[killerid];
 
 		// If they aren't streamed for each other, then won't call OnPlayerDeath
-		logprintf("streamed: %d, %d", pKiller->byteStreamedIn[playerid], pPlayer->byteStreamedIn[killerid]);
+		//logprintf("streamed: %d, %d", pKiller->byteStreamedIn[playerid], pPlayer->byteStreamedIn[killerid]);
 		if(!pKiller->byteStreamedIn[playerid] || !pPlayer->byteStreamedIn[killerid])
 			return;
 
-		logprintf("syncdata: %d, reason: %d, health: %f", pKiller->syncData.byteWeapon, reasonid, pPlayer->fHealth);
+		//logprintf("syncdata: %d, reason: %d, health: %f", pKiller->syncData.byteWeapon, reasonid, pPlayer->fHealth);
 		if( pKiller->syncData.byteWeapon != reasonid && reasonid <= 46 )// 46 = parachute
 			return;
 		else if( ( reasonid == 48 || reasonid == 49 ) && pKiller->byteState != PLAYER_STATE_DRIVER ) // 48 - carkill // 49 - helikill
@@ -216,10 +186,6 @@ void InitRPCs()
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
 
-#ifdef FUCK_SPAWN_PROTECTION
-	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Spawn);
-	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Spawn, Spawn);
-#endif
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
 

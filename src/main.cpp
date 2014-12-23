@@ -95,7 +95,9 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		strcpy(szVersion, "0.3z R4");
 	}
 
-	if (GetServerCfgOption("YSF_noversioncheck") != "1")
+	//logprintf("skipgeci: %d", GetServerCfgOption("ysf_skipversioncheck").c_str());
+
+	if (1)
 	{
 		if (version != SAMP_VERSION_UNKNOWN)
 		{
@@ -181,13 +183,9 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			// Get pRakServer
 			int (*pfn_GetRakServer)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_RAKSERVER];
 			pRakServer = (RakServer*)pfn_GetRakServer();
-
-			std::string port, bind, maxconnections;
-			port = GetServerCfgOption("port");
-			bind = GetServerCfgOption("bind");
-			maxconnections = GetServerCfgOption("maxconnections");
-
-			pRakServer->Start((!maxconnections.length()) ? MAX_PLAYERS : atoi(maxconnections.c_str()), 0, 5, atoi(port.c_str()), (!bind.length()) ? NULL : bind.c_str());
+		
+			// SetMaxPlayers() fix
+			pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
 
 			//logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 

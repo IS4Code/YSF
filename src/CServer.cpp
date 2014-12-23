@@ -316,7 +316,6 @@ void CServer::Packet_StatsUpdate(Packet *p)
 	WORD playerid = p->playerIndex;
 	int money;
 	int drunklevel;
-//	BYTE bytePacketID;
 
 	bsStats.SetReadOffset(8);
 	bsStats.Read(money);

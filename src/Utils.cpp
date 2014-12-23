@@ -269,5 +269,5 @@ std::string GetServerCfgOption(const std::string &option)
 			}
 		}
 	}
-	return value;
+	return "0";
 }

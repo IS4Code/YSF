@@ -203,6 +203,8 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 
 bool CCallbackManager::OnServerMessage(char* message)
 {
+	if (!message) return 0;
+
 	int idx = -1;
 	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
@@ -221,7 +223,7 @@ bool CCallbackManager::OnServerMessage(char* message)
 	return !!ret;
 }
 
-bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, char* command)
+bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command)
 {
 	int idx = -1;
 	cell ret = 1;
@@ -235,6 +237,7 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 			in.s_addr = binaryAddress;
 
 			amx_PushString(*iter, &amx_addr, &phys_addr, command, 0, 0);
+			amx_Push(*iter, static_cast<cell>(success));
 			amx_PushString(*iter, &amx_addr, &phys_addr, password, 0, 0);
 			amx_Push(*iter, port);
 			amx_PushString(*iter, &amx_addr, &phys_addr, inet_ntoa(in), 0, 0);

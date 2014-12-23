@@ -27,7 +27,7 @@ public:
 	static void	OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid);
 
 	static bool OnServerMessage(char* message);
-	static bool OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, char* command);
+	static bool OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command);
 
 	static std::vector<AMX *>		m_vecAMX;
 };

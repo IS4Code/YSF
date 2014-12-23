@@ -1097,12 +1097,12 @@ struct Packet
 class RakServer
 {
 public:
-	virtual ~RakServer();
-	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0;
-	virtual void InitializeSecurity( const char *privateKeyE, const char *privateKeyN ); // 4
+	~RakServer();
+	virtual void _0();
+	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0; // 4
 	virtual void DisableSecurity( void ); // 8
 	virtual void SetPassword( const char *_password );	// 12
-	//virtual bool HasPassword( void );	// 16
+	virtual bool HasPassword( void );	// 16
 	virtual void Disconnect( unsigned int blockDuration, unsigned char orderingChannel=0 );	// 20
 	virtual bool Send_ASD(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast); // 24
 	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);	// 28
@@ -1175,10 +1175,10 @@ public:
 class RakServer
 {
 public:
-	virtual ~RakServer();
+	~RakServer();
+	virtual bool _0(); 
+	virtual void _4();
 	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0;
-	//virtual void _4();
-	virtual void _8();
 	virtual void _C();
 	virtual void _10();
 	virtual void _14();

@@ -5210,11 +5210,11 @@ static cell AMX_NATIVE_CALL Natives::SendData( AMX* amx, cell* params )
 
 	if(bBroadcast)
 	{
-		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, UNASSIGNED_PLAYER_ID, true);
+		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
 	}
 	else
 	{
-		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, playerId, 0);
+		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, playerId, 0);
 	}
 	return 1;
 }

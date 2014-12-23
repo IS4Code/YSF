@@ -683,7 +683,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					szPassword[wStrLen] = 0;
 					data += wStrLen;
 
-					if (strcmp(szPassword, pServer->GetStringVariable("rcon_password")) == 0)
+					if (!strcmp(szPassword, pServer->GetStringVariable("rcon_password")))
 					{
 						// Check there's enough data for another WORD
 						tmp_datalen += sizeof(WORD);
@@ -709,7 +709,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						if (pConsole)
 						{
-							if (CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, szCommand))
+							if (CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, true, szCommand))
 							{ 
 								bRconSocketReply = true;
 								// Execute the command
@@ -730,7 +730,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						RconSocketReply("Invalid RCON password.");
 						bRconSocketReply = false;
 
-						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, "NULL");
+						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, false, "NULL");
 					}
 					free(szPassword);
 
@@ -780,5 +780,5 @@ void InstallPreHooks()
 		GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
 		query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
 	}
-	logprintf_hook.Install((void*)logprintf, (void*)HOOK_logprintf);	
+	//logprintf_hook.Install((void*)logprintf, (void*)HOOK_logprintf);	
 }
