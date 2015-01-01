@@ -1,5 +1,5 @@
-#ifndef PICKUPPOOL_H
-#define PICKUPPOOL_H
+#ifndef YSF_PICKUPPOOL_H
+#define YSF_PICKUPPOOL_H
 
 #include "CTypes.h"
 #include "CVector.h"

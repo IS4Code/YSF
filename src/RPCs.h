@@ -30,8 +30,8 @@
  *  SA:MP Team past, present and future
  */
 
-#ifndef __YSF_RPCS
-#define __YSF_RPCS
+#ifndef YSF_RPCS_H
+#define YSF_RPCS_H
 
 extern int RPC_Gravity;
 extern int RPC_Weather;
@@ -52,6 +52,9 @@ extern int RPC_RemovePlayerAttachedObject;
 extern int RPC_WorldPlayerAdd;
 extern int RPC_WorldPlayerRemove;
 extern int RPC_ChatBubble;
+extern int RPC_SetPlayerSkin;
+extern int RPC_SetPlayerName;
+extern int RPC_SetFightingStyle;
 
 extern int RPC_UpdateScoresPingsIPs;
 extern int RPC_PickedUpPickup;

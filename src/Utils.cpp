@@ -8,17 +8,7 @@
 
   =========================================*/
 
-#include "Utils.h"
-
-#include "CVector.h"
-#include "CPlayerData.h"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-
-#include <sdk/plugin.h>
+#include "main.h"
 
 // Linux GetTickCount
 #ifndef _WIN32
@@ -63,6 +53,8 @@ const char* CUtils::GetWeaponName_(BYTE weaponid)
 {
 	switch (weaponid)
 	{
+	case 0:
+		return "Fists";
 	case WEAPON_BRASSKNUCKLE:
 		return "Brass Knuckles";
 	case WEAPON_GOLFCLUB:
@@ -99,6 +91,12 @@ const char* CUtils::GetWeaponName_(BYTE weaponid)
 		return "Teargas";
 	case WEAPON_MOLTOV:
 		return "Molotov";
+	case 19:
+		return "Vehicle Missile";
+	case 20:
+		return "Hydra Flare";
+	case 21:
+		return "Jetpack";
 	case WEAPON_COLT45:
 		return "Colt 45";
 	case WEAPON_SILENCED:
@@ -143,14 +141,20 @@ const char* CUtils::GetWeaponName_(BYTE weaponid)
 		return "Fire Extinguisher";
 	case WEAPON_CAMERA:
 		return "Camera";
-	case 44:
+	case WEAPON_NIGHTVISION:
 		return "Nightvision";
-	case 45:
+	case WEAPON_INFRARED:
 		return "Infrared";
 	case WEAPON_PARACHUTE:
 		return "Parachute";
+	case 47:
+		return "Fake Pistol";
 	case WEAPON_VEHICLE:
 		return "Vehicle";
+	case 50:
+		return "Helicopter Blades";
+	case 51:
+		return "Explosion";
 	case WEAPON_DROWN:
 		return "Drowned";
 	case WEAPON_COLLISION:
@@ -242,7 +246,7 @@ BYTE CUtils::GetWeaponSlot(BYTE weaponid)
 	return result;
 }
 
-char *GetPlayerName(int playerid)
+char *GetPlayerName_(int playerid)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;
 

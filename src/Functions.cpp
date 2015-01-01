@@ -1,7 +1,3 @@
-#include "Functions.h"
-
-#include "Structs.h"
-#include "Addresses.h"
 #include "main.h"
 
 CConsole__AddStringVariable_t			CSAMPFunctions::pfn__CConsole__AddStringVariable = NULL;

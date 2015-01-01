@@ -1,7 +1,7 @@
-#ifndef HOOKS_H
-#define HOOKS_H
+#ifndef YSF_HOOKS_H
+#define YSF_HOOKS_H
 
-#include <sdk/plugin.h>
+#include <sampgdk/sampgdk.h>
 #include "CTypes.h"
 
 // Hopefully this will be optimised out

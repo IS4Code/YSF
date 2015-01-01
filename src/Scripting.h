@@ -30,10 +30,10 @@
  *  SA:MP Team past, present and future
  */
 
-#ifndef SCRIPTING_H
-#define SCRIPTING_H
+#ifndef YSF_SCRIPTING_H
+#define YSF_SCRIPTING_H
 
-#include <sdk/plugin.h>
+#include <sampgdk/sampgdk.h>
 #include "main.h"
 
 #define CHECK_PARAMS(m, n) \
@@ -86,6 +86,13 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetPlayerGravity(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetPlayerTeamForPlayer(AMX *amx, cell *params); // R5 - Exp
 	static cell AMX_NATIVE_CALL GetPlayerTeamForPlayer(AMX *amx, cell *params); // R5
+	static cell AMX_NATIVE_CALL SetPlayerSkinForPlayer(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL GetPlayerSkinForPlayer(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL SetPlayerNameForPlayer(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL GetPlayerNameForPlayer(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL SetPlayerFightStyleForPlayer(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL GetPlayerFightStyleForPlayer(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL SetPlayerPosForPlayer(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL GetPlayerWeather(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerWorldBounds(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL TogglePlayerWidescreen(AMX *amx, cell *params);

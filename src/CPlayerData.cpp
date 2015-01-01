@@ -1,19 +1,4 @@
-#include "CPlayerData.h"
-
-#include "Utils.h"
-#include "CCallbackManager.h"
-#include "CServer.h"
-#include "RPCs.h"
-
 #include "main.h"
-#include <map>
-
-#ifndef _WIN32
-	#include <string.h>
-#else
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#endif
 
 CPlayerData::CPlayerData( WORD playerid )
 {
@@ -59,8 +44,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	fBounds[2] = 20000.0f;
 	fBounds[3] = -20000.0f;
 
-	memset(bytePlayersTeam, 0xFF, sizeof(bytePlayersTeam));
-
 	memset(pPlayerZone, NULL, sizeof(pPlayerZone));
 	memset(byteClientSideZoneIDUsed, 0xFF, sizeof(byteClientSideZoneIDUsed));
 	memset(wClientSideGlobalZoneID, 0xFFFF, sizeof(wClientSideGlobalZoneID));
@@ -85,11 +68,106 @@ CPlayerData::CPlayerData( WORD playerid )
 	dwLastUpdateTick = false;
 
 	bHidden = false;
+
+	// Private
+	memset(m_iTeams, -1, sizeof(m_iSkins));
+	memset(m_iSkins, -1, sizeof(m_iSkins));
+	memset(m_iFightingStyles, -1, sizeof(m_iFightingStyles));
+	memset(m_szNames, NULL, sizeof(m_szNames));
 }
 
 CPlayerData::~CPlayerData( void )
 {
 
+}
+
+bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
+{
+	m_iTeams[teamplayerid] = team;
+
+	RakNet::BitStream bs;
+	bs.Write((WORD)teamplayerid);
+	bs.Write((BYTE)team);	
+	pRakServer->RPC(&RPC_SetPlayerTeam, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	return true;
+}
+
+int CPlayerData::GetPlayerTeamForPlayer(WORD teamplayerid)
+{
+	CPlayer *p = pNetGame->pPlayerPool->pPlayer[teamplayerid];
+	if (m_iTeams[teamplayerid] == -1)
+	{
+		return p->spawn.byteTeam;
+	}
+	return m_iTeams[teamplayerid];
+}
+
+
+bool CPlayerData::SetPlayerSkinForPlayer(WORD skinplayerid, int skin)
+{
+	m_iSkins[skinplayerid] = skin;
+
+	RakNet::BitStream bs;
+	bs.Write((int)skinplayerid);
+	bs.Write((int)skin);
+	pRakServer->RPC(&RPC_SetPlayerSkin, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	return true;
+}
+
+int CPlayerData::GetPlayerSkinForPlayer(WORD skinplayerid)
+{
+	CPlayer *p = pNetGame->pPlayerPool->pPlayer[skinplayerid];
+	if (m_iSkins[skinplayerid] == -1)
+	{
+		return p->spawn.iSkin;
+	}
+	return m_iSkins[skinplayerid];
+}
+
+bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, char *name)
+{
+	memcpy(&m_szNames[nameplayerid], name, MAX_PLAYER_NAME);
+	BYTE len = strlen(name);
+
+	RakNet::BitStream bs;
+	bs.Write((WORD)nameplayerid);
+	bs.Write((BYTE)len);
+	bs.Write(name, len);
+	bs.Write((BYTE)1);
+
+	pRakServer->RPC(&RPC_SetPlayerName, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	return true;
+}
+
+char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
+{
+	CPlayer *p = pNetGame->pPlayerPool->pPlayer[nameplayerid];
+	if (!m_szNames[nameplayerid])
+	{
+		return GetPlayerName_(nameplayerid);
+	}
+	return &m_szNames[nameplayerid][0];
+}
+
+bool CPlayerData::SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style)
+{
+	m_iFightingStyles[styleplayerid] = style;
+
+	RakNet::BitStream bs;
+	bs.Write((WORD)styleplayerid);
+	bs.Write((BYTE)style);
+	pRakServer->RPC(&RPC_SetFightingStyle, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	return true;
+}
+
+int CPlayerData::GetPlayerFightingStyleForPlayer(WORD styleplayerid)
+{
+	CPlayer *p = pNetGame->pPlayerPool->pPlayer[styleplayerid];
+	if (m_iFightingStyles[styleplayerid] == -1)
+	{
+		return p->byteFightingStyle;
+	}
+	return m_iFightingStyles[styleplayerid];
 }
 
 WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
@@ -114,7 +192,7 @@ WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
 	return 0xFFFF;
 }
 
-bool CPlayerData::DestroyObject(WORD objectid)
+bool CPlayerData::DestroyObject_(WORD objectid)
 {
 	RakNet::BitStream bs;
 	bs.Write(objectid);

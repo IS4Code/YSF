@@ -1,15 +1,4 @@
-#include "CGangZonePool.h"
-
-#include "CPlayerData.h"
-#include "Structs.h"
 #include "main.h"
-#include "CCallbackManager.h"
-#include "RPCs.h"
-#include "Utils.h"
-
-#ifndef _WIN32
-	#include <string.h>
-#endif
 
 CGangZonePool::CGangZonePool()
 {
@@ -110,6 +99,7 @@ void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 		if(pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 0xFF) break;
 		i++;
 	}
+	if (i == MAX_GANG_ZONES) return;
 
 	// Mark client side zone id as used
 	if(!bPlayerZone)
@@ -152,6 +142,7 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 			if(pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 0xFF) break;
 			i++;
 		}
+		if (i == MAX_GANG_ZONES) return;
 
 		// Mark client side zone id as used
 		pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0;
@@ -207,6 +198,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 
 		pPlayerData[playerid]->wClientSidePlayerZoneID[i] = 0xFFFF;
 	}
+	if (i == MAX_GANG_ZONES) return;
 
 	pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0xFF;
 	pPlayerData[playerid]->dwClientSideZoneColor[i] = 0;
@@ -253,6 +245,7 @@ void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, boo
 			i++;
 		}
 	}
+	if (i == MAX_GANG_ZONES) return;
 
 	pPlayerData[playerid]->dwClientSideZoneFlashColor[i] = dwColor;
 	pPlayerData[playerid]->bIsGangZoneFlashing[i] = true;
@@ -296,6 +289,7 @@ void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZo
 			i++;
 		}
 	}
+	if (i == MAX_GANG_ZONES) return;
 
 	pPlayerData[playerid]->dwClientSideZoneFlashColor[i] = 0;
 	pPlayerData[playerid]->bIsGangZoneFlashing[i] = true;

@@ -1,17 +1,4 @@
-#include "CServer.h"
-
-#include "Addresses.h"
-#include "CPlayerData.h"
-#include "CCallbackManager.h"
-#include "Functions.h"
-#include "RPCs.h"
-#include "Utils.h"
 #include "main.h"
-
-#ifndef _WIN32
-	#include <cstring>
-#endif
-#include <stdio.h>
 
 CServer::CServer(eSAMPVersion version)
 {
@@ -166,7 +153,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 			}
 
 			//logprintf("remove objects i: %d, forplayerid: %d", i, forplayerid);
-			pPlayerData[playerid]->DestroyObject(i);
+			pPlayerData[playerid]->DestroyObject_(i);
 
 			/*
 			logprintf("leave %d, %f, %f, %f, %f, %f, %f", gAOData[forplayerid][i].AttachPlayerID,
@@ -277,7 +264,7 @@ bool CServer::IsValidNick(char *szName)
 	return true;
 }
 
-WORD CServer::GetMaxPlayers()
+WORD CServer::GetMaxPlayers_()
 {
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;

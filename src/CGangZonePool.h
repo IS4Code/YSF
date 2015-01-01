@@ -1,5 +1,5 @@
-#ifndef CGANGZONEPOOL_H
-#define CGANGZONEPOOL_H
+#ifndef YSF_CGANGZONEPOOL_H
+#define YSF_CGANGZONEPOOL_H
 
 #include "main.h"
 #include "Structs.h"

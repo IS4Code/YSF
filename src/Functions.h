@@ -1,7 +1,7 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#ifndef YSF_FUNCTIONS_H
+#define YSF_FUNCTIONS_H
 
-#include <sdk/plugin.h>
+#include <sampgdk/sampgdk.h>
 
 #ifdef _WIN32
 #include <winsock2.h>

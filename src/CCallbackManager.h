@@ -1,5 +1,5 @@
-#ifndef CALLBACKMANAGER_H
-#define CALLBACKMANAGER_H
+#ifndef YSF_CALLBACKMANAGER_H
+#define YSF_CALLBACKMANAGER_H
 
 // Thx to OrMisicL - from FCNPC
 #include <vector>

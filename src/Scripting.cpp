@@ -30,34 +30,7 @@
  *  SA:MP Team past, present and future
  */
 
-#include "Scripting.h"
-
-#include <raknet/BitStream.h>
-#include "RPCs.h"
-#include "amxfunctions.h"
-#include "Utils.h"
-#include "Structs.h"
-#include "CPlayerData.h"
-#include "Functions.h"
-#include "CModelSizes.h"
-
-#ifdef _WIN32
-	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
-	// Yes - BOTH string versions...
-	#include <strsafe.h>
-#else
-	#include <sys/stat.h>
-	#include <dirent.h>
-	#include <fnmatch.h>
-//	#include <sys/times.h>
-	#include <algorithm>
-#endif
-
-#include <sdk/plugin.h>
-
-#include <string.h>
-#include <stdio.h>
+#include "main.h"
 
 // extern
 typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
@@ -937,7 +910,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerGravity( AMX* amx, cell* params )
 	return amx_ftoc(pPlayerData[playerid]->fGravity);
 }
 
-// native SetPlayerTeamForPlayer(forplayerid, playerid, teamid);
+// native SetPlayerTeamForPlayer(playerid, teamplayerid, teamid);
 static cell AMX_NATIVE_CALL Natives::SetPlayerTeamForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -946,22 +919,18 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerTeamForPlayer( AMX* amx, cell* par
 
 	CHECK_PARAMS(3, "SetPlayerTeamForPlayer");
 
-	int forplayerid = (int)params[1];
-	int playerid = (int)params[2];
-	BYTE team = (BYTE)params[3];
+	int playerid = (int)params[1];
+	int teamplayerid = (int)params[2];
+	int team = (int)params[3];
 
-	if(!IsPlayerConnected(forplayerid) || !IsPlayerConnected(playerid)) return 0;
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(teamplayerid)) return 0;
+	if (team < 0 || team > 255) return 0;
 
-	pPlayerData[forplayerid]->bytePlayersTeam[playerid] = team;
-
-	RakNet::BitStream bs;
-	bs.Write((WORD)playerid);	// playerid
-	bs.Write(team);				// teamid
-	pRakServer->RPC(&RPC_SetPlayerTeam, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	pPlayerData[playerid]->SetPlayerTeamForPlayer(teamplayerid, team);
 	return 1;
 }
 
-// native GetPlayerTeamForPlayer(forplayerid, playerid);
+// native GetPlayerTeamForPlayer(playerid, teamplayerid);
 static cell AMX_NATIVE_CALL Natives::GetPlayerTeamForPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -970,12 +939,156 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerTeamForPlayer( AMX* amx, cell* par
 
 	CHECK_PARAMS(2, "GetPlayerTeamForPlayer");
 
-	int forplayerid = (int)params[1];
-	int playerid = (int)params[2];
+	int playerid = (int)params[1];
+	int teamplayerid = (int)params[2];
 
-	if(!IsPlayerConnected(forplayerid) || !IsPlayerConnected(playerid)) return 0;
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(teamplayerid)) return 0;
 
-	return pPlayerData[forplayerid]->bytePlayersTeam[playerid];
+	return pPlayerData[playerid]->GetPlayerTeamForPlayer(teamplayerid);
+}
+
+// native SetPlayerSkinForPlayer(playerid, skinplayerid, skin);
+static cell AMX_NATIVE_CALL Natives::SetPlayerSkinForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "SetPlayerSkinForPlayer");
+
+	int playerid = (int)params[1];
+	int skinplayerid = (int)params[2];
+	int skin = (int)params[3];
+
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(skinplayerid)) return 0;
+	if (skin < 0 || skin > 300) return 0;
+
+	pPlayerData[playerid]->SetPlayerSkinForPlayer(skinplayerid, skin);
+	return 1;
+}
+
+// native GetPlayerSkinForPlayer(playerid, skinplayerid);
+static cell AMX_NATIVE_CALL Natives::GetPlayerSkinForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "GetPlayerSkinForPlayer");
+
+	int playerid = (int)params[1];
+	int skinplayerid = (int)params[2];
+
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(skinplayerid)) return 0;
+
+	return pPlayerData[playerid]->GetPlayerSkinForPlayer(skinplayerid);
+}
+
+// native SetPlayerNameForPlayer(playerid, nameplayerid, playername[]);
+static cell AMX_NATIVE_CALL Natives::SetPlayerNameForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "SetPlayerNameForPlayer");
+
+	int playerid = (int)params[1];
+	int nameplayerid = (int)params[2];
+	char *name = NULL;
+
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(nameplayerid)) return 0;
+
+	amx_StrParam(amx, params[3], name);
+	logprintf("playername: %s", name);
+
+	pPlayerData[playerid]->SetPlayerNameForPlayer(nameplayerid, name);
+	return 1;
+}
+
+// native GetPlayerNameForPlayer(playerid, nameplayerid, playername[], size = sizeof(playername));
+static cell AMX_NATIVE_CALL Natives::GetPlayerNameForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(4, "GetPlayerNameForPlayer");
+
+	int playerid = (int)params[1];
+	int nameplayerid = (int)params[2];
+	char *name = NULL;
+
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(nameplayerid)) return 0;
+
+	return set_amxstring(amx, params[3], pPlayerData[playerid]->GetPlayerNameForPlayer(nameplayerid), params[4]);
+}
+
+// native SetPlayerFightStyleForPlayer(playerid, styleplayerid, style);
+static cell AMX_NATIVE_CALL Natives::SetPlayerFightStyleForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "SetPlayerFightStyleForPlayer");
+
+	int playerid = (int)params[1];
+	int styleplayerid = (int)params[2];
+	int skin = (int)params[3];
+
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(styleplayerid)) return 0;
+
+	pPlayerData[playerid]->SetPlayerFightingStyleForPlayer(styleplayerid, skin);
+	return 1;
+}
+
+// native GetPlayerFightStyleForPlayer(playerid, skinplayerid);
+static cell AMX_NATIVE_CALL Natives::GetPlayerFightStyleForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "GetPlayerFightStyleForPlayer");
+
+	int playerid = (int)params[1];
+	int styleplayerid = (int)params[2];
+
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(styleplayerid)) return 0;
+
+	return pPlayerData[playerid]->GetPlayerFightingStyleForPlayer(styleplayerid);
+}
+
+// native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Floaf:fZ);
+static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 5;
+
+	CHECK_PARAMS(5, "SetPlayerPosForPlayer");
+
+	int playerid = (int)params[1];
+	int posplayerid = (int)params[2];
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(posplayerid)) return 0;
+
+	CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
+	CVector vecPos = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+
+	CSyncData pSyncData;
+	//memcpy(&pSyncData, &p->syncData, sizeof(CSyncData));
+	memset(&pSyncData, 0, sizeof(CSyncData));
+
+	pSyncData.vecPosition = vecPos;
+	logprintf("position: %f, %f, %f, health:", pSyncData.vecPosition.fX, pSyncData.vecPosition.fY, pSyncData.vecPosition.fZ);
+
+	RakNet::BitStream bs;
+	bs.Write((BYTE)ID_PLAYER_SYNC);
+	bs.Write((WORD)posplayerid);
+	bs.Write((char*)&pSyncData, sizeof(CSyncData));
+	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false);
+	return 1;
 }
 
 // native SetWeather(weatherid);
@@ -3894,6 +4007,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_AttachPlayerObjectToPlayer( AMX* amx,
 // native YSF_AddPlayer(playerid);
 static cell AMX_NATIVE_CALL Natives::YSF_AddPlayer( AMX* amx, cell* params )
 {
+/*
 	// If unknown server version
 	if(!pServer)
 		return 0;
@@ -3917,12 +4031,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_AddPlayer( AMX* amx, cell* params )
 	if(ret)
 		pNetGame->pPickupPool->InitializeForPlayer(playerid);
 #endif
-	return ret;
+	*/
+	return 1;
 }
 
 // native YSF_RemovePlayer(playerid);
 static cell AMX_NATIVE_CALL Natives::YSF_RemovePlayer( AMX* amx, cell* params )
 {
+/*
 	// If unknown server version
 	if(!pServer)
 		return 0;
@@ -3935,12 +4051,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_RemovePlayer( AMX* amx, cell* params )
 	//logprintf("YSF_RemovePlayer - connected: %d, raknet geci: %d", pNetGame->pPlayerPool->bIsPlayerConnected[(int)params[1]], pRakServer->GetPlayerIDFromIndex((int)params[1]).binaryAddress);
 	int playerid = (int)params[1];
 	pServer->RemovePlayer(playerid);
+*/
 	return 1;
 }
 
 // native YSF_StreamIn(playerid, forplayerid);
 static cell AMX_NATIVE_CALL Natives::YSF_StreamIn( AMX* amx, cell* params )
 {
+/*
 	// If unknown server version
 	if(!pServer)
 		return 0;
@@ -3951,12 +4069,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_StreamIn( AMX* amx, cell* params )
 	CHECK_PARAMS(2, "YSF_StreamIn");
 
 	pServer->OnPlayerStreamIn((WORD)params[1], (WORD)params[2]);
+*/
 	return 1;
 }
 
 // native YSF_StreamOut(playerid, forplayerid);
 static cell AMX_NATIVE_CALL Natives::YSF_StreamOut( AMX* amx, cell* params )
 {
+/*
 	// If unknown server version
 	if(!pServer)
 		return 0;
@@ -3967,6 +4087,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_StreamOut( AMX* amx, cell* params )
 	CHECK_PARAMS(2, "YSF_StreamOut");
 
 	pServer->OnPlayerStreamOut((WORD)params[1], (WORD)params[2]);
+*/
 	return 1;
 }
 
@@ -5384,8 +5505,17 @@ AMX_NATIVE_INFO YSINatives [] =
 	// Special
 	{ "SetPlayerGravity",				Natives::SetPlayerGravity },
 	{ "GetPlayerGravity",				Natives::GetPlayerGravity },
+	
 	{ "SetPlayerTeamForPlayer",			Natives::SetPlayerTeamForPlayer }, // R5 - Experimental - needs testing - tested, should be OK
 	{ "GetPlayerTeamForPlayer",			Natives::GetPlayerTeamForPlayer }, // R5
+	{ "SetPlayerSkinForPlayer",			Natives::SetPlayerSkinForPlayer }, // R11
+	{ "GetPlayerSkinForPlayer",			Natives::GetPlayerSkinForPlayer }, // R11
+	{ "SetPlayerNameForPlayer",			Natives::SetPlayerNameForPlayer }, // R11
+	{ "GetPlayerNameForPlayer",			Natives::GetPlayerNameForPlayer }, // R11
+	{ "SetPlayerFightStyleForPlayer",	Natives::SetPlayerFightStyleForPlayer }, // R11
+	{ "GetPlayerFightStyleForPlayer",	Natives::GetPlayerFightStyleForPlayer }, // R11
+	{ "SetPlayerPosForPlayer",			Natives::SetPlayerPosForPlayer}, // R11
+
 	{ "GetPlayerWeather",				Natives::GetPlayerWeather },
 	{ "GetPlayerWorldBounds",			Natives::GetPlayerWorldBounds },
 	{ "TogglePlayerWidescreen",			Natives::TogglePlayerWidescreen },

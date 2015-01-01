@@ -1,5 +1,5 @@
-#ifndef CMODELSIZES_H
-#define CMODELSIZES_H
+#ifndef YSF_CMODELSIZES_H
+#define YSF_CMODELSIZES_H
 
 #include "CTypes.h"
 #include "CVector.h"

@@ -1,14 +1,4 @@
-#include "RPCs.h"
-
 #include "main.h"
-
-#include "Structs.h"
-#include "CCallbackManager.h"
-#include "CPlayerData.h"
-#include "Functions.h"
-#include "Utils.h"
-
-#include <sdk/plugin.h>
 
 int RPC_Gravity = 0x92;
 int RPC_Weather = 0x98;
@@ -29,6 +19,9 @@ int RPC_RemovePlayerAttachedObject = 0x71;
 int RPC_WorldPlayerAdd = 32;
 int RPC_WorldPlayerRemove = 163;
 int RPC_ChatBubble = 0x3B;
+int RPC_SetPlayerSkin = 0x99;
+int RPC_SetPlayerName = 0x0B;
+int RPC_SetFightingStyle = 0x59;
 
 int RPC_UpdateScoresPingsIPs = 0x9B;
 int RPC_PickedUpPickup = 0x83;
@@ -98,12 +91,12 @@ void Death(RPCParameters* rpcParams)
 			return;
 
 		if (pServer->GetIntVariable("chatlogging"))
-			logprintf("[kill] %s killed %s %s", GetPlayerName(killerid), GetPlayerName(playerid), CUtils::GetWeaponName_(reasonid));
+			logprintf("[kill] %s killed %s %s", GetPlayerName_(killerid), GetPlayerName_(playerid), CUtils::GetWeaponName_(reasonid));
 	}
 	else
 	{
 		if (pServer->GetIntVariable("chatlogging"))
-			logprintf("[death] %s died %d", GetPlayerName(playerid), reasonid);
+			logprintf("[death] %s died %d", GetPlayerName_(playerid), reasonid);
 	}
 	
 	bsData.Reset();

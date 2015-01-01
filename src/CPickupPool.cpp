@@ -1,11 +1,4 @@
-#include "CPickupPool.h"
-
-#include "CVector.h"
 #include "main.h"
-#include <raknet/BitStream.h>
-#include "CPlayerData.h"
-#include "RPCs.h"
-#include "Utils.h"
 
 #define MAX_PICKUP_DISTANCE	70.0f
 
@@ -21,6 +14,19 @@ CPickupPool::~CPickupPool()
 
 void CPickupPool::InitializeForPlayer(WORD playerid)
 {
+	/*
+	CPickup pPickup(1337, 0, CVector(0.0, 0.0, 0.0), 0, GLOBAL);
+	
+	int id = 0;
+	for(int x = 0; x != 6; x++)
+	{
+		for(int i = 0; i != 200; i++, id++)
+		{
+			ShowPickup(id, playerid, &pPickup);
+			HidePickup(id, playerid);
+		}
+	}
+	*/
 	int count = 0;
 	for (PickupMap::iterator p = m_Pickups.begin(); p != m_Pickups.end(); p++)
 	{
@@ -152,7 +158,7 @@ void CPickupPool::Destroy(int pickupid)
 			{
 				if(p->second == it->second)
 				{
-					//logprintf("destroy pickup: playerid: %d, pickup %d, clientside: %d - pos: %f, %f, %f", i, pickupid, p->first, p->second->vecPos.fX, p->second->vecPos.fY, p->second->vecPos.fZ);
+					logprintf("destroy pickup: playerid: %d, pickup %d, clientside: %d - pos: %f, %f, %f", i, pickupid, p->first, p->second->vecPos.fX, p->second->vecPos.fY, p->second->vecPos.fZ);
 
 					HidePickup((int)p->first, i);
 					pPlayerData[i]->bClientPickupStreamedIn[p->first] = false;
@@ -285,7 +291,7 @@ void CPickupPool::Process(void)
 				{
 					if (pNetGame->pPlayerPool->dwVirtualWorld[playerid] == p->second->iWorld || p->second->iWorld == -1)
 					{
-						//logprintf("streamin: %f - %d, world: %d (pickupid: %d)", distance, playerid, p->second->iWorld, p->first);
+						logprintf("streamin: %f - %d, world: %d (pickupid: %d)", distance, playerid, p->second->iWorld, p->first);
 						pPlayerData[playerid]->bClientPickupStreamedIn.set(p->first, true);
 
 						ShowPickup((int)p->first, playerid, p->second);
@@ -293,7 +299,7 @@ void CPickupPool::Process(void)
 				}
 				else if ((distance >= MAX_PICKUP_DISTANCE || (pNetGame->pPlayerPool->dwVirtualWorld[playerid] != p->second->iWorld && p->second->iWorld != -1)) && pPlayerData[playerid]->bClientPickupStreamedIn[p->first])
 				{
-					//logprintf("streamout: %f - %d (pickupid: %d)", distance, playerid, p->first);
+					logprintf("streamout: %f - %d (pickupid: %d)", distance, playerid, p->first);
 					pPlayerData[playerid]->bClientPickupStreamedIn.set(p->first, false);
 
 					HidePickup((int)p->first, playerid);

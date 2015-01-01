@@ -30,8 +30,8 @@
  *  SA:MP Team past, present and future
  */
 
-#ifndef __YSF_STRUCTS
-#define __YSF_STRUCTS
+#ifndef YSF_STRUCTS_H
+#define YSF_STRUCTS_H
 
 #include "CServer.h"
 #include <raknet/BitStream.h>
@@ -40,27 +40,28 @@
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
 #include <map>
-#include <sdk/plugin.h>
+
+#include <sampgdk/sampgdk.h>
 
 class CGangZonePool;
 #define PAD(a, b)			char a[b]
 
 // SA-MP defines
-#define	MAX_PLAYERS					500
-#define	MAX_OBJECTS					1000
-#define	MAX_GANG_ZONES				1024
-#define	MAX_PICKUPS					4096
-#define	MAX_TEXT_DRAWS				2048
-#define	MAX_PLAYER_TEXT_DRAWS		256
-#define	MAX_VEHICLES				2000
+//#define	MAX_PLAYERS					500
+//#define	MAX_OBJECTS					1000
+//#define	MAX_GANG_ZONES				1024
+//#define	MAX_PICKUPS					4096
+//#define	MAX_TEXT_DRAWS				2048
+//#define	MAX_PLAYER_TEXT_DRAWS		256
+//#define	MAX_VEHICLES				2000
 #define	MAX_ATTACHED_OBJECTS		10
-#define	MAX_PLAYER_NAME				24
-#define	MAX_3DTEXT_GLOBAL			1024
-#define	MAX_3DTEXT_PLAYER			1024
-#define	MAX_MENUS					128
-#define	INVALID_PLAYER_ID			65535
+//#define	MAX_PLAYER_NAME				24
+//#define	MAX_3DTEXT_GLOBAL			1024
+//#define	MAX_3DTEXT_PLAYER			1024
+//#define	MAX_MENUS					128
+//#define	INVALID_PLAYER_ID			65535
 #define	MAX_FILTER_SCRIPTS			16
-
+/*
 #define WEAPON_BRASSKNUCKLE				1
 #define WEAPON_GOLFCLUB					2
 #define WEAPON_NITESTICK				3
@@ -118,7 +119,7 @@ class CGangZonePool;
 #define PLAYER_STATE_WASTED						(7)
 #define PLAYER_STATE_SPAWNED					(8)
 #define PLAYER_STATE_SPECTATING					(9)
-
+*/
 #define AFK_ACCURACY					1500
 
 typedef int                 INT;

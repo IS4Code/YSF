@@ -1,10 +1,10 @@
-#ifndef CPLAYER_H
-#define CPLAYER_H
+#ifndef YSF_CPLAYERDATA_H
+#define YSF_CPLAYERDATA_H
 
 //#include "CServer.h"
 #include "Structs.h"
 #include <bitset>
-#include <sdk/plugin.h>
+#include <sampgdk/sampgdk.h>
 
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
@@ -58,8 +58,20 @@ public:
 	CPlayerData(WORD playerid);
 	~CPlayerData(void);
 
+	bool SetPlayerTeamForPlayer(WORD teamplayerid, int team);
+	int GetPlayerTeamForPlayer(WORD teamplayerid);
+
+	bool SetPlayerSkinForPlayer(WORD skinplayerid, int skin);
+	int GetPlayerSkinForPlayer(WORD skinplayerid);
+
+	bool SetPlayerNameForPlayer(WORD nameplayerid, char *name);
+	char *GetPlayerNameForPlayer(WORD nameplayerid);
+
+	bool SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style);
+	int GetPlayerFightingStyleForPlayer(WORD styleplayerid);
+
 	WORD GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer = false);
-	bool DestroyObject(WORD objectid);
+	bool DestroyObject_(WORD objectid);
 
 	void Process(void);
 
@@ -78,8 +90,7 @@ public:
 	float fBounds[4];
 
 	BYTE byteTeam;
-	BYTE bytePlayersTeam[MAX_PLAYERS]; // for GetPlayerTeamForPlayer
-
+	
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];
 
 	// [clientsideid] = serversideid
@@ -114,5 +125,12 @@ public:
 	bool bAFKState : 1;
 	bool bEverUpdated : 1; 
 	bool bHidden : 1;
+	bool bControllable : 1;
+
+private:
+	int m_iTeams[MAX_PLAYERS];
+	int m_iSkins[MAX_PLAYERS];
+	int m_iFightingStyles[MAX_PLAYERS];
+	char m_szNames[MAX_PLAYERS][MAX_PLAYER_NAME];
 };
 #endif

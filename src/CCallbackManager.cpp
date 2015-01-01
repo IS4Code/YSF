@@ -1,18 +1,5 @@
-#include "CCallbackManager.h"
-#include "CServer.h"
-#include "Structs.h"
-
-#include <sdk/plugin.h>
 #include "main.h"
-#include "Utils.h"
 
-#include <vector>
-
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <arpa/inet.h>
-#endif
 std::vector<AMX *> CCallbackManager::m_vecAMX;
 
 void CCallbackManager::RegisterAMX(AMX *pAMX)
@@ -264,16 +251,17 @@ void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
 		}
 	}
 }
-/*
+
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 {
 	if (playerid >= 0 && playerid < MAX_PLAYERS)
 	{
 		bool ret = pServer->AddPlayer(playerid);
-
 		// Initialize pickups
+#ifdef NEW_PICKUP_SYSTEM
 		if (ret)
 			pNetGame->pPickupPool->InitializeForPlayer(playerid);
+#endif
 	}
 	return true;
 }
@@ -300,8 +288,25 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnDialogResponse(int playerid, int dialogid, int 
 {
 	if (IsPlayerConnected(playerid))
 	{
-		//pNetGame->pPlayerPool->pPlayer[playerid]->wDialogID = 0;
+		pNetGame->pPlayerPool->pPlayer[playerid]->wDialogID = 0;
+	}
+	return false;
+}
+
+PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditObject(int playerid, bool playerobject, int objectid, int response, float fX, float fY, float fZ, float fRotX, float fRotY, float fRotZ)
+{
+	if (IsPlayerConnected(playerid) && response < EDIT_RESPONSE_UPDATE)
+	{
+		pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject = false;
 	}
 	return true;
 }
-*/
+
+PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditAttachedObject(int playerid, int response, int index, int modelid, int boneid, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float fRotZ, float fScaleX, float fScaleY, float fScaleZ)
+{
+	if (IsPlayerConnected(playerid) && response < EDIT_RESPONSE_UPDATE)
+	{
+		pNetGame->pPlayerPool->pPlayer[playerid]->bEditAttachedObject = false;
+	}
+	return true;
+}

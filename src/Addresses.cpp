@@ -1,9 +1,4 @@
-#include "Addresses.h"
-
-#include "Hooks.h"
 #include "main.h"
-
-#include <sdk/plugin.h>
 
 #ifdef _WIN32
 DWORD CAddress::FUNC_Logprintf_03Z = 0x00486CB0;

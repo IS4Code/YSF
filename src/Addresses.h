@@ -30,8 +30,8 @@
  *  SA:MP Team past, present and future
  */
 
-#ifndef ADDRESSES_H
-#define ADDRESSES_H
+#ifndef YSF_ADDRESSES_H
+#define YSF_ADDRESSES_H
 
 typedef unsigned long       DWORD;
 

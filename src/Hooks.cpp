@@ -30,41 +30,8 @@
  *  
  *  SA:MP Team past, present and future
  */
-#include "Hooks.h"
-
-#include "Addresses.h"
-#include "RPCs.h"
 
 #include "main.h"
-#include "Utils.h"
-#include "CCallbackManager.h"
-#include "Scripting.h"
-#include "Structs.h"
-#include "CPlayerData.h"
-#include "Functions.h"
-
-#ifdef _WIN32
-	#define WIN32_LEAN_AND_MEAN
-	//#define VC_EXTRALEAN
-	#include <Windows.h>
-	#include <Psapi.h>
-#else
-	#include <stdio.h>
-	#include <sys/mman.h>
-	#include <limits.h>
-	#include <string.h>
-	#include <algorithm>
-	#include <unistd.h>
-	#include <cstdarg>
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <arpa/inet.h>
-
-	#define INVALID_SOCKET -1
-#endif
-
-#include "subhook/subhook.h"
-#include <sdk/plugin.h>
 
 #ifndef PAGESIZE
 	#define PAGESIZE (4096)
@@ -492,7 +459,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					WORD wPlayerCount = pServer->GetPlayerCount();
 					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 
-					WORD wMaxPlayers = pServer->GetMaxPlayers();
+					WORD wMaxPlayers = pServer->GetMaxPlayers_();
 
 					BYTE byteIsPassworded = pServer->GetStringVariable("password")[0] != 0;
 
@@ -574,7 +541,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						{
 							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
-								szName = RemoveHexColorFromString(GetPlayerName(r));
+								szName = RemoveHexColorFromString(GetPlayerName_(r));
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);
@@ -622,7 +589,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 							{
 								memcpy(newdata, &r, sizeof(BYTE));
 								newdata += sizeof(BYTE);
-								szName = GetPlayerName(r);
+								szName = GetPlayerName_(r);
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);

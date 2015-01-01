@@ -7,28 +7,6 @@
 
 #include "main.h"
 
-#include "Addresses.h"
-#include "Hooks.h"
-#include "RPCs.h"
-
-#include <fstream>
-#include "CGangZonePool.h"
-#include "Utils.h"
-#include "CCallbackManager.h"
-#include "CPickupPool.h"
-#include "CPlayerData.h"
-#include "Scripting.h"
-#include "Functions.h"
-
-#include <sdk/plugin.h>
-
-#include "subhook/subhook.h"
-
-#ifdef LINUX
-	#include <cstring>
-	typedef unsigned char *PCHAR;
-#endif
-
 //----------------------------------------------------------
 
 void **ppPluginData;
@@ -50,22 +28,23 @@ CPlayerData *pPlayerData[MAX_PLAYERS];
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() 
 {
-	return SUPPORTS_VERSION | SUPPORTS_AMX_NATIVES | SUPPORTS_PROCESS_TICK;
+	return sampgdk_Supports() | SUPPORTS_VERSION | SUPPORTS_AMX_NATIVES | SUPPORTS_PROCESS_TICK;
 }
 
 //----------------------------------------------------------
 // The Load() function gets passed on exported functions from
 // the SA-MP Server, like the AMX Functions and logprintf().
 // Should return true if loading the plugin has succeeded.
-typedef void(*logprintf_t)(char* format, ...);
-logprintf_t logprintf;
+//typedef void(*logprintf_t)(char* format, ...);
+//logprintf_t logprintf;
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 {
 	ppPluginData = ppData;
 	pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
-	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
+	//logprintf = (logprintf_t);
 
+	bool ret = sampgdk_Load(ppData);
 	logprintf("logprintf = 0x%08X\n", *((int*)(&logprintf)));
 	
 #ifndef _WIN32
@@ -74,22 +53,24 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	// Check server version
 	eSAMPVersion version = SAMP_VERSION_UNKNOWN;
 	char szVersion[64];
-	if(logprintf == (logprintf_t)CAddress::FUNC_Logprintf_03Z)
+
+	DWORD addr = (DWORD)ppData[PLUGIN_DATA_LOGPRINTF];
+	if (addr == CAddress::FUNC_Logprintf_03Z)
 	{
 		version = SAMP_VERSION_03Z;
 		strcpy(szVersion, "0.3z");
 	}
-	else if(logprintf == (logprintf_t)CAddress::FUNC_Logprintf_03ZR2_2)
+	else if (addr == CAddress::FUNC_Logprintf_03ZR2_2)
 	{
 		version = SAMP_VERSION_03Z_R2_2;
 		strcpy(szVersion, "0.3z R2-2");
 	}
-	else if(logprintf == (logprintf_t)CAddress::FUNC_Logprintf_03ZR3)
+	else if (addr == CAddress::FUNC_Logprintf_03ZR3)
 	{
 		version = SAMP_VERSION_03Z_R3;
 		strcpy(szVersion, "0.3z R3");
 	}
-	else if(logprintf == (logprintf_t)CAddress::FUNC_Logprintf_03ZR4)
+	else if (addr == CAddress::FUNC_Logprintf_03ZR4)
 	{
 		version = SAMP_VERSION_03Z_R4;
 		strcpy(szVersion, "0.3z R4");
@@ -129,7 +110,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	logprintf("    Operating System: " OS_NAME "\n");
 	logprintf("    Built on: " __DATE__ " at "__TIME__ "\n");
 	logprintf(" ===============================\n");
-	return 1;
+	return ret;
 }
 
 //----------------------------------------------------------
@@ -152,6 +133,8 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 
 	delete pServer;
 	pServer = NULL;
+
+	sampgdk_Unload();
 }
 
 //----------------------------------------------------------

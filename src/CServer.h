@@ -1,5 +1,5 @@
-#ifndef CSERVER_H
-#define CSERVER_H
+#ifndef YSF_CSERVER_H
+#define YSF_CSERVER_H
 
 class CNetGame;
 class RakServer;
@@ -36,7 +36,7 @@ public:
 	bool IsNickNameCharacterAllowed(char character);
 	bool IsValidNick(char *szName);
 
-	WORD GetMaxPlayers();
+	WORD GetMaxPlayers_();
 	WORD GetPlayerCount();
 	WORD GetNPCCount();
 
