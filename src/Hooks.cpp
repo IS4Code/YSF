@@ -45,6 +45,8 @@ static SubHook GetPacketID_hook;
 static SubHook logprintf_hook;
 static SubHook query_hook;
 
+AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL;
+
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
 {
@@ -151,6 +153,15 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		int i = 0;
 		while (nativelist[i].name)
 		{
+			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyPlayerObject"))
+				pDestroyPlayerObject = nativelist[i].func;
+
+			if(!pCancelEdit && !strcmp(nativelist[i].name, "CancelEdit"))
+				pCancelEdit = nativelist[i].func;
+
+			if(!pTogglePlayerControllable && !strcmp(nativelist[i].name, "TogglePlayerControllable"))
+				pTogglePlayerControllable = nativelist[i].func;
+
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
 			
@@ -353,6 +364,26 @@ static void HOOK_logprintf(const char *msg, ...)
 		RconSocketReply(buffer);
 }
 
+//----------------------------------------------------
+
+void RconSocketReply(char* szMessage)
+{
+	// IMPORTANT!
+	// Don't use logprintf from here... You'll cause an infinite loop.
+	if (bRconSocketReply)
+	{
+		char* newdata = (char*)malloc(cur_datalen + strlen(szMessage) + sizeof(WORD));
+		char* keep_ptr = newdata;
+		memcpy(newdata, cur_data, cur_datalen);
+		newdata += cur_datalen;
+		*(WORD*)newdata = (WORD)strlen(szMessage);
+		newdata += sizeof(WORD);
+		memcpy(newdata, szMessage, strlen(szMessage));
+		newdata += strlen(szMessage);
+		sendto(cur_sock, keep_ptr, (int)(newdata - keep_ptr), 0, (sockaddr*)&to, sizeof(to));
+		free(keep_ptr);
+	}
+}
 
 //----------------------------------------------------
 // bool CheckQueryFlood()
@@ -717,27 +748,6 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 	}
 }
 
-//----------------------------------------------------
-
-void RconSocketReply(char* szMessage)
-{
-	// IMPORTANT!
-	// Don't use logprintf from here... You'll cause an infinite loop.
-	if (bRconSocketReply)
-	{
-		char* newdata = (char*)malloc(cur_datalen + strlen(szMessage) + sizeof(WORD));
-		char* keep_ptr = newdata;
-		memcpy(newdata, cur_data, cur_datalen);
-		newdata += cur_datalen;
-		*(WORD*)newdata = (WORD)strlen(szMessage);
-		newdata += sizeof(WORD);
-		memcpy(newdata, szMessage, strlen(szMessage));
-		newdata += strlen(szMessage);
-		sendto(cur_sock, keep_ptr, (int)(newdata - keep_ptr), 0, (sockaddr*)&to, sizeof(to));
-		free(keep_ptr);
-	}
-}
-
 void InstallPreHooks()
 {
 	if (pServer)
@@ -747,5 +757,6 @@ void InstallPreHooks()
 		GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
 		query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
 	}
-	//logprintf_hook.Install((void*)logprintf, (void*)HOOK_logprintf);	
+	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);	
 }
+

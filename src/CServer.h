@@ -57,8 +57,8 @@ public:
 	void	ModifyVariableFlags(char* pVarName, DWORD VarFlags);
 private:
 	eSAMPVersion m_Version;
-	float m_fGravity;
-	unsigned char m_byteWeather;
+	//float m_fGravity;
+	//unsigned char m_byteWeather;
 	int m_iTicks;
 
 	std::vector <char> m_vecValidNameCharacters;

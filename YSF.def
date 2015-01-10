@@ -11,4 +11,7 @@ EXPORTS
 	OnPlayerDisconnect
 	OnPlayerStreamIn
 	OnPlayerStreamOut
+	OnPlayerSpawn
 	OnDialogResponse
+	OnPlayerEditObject
+	OnPlayerEditAttachedObject

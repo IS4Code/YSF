@@ -45,7 +45,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	//logprintf = (logprintf_t);
 
 	bool ret = sampgdk_Load(ppData);
-	logprintf("logprintf = 0x%08X\n", *((int*)(&logprintf)));
+	logprintf("logprintf = 0x%08X\n", ppData[PLUGIN_DATA_LOGPRINTF]);
 	
 #ifndef _WIN32
 	LoadTickCount();
@@ -183,6 +183,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
+			logprintf("weather pnetgame: %d", pNetGame->byteWeather);
 			/*
 			if (pNetGame->pPlayerPool->bIsPlayerConnected[0])
 			{

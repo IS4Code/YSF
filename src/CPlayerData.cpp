@@ -68,6 +68,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	dwLastUpdateTick = false;
 
 	bHidden = false;
+	bControllable = true;
 
 	// Private
 	memset(m_iTeams, -1, sizeof(m_iSkins));

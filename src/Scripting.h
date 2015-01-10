@@ -93,6 +93,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SetPlayerFightStyleForPlayer(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL GetPlayerFightStyleForPlayer(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL SetPlayerPosForPlayer(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL ApplyAnimationForPlayer(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL GetPlayerWeather(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerWorldBounds(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL TogglePlayerWidescreen(AMX *amx, cell *params);
@@ -111,6 +112,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SetPlayerChatBubbleForPlayer(AMX *amx, cell *params); // R10
 	static cell AMX_NATIVE_CALL SetPlayerVersion(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL IsPlayerSpawned(AMX *amx, cell *params); // R9
+	static cell AMX_NATIVE_CALL IsPlayerControllable(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL SpawnForWorld(AMX *amx, cell *params); // R10
 
 	static cell AMX_NATIVE_CALL GetPlayerSirenState(AMX *amx, cell *params);
@@ -312,12 +314,15 @@ namespace Natives
 
 	static cell AMX_NATIVE_CALL GetWeaponSlot(AMX *amx, cell *params);
 
-	static cell AMX_NATIVE_CALL FIXED_AttachPlayerObjectToPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL FIXED_SetGravity(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL FIXED_GetGravity(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL FIXED_SetWeather(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL FIXED_SetPlayerWeather(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL FIXED_SetPlayerWorldBounds(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_AttachPlayerObjectToPlayer(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetGravity(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_GetGravity(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetWeather(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetPlayerWeather(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetPlayerWorldBounds(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_DestroyPlayerObject(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_CancelEdit(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_TogglePlayerControllable(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL YSF_GangZoneCreate(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GangZoneDestroy(AMX *amx, cell *params);

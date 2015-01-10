@@ -12,7 +12,7 @@
 #define ARRAY_SIZE(a)	( sizeof((a)) / sizeof(*(a)) )
 #define SAFE_DELETE(p)	{ if (p) { delete (p); (p) = NULL; } }
 #define SAFE_RELEASE(p)	{ if (p) { (p)->Release(); (p) = NULL; } }
-
+#define PAD(a, b) char a[b]
 // ------------
 // VERSION INFO
 // ------------
@@ -103,6 +103,8 @@ using sampgdk::logprintf;
 // ---------
 // EXTERNALS
 // ---------
+
+extern void **ppPluginData;
 
 extern CServer *pServer;
 extern CPlayerData *pPlayerData[500];

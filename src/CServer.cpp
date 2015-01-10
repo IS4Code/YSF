@@ -2,8 +2,8 @@
 
 CServer::CServer(eSAMPVersion version)
 {
-	m_fGravity = 0.008f;
-	m_byteWeather = 10;
+//	m_fGravity = 0.008f;
+//	m_byteWeather = 10;
 	m_iTicks = 0;
 
 	memset(pPlayerData, NULL, MAX_PLAYERS);
@@ -170,6 +170,9 @@ void CServer::SetGravity_(float fGravity)
 	// Update console
 	char szGravity[16];
 	sprintf(szGravity, "%f", fGravity);
+
+	//m_fGravity = fGravity;
+	pNetGame->fGravity = fGravity;
 	pServer->SetStringVariable("gravity", szGravity);
 
 	// Minden játékos gravitációja átállítása arra, amire a szerver gravitációját beállítottuk
@@ -186,7 +189,7 @@ void CServer::SetGravity_(float fGravity)
 
 float CServer::GetGravity_(void)
 {
-	return m_fGravity;
+	return pNetGame->fGravity;
 }
 
 void CServer::SetWeather_(BYTE byteWeather)
@@ -194,6 +197,9 @@ void CServer::SetWeather_(BYTE byteWeather)
 	// Update console
 	char szWeather[8];
 	sprintf(szWeather, "%d", byteWeather);
+	
+	//m_byteWeather = byteWeather;
+	pNetGame->byteWeather = byteWeather;
 	pServer->SetStringVariable("weather", szWeather);
 
 	// Minden játékos idõjárása átállítása arra, amire a szerver idõjárást beállítottuk
@@ -210,7 +216,7 @@ void CServer::SetWeather_(BYTE byteWeather)
 
 BYTE CServer::GetWeather_(void)
 {
-	return m_byteWeather;
+	return pNetGame->byteWeather;
 }
 
 void CServer::AllowNickNameCharacter(char character, bool enable)

@@ -851,7 +851,7 @@ static cell AMX_NATIVE_CALL Natives::SendInvalidPlayerSync(AMX *amx, cell *param
 }
 
 // native SetGravity(Float:gravity);
-static cell AMX_NATIVE_CALL Natives::FIXED_SetGravity( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_SetGravity( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -864,7 +864,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_SetGravity( AMX* amx, cell* params )
 }
 
 // native Float:GetGravity();
-static cell AMX_NATIVE_CALL Natives::FIXED_GetGravity( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_GetGravity( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1091,8 +1091,57 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* param
 	return 1;
 }
 
+// native ApplyAnimationForPlayer(playerid, animplayerid, animlib[], animname[], Float:fDelta, loop, lockx, locky, freeze, time);
+static cell AMX_NATIVE_CALL Natives::ApplyAnimationForPlayer(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(10, "ApplyAnimationForPlayer");
+	RakNet::BitStream bsSend;
+
+	char *szAnimLib;
+	char *szAnimName;
+	BYTE byteAnimLibLen;
+	BYTE byteAnimNameLen;
+	float fS;
+	bool opt1,opt2,opt3,opt4;
+	int time;
+	
+	int playerid = (int)params[1];
+	int animplayerid = (int)params[2];
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(animplayerid)) return 0;
+
+	amx_StrParam(amx, params[3], szAnimLib);
+	amx_StrParam(amx, params[4], szAnimName);
+
+	if(!szAnimLib || !szAnimName) return 0;
+
+	byteAnimLibLen = strlen(szAnimLib);
+	byteAnimNameLen = strlen(szAnimName);
+
+	fS = amx_ctof(params[5]);
+	opt1 = !!params[6];
+	opt2 = !!params[7];
+	opt3 = !!params[8];
+	opt4 = !!params[9];
+	time = (int)params[10];
+
+	bsSend.Write((WORD)animplayerid);
+	bsSend.Write(byteAnimLibLen);
+	bsSend.Write(szAnimLib,byteAnimLibLen);
+	bsSend.Write(byteAnimNameLen);
+	bsSend.Write(szAnimName,byteAnimNameLen);
+	bsSend.Write(fS);
+	bsSend.Write(opt1);
+	bsSend.Write(opt2);
+	bsSend.Write(opt3);
+	bsSend.Write(opt4);
+	bsSend.Write(time);
+
+	pRakServer->RPC(&RPC_ScrApplyAnimation, &bsSend, HIGH_PRIORITY, UNRELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	return 1;
+}
+
 // native SetWeather(weatherid);
-static cell AMX_NATIVE_CALL Natives::FIXED_SetWeather( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_SetWeather( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -1105,7 +1154,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_SetWeather( AMX* amx, cell* params )
 }
 
 // native SetPlayerWeather(playerid, weatherid);
-static cell AMX_NATIVE_CALL Natives::FIXED_SetPlayerWeather(AMX* amx, cell* params)
+static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWeather(AMX* amx, cell* params)
 {
 	// If unknown server version
 	if (!pServer)
@@ -1141,7 +1190,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerWeather( AMX* amx, cell* params )
 }
 
 // native SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
-static cell AMX_NATIVE_CALL Natives::FIXED_SetPlayerWorldBounds(AMX* amx, cell* params)
+static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWorldBounds(AMX* amx, cell* params)
 {
 	// If unknown server version
 	if (!pServer)
@@ -1165,6 +1214,74 @@ static cell AMX_NATIVE_CALL Natives::FIXED_SetPlayerWorldBounds(AMX* amx, cell* 
 	bs.Write(pPlayerData[playerid]->fBounds[3]);
 	pRakServer->RPC(&RPC_WorldBounds, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
+}
+
+// native DestroyPlayerObject(playerid, objectid)
+static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "DestroyPlayerObject");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+
+	if(pDestroyPlayerObject(amx, params))
+	{
+		if(pPlayerData[playerid]->stObj[objectid].usObjectID != 0xFFFF || pPlayerData[playerid]->stObj[objectid].usAttachPlayerID != INVALID_PLAYER_ID)
+		{
+			pPlayerData[playerid]->stObj[objectid].usObjectID = 0xFFFF;
+			pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = INVALID_PLAYER_ID;
+			pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(0.0f, 0.0f, 0.0f);
+			pPlayerData[playerid]->stObj[objectid].vecRot = CVector(0.0f, 0.0f, 0.0f);		
+
+			logprintf("remove attached shit");
+		}
+		return 1;
+	}
+	return 0;
+}
+
+// native CancelEdit(playerid)
+static cell AMX_NATIVE_CALL Natives::YSF_CancelEdit(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "CancelEdit");
+
+	int playerid = (int)params[1];
+
+	if(pCancelEdit(amx, params))
+	{
+		pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject = false;
+		return 1;
+	}
+	return 0;
+}
+
+// native TogglePlayerControllable(playerid, bool:toggle)
+static cell AMX_NATIVE_CALL Natives::YSF_TogglePlayerControllable(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "TogglePlayerControllable");
+
+	int playerid = (int)params[1];
+	bool toggle = !!params[2];
+
+	if(pTogglePlayerControllable(amx, params))
+	{
+		pPlayerData[playerid]->bControllable = toggle;
+		printf("controllable: %d, %d", toggle, pPlayerData[playerid]->bControllable);
+		return 1;
+	}
+	return 0;
 }
 
 // native TogglePlayerWidescreen(playerid, bool:set);
@@ -1761,7 +1878,22 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerSpawned( AMX* amx, cell* params )
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	int state = pNetGame->pPlayerPool->pPlayer[playerid]->byteState;
-	return (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED && state != PLAYER_STATE_SPAWNED);
+	return (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED && state != PLAYER_STATE_SPAWNED && pNetGame->pPlayerPool->pPlayer[playerid]->bHasSpawnInfo);
+}
+
+// native IsPlayerControllable(playerid);
+static cell AMX_NATIVE_CALL Natives::IsPlayerControllable( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsPlayerSpawned");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pPlayerData[playerid]->bControllable;
 }
 
 // native SpawnForWorld(playerid);
@@ -3968,7 +4100,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelAttached( AMX* amx, cel
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL Natives::FIXED_AttachPlayerObjectToPlayer( AMX* amx, cell* params )
+static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
@@ -3983,7 +4115,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_AttachPlayerObjectToPlayer( AMX* amx,
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(!IsPlayerConnected(attachplayerid)) return 0;
 
-	if(objectid < 1 || objectid >= 1000) return 0;
+	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 	
 	pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = attachplayerid;
@@ -4001,6 +4133,52 @@ static cell AMX_NATIVE_CALL Natives::FIXED_AttachPlayerObjectToPlayer( AMX* amx,
 	bs.Write(amx_ctof(params[9]));
 
 	pRakServer->RPC(&RPC_AttachObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	return 1;
+}
+
+// native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
+static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(10, "AttachPlayerObjectToObject");
+
+	int forplayerid = (int)params[1];
+	int wObjectID = (int)params[2];
+	int wAttachTo = (int)params[3];
+
+	if(!IsPlayerConnected(forplayerid)) return 0;
+
+	if(wObjectID < 1 || wObjectID >= MAX_OBJECTS) return 0;
+	if(wAttachTo < 1 || wAttachTo >= MAX_OBJECTS) return 0;
+
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
+	if(!pObjectPool->m_pPlayerObjects[forplayerid][wObjectID] || !pObjectPool->m_pPlayerObjects[forplayerid][wAttachTo]) return 0; // Check if object is exist
+
+	CVector vecOffset = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
+	CVector vecOffsetRot = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
+	BYTE byteSyncRot = !!params[10];
+
+	int iModelID = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->iModel;
+	CVector vecPos = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->matWorld.pos;
+	CVector vecRot = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->vecRot;
+	float fDrawDistance = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->fDrawDistance;
+	
+	RakNet::BitStream bs;
+	bs.Write(wObjectID);
+	bs.Write(iModelID);
+	bs.Write(vecPos);
+	bs.Write(vecRot);
+	bs.Write(fDrawDistance);
+	bs.Write((WORD)-1); // padding, idk what is it
+	bs.Write(wAttachTo);
+	bs.Write(vecOffset);
+	bs.Write(vecOffsetRot);	
+	bs.Write(byteSyncRot);
+	
+	pRakServer->RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
 	return 1;
 }
 
@@ -4109,9 +4287,8 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
 	}
 
 	WORD ret = pNetGame->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
-	if (ret == 0xFFFF) return -1;
 
-	return ret;
+	return (ret == 0xFFFF) ? -1 : ret;
 }
 
 static cell AMX_NATIVE_CALL Natives::YSF_GangZoneDestroy(AMX *amx, cell *params)
@@ -4392,50 +4569,6 @@ static cell AMX_NATIVE_CALL Natives::GetMenuItem( AMX* amx, cell* params )
 	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
 
 	return set_amxstring(amx, params[4], pMenu->items[itemid][column], params[5]);
-}
-
-// native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
-static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(10, "AttachPlayerObjectToObject");
-
-	int forplayerid = (int)params[1];
-	if(!IsPlayerConnected(forplayerid)) return 0;
-
-	int wObjectID = (int)params[2];
-	int wAttachTo = (int)params[3];
-	short padding1 = -1;
-	CVector vecOffset = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
-	CVector vecOffsetRot = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
-	BYTE byteSyncRot = !!params[10];
-
-	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-
-	if(!pObjectPool->m_pPlayerObjects[forplayerid][wObjectID] || !pObjectPool->m_pPlayerObjects[forplayerid][wAttachTo]) return 0; // Check if object is exist
-	
-	int iModelID = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->iModel;
-	CVector vecPos = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->matWorld.pos;
-	CVector vecRot = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->vecRot;
-	float fDrawDistance = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->fDrawDistance;
-	
-	RakNet::BitStream bs;
-	bs.Write(wObjectID);
-	bs.Write(iModelID);
-	bs.Write(vecPos);
-	bs.Write(vecRot);
-	bs.Write(fDrawDistance);
-	bs.Write(padding1);
-	bs.Write(wAttachTo);
-	bs.Write(vecOffset);
-	bs.Write(vecOffsetRot);	
-	bs.Write(byteSyncRot);
-	
-	pRakServer->RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
-	return 1;
 }
 
 // native CreatePlayerGangZone(playerid, Float:minx, Float:miny, Float:maxx, Float:maxy);
@@ -5515,7 +5648,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SetPlayerFightStyleForPlayer",	Natives::SetPlayerFightStyleForPlayer }, // R11
 	{ "GetPlayerFightStyleForPlayer",	Natives::GetPlayerFightStyleForPlayer }, // R11
 	{ "SetPlayerPosForPlayer",			Natives::SetPlayerPosForPlayer}, // R11
-
+	{ "ApplyAnimationForPlayer",		Natives::ApplyAnimationForPlayer}, // R11
 	{ "GetPlayerWeather",				Natives::GetPlayerWeather },
 	{ "GetPlayerWorldBounds",			Natives::GetPlayerWorldBounds },
 	{ "TogglePlayerWidescreen",			Natives::TogglePlayerWidescreen },
@@ -5534,6 +5667,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SetPlayerChatBubbleForPlayer",	Natives::SetPlayerChatBubbleForPlayer}, // R10
 	{ "SetPlayerVersion",				Natives::SetPlayerVersion }, // R9
 	{ "IsPlayerSpawned",				Natives::IsPlayerSpawned }, // R9
+	{"IsPlayerControllable",			Natives::IsPlayerControllable}, // R11
 	{ "SpawnForWorld",					Natives::SpawnForWorld }, // R10
 
 	// Special things from syncdata
@@ -5761,13 +5895,16 @@ AMX_NATIVE_INFO YSINatives [] =
 AMX_NATIVE_INFO RedirecedtNatives[] =
 {
 	// File
-	{ "AttachPlayerObjectToPlayer",		Natives::FIXED_AttachPlayerObjectToPlayer },
-	{ "SetGravity",						Natives::FIXED_SetGravity },
-	{ "GetGravity",						Natives::FIXED_GetGravity },
-	{ "SetWeather",						Natives::FIXED_SetWeather },
-	{ "SetPlayerWeather",				Natives::FIXED_SetPlayerWeather },
-	{ "SetPlayerWorldBounds",			Natives::FIXED_SetPlayerWorldBounds },
-	
+	{ "AttachPlayerObjectToPlayer",		Natives::YSF_AttachPlayerObjectToPlayer },
+	{ "SetGravity",						Natives::YSF_SetGravity },
+	{ "GetGravity",						Natives::YSF_GetGravity },
+	{ "SetWeather",						Natives::YSF_SetWeather },
+	{ "SetPlayerWeather",				Natives::YSF_SetPlayerWeather },
+	{ "SetPlayerWorldBounds",			Natives::YSF_SetPlayerWorldBounds },
+	{ "DestroyPlayerObject",			Natives::YSF_DestroyPlayerObject },
+	{ "CancelEdit",						Natives::YSF_CancelEdit },
+	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
+
 	{ "GangZoneCreate",					Natives::YSF_GangZoneCreate },
 	{ "GangZoneDestroy",				Natives::YSF_GangZoneDestroy },
 	{ "GangZoneShowForPlayer",			Natives::YSF_GangZoneShowForPlayer },

@@ -284,6 +284,12 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamOut(int playerid, int forplayerid)
 	return true;
 }
 
+PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerSpawn(int playerid)
+{
+	pPlayerData[playerid]->bControllable = true;
+	return true;
+}
+
 PLUGIN_EXPORT bool PLUGIN_CALL OnDialogResponse(int playerid, int dialogid, int response, int listitem, const char * inputtext)
 {
 	if (IsPlayerConnected(playerid))
@@ -299,7 +305,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditObject(int playerid, bool playerobjec
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject = false;
 	}
-	return true;
+	return false;
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditAttachedObject(int playerid, int response, int index, int modelid, int boneid, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float fRotZ, float fScaleX, float fScaleY, float fScaleZ)
@@ -308,5 +314,5 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditAttachedObject(int playerid, int resp
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->bEditAttachedObject = false;
 	}
-	return true;
+	return false;
 }

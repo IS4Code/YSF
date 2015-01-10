@@ -11,6 +11,8 @@
 // just bypasses the compilers checks to do what I want
 #define POINTER_TO_MEMBER(m,n,o) temp = n, m = *(o *)&temp
 
+extern AMX_NATIVE pDestroyPlayerObject, pCancelEdit, pTogglePlayerControllable;
+
 // Definitions
 bool Unlock(void *address, size_t len);
 //void AssemblySwap(char * addr, char * dat, int len);
