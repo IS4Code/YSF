@@ -244,7 +244,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				pVehicleSync.wLRAnalog = 0;
 
 				// Fix "player bugger"
-				// Causes this screen: 
+				// Causes this screen: http://scrn.sixtytiger.com/sa-mp-026.png
 				// Happens when a player is in a car with a cheating player, and that cheating player
 				// manipulates the vehicle position to be outside the GTA:SA position range
 				if (pVehicleSync.vecPosition.fX < -20000.0f || pVehicleSync.vecPosition.fX > 20000.0f ||
