@@ -46,12 +46,22 @@
 	#include <unistd.h>
 	#include <sys/time.h>
 	#include <sys/times.h>
+	#include <sys/socket.h>
 	#include <signal.h>
 	#include <sys/types.h>
 	#include <sys/sysinfo.h>
+	#include <sys/stat.h>
 	#include <dirent.h>
+	#include <cstring>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <sys/mman.h>
+	#include <fnmatch.h>
 
+	typedef const char *PCHAR;
 	typedef int SOCKET;
+
+	#define INVALID_SOCKET -1
 
 	#ifndef stricmp
 		#define stricmp strcasecmp
