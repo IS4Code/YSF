@@ -44,6 +44,7 @@ static SubHook amx_Register_hook;
 static SubHook GetPacketID_hook;
 static SubHook logprintf_hook;
 static SubHook query_hook;
+static SubHook CVehicle__Respawn_hook;
 
 AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
 
@@ -852,7 +853,21 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 		return 0;
 	}
 }
+/*
+class CHookVehicle
+{
+public:
+	void* __thiscall HOOK_CVehicle__Respawn(void* pVehicle);
+};
 
+void __stdcall HOOK_CVehicle__Respawn(void *pVehicle)
+{
+	SubHook::ScopedRemove remove(&CVehicle__Respawn_hook);
+
+	logprintf("respawn: %x", pVehicle);
+	//CSAMPFunctions::RespawnVehicle_((CVehicle*)pVehicle);
+}
+*/
 void InstallPreHooks()
 {
 	if (pServer)
@@ -861,6 +876,8 @@ void InstallPreHooks()
 		amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 		GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
 		query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
+
+		//CVehicle__Respawn_hook.Install((void*)CAddress::FUNC_CVehicle__Respawn, HOOK_CVehicle__Respawn);
 	}
 	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);	
 }

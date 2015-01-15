@@ -23,6 +23,7 @@ typedef bool(__thiscall *CFilterscripts__LoadFilterscript_t)(void *pFilterscript
 typedef bool(__thiscall *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
 
 typedef void(__thiscall *CPlayer__SpawnForWorld_t)(void *pPlayer);
+typedef void(__thiscall *CVehicle__Respawn_t)(CVehicle *pVehicle);
 
 typedef int(__thiscall *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef char *(__thiscall *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
@@ -56,6 +57,8 @@ public:
 	static bool		UnLoadFilterscript(char *szName);
 	
 	static void		SpawnPlayer_(int iPlayerId);
+	static void		RespawnVehicle_(CVehicle *pVehicle);
+
 	static void		Packet_WeaponsUpdate(Packet *p);
 	static char*	format_amxstring(AMX *amx, cell *params, int parm, int &len);
 
@@ -71,6 +74,7 @@ public:
 	static CFilterscripts__UnLoadFilterscript_t		pfn__CFilterscripts__UnLoadFilterscript;
 	// Player
 	static CPlayer__SpawnForWorld_t					pfn__CPlayer__SpawnForWorld;
+	static CVehicle__Respawn_t						pfn__CVehicle__Respawn;
 	// Query
 	static Packet_WeaponsUpdate_t					pfn__Packet_WeaponsUpdate;
 	static format_amxstring_t						pfn__format_amxstring;

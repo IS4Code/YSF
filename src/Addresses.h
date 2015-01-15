@@ -78,6 +78,7 @@ public:
 	static DWORD			FUNC_GetPacketID;
 
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
+	static DWORD			FUNC_CVehicle__Respawn;
 	static DWORD			FUNC_ProcessQueryPacket;
 	static DWORD			FUNC_Packet_WeaponsUpdate;
 	static DWORD			FUNC_format_amxstring;

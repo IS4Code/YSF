@@ -9,6 +9,7 @@ CFilterscripts__LoadFilterscript_t		CSAMPFunctions::pfn__CFilterscripts__LoadFil
 CFilterscripts__UnLoadFilterscript_t	CSAMPFunctions::pfn__CFilterscripts__UnLoadFilterscript = NULL;
 
 CPlayer__SpawnForWorld_t				CSAMPFunctions::pfn__CPlayer__SpawnForWorld = NULL;
+CVehicle__Respawn_t						CSAMPFunctions::pfn__CVehicle__Respawn = NULL;
 
 Packet_WeaponsUpdate_t					CSAMPFunctions::pfn__Packet_WeaponsUpdate = NULL;
 
@@ -69,6 +70,11 @@ bool CSAMPFunctions::UnLoadFilterscript(char *szName)
 void CSAMPFunctions::SpawnPlayer_(int playerid)
 {
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
+}
+
+void CSAMPFunctions::RespawnVehicle_(CVehicle *pVehicle)
+{
+	pfn__CVehicle__Respawn(pVehicle);
 }
 
 void CSAMPFunctions::Packet_WeaponsUpdate(Packet *p)

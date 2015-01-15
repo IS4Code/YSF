@@ -32,6 +32,8 @@ DWORD CAddress::FUNC_ContainsInvalidChars = NULL;
 DWORD CAddress::FUNC_GetPacketID = NULL;
 
 DWORD CAddress::FUNC_CPlayer__SpawnForWorld = NULL;
+DWORD CAddress::FUNC_CVehicle__Respawn = NULL;
+
 DWORD CAddress::FUNC_ProcessQueryPacket = NULL;
 DWORD CAddress::FUNC_Packet_WeaponsUpdate = NULL;
 DWORD CAddress::FUNC_format_amxstring = NULL;
@@ -84,7 +86,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		}
 		case SAMP_VERSION_03Z_R4:
 		{
-			//ADDR_RECEIVE_HOOKPOS =						0x458A20;
+			FUNC_CVehicle__Respawn = 0x00493200;
 			break;
 		}
 	}
