@@ -246,43 +246,63 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			pPlayerData[playerid]->dwLastUpdateTick = GetTickCount();
 			pPlayerData[playerid]->bEverUpdated = true;
 			
-			if (packetId == ID_VEHICLE_SYNC || packetId == ID_PASSENGER_SYNC)
+			if (packetId == ID_VEHICLE_SYNC || packetId == ID_PASSENGER_SYNC || packetId == ID_UNOCCUPIED_SYNC)
 			{
-				RakNet::BitStream bsData(p->data, p->length, false);
-				CVehicleSyncData pVehicleSync;
+				static CVector emptyVector = CVector(0.0f, 0.0f, 0.0f);
+				CVector* vecPosition = &emptyVector;
+				CVector* vecVelocity = &emptyVector;
+				float fTrainSpeed = 0.0f;
+				CVehicleSyncData *vd = NULL;
+				CUnoccupiedSyncData *ud = NULL;
+				CPassengerSyncData *pd = NULL;
 
-				bsData.SetReadOffset(8);
-				bsData.Read((char*)&pVehicleSync, sizeof(pVehicleSync));
-				
-				pVehicleSync.wKeys = 0;
-				pVehicleSync.wUDAnalog = 0;
-				pVehicleSync.wLRAnalog = 0;
+				switch (packetId) {
+				case ID_VEHICLE_SYNC:
+					vd = (CVehicleSyncData*)(&p->data[1]);
+					vecPosition = &vd->vecPosition;
+					vecVelocity = &vd->vecVelocity;
+					fTrainSpeed = vd->fTrainSpeed;
+					break;
 
+				case ID_UNOCCUPIED_SYNC:
+					ud = (CUnoccupiedSyncData*)(&p->data[1]);
+					vecPosition = &ud->vecPosition;
+					vecVelocity = &ud->vecVelocity;
+					break;
+
+				case ID_PASSENGER_SYNC:
+					pd = (CPassengerSyncData*)(&p->data[1]);
+					vecPosition = &pd->vecPosition;
+					break;
+
+				default:
+					break;
+				}
 				// Fix "player bugger"
 				// Causes this screen: http://scrn.sixtytiger.com/sa-mp-026.png
 				// Happens when a player is in a car with a cheating player, and that cheating player
 				// manipulates the vehicle position to be outside the GTA:SA position range
-				if (pVehicleSync.vecPosition.fX < -20000.0f || pVehicleSync.vecPosition.fX > 20000.0f ||
-					pVehicleSync.vecPosition.fY < -20000.0f || pVehicleSync.vecPosition.fY > 20000.0f ||
-					pVehicleSync.vecPosition.fZ < -20000.0f || pVehicleSync.vecPosition.fZ > 20000.0f ||
+				if (vecPosition->fX < -20000.0f || vecPosition->fX > 20000.0f ||
+					vecPosition->fY < -20000.0f || vecPosition->fY > 20000.0f ||
+					vecPosition->fZ < -20000.0f || vecPosition->fZ > 20000.0f ||
 					
 					// MOVE SPEED
 
-					pVehicleSync.vecVelocity.fX > 35.0f || pVehicleSync.vecVelocity.fX < -35.0f ||
-					pVehicleSync.vecVelocity.fY > 35.0f || pVehicleSync.vecVelocity.fY < -35.0f ||
-					pVehicleSync.vecVelocity.fZ > 35.0f || pVehicleSync.vecVelocity.fZ < -35.0f ||
+					vecVelocity->fX > 35.0f || vecVelocity->fX < -35.0f ||
+					vecVelocity->fY > 35.0f || vecVelocity->fY < -35.0f ||
+					vecVelocity->fZ > 35.0f || vecVelocity->fZ < -35.0f ||
 
 					// infinity checks
 
-					!isfinite(pVehicleSync.vecPosition.fX) || !isfinite(pVehicleSync.vecPosition.fY) || !isfinite(pVehicleSync.vecPosition.fZ) ||
-					!isfinite(pVehicleSync.vecVelocity.fX) || !isfinite(pVehicleSync.vecVelocity.fY) || !isfinite(pVehicleSync.vecVelocity.fZ)
+					!isfinite(vecPosition->fX) || !isfinite(vecPosition->fY) || !isfinite(vecPosition->fZ) ||
+					!isfinite(vecVelocity->fX) || !isfinite(vecVelocity->fY) || !isfinite(vecVelocity->fZ)
 					)
 				{
 					return 0xFF;
 				}
 
 				// Fix "bike crash"
-				if (pVehicleSync.fTrainSpeed > 1000.0 || pVehicleSync.fTrainSpeed < 0.0)
+				if (fTrainSpeed > 1000.0f || fTrainSpeed < 0.0f)
 				{
 					return 0xFF;
 				}
@@ -320,25 +340,16 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			*/
 		}
 
-		/* Doesn't work - tested :(
 		if (packetId == ID_PLAYER_SYNC)
 		{
-			//logprintf("ID_PLAYER_SYNC");
-			RakNet::BitStream bsData(p->data, p->length, false);
-			CSyncData pSyncData;
+			CSyncData *pSyncData = (CSyncData*)(&p->data[1]);
 
-			bsData.SetReadOffset(8);
-			bsData.Read((char*)&pSyncData, sizeof(pSyncData));
-
-			//logprintf("health: %d, weapon: %d, specialaction: %d", pSyncData.byteHealth, pSyncData.byteWeapon, pSyncData.byteSpecialAction);
-
-			if (pSyncData.byteWeapon == 44 || pSyncData.byteWeapon == 45)
+			// Fix nightvision and infrared sync
+			if (pSyncData->byteWeapon == 44 || pSyncData->byteWeapon == 45)
 			{
-				pSyncData.byteWeapon = 0;
-				//logprintf("nightvision");
+				pSyncData->wKeys &= ~4;
 			}
 		}
-		*/
 
 		// Stats and weapons update
 		if (packetId == ID_STATS_UPDATE)
