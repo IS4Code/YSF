@@ -947,6 +947,27 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerTeamForPlayer( AMX* amx, cell* par
 	return pPlayerData[playerid]->GetPlayerTeamForPlayer(teamplayerid);
 }
 
+static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerTeam(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetPlayerTeam");
+
+	int playerid = (int)params[1];
+	if(pSetPlayerTeam(amx, params))
+	{
+		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		{
+			if(IsPlayerConnected(i))
+				pPlayerData[i]->ResetPlayerTeam(playerid);
+		}
+		return 1;
+	}
+	return 0;
+}
+
 // native SetPlayerSkinForPlayer(playerid, skinplayerid, skin);
 static cell AMX_NATIVE_CALL Natives::SetPlayerSkinForPlayer(AMX* amx, cell* params)
 {
@@ -982,6 +1003,27 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSkinForPlayer(AMX* amx, cell* para
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(skinplayerid)) return 0;
 
 	return pPlayerData[playerid]->GetPlayerSkinForPlayer(skinplayerid);
+}
+
+static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerSkin(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetPlayerSkin");
+
+	int playerid = (int)params[1];
+	if(pSetPlayerSkin(amx, params))
+	{
+		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		{
+			if(IsPlayerConnected(i))
+				pPlayerData[i]->ResetPlayerSkin(playerid);
+		}
+		return 1;
+	}
+	return 0;
 }
 
 // native SetPlayerNameForPlayer(playerid, nameplayerid, playername[]);
@@ -1024,6 +1066,27 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerNameForPlayer(AMX* amx, cell* para
 	return set_amxstring(amx, params[3], pPlayerData[playerid]->GetPlayerNameForPlayer(nameplayerid), params[4]);
 }
 
+static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerName(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "SetPlayerName");
+
+	int playerid = (int)params[1];
+	if(pSetPlayerName(amx, params))
+	{
+		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		{
+			if(IsPlayerConnected(i))
+				pPlayerData[i]->ResetPlayerName(playerid);
+		}
+		return 1;
+	}
+	return 0;
+}
+
 // native SetPlayerFightStyleForPlayer(playerid, styleplayerid, style);
 static cell AMX_NATIVE_CALL Natives::SetPlayerFightStyleForPlayer(AMX* amx, cell* params)
 {
@@ -1060,6 +1123,27 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerFightStyleForPlayer(AMX* amx, cell
 	return pPlayerData[playerid]->GetPlayerFightingStyleForPlayer(styleplayerid);
 }
 
+static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerFightingStyle(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetPlayerFightingStyle");
+
+	int playerid = (int)params[1];
+	if(pSetPlayerFightingStyle(amx, params))
+	{
+		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		{
+			if(IsPlayerConnected(i))
+				pPlayerData[i]->ResetPlayerFightingStyle(playerid);
+		}
+		return 1;
+	}
+	return 0;
+}
+
 // native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Floaf:fZ);
 static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* params)
 {
@@ -1077,11 +1161,11 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* param
 	CVector vecPos = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 
 	CSyncData pSyncData;
-	//memcpy(&pSyncData, &p->syncData, sizeof(CSyncData));
-	memset(&pSyncData, 0, sizeof(CSyncData));
+	memcpy(&pSyncData, &p->syncData, sizeof(CSyncData));
+	//memset(&pSyncData, 0, sizeof(CSyncData));
 
 	pSyncData.vecPosition = vecPos;
-	logprintf("position: %f, %f, %f, health:", pSyncData.vecPosition.fX, pSyncData.vecPosition.fY, pSyncData.vecPosition.fZ);
+	logprintf("position: %f, %f, %f, health: %d\n", pSyncData.vecPosition.fX, pSyncData.vecPosition.fY, pSyncData.vecPosition.fZ, pSyncData.byteHealth);
 
 	RakNet::BitStream bs;
 	bs.Write((BYTE)ID_PLAYER_SYNC);
@@ -1278,7 +1362,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_TogglePlayerControllable(AMX* amx, cell
 	if(pTogglePlayerControllable(amx, params))
 	{
 		pPlayerData[playerid]->bControllable = toggle;
-		printf("controllable: %d, %d", toggle, pPlayerData[playerid]->bControllable);
+		//printf("controllable: %d, %d", toggle, pPlayerData[playerid]->bControllable);
 		return 1;
 	}
 	return 0;
@@ -5540,6 +5624,76 @@ static cell AMX_NATIVE_CALL Natives::FIXED_IsPlayerConnected(AMX* amx, cell* par
 	return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;
 }
 
+static cell AMX_NATIVE_CALL Natives::YSF_SetVehicleToRespawn(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "SetVehicleToRespawn");
+	
+	int vehicleid = (int)params[1];
+	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
+
+	if(!pVehicle) return 0;
+
+	std::map<int, CVehicleSpawn>::iterator v = pServer->vehicleSpawnData.find(vehicleid);
+	if(v == pServer->vehicleSpawnData.end())
+	{
+		pSetVehicleToRespawn(amx, params);
+	}
+	else
+	{
+		RakNet::BitStream bsVehicleSpawn;
+		CVehicleSpawn spawn = v->second;
+
+		CVehicleModInfo CarModInfo;
+		memset(&CarModInfo,0,sizeof(CVehicleModInfo));
+
+		bsVehicleSpawn.Write(vehicleid);
+		bsVehicleSpawn.Write(spawn.iModelID);
+		bsVehicleSpawn.Write(spawn.vecPos);
+		bsVehicleSpawn.Write(spawn.fRot);
+		bsVehicleSpawn.Write(spawn.iColor1);
+		bsVehicleSpawn.Write(spawn.iColor2);
+		bsVehicleSpawn.Write((float)1000.0f);
+
+		// now add spawn co-ords and rotation
+		bsVehicleSpawn.Write(spawn.vecPos);
+		bsVehicleSpawn.Write(spawn.fRot);
+		bsVehicleSpawn.Write(spawn.iInterior);
+
+		if(pVehicle->szNumberplate[0] == '\0') {
+			bsVehicleSpawn.Write(false);
+		} else {
+			bsVehicleSpawn.Write(true);
+			bsVehicleSpawn.Write((PCHAR)pVehicle->szNumberplate, 9);
+		}
+
+		if(!memcmp((void *)&CarModInfo,(void *)&CarModInfo,sizeof(CVehicleModInfo))) {
+			bsVehicleSpawn.Write(false);
+		} else {
+			bsVehicleSpawn.Write(true);
+			bsVehicleSpawn.Write((PCHAR)&CarModInfo, sizeof(CarModInfo));
+		}
+
+		pServer->vehicleSpawnData.erase(vehicleid);
+	}
+	return 1;
+}
+
+static cell AMX_NATIVE_CALL Natives::YSF_DestroyVehicle(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "YSF_DestroyVehicle");
+
+	// TODO
+	return 1;
+}
+
 #ifdef NEW_PICKUP_SYSTEM
 // native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 static cell AMX_NATIVE_CALL Natives::CreatePickup(AMX *amx, cell *params)
@@ -5904,6 +6058,8 @@ AMX_NATIVE_INFO RedirecedtNatives[] =
 	{ "DestroyPlayerObject",			Natives::YSF_DestroyPlayerObject },
 	{ "CancelEdit",						Natives::YSF_CancelEdit },
 	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
+	{ "SetVehicleToRespawn",			Natives::YSF_SetVehicleToRespawn},
+	{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
 
 	{ "GangZoneCreate",					Natives::YSF_GangZoneCreate },
 	{ "GangZoneDestroy",				Natives::YSF_GangZoneDestroy },

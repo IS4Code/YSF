@@ -4,11 +4,13 @@
 class CNetGame;
 class RakServer;
 struct Packet;
+class CVehicleSpawn;
 
 #include "CTypes.h"
 #include "Addresses.h"
 
 #include <vector>
+#include <set>
 
 class CServer
 {
@@ -55,6 +57,8 @@ public:
 	void	SetBoolVariable(char *szRule, bool value);
 
 	void	ModifyVariableFlags(char* pVarName, DWORD VarFlags);
+	
+	std::map<int, CVehicleSpawn> vehicleSpawnData;
 private:
 	eSAMPVersion m_Version;
 	//float m_fGravity;

@@ -323,7 +323,14 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_DestroyPlayerObject(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_CancelEdit(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_TogglePlayerControllable(AMX *amx, cell *params);
-
+	static cell AMX_NATIVE_CALL YSF_SetVehicleToRespawn(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_DestroyVehicle(AMX *amx, cell *params);
+	
+	static cell AMX_NATIVE_CALL YSF_SetPlayerTeam(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetPlayerSkin(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetPlayerFightingStyle(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetPlayerName(AMX *amx, cell *params);
+	
 	static cell AMX_NATIVE_CALL YSF_GangZoneCreate(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GangZoneDestroy(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GangZoneShowForPlayer(AMX *amx, cell *params);

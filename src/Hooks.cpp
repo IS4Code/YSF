@@ -45,7 +45,7 @@ static SubHook GetPacketID_hook;
 static SubHook logprintf_hook;
 static SubHook query_hook;
 
-AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL;
+AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -161,6 +161,21 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 			if(!pTogglePlayerControllable && !strcmp(nativelist[i].name, "TogglePlayerControllable"))
 				pTogglePlayerControllable = nativelist[i].func;
+
+			if(!pSetPlayerTeam && !strcmp(nativelist[i].name, "SetPlayerTeam"))
+				pSetPlayerTeam = nativelist[i].func;
+			
+			if(!pSetPlayerSkin && !strcmp(nativelist[i].name, "SetPlayerSkin"))
+				pSetPlayerSkin = nativelist[i].func;
+			
+			if(!pSetPlayerFightingStyle && !strcmp(nativelist[i].name, "SetPlayerFightingStyle"))
+				pSetPlayerFightingStyle = nativelist[i].func;
+			
+			if(!pSetPlayerName && !strcmp(nativelist[i].name, "SetPlayerName"))
+				pSetPlayerName = nativelist[i].func;
+			
+			if(!pSetVehicleToRespawn && !strcmp(nativelist[i].name, "SetVehicleToRespawn"))
+				pSetVehicleToRespawn = nativelist[i].func;
 
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;

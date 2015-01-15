@@ -286,7 +286,10 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamOut(int playerid, int forplayerid)
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerSpawn(int playerid)
 {
-	pPlayerData[playerid]->bControllable = true;
+	if (IsPlayerConnected(playerid))
+	{
+		pPlayerData[playerid]->bControllable = true;
+	}
 	return true;
 }
 

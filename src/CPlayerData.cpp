@@ -143,7 +143,7 @@ bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, char *name)
 char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
 {
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[nameplayerid];
-	if (!m_szNames[nameplayerid])
+	if (!m_szNames[nameplayerid][0])
 	{
 		return GetPlayerName_(nameplayerid);
 	}
