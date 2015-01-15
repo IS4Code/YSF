@@ -72,8 +72,32 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	}
 	else if (addr == CAddress::FUNC_Logprintf_03ZR4)
 	{
-		version = SAMP_VERSION_03Z_R4;
+#ifndef _WIN32
+		if(*(DWORD*)0x080D9C4F == 0x6681FAF3)
+		{
+			if(MAX_PLAYERS != 500) 
+			{
+				logprintf("YSF: You are trying to load YSF 1000p version at 500p server. Get 500p version");
+				return 0;
+			}
+			strcpy(szVersion, "0.3z R4");
+			version = SAMP_VERSION_03Z_R4;
+		}
+		else
+		{
+			if(MAX_PLAYERS != 1000) 
+			{
+				logprintf("YSF: You are trying to load YSF 500p version at 1000p server. Get 1000p version");
+				return 0;
+			}
+
+			strcpy(szVersion, "0.3z R4-1000p");
+			version = SAMP_VERSION_03Z_R4;
+		}	
+#else
 		strcpy(szVersion, "0.3z R4");
+		version = SAMP_VERSION_03Z_R4;
+#endif
 	}
 
 	//logprintf("skipgeci: %d", GetServerCfgOption("ysf_skipversioncheck").c_str());
