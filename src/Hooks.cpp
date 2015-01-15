@@ -230,22 +230,50 @@ static BYTE HOOK_GetPacketID(Packet *p)
 		{
 			pPlayerData[playerid]->dwLastUpdateTick = GetTickCount();
 			pPlayerData[playerid]->bEverUpdated = true;
-			/*
-			if (packetId == ID_VEHICLE_SYNC)
+			
+			if (packetId == ID_VEHICLE_SYNC || packetId == ID_PASSENGER_SYNC)
 			{
 				RakNet::BitStream bsData(p->data, p->length, false);
 				CVehicleSyncData pVehicleSync;
 
 				bsData.SetReadOffset(8);
 				bsData.Read((char*)&pVehicleSync, sizeof(pVehicleSync));
-				logprintf("keys sync: %d", pVehicleSync.wKeys);
 				
 				pVehicleSync.wKeys = 0;
 				pVehicleSync.wUDAnalog = 0;
 				pVehicleSync.wLRAnalog = 0;
+
+				// Fix "player bugger"
+				// Causes this screen: 
+				// Happens when a player is in a car with a cheating player, and that cheating player
+				// manipulates the vehicle position to be outside the GTA:SA position range
+				if (pVehicleSync.vecPosition.fX < -20000.0f || pVehicleSync.vecPosition.fX > 20000.0f ||
+					pVehicleSync.vecPosition.fY < -20000.0f || pVehicleSync.vecPosition.fY > 20000.0f ||
+					pVehicleSync.vecPosition.fZ < -20000.0f || pVehicleSync.vecPosition.fZ > 20000.0f ||
+					
+					// MOVE SPEED
+
+					pVehicleSync.vecVelocity.fX > 35.0f || pVehicleSync.vecVelocity.fX < -35.0f ||
+					pVehicleSync.vecVelocity.fY > 35.0f || pVehicleSync.vecVelocity.fY < -35.0f ||
+					pVehicleSync.vecVelocity.fZ > 35.0f || pVehicleSync.vecVelocity.fZ < -35.0f ||
+
+					// infinity checks
+
+					!isfinite(pVehicleSync.vecPosition.fX) || !isfinite(pVehicleSync.vecPosition.fY) || !isfinite(pVehicleSync.vecPosition.fZ) ||
+					!isfinite(pVehicleSync.vecVelocity.fX) || !isfinite(pVehicleSync.vecVelocity.fY) || !isfinite(pVehicleSync.vecVelocity.fZ)
+					)
+				{
+					return 0xFF;
+				}
+
+				// Fix "bike crash"
+				if (pVehicleSync.fTrainSpeed > 1000.0 || pVehicleSync.fTrainSpeed < 0.0)
+				{
+					return 0xFF;
+				}
 			
 			}
-			*/
+			
 			/*
 			// Based on JernejL's tutorial - http://forum.sa-mp.com/showthread.php?t=172085
 			DWORD dwDrunkNew = pPlayerPool->dwDrunkLevel[playerid];
@@ -325,6 +353,57 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				pBulletSync.vecCenterOfHit.fZ < -20000.0 || pBulletSync.vecCenterOfHit.fZ > 20000.0)
 			{
 				//logprintf("bullet crasher detected. id = %d", playerid);
+				return 0xFF;
+			}
+
+			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_PLAYER && ((pBulletSync.vecCenterOfHit.fX > 10.0f || pBulletSync.vecCenterOfHit.fX < -10.0f) || (pBulletSync.vecCenterOfHit.fY > 10.0f || pBulletSync.vecCenterOfHit.fY < -10.0f) || (pBulletSync.vecCenterOfHit.fZ > 10.0f || pBulletSync.vecCenterOfHit.fZ < -10.0f)))
+			{
+				return 0xFF;
+			}
+
+			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_VEHICLE && ((pBulletSync.vecCenterOfHit.fX > 100.0f || pBulletSync.vecCenterOfHit.fX < -100.0f) || (pBulletSync.vecCenterOfHit.fY > 100.0f || pBulletSync.vecCenterOfHit.fY < -100.0f) || (pBulletSync.vecCenterOfHit.fZ > 100.0f || pBulletSync.vecCenterOfHit.fZ < -100.0f)))
+			{
+				return 0xFF;
+			}
+
+			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_OBJECT || pBulletSync.byteHitType == BULLET_HIT_TYPE_PLAYER_OBJECT && ((pBulletSync.vecCenterOfHit.fX > 1000.0 || pBulletSync.vecCenterOfHit.fX < -1000.0) || (pBulletSync.vecCenterOfHit.fY > 1000.0 || pBulletSync.vecCenterOfHit.fY < -1000.0) || (pBulletSync.vecCenterOfHit.fZ > 1000.0 || pBulletSync.vecCenterOfHit.fZ < -1000.0)))
+			{
+				return 0xFF;
+			}
+		}
+
+		if (packetId == ID_AIM_SYNC)
+		{
+			RakNet::BitStream bsData(p->data, p->length, false);
+
+			bsData.SetReadOffset(8);
+
+			CAimSyncData aim;
+			bsData.Read((char*)&aim, sizeof(aim));
+
+			float x, y, z;
+			GetPlayerPos(p->playerIndex, &x, &y, &z);
+
+			float distx = aim.vecPosition.fX - x;
+			float disty = aim.vecPosition.fY - y;
+			float distz = aim.vecPosition.fZ - z;
+
+
+			if ((abs(distx) + abs(disty) + abs(distz)) > 500.0f)
+			{
+				return 0xFF;
+			}
+
+			if (!isfinite(aim.vecPosition.fX) || !isfinite(aim.vecPosition.fY) || !isfinite(aim.vecPosition.fZ) ||
+				!isfinite(aim.vecFront.fX) || !isfinite(aim.vecFront.fY) || !isfinite(aim.vecFront.fZ))
+			{
+				return 0xFF;
+			}
+
+			if (aim.vecFront.fX < -9.9f || aim.vecFront.fX > 9.9f ||
+				aim.vecFront.fY < -9.9f || aim.vecFront.fY > 9.9f ||
+				aim.vecFront.fZ < -9.9f || aim.vecFront.fZ > 9.9f)
+			{
 				return 0xFF;
 			}
 		}
