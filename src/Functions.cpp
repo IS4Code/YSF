@@ -72,7 +72,7 @@ void CSAMPFunctions::SpawnPlayer_(int playerid)
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
 }
 
-void CSAMPFunctions::RespawnVehicle_(CVehicle *pVehicle)
+void CSAMPFunctions::RespawnVehicle_(void *pVehicle)
 {
 	pfn__CVehicle__Respawn(pVehicle);
 }

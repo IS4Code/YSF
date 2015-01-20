@@ -1072,7 +1072,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerName(AMX* amx, cell* params)
 	if (!pServer)
 		return 0;
 
-	CHECK_PARAMS(3, "SetPlayerName");
+	CHECK_PARAMS(2, "SetPlayerName");
 
 	int playerid = (int)params[1];
 	if(pSetPlayerName(amx, params))
@@ -5793,7 +5793,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SetPlayerGravity",				Natives::SetPlayerGravity },
 	{ "GetPlayerGravity",				Natives::GetPlayerGravity },
 	
-	{ "SetPlayerTeamForPlayer",			Natives::SetPlayerTeamForPlayer }, // R5 - Experimental - needs testing - tested, should be OK
+	{ "SetPlayerTeamForPlayer",			Natives::SetPlayerTeamForPlayer }, // R5
 	{ "GetPlayerTeamForPlayer",			Natives::GetPlayerTeamForPlayer }, // R5
 	{ "SetPlayerSkinForPlayer",			Natives::SetPlayerSkinForPlayer }, // R11
 	{ "GetPlayerSkinForPlayer",			Natives::GetPlayerSkinForPlayer }, // R11
@@ -6058,8 +6058,8 @@ AMX_NATIVE_INFO RedirecedtNatives[] =
 	{ "DestroyPlayerObject",			Natives::YSF_DestroyPlayerObject },
 	{ "CancelEdit",						Natives::YSF_CancelEdit },
 	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
-	{ "SetVehicleToRespawn",			Natives::YSF_SetVehicleToRespawn},
-	{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
+	//{ "SetVehicleToRespawn",			Natives::YSF_SetVehicleToRespawn},
+	//{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
 
 	{ "GangZoneCreate",					Natives::YSF_GangZoneCreate },
 	{ "GangZoneDestroy",				Natives::YSF_GangZoneDestroy },
@@ -6079,6 +6079,11 @@ AMX_NATIVE_INFO RedirecedtNatives[] =
 #endif
 	{ "GetWeaponName",					Natives::FIXED_GetWeaponName },
 	{ "IsPlayerConnected",				Natives::FIXED_IsPlayerConnected },
+
+	{ "SetPlayerTeam",					Natives::YSF_SetPlayerTeam },
+	{ "SetPlayerSkin",					Natives::YSF_SetPlayerSkin },
+	{ "SetPlayerName",					Natives::YSF_SetPlayerName },
+	{ "SetPlayerFightingStyle",			Natives::YSF_SetPlayerFightingStyle },
 	{ 0,								0 }
 };
 

@@ -85,7 +85,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>bin\win32\Release\YSF.lib</ImportLibrary>
       <ModuleDefinitionFile>YSF.def</ModuleDefinitionFile>
-      <OutputFile>C:\Users\Ati\Desktop\SERVER\plugins\YSF.dll</OutputFile>
+      <OutputFile>$(ProjectDir)bin\win32\Release\YSF.dll</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;winmm.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>false</DataExecutionPrevention>
@@ -97,11 +97,12 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_CHRONO_HEADER_ONLY;_CRT_SECURE_NO_WARNINGS;SAMPGDK_AMALGAMATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SAMPGDK_AMALGAMATION;SUBHOOK_IMPLEMENTATION;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include;lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ProgramDataBaseFileName>$(OutDir)YSF.pdb</ProgramDataBaseFileName>
       <Optimization>Disabled</Optimization>
+      <StructMemberAlignment>1Byte</StructMemberAlignment>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_CHRONO_HEADER_ONLY;_CRT_SECURE_NO_WARNINGS;SAMPGDK_AMALGAMATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -113,6 +114,8 @@
       <ImportLibrary>bin\win32\Debug\YSF.lib</ImportLibrary>
       <ModuleDefinitionFile>YSF.def</ModuleDefinitionFile>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <OutputFile>$(ProjectDir)bin\win32\Debug\YSF.dll</OutputFile>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

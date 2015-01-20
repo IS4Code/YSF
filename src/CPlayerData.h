@@ -60,19 +60,19 @@ public:
 
 	bool SetPlayerTeamForPlayer(WORD teamplayerid, int team);
 	int GetPlayerTeamForPlayer(WORD teamplayerid);
-	inline int ResetPlayerTeam(WORD playerid) { m_iTeams[playerid] = -1; }
+	inline void ResetPlayerTeam(WORD playerid) { m_iTeams[playerid] = -1; }
 
 	bool SetPlayerSkinForPlayer(WORD skinplayerid, int skin);
 	int GetPlayerSkinForPlayer(WORD skinplayerid);
-	inline int ResetPlayerSkin(WORD playerid) { m_iSkins[playerid] = -1; }
+	inline void ResetPlayerSkin(WORD playerid) { m_iSkins[playerid] = -1; }
 
 	bool SetPlayerNameForPlayer(WORD nameplayerid, char *name);
 	char *GetPlayerNameForPlayer(WORD nameplayerid);
-	inline int ResetPlayerName(WORD playerid) { m_szNames[playerid][0] = NULL; }
+	inline void ResetPlayerName(WORD playerid) { m_szNames[playerid][0] = NULL; }
 
 	bool SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style);
 	int GetPlayerFightingStyleForPlayer(WORD styleplayerid);
-	inline int ResetPlayerFightingStyle(WORD playerid){ m_iFightingStyles[playerid] = -1; }
+	inline void ResetPlayerFightingStyle(WORD playerid){ m_iFightingStyles[playerid] = -1; }
 
 	WORD GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer = false);
 	bool DestroyObject_(WORD objectid);

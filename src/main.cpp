@@ -207,7 +207,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		}
 		else
 		{
-			logprintf("weather pnetgame: %d", pNetGame->byteWeather);
+			//logprintf("weather pnetgame: %d", pNetGame->byteWeather);
 			/*
 			if (pNetGame->pPlayerPool->bIsPlayerConnected[0])
 			{

@@ -375,14 +375,6 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			bsData.SetReadOffset(8);
 			bsData.Read((char*)&pBulletSync, sizeof(pBulletSync));
 
-			if (pBulletSync.vecCenterOfHit.fX < -20000.0 || pBulletSync.vecCenterOfHit.fX > 20000.0 ||
-				pBulletSync.vecCenterOfHit.fY < -20000.0 || pBulletSync.vecCenterOfHit.fY > 20000.0 ||
-				pBulletSync.vecCenterOfHit.fZ < -20000.0 || pBulletSync.vecCenterOfHit.fZ > 20000.0)
-			{
-				//logprintf("bullet crasher detected. id = %d", playerid);
-				return 0xFF;
-			}
-
 			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_PLAYER && ((pBulletSync.vecCenterOfHit.fX > 10.0f || pBulletSync.vecCenterOfHit.fX < -10.0f) || (pBulletSync.vecCenterOfHit.fY > 10.0f || pBulletSync.vecCenterOfHit.fY < -10.0f) || (pBulletSync.vecCenterOfHit.fZ > 10.0f || pBulletSync.vecCenterOfHit.fZ < -10.0f)))
 			{
 				return 0xFF;
@@ -408,15 +400,10 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			CAimSyncData aim;
 			bsData.Read((char*)&aim, sizeof(aim));
 
-			float x, y, z;
-			GetPlayerPos(p->playerIndex, &x, &y, &z);
+			CVector vecPos = pNetGame->pPlayerPool->pPlayer[p->playerIndex]->vecPosition;
+			CVector vecDist = aim.vecPosition - vecPos;
 
-			float distx = aim.vecPosition.fX - x;
-			float disty = aim.vecPosition.fY - y;
-			float distz = aim.vecPosition.fZ - z;
-
-
-			if ((abs(distx) + abs(disty) + abs(distz)) > 500.0f)
+			if ((abs(vecDist.fX) + abs(vecDist.fY) + abs(vecDist.fZ)) > 500.0f)
 			{
 				return 0xFF;
 			}
