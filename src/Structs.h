@@ -109,7 +109,12 @@ public:
 	BYTE			byteWeaponState : 6;	// 0x001D - 0x001E
 	BYTE			byteCameraZoom : 2;
 	BYTE			unk;					// 0x001E - 0x001F
-	// Size = 31
+	/* 0.3.7
+	WORD			wCameraObject;			// 31
+	WORD			wCameraVehicle;			// 33
+	WORD			wCameraPlayer;			// 35
+*/
+	// Size = 31 / 37
 };
 
 class CVehicleSyncData

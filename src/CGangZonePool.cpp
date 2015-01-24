@@ -86,7 +86,7 @@ void CGangZonePool::Delete(WORD playerid, WORD wZone)
 	}
 }
 
-void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
+bool CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
 {
 	RakNet::BitStream bsParams;
 	
@@ -99,20 +99,25 @@ void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 		if(pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 0xFF) break;
 		i++;
 	}
-	if (i == MAX_GANG_ZONES) return;
+	if (i == MAX_GANG_ZONES) return 0;
 
 	// Mark client side zone id as used
 	if(!bPlayerZone)
 	{
+		pZone = pGangZone[wZone];
+		if(!pZone) return 0;
+
 		pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0;
 		pPlayerData[playerid]->wClientSideGlobalZoneID[i] = wZone;
-		pZone = pGangZone[wZone];
+		
 	}
 	else
 	{
+		pZone = pPlayerData[playerid]->pPlayerZone[wZone];
+		if(!pZone) return 0;
+
 		pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 1;
 		pPlayerData[playerid]->wClientSidePlayerZoneID[i] = wZone;
-		pZone = pPlayerData[playerid]->pPlayerZone[wZone];
 	}
 	pPlayerData[playerid]->dwClientSideZoneColor[i] = dwColor;
 
@@ -125,6 +130,7 @@ void CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 	bsParams.Write(pZone->fGangZone[3]);
 	bsParams.Write(RGBA_ABGR(dwColor));
 	pRakServer->RPC(&RPC_ShowGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	return 1;
 }
 
 void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
@@ -160,7 +166,7 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 	}
 }
 
-void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
+bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 {
 	WORD i = 0;
 	CGangZone *pZone = NULL;
@@ -173,7 +179,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 			if(pPlayerData[playerid]->wClientSideGlobalZoneID[i] == wZone) break;
 			i++;
 		}
-		if(i == MAX_GANG_ZONES) return;
+		if(i == MAX_GANG_ZONES) return 0;
 
 		if (pPlayerData[playerid]->bInGangZone[i])
 		{
@@ -189,7 +195,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 			if(pPlayerData[playerid]->wClientSidePlayerZoneID[i] == wZone) break;
 			i++;
 		}
-		if(i == MAX_GANG_ZONES) return;
+		if(i == MAX_GANG_ZONES) return 0;
 		
 		if (pPlayerData[playerid]->bInGangZone[i])
 		{
@@ -198,7 +204,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 
 		pPlayerData[playerid]->wClientSidePlayerZoneID[i] = 0xFFFF;
 	}
-	if (i == MAX_GANG_ZONES) return;
+	if (i == MAX_GANG_ZONES) return 0;
 
 	pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0xFF;
 	pPlayerData[playerid]->dwClientSideZoneColor[i] = 0;
@@ -210,6 +216,7 @@ void CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
 	pRakServer->RPC(&RPC_HideGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	return 1;
 }
 
 void CGangZonePool::HideForAll(WORD wZone)

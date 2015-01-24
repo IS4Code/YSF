@@ -747,7 +747,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (pRakServer && pRakServer->IsBanned(inet_ntoa(in))) return 1;
 
 					// We do not process these queries 'query' is 0
-					if (!pServer->GetBoolVariable("query")) return 1;
+					if (!pServer->GetBoolVariable("query") || !pServer->GetBoolVariable("rcon")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
 					cur_sock = s;

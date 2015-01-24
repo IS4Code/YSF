@@ -23,7 +23,7 @@ typedef bool(__thiscall *CFilterscripts__LoadFilterscript_t)(void *pFilterscript
 typedef bool(__thiscall *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
 
 typedef void(__thiscall *CPlayer__SpawnForWorld_t)(void *pPlayer);
-typedef void(__thiscall *CVehicle__Respawn_t)(pVehicle *pVehicle);
+typedef void(__thiscall *CVehicle__Respawn_t)(void *pVehicle);
 
 typedef int(__thiscall *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef char *(__thiscall *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);

@@ -9,7 +9,7 @@ GPP = g++ -m32 -Ilib
 GCC = gcc -m32
 YSF_OUTFILE = "./YSF.so"
 
-COMPILE_FLAGS = -c -fPIC -w -D LINUX
+COMPILE_FLAGS = -c -O3 -fpack-struct=1 -fPIC -w -D LINUX
 
 YSF = -D YSF $(COMPILE_FLAGS)
 

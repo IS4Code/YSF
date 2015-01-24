@@ -4403,8 +4403,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForPlayer( AMX* amx, cell* 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->ShowForPlayer(playerid, zoneid, color);
-	return 1;
+	return pNetGame->pGangZonePool->ShowForPlayer(playerid, zoneid, color);
 }
 
 // native YSF_GangZoneHideForPlayer(playerid, zone);

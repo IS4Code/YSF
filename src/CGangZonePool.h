@@ -25,9 +25,9 @@ public:
 	void Delete(WORD wZone);
 	void Delete(WORD playerid, WORD wZone);
 
-	void ShowForPlayer(WORD bytePlayer, WORD wZone, DWORD dwColor, bool bPlayerZone = false);
+	bool ShowForPlayer(WORD bytePlayer, WORD wZone, DWORD dwColor, bool bPlayerZone = false);
 	void ShowForAll(WORD wZone, DWORD dwColor);
-	void HideForPlayer(WORD bytePlayer, WORD wZone, bool bPlayerZone = false);
+	bool HideForPlayer(WORD bytePlayer, WORD wZone, bool bPlayerZone = false);
 	void HideForAll(WORD wZone);
 	void FlashForPlayer(WORD bytePlayer, WORD wZone, DWORD dwColor, bool bPlayerZone = false);
 	void FlashForAll(WORD wZone, DWORD dwColor);
