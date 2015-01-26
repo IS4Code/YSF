@@ -5,11 +5,11 @@
 # make YSF
 #
 
-GPP = g++ -m32 -Ilib
-GCC = gcc -m32
+GPP = g++ -m32 -Ilib -DSAMPGDK_AMALGAMATION -nodefaultlibs
+GCC = gcc -m32 -Ilib -DSAMPGDK_AMALGAMATION -nodefaultlibs
 YSF_OUTFILE = "./YSF.so"
 
-COMPILE_FLAGS = -c -O3 -fpack-struct=1 -fPIC -w -D LINUX
+COMPILE_FLAGS = -c -O2 -fpack-struct=1 -fPIC -w -DLINUX
 
 YSF = -D YSF $(COMPILE_FLAGS)
 
@@ -19,8 +19,8 @@ clean:
 	-rm -f *~ *.o *.so
 
 YSF: clean
-	$(GCC) $(YSF) ./lib/sdk/*.cpp
+	$(GPP) $(YSF) ./lib/sdk/*.cpp
 	$(GPP) $(YSF) ./lib/raknet/*.cpp
 	$(GCC) $(YSF) ./lib/subhook/subhook.c
 	$(GPP) $(YSF) ./src/*.cpp
-	$(GPP) -fshort-wchar -shared -o $(YSF_OUTFILE) *.o
+	$(GCC) -fshort-wchar -shared -o $(YSF_OUTFILE) *.o
