@@ -117,7 +117,7 @@ using sampgdk::logprintf;
 extern void **ppPluginData;
 
 extern CServer *pServer;
-extern CPlayerData *pPlayerData[500];
+extern CPlayerData *pPlayerData[MAX_PLAYERS];
 
 extern CNetGame *pNetGame;
 extern void *pConsole;

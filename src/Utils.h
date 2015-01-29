@@ -21,6 +21,7 @@
 // Linux
 #ifndef _WIN32
 
+#undef GetTickCount
 int GetTickCount();
 void LoadTickCount();
 
