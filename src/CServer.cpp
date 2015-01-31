@@ -2,8 +2,6 @@
 
 CServer::CServer(eSAMPVersion version)
 {
-//	m_fGravity = 0.008f;
-//	m_byteWeather = 10;
 	m_iTicks = 0;
 
 	memset(pPlayerData, NULL, MAX_PLAYERS);
@@ -171,7 +169,6 @@ void CServer::SetGravity_(float fGravity)
 	char szGravity[16];
 	sprintf(szGravity, "%f", fGravity);
 
-	//m_fGravity = fGravity;
 	pNetGame->fGravity = fGravity;
 	pServer->SetStringVariable("gravity", szGravity);
 
@@ -198,7 +195,6 @@ void CServer::SetWeather_(BYTE byteWeather)
 	char szWeather[8];
 	sprintf(szWeather, "%d", byteWeather);
 	
-	//m_byteWeather = byteWeather;
 	pNetGame->byteWeather = byteWeather;
 	pServer->SetStringVariable("weather", szWeather);
 

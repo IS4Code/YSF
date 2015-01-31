@@ -43,7 +43,6 @@ extern int RPC_CreateObject;
 extern int RPC_DestroyObject;
 extern int RPC_AttachObject;
 extern int RPC_Widescreen;
-extern int RPC_WorldBounds;
 extern int RPC_ShowGangZone;
 extern int RPC_HideGangZone;
 extern int RPC_FlashGangZone;

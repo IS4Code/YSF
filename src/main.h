@@ -115,7 +115,7 @@ using sampgdk::logprintf;
 // ---------
 
 extern void **ppPluginData;
-
+	
 extern CServer *pServer;
 extern CPlayerData *pPlayerData[MAX_PLAYERS];
 

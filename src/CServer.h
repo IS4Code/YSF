@@ -61,8 +61,6 @@ public:
 	std::map<int, CVehicleSpawn> vehicleSpawnData;
 private:
 	eSAMPVersion m_Version;
-	//float m_fGravity;
-	//unsigned char m_byteWeather;
 	int m_iTicks;
 
 	std::vector <char> m_vecValidNameCharacters;

@@ -46,7 +46,7 @@ static SubHook logprintf_hook;
 static SubHook query_hook;
 static SubHook CVehicle__Respawn_hook;
 
-AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
+AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -163,6 +163,9 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			if(!pTogglePlayerControllable && !strcmp(nativelist[i].name, "TogglePlayerControllable"))
 				pTogglePlayerControllable = nativelist[i].func;
 
+			if(!pSetPlayerWorldBounds && !strcmp(nativelist[i].name, "SetPlayerWorldBounds"))
+				pSetPlayerWorldBounds = nativelist[i].func;
+			
 			if(!pSetPlayerTeam && !strcmp(nativelist[i].name, "SetPlayerTeam"))
 				pSetPlayerTeam = nativelist[i].func;
 			
@@ -299,15 +302,15 @@ static BYTE HOOK_GetPacketID(Packet *p)
 					!isfinite(vecVelocity->fX) || !isfinite(vecVelocity->fY) || !isfinite(vecVelocity->fZ)
 					)
 				{
+					logprintf("vehicle crasher");
 					return 0xFF;
 				}
-
+				
 				// Fix "bike crash"
-				if (fTrainSpeed > 1000.0f || fTrainSpeed < 0.0f)
+				if (fTrainSpeed > 100000.0f || fTrainSpeed < 0.0f)
 				{
 					return 0xFF;
 				}
-			
 			}
 			
 			/*

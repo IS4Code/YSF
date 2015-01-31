@@ -1283,20 +1283,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWorldBounds(AMX* amx, cell* pa
 	CHECK_PARAMS(5, "SetPlayerWorldBounds");
 
 	int playerid = (int)params[1];
-	if (!IsPlayerConnected(playerid)) return 0;
 
-	// Update stored values
-	pPlayerData[playerid]->fBounds[0] = amx_ctof(params[2]);
-	pPlayerData[playerid]->fBounds[1] = amx_ctof(params[3]);
-	pPlayerData[playerid]->fBounds[2] = amx_ctof(params[4]);
-	pPlayerData[playerid]->fBounds[3] = amx_ctof(params[5]);
-
-	RakNet::BitStream bs;
-	bs.Write(pPlayerData[playerid]->fBounds[0]);
-	bs.Write(pPlayerData[playerid]->fBounds[1]);
-	bs.Write(pPlayerData[playerid]->fBounds[2]);
-	bs.Write(pPlayerData[playerid]->fBounds[3]);
-	pRakServer->RPC(&RPC_WorldBounds, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	if(pSetPlayerWorldBounds(amx, params) && IsPlayerConnected(playerid))
+	{
+		pPlayerData[playerid]->fBounds[0] = amx_ctof(params[2]);
+		pPlayerData[playerid]->fBounds[1] = amx_ctof(params[3]);
+		pPlayerData[playerid]->fBounds[2] = amx_ctof(params[4]);
+		pPlayerData[playerid]->fBounds[3] = amx_ctof(params[5]);
+	}
 	return 1;
 }
 
@@ -1312,7 +1306,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
 
-	if(pDestroyPlayerObject(amx, params))
+	if(pDestroyPlayerObject(amx, params) && IsPlayerConnected(playerid))
 	{
 		if(pPlayerData[playerid]->stObj[objectid].usObjectID != 0xFFFF || pPlayerData[playerid]->stObj[objectid].usAttachPlayerID != INVALID_PLAYER_ID)
 		{
@@ -1339,7 +1333,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_CancelEdit(AMX* amx, cell* params)
 
 	int playerid = (int)params[1];
 
-	if(pCancelEdit(amx, params))
+	if(pCancelEdit(amx, params) && IsPlayerConnected(playerid))
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject = false;
 		return 1;
@@ -1359,7 +1353,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_TogglePlayerControllable(AMX* amx, cell
 	int playerid = (int)params[1];
 	bool toggle = !!params[2];
 
-	if(pTogglePlayerControllable(amx, params))
+	if(pTogglePlayerControllable(amx, params) && IsPlayerConnected(playerid))
 	{
 		pPlayerData[playerid]->bControllable = toggle;
 		//printf("controllable: %d, %d", toggle, pPlayerData[playerid]->bControllable);
