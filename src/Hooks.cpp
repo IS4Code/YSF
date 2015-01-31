@@ -305,12 +305,13 @@ static BYTE HOOK_GetPacketID(Packet *p)
 					logprintf("vehicle crasher");
 					return 0xFF;
 				}
-				
+				/*
 				// Fix "bike crash"
 				if (fTrainSpeed > 100000.0f || fTrainSpeed < 0.0f)
 				{
 					return 0xFF;
 				}
+				*/
 			}
 			
 			/*
@@ -398,28 +399,26 @@ static BYTE HOOK_GetPacketID(Packet *p)
 		{
 			RakNet::BitStream bsData(p->data, p->length, false);
 
-			bsData.SetReadOffset(8);
-
-			CAimSyncData aim;
-			bsData.Read((char*)&aim, sizeof(aim));
+			CAimSyncData *aim = (CAimSyncData*)(&p->data[1]);;
+			int weaponid = pNetGame->pPlayerPool->pPlayer[p->playerIndex]->byteCurrentWeapon;
 
 			CVector vecPos = pNetGame->pPlayerPool->pPlayer[p->playerIndex]->vecPosition;
-			CVector vecDist = aim.vecPosition - vecPos;
+			CVector vecDist = aim->vecPosition - vecPos;
 
 			if ((abs(vecDist.fX) + abs(vecDist.fY) + abs(vecDist.fZ)) > 500.0f)
 			{
 				return 0xFF;
 			}
 
-			if (!isfinite(aim.vecPosition.fX) || !isfinite(aim.vecPosition.fY) || !isfinite(aim.vecPosition.fZ) ||
-				!isfinite(aim.vecFront.fX) || !isfinite(aim.vecFront.fY) || !isfinite(aim.vecFront.fZ))
+			if (!isfinite(aim->vecPosition.fX) || !isfinite(aim->vecPosition.fY) || !isfinite(aim->vecPosition.fZ) ||
+				!isfinite(aim->vecFront.fX) || !isfinite(aim->vecFront.fY) || !isfinite(aim->vecFront.fZ))
 			{
 				return 0xFF;
 			}
 
-			if (aim.vecFront.fX < -9.9f || aim.vecFront.fX > 9.9f ||
-				aim.vecFront.fY < -9.9f || aim.vecFront.fY > 9.9f ||
-				aim.vecFront.fZ < -9.9f || aim.vecFront.fZ > 9.9f)
+			if (aim->vecFront.fX < -9.9f || aim->vecFront.fX > 9.9f ||
+				aim->vecFront.fY < -9.9f || aim->vecFront.fY > 9.9f ||
+				aim->vecFront.fZ < -9.9f || aim->vecFront.fZ > 9.9f)
 			{
 				return 0xFF;
 			}

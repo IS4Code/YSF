@@ -1807,7 +1807,7 @@ static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params )
 	CHECK_PARAMS(13, "SendBulletData");
 
 	int playerid = (int)params[1];
-	int forplayerid = (int)params[12];
+	int forplayerid = (int)params[13];
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(forplayerid != -1)
@@ -4359,8 +4359,8 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
 	// If coordinates are wrong, then won't create bugged zone!
 	if(fMaxX <= fMinX || fMaxY <= fMinY) 
 	{
-		logprintf("GangZoneCreate: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
-		logprintf("GangZoneCreate: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
+		//logprintf("GangZoneCreate: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
+		//logprintf("GangZoneCreate: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
 		return -1;
 	}
 
