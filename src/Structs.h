@@ -580,7 +580,7 @@ public:
 	ushort				wAttachedObjectID;	// 165 - 167
 	CVector				vecAttachedOffset;	// 167 - 179
 	CVector				vecAttachedRotation;// 179 - 191
-	BYTE				byteSomething; // 191 - 192
+	BYTE				byteSyncRot; // 191 - 192
 	DWORD				dwMaterialCount; // 192 - 196
 	CObjectMaterial		Material[16]; // 196 - 3636
 	char				*szMaterialText[16]; // 3636 - 3652

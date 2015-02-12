@@ -9,7 +9,7 @@ GPP = g++ -m32 -Ilib -DSAMPGDK_AMALGAMATION -nodefaultlibs
 GCC = gcc -m32 -Ilib -DSAMPGDK_AMALGAMATION -nodefaultlibs
 YSF_OUTFILE = "./YSF.so"
 
-COMPILE_FLAGS = -c -O2 -fpack-struct=1 -fPIC -w -DLINUX
+COMPILE_FLAGS = -c -O3 -fpack-struct=1 -fPIC -w -DLINUX
 
 YSF = -D YSF $(COMPILE_FLAGS)
 

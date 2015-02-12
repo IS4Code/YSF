@@ -446,7 +446,7 @@ static void HOOK_logprintf(const char *msg, ...)
 {
 	SubHook::ScopedRemove remove(&logprintf_hook);
 
-	char buffer[1024];
+	static char buffer[1024];
 	va_list arguments;
 	va_start(arguments, msg);
 	vsnprintf(buffer, sizeof(buffer), msg, arguments);
@@ -457,6 +457,8 @@ static void HOOK_logprintf(const char *msg, ...)
 
 	if (bRconSocketReply) 
 		RconSocketReply(buffer);
+
+	//SAFE_DELETE(buffer);
 }
 
 //----------------------------------------------------
@@ -823,7 +825,8 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						RconSocketReply("Invalid RCON password.");
 						bRconSocketReply = false;
 
-						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, false, "NULL");
+						
+						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, (!szPassword[0]) ? ("NULL") : (szPassword), false, "NULL");
 					}
 					free(szPassword);
 

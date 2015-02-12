@@ -1315,7 +1315,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 			pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(0.0f, 0.0f, 0.0f);
 			pPlayerData[playerid]->stObj[objectid].vecRot = CVector(0.0f, 0.0f, 0.0f);		
 
-			logprintf("remove attached shit");
+			//logprintf("remove attached shit");
 		}
 		return 1;
 	}
@@ -4245,13 +4245,13 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	float fDrawDistance = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->fDrawDistance;
 	
 	RakNet::BitStream bs;
-	bs.Write(wObjectID);
+	bs.Write((WORD)wObjectID);
 	bs.Write(iModelID);
 	bs.Write(vecPos);
 	bs.Write(vecRot);
-	bs.Write(fDrawDistance);
-	bs.Write((WORD)-1); // padding, idk what is it
-	bs.Write(wAttachTo);
+	bs.Write(fDrawDistance); // 159
+	bs.Write((WORD)-1); // attached vehicle
+	bs.Write((WORD)wAttachTo); // attached object
 	bs.Write(vecOffset);
 	bs.Write(vecOffsetRot);	
 	bs.Write(byteSyncRot);
