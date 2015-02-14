@@ -23,7 +23,7 @@ typedef bool(__thiscall *CFilterscripts__LoadFilterscript_t)(void *pFilterscript
 typedef bool(__thiscall *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
 
 typedef void(__thiscall *CPlayer__SpawnForWorld_t)(void *pPlayer);
-typedef void(__thiscall *CVehicle__Respawn_t)(void *pVehicle);
+typedef DWORD(__thiscall *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
 
 typedef int(__thiscall *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef char *(__thiscall *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
@@ -38,10 +38,11 @@ typedef bool(*CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, char 
 typedef bool(*CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
              
 typedef void(*CPlayer__SpawnForWorld_t)(void *pPlayer);
-typedef void(*CVehicle__Respawn_t)(void *pVehicle);
+typedef DWORD(*CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
 
 typedef int (*Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef char *(*format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
+
 #endif
 
 class CSAMPFunctions
@@ -63,6 +64,8 @@ public:
 	static void		Packet_WeaponsUpdate(Packet *p);
 	static char*	format_amxstring(AMX *amx, cell *params, int parm, int &len);
 
+	static void		RespawnVehicle(CVehicle *pVehicle);
+
 	// Function
 	// Rules
 	static CConsole__AddStringVariable_t			pfn__CConsole__AddStringVariable;
@@ -73,9 +76,11 @@ public:
 	// Filterscripts
 	static CFilterscripts__LoadFilterscript_t		pfn__CFilterscripts__LoadFilterscript;
 	static CFilterscripts__UnLoadFilterscript_t		pfn__CFilterscripts__UnLoadFilterscript;
+
 	// Player
 	static CPlayer__SpawnForWorld_t					pfn__CPlayer__SpawnForWorld;
-	static CVehicle__Respawn_t						pfn__CVehicle__Respawn;
+	static CPlayerPool__HandleVehicleRespawn_t		pfn__CPlayerPool__HandleVehicleRespawn;
+
 	// Query
 	static Packet_WeaponsUpdate_t					pfn__Packet_WeaponsUpdate;
 	static format_amxstring_t						pfn__format_amxstring;

@@ -32,6 +32,8 @@ DWORD CAddress::FUNC_ContainsInvalidChars = NULL;
 DWORD CAddress::FUNC_GetPacketID = NULL;
 
 DWORD CAddress::FUNC_CPlayer__SpawnForWorld = NULL;
+DWORD CAddress::FUNC_CPlayerPool__HandleVehicleRespawn = NULL;
+
 DWORD CAddress::FUNC_CVehicle__Respawn = NULL;
 
 DWORD CAddress::FUNC_ProcessQueryPacket = NULL;
@@ -86,7 +88,8 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		}
 		case SAMP_VERSION_03Z_R4:
 		{
-			FUNC_CVehicle__Respawn = 0x00493200;
+			FUNC_CVehicle__Respawn = 0x493200;
+			FUNC_CPlayerPool__HandleVehicleRespawn = 0x465B10;
 			break;
 		}
 	}
@@ -154,6 +157,8 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			FUNC_CConsole__FindVariable =				0x809EA60; 
 			FUNC_CConsole__SendRules =					0x809E4C0;
 			FUNC_CConsole__Execute =					0x809EB40;
+			FUNC_CVehicle__Respawn =					0x8145A70;
+			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80CF230;
 			break;
 		}
 	}

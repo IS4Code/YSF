@@ -353,5 +353,5 @@ namespace Natives
 
 int InitScripting(AMX *amx);
 
-extern AMX_NATIVE_INFO RedirecedtNatives[];
+extern AMX_NATIVE_INFO RedirectedNatives[];
 #endif

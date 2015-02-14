@@ -6039,7 +6039,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ 0,								0 }
 };
 
-AMX_NATIVE_INFO RedirecedtNatives[] =
+AMX_NATIVE_INFO RedirectedNatives[] =
 {
 	// File
 	{ "AttachPlayerObjectToPlayer",		Natives::YSF_AttachPlayerObjectToPlayer },

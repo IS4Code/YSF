@@ -9,7 +9,7 @@ CFilterscripts__LoadFilterscript_t		CSAMPFunctions::pfn__CFilterscripts__LoadFil
 CFilterscripts__UnLoadFilterscript_t	CSAMPFunctions::pfn__CFilterscripts__UnLoadFilterscript = NULL;
 
 CPlayer__SpawnForWorld_t				CSAMPFunctions::pfn__CPlayer__SpawnForWorld = NULL;
-CVehicle__Respawn_t						CSAMPFunctions::pfn__CVehicle__Respawn = NULL;
+CPlayerPool__HandleVehicleRespawn_t		CSAMPFunctions::pfn__CPlayerPool__HandleVehicleRespawn = NULL;
 
 Packet_WeaponsUpdate_t					CSAMPFunctions::pfn__Packet_WeaponsUpdate = NULL;
 
@@ -26,6 +26,7 @@ void CSAMPFunctions::Initialize()
 	pfn__CFilterscripts__UnLoadFilterscript = (CFilterscripts__UnLoadFilterscript_t)(CAddress::FUNC_CFilterscripts__UnLoadFilterscript);
 
 	pfn__CPlayer__SpawnForWorld = (CPlayer__SpawnForWorld_t)(CAddress::FUNC_CPlayer__SpawnForWorld);
+	pfn__CPlayerPool__HandleVehicleRespawn = (CPlayerPool__HandleVehicleRespawn_t)(CAddress::FUNC_CPlayerPool__HandleVehicleRespawn);
 
 	pfn__Packet_WeaponsUpdate = (Packet_WeaponsUpdate_t)(CAddress::FUNC_Packet_WeaponsUpdate);
 
@@ -72,11 +73,6 @@ void CSAMPFunctions::SpawnPlayer_(int playerid)
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
 }
 
-void CSAMPFunctions::RespawnVehicle_(void *pVehicle)
-{
-	pfn__CVehicle__Respawn(pVehicle);
-}
-
 void CSAMPFunctions::Packet_WeaponsUpdate(Packet *p)
 {
 	if (CAddress::FUNC_Packet_WeaponsUpdate)
@@ -86,4 +82,39 @@ void CSAMPFunctions::Packet_WeaponsUpdate(Packet *p)
 char* CSAMPFunctions::format_amxstring(AMX *amx, cell *params, int parm, int &len)
 {
 	return pfn__format_amxstring(amx, params, parm, len);
+}
+
+void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
+{
+	memset(&pVehicle->vehMatrix, 0, sizeof(MATRIX4X4));
+	memset(&pVehicle->vecVelocity, 0, sizeof(CVector));
+	memset(&pVehicle->vecTurnSpeed, 0, sizeof(CVector));
+	memset(&pVehicle->vehModInfo, 0, sizeof(CVehicleModInfo));
+
+	pVehicle->vehModInfo.iColor1 = -1;
+	pVehicle->vehModInfo.iColor2 = -1;
+	pVehicle->vehMatrix.pos = pVehicle->customSpawn.vecPos;
+	pVehicle->vecPosition = pVehicle->customSpawn.vecPos;
+	pVehicle->vehLightStatus = 0;
+	pVehicle->fHealth = 1000.0f;
+	pVehicle->vehDoorStatus = 0;
+	pVehicle->vehTireStatus = 0;
+	pVehicle->vehPanelStatus = 0;
+	pVehicle->bDead = 0;
+	pVehicle->bDeathNotification = 0;
+	pVehicle->bOccupied = 0;
+	pVehicle->vehRespawnTick = GetTickCount();
+	pVehicle->vehParamEx.alarm = -1;
+	pVehicle->vehParamEx.bonnet = -1;
+	pVehicle->vehParamEx.boot = -1;
+	pVehicle->vehParamEx.doors = -1;
+	pVehicle->vehParamEx.engine = -1;
+	pVehicle->vehParamEx.lights = -1;
+	pVehicle->vehParamEx.objective = -1;
+	pVehicle->vehOccupiedTick = GetTickCount();
+
+	if (pNetGame && pNetGame->pPlayerPool)
+		pfn__CPlayerPool__HandleVehicleRespawn(pNetGame->pPlayerPool, pVehicle->wVehicleID);
+
+	CCallbackManager::OnVehicleSpawn(pVehicle->wVehicleID);
 }

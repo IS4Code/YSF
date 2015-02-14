@@ -19,6 +19,7 @@ public:
 	static void	OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid);
 	static void	OnPlayerPauseStateChange(WORD playerid, bool pausestate);
 	static void	OnPlayerStatsAndWeaponsUpdate(WORD playerid);
+	static void OnVehicleSpawn(WORD vehicleid);
 
 	// Default SAMP Callbakcs
 	static void	OnPlayerDeath(WORD playerid, WORD killerid, BYTE reason);
