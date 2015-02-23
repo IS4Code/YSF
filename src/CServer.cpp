@@ -32,8 +32,7 @@ bool CServer::RemovePlayer(int playerid)
 {
 	if(pPlayerData[playerid])
 	{
-		delete pPlayerData[playerid];
-		pPlayerData[playerid] = NULL;
+		SAFE_DELETE(pPlayerData[playerid]);
 		return 1;
 	}
 	return 0;

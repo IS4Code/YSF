@@ -60,6 +60,10 @@ CPlayerData::CPlayerData( WORD playerid )
 	bFakePingToggle = false;
 	dwFakePingValue = 0;
 
+	pCustomSyncData = NULL;
+	memset(bCustomPos, false, MAX_PLAYERS);
+	memset(vecCustomPos, NULL, sizeof(CVector));
+
 	dwFPS = 0;
 	dwLastDrunkLevel = 0;
 

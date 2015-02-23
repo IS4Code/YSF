@@ -1159,18 +1159,34 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* param
 
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 	CVector vecPos = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+	
+	pPlayerData[playerid]->bCustomPos[posplayerid] = true;
+	
+	logprintf("0");
+
+	SAFE_DELETE(pPlayerData[playerid]->vecCustomPos[posplayerid]);
+	pPlayerData[playerid]->vecCustomPos[posplayerid] = new CVector;
 
 	CSyncData pSyncData;
 	memcpy(&pSyncData, &p->syncData, sizeof(CSyncData));
+	
+	logprintf("1");
+	memcpy(pPlayerData[playerid]->vecCustomPos[posplayerid], &vecPos, sizeof(CVector));
+	logprintf("2");
+
 	//memset(&pSyncData, 0, sizeof(CSyncData));
 
 	pSyncData.vecPosition = vecPos;
-	logprintf("position: %f, %f, %f, health: %d\n", pSyncData.vecPosition.fX, pSyncData.vecPosition.fY, pSyncData.vecPosition.fZ, pSyncData.byteHealth);
-
+	logprintf("position: %f, %f, %f, health: %d\n", pPlayerData[playerid]->vecCustomPos[posplayerid]->fX, pPlayerData[playerid]->vecCustomPos[posplayerid]->fY, pPlayerData[playerid]->vecCustomPos[posplayerid]->fZ, pSyncData.byteHealth);
+	
 	RakNet::BitStream bs;
 	bs.Write((BYTE)ID_PLAYER_SYNC);
 	bs.Write((WORD)posplayerid);
-	bs.Write((char*)&pSyncData, sizeof(CSyncData));
+	bs.Write((bool)0); // bHasLR
+	bs.Write((bool)0); // bHasUD
+	bs.Write(pSyncData.wKeys); // bHasUD
+	bs.Write(vecPos);
+
 	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false);
 	return 1;
 }
@@ -5633,9 +5649,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetVehicleToRespawn(AMX* amx, cell* par
 	std::map<int, CVehicleSpawn>::iterator v = pServer->vehicleSpawnData.find(vehicleid);
 	if(v == pServer->vehicleSpawnData.end())
 	{
-		pSetVehicleToRespawn(amx, params);
+		// Eredeti respawn funkció
 	}
-	else
+	else // Törlés és létrehozás de ez kurvára nem kész itt
 	{
 		RakNet::BitStream bsVehicleSpawn;
 		CVehicleSpawn spawn = v->second;
@@ -5714,24 +5730,6 @@ static cell AMX_NATIVE_CALL Natives::SetPickupStreamingEnabled(AMX *amx, cell *p
 }
 #endif
 
-#ifdef sdasdasd
-// original funckció így néz ki:
-// char* format_amxstring(AMX *amx, cell *params, int parm, int &len)
-
-typedef char *(__thiscall *FUNC_format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
-
-static cell AMX_NATIVE_CALL tesztgeci(AMX *amx, cell *params)
-{
-	/*
-	FUNC_format_amxstring_t pfn_formatstr = (FUNC_format_amxstring_t)0x0046ED90;
-
-	int len;
-	char *ret = pfn_formatstr(amx, params, 1, len);
-	std::printf("%s", ret);
-	*/
-	return 1;
-}
-#endif
 
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =

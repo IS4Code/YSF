@@ -26,7 +26,7 @@ typedef void(__thiscall *CPlayer__SpawnForWorld_t)(void *pPlayer);
 typedef void(__thiscall *CVehicle__Respawn_t)(void *pVehicle);
 
 typedef int(__thiscall *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
-typedef char *(__thiscall *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
+typedef char *(__cdecl *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
 
 #else
 typedef void(*CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);

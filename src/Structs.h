@@ -162,8 +162,8 @@ public:
 class CSyncData
 {
 public:
-	WORD			wUDAnalog;				// 0x0076 - 0x0078
-	WORD			wLRAnalog;				// 0x0078 - 0x007A
+	signed short	wUDAnalog;				// 0x0076 - 0x0078
+	signed short	wLRAnalog;				// 0x0078 - 0x007A
 	WORD			wKeys;					// 0x007A - 0x007C
 	CVector			vecPosition;			// 0x007C - 0x0088
 	float			fQuaternionAngle;		// 0x0088 - 0x008C
@@ -175,7 +175,15 @@ public:
 	CVector			vecVelocity;			// 0x009C - 0x00A8
 	CVector			vecSurfing;				// 0x00A8 - 0x00B4
 	WORD			wSurfingInfo;			// 0x00B4 - 0x00B6
-	int				iAnimationId;			// 0x00B6 - 0x00BA
+	union 
+	{
+		int		iAnimationId;				// 0x00B6 - 0x00BA
+		struct 
+		{
+			WORD	wAnimIndex;
+			WORD	wAnimFlags;
+		};
+	};
 	// Size = 68
 };
 

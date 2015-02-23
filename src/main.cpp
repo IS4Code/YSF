@@ -141,7 +141,6 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 // The AmxLoad() function gets called when a new gamemode or
 // filterscript gets loaded with the server. In here we register
 // the native functions we like to add to the scripts.
-typedef std::map<std::string, ConsoleVariable_s*> StringConvarMap;
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx) 
 {

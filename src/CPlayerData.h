@@ -95,6 +95,13 @@ public:
 
 	BYTE byteTeam;
 	
+	// Special shits for store sync data
+	CSyncData *pCustomSyncData;
+
+	// Per-player pos
+	bool bCustomPos[MAX_PLAYERS];
+	CVector *vecCustomPos[MAX_PLAYERS];
+
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];
 
 	// [clientsideid] = serversideid

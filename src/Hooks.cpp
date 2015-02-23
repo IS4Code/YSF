@@ -354,6 +354,16 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			{
 				pSyncData->wKeys &= ~4;
 			}
+
+			// Sync 
+			for(WORD i = 0; i != MAX_PLAYERS; i++)
+			{
+				if(IsPlayerConnected(i))
+				{
+					if(pPlayerData[i]->bCustomPos[playerid])
+						pSyncData->vecPosition = *pPlayerData[i]->vecCustomPos[playerid];
+				}
+			}
 		}
 
 		// Stats and weapons update
