@@ -252,6 +252,21 @@ void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
 	}
 }
 
+void CCallbackManager::OnVehicleSpawn(WORD vehicleid)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if (!amx_FindPublic(*iter, "OnVehicleSpawn", &idx))
+		{
+			amx_Push(*iter, vehicleid);
+
+			amx_Exec(*iter, &ret, idx);
+		}
+	}
+}
+
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 {
 	if (playerid >= 0 && playerid < MAX_PLAYERS)

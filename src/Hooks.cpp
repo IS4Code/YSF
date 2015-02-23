@@ -184,15 +184,15 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
 			
-			while (RedirecedtNatives[x].name)
+			while (RedirectedNatives[x].name)
 			{
 				//logprintf("asdasd %s", RedirecedtNatives[x].name);
-				if (!strcmp(nativelist[i].name, RedirecedtNatives[x].name))
+				if (!strcmp(nativelist[i].name, RedirectedNatives[x].name))
 				{
 					if (!g_bNativesHooked) g_bNativesHooked = true;
 				
 					//logprintf("native: %s, %s", nativelist[i].name, RedirecedtNatives[x].name);
-					nativelist[i].func = RedirecedtNatives[x].func;
+					nativelist[i].func = RedirectedNatives[x].func;
 				}
 				x++;
 			}
