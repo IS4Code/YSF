@@ -33,7 +33,11 @@
 #ifndef YSF_ADDRESSES_H
 #define YSF_ADDRESSES_H
 
-typedef unsigned long       DWORD;
+#ifdef _WIN32
+	#define RAKNET_SEND_OFFSET			7
+#else
+	#define RAKNET_SEND_OFFSET			9
+#endif
 
 #include <vector>
 
@@ -78,9 +82,9 @@ public:
 	static DWORD			FUNC_GetPacketID;
 
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
-	static DWORD			FUNC_CPlayerPool__HandleVehicleRespawn;
 
 	static DWORD			FUNC_CVehicle__Respawn;
+	static DWORD			FUNC_CPlayerPool__HandleVehicleRespawn;
 
 	static DWORD			FUNC_ProcessQueryPacket;
 	static DWORD			FUNC_Packet_WeaponsUpdate;

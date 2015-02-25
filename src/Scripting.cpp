@@ -5633,64 +5633,6 @@ static cell AMX_NATIVE_CALL Natives::FIXED_IsPlayerConnected(AMX* amx, cell* par
 	return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_SetVehicleToRespawn(AMX* amx, cell* params)
-{
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "SetVehicleToRespawn");
-	
-	int vehicleid = (int)params[1];
-	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
-
-	if(!pVehicle) return 0;
-
-	std::map<int, CVehicleSpawn>::iterator v = pServer->vehicleSpawnData.find(vehicleid);
-	if(v == pServer->vehicleSpawnData.end())
-	{
-		// Eredeti respawn funkció
-	}
-	else // Törlés és létrehozás de ez kurvára nem kész itt
-	{
-		RakNet::BitStream bsVehicleSpawn;
-		CVehicleSpawn spawn = v->second;
-
-		CVehicleModInfo CarModInfo;
-		memset(&CarModInfo,0,sizeof(CVehicleModInfo));
-
-		bsVehicleSpawn.Write(vehicleid);
-		bsVehicleSpawn.Write(spawn.iModelID);
-		bsVehicleSpawn.Write(spawn.vecPos);
-		bsVehicleSpawn.Write(spawn.fRot);
-		bsVehicleSpawn.Write(spawn.iColor1);
-		bsVehicleSpawn.Write(spawn.iColor2);
-		bsVehicleSpawn.Write((float)1000.0f);
-
-		// now add spawn co-ords and rotation
-		bsVehicleSpawn.Write(spawn.vecPos);
-		bsVehicleSpawn.Write(spawn.fRot);
-		bsVehicleSpawn.Write(spawn.iInterior);
-
-		if(pVehicle->szNumberplate[0] == '\0') {
-			bsVehicleSpawn.Write(false);
-		} else {
-			bsVehicleSpawn.Write(true);
-			bsVehicleSpawn.Write((PCHAR)pVehicle->szNumberplate, 9);
-		}
-
-		if(!memcmp((void *)&CarModInfo,(void *)&CarModInfo,sizeof(CVehicleModInfo))) {
-			bsVehicleSpawn.Write(false);
-		} else {
-			bsVehicleSpawn.Write(true);
-			bsVehicleSpawn.Write((PCHAR)&CarModInfo, sizeof(CarModInfo));
-		}
-
-		pServer->vehicleSpawnData.erase(vehicleid);
-	}
-	return 1;
-}
-
 static cell AMX_NATIVE_CALL Natives::YSF_DestroyVehicle(AMX* amx, cell* params)
 {
 	// If unknown server version
@@ -6037,7 +5979,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ 0,								0 }
 };
 
-AMX_NATIVE_INFO RedirecedtNatives[] =
+AMX_NATIVE_INFO RedirectedNatives[] =
 {
 	// File
 	{ "AttachPlayerObjectToPlayer",		Natives::YSF_AttachPlayerObjectToPlayer },

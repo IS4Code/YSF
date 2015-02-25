@@ -152,33 +152,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		if(!bFirst)
 		{
 			bFirst = true;
-			//logprintf("AMXLoad2");
-
-			// Get pNetGame
-			int (*pfn_GetNetGame)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_NETGAME];
-			pNetGame = (CNetGame*)pfn_GetNetGame();
-
-			// Get pConsole
-			int (*pfn_GetConsole)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_CONSOLE];
-			pConsole = (void*)pfn_GetConsole();
-
-			// Get pRakServer
-			int (*pfn_GetRakServer)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_RAKSERVER];
-			pRakServer = (RakServer*)pfn_GetRakServer();
-		
-			// SetMaxPlayers() fix
-			pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
-
-			//logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
-
-			// Recreate GangZone pool
-			pNetGame->pGangZonePool = new CGangZonePool();
-
-#ifdef NEW_PICKUP_SYSTEM
-			pNetGame->pPickupPool = new CPickupPool();
-#endif
-			// Re-init some RPCs
-			InitRPCs();
+			InstallPostHooks();
 		}
 		else
 		{

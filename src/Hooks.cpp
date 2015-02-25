@@ -46,6 +46,27 @@ static SubHook logprintf_hook;
 static SubHook query_hook;
 static SubHook CVehicle__Respawn_hook;
 
+// RakServer::Send hook - Thanks to Gamer_Z
+class CHookRakServer
+{
+public:
+	static bool __thiscall Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+};
+
+typedef bool (__thiscall *FPTR)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+
+FPTR RaknetOriginalSend;
+
+bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
+{
+/*
+	BYTE id;
+	parameters->Read(id);
+	logprintf("packet sent: %d", id);
+*/
+	return RaknetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
+}
+
 AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
 
 // Y_Less - original YSF
@@ -129,6 +150,24 @@ DWORD FindPattern(char *pattern, char *mask)
 	return 0;
 }
 
+void InstallJump(unsigned long addr, void *func)
+{
+#ifdef WIN32
+	unsigned long dwOld;
+	VirtualProtect((LPVOID)addr, 5, PAGE_EXECUTE_READWRITE, &dwOld);
+#else
+	int pagesize = sysconf(_SC_PAGE_SIZE);
+	void *unpraddr = (void *)(((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize;
+	mprotect(unpraddr, pagesize, PROT_WRITE);
+#endif
+	*(unsigned char *)addr = 0xE9;
+	*(unsigned long *)((unsigned long)addr + 0x1) = (unsigned long)func - (unsigned long)addr - 5;
+#ifdef WIN32
+	VirtualProtect((LPVOID)addr, 5, dwOld, &dwOld);
+#else
+	mprotect(unpraddr, pagesize, PROT_READ | PROT_EXEC);
+#endif
+}
 ///////////////////////////////////////////////////////////////
 // Hooks //
 ///////////////////////////////////////////////////////////////
@@ -467,8 +506,6 @@ static void HOOK_logprintf(const char *msg, ...)
 
 	if (bRconSocketReply) 
 		RconSocketReply(buffer);
-
-	//SAFE_DELETE(buffer);
 }
 
 //----------------------------------------------------
@@ -835,7 +872,6 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						RconSocketReply("Invalid RCON password.");
 						bRconSocketReply = false;
 
-						
 						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, (!szPassword[0]) ? ("NULL") : (szPassword), false, "NULL");
 					}
 					free(szPassword);
@@ -855,21 +891,25 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 		return 0;
 	}
 }
-/*
-class CHookVehicle
-{
-public:
-	void* __thiscall HOOK_CVehicle__Respawn(void* pVehicle);
-};
 
-void __stdcall HOOK_CVehicle__Respawn(void *pVehicle)
-{
-	SubHook::ScopedRemove remove(&CVehicle__Respawn_hook);
+#ifdef WIN32
 
-	logprintf("respawn: %x", pVehicle);
-	//CSAMPFunctions::RespawnVehicle_((CVehicle*)pVehicle);
+CVehicle *_pVehicle;
+
+void _declspec(naked) HOOK_CVehicle__Respawn()
+{
+	_asm mov _pVehicle, ecx
+	_asm pushad
+
+	CSAMPFunctions::RespawnVehicle(_pVehicle);
+
+	_asm popad
+	_asm retn
 }
-*/
+
+#endif
+
+// Things that needs to be hooked before netgame initialied
 void InstallPreHooks()
 {
 	if (pServer)
@@ -878,9 +918,48 @@ void InstallPreHooks()
 		amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 		GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
 		query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
-
-		//CVehicle__Respawn_hook.Install((void*)CAddress::FUNC_CVehicle__Respawn, HOOK_CVehicle__Respawn);
+#ifdef WIN32
+		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)HOOK_CVehicle__Respawn);
+#else
+		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
+#endif
 	}
 	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);	
 }
 
+// Things that needs to be hooked after netgame initialied
+void InstallPostHooks()
+{
+	// Get pNetGame
+	int (*pfn_GetNetGame)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_NETGAME];
+	pNetGame = (CNetGame*)pfn_GetNetGame();
+
+	// Get pConsole
+	int (*pfn_GetConsole)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_CONSOLE];
+	pConsole = (void*)pfn_GetConsole();
+
+	// Get pRakServer
+	int (*pfn_GetRakServer)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_RAKSERVER];
+	pRakServer = (RakServer*)pfn_GetRakServer();
+		
+	// SetMaxPlayers() fix
+	pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
+	
+	// Recreate GangZone pool
+	pNetGame->pGangZonePool = new CGangZonePool();
+
+#ifdef NEW_PICKUP_SYSTEM
+	// Recreate Pickup pool
+	pNetGame->pPickupPool = new CPickupPool();
+#endif
+	// Re-init some RPCs
+	InitRPCs();
+
+	//logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
+
+	// RakServer::Send hook - Thanks to Gamer_Z
+	int SendFunc = ((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET];
+	RaknetOriginalSend = reinterpret_cast<FPTR>(SendFunc);
+	Unlock((LPVOID)&((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET], 4);
+	((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
+}
