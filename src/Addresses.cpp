@@ -62,6 +62,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	FUNC_GetPacketID =							FindPattern("\x8B\x44\x24\x04\x85\xC0\x75\x03\x0C\xFF\xC3", "xxxxxxx???x");
 	
 	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x56\x8B\xF1\x8B\x86\x3B\x26\x00\x00\x85\xC0\x0F\x84", "xxxxx????xxxx");
+	FUNC_CVehicle__Respawn =					FindPattern("\x53\x33\xC0\x56\x8B\xF1\x57\xB9\x10\x00\x00\x00\x8D\x7E\x0C", "xxxxxxxxx???xxx");
+	FUNC_CPlayerPool__HandleVehicleRespawn =	FindPattern("\x53\x56\x57\x8B\x7C\x24\x10\x8D\xB1", "xxxxxx?xx");
+
 	FUNC_ProcessQueryPacket =					FindPattern("\x83\xEC\x24\x53\x55\x56\x57\x8B\x7C\x24", "xxxxxxxxxx");
 	FUNC_Packet_WeaponsUpdate =					FindPattern("\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x0\x0\x0\x0\x50\x64\x89\x25\x0\x0\x0\x0\x81\xEC\x28\x01\x00\x00\x55\x56", "xx????xx????xxxx????xxxxxxxx");
 
@@ -69,12 +72,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	ADDR_CNetGame_GMX_PckupDelete =				FindPattern("\x83\xC4\x04\x89\x5E\x10", "xxxxxx") - 0x8;
 
 	FUNC_format_amxstring =						FindPattern("\x8B\x54\x24\x08\x56\x8B\x74\x24\x08\x57\x33\xC0", "xxxxxxxxxxxx"); //0x0046ED90;
-
-	logprintf("FUNC_format_amxstring  %x\n",	FUNC_format_amxstring);
-
-	//logprintf("FUNC_CConsole__FindVariable: %x", FUNC_CConsole__FindVariable); // 0x00486110
-	//logprintf("FUNC_CConsole__SendRules: %x", FUNC_CConsole__SendRules); // 0x00485DD0
-	//logprintf("FUNC_CConsole__Execute: %X", FUNC_CConsole__Execute); // 0x00486350
 
 	switch(sampVersion)
 	{
@@ -85,8 +82,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		}
 		case SAMP_VERSION_03Z_R4:
 		{
-			FUNC_CVehicle__Respawn = 0x493200;
-			FUNC_CPlayerPool__HandleVehicleRespawn = 0x465B10;
 			break;
 		}
 	}

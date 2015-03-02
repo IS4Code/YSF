@@ -56,18 +56,8 @@ public:
 typedef bool (__thiscall *FPTR)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 
 FPTR RaknetOriginalSend;
-
-bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
-{
-/*
-	BYTE id;
-	parameters->Read(id);
-	logprintf("packet sent: %d", id);
-*/
-	return RaknetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
-}
-
 AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
+
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -172,6 +162,7 @@ void InstallJump(unsigned long addr, void *func)
 // Hooks //
 ///////////////////////////////////////////////////////////////
 
+//----------------------------------------------------
 // Custom name check
 
 bool HOOK_ContainsInvalidChars(char * szString)
@@ -180,6 +171,8 @@ bool HOOK_ContainsInvalidChars(char * szString)
 
 	return !pServer->IsValidNick(szString);
 }
+
+//----------------------------------------------------
 
 // amx_Register hook for redirect natives
 bool g_bNativesHooked = false;  
@@ -241,6 +234,8 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 	return amx_Register(amx, nativelist, number);
 }
+
+//----------------------------------------------------
 
 // GetPacketID hook
 BYTE GetPacketID(Packet *p)
@@ -393,16 +388,6 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			{
 				pSyncData->wKeys &= ~4;
 			}
-
-			// Sync 
-			for(WORD i = 0; i != MAX_PLAYERS; i++)
-			{
-				if(IsPlayerConnected(i))
-				{
-					if(pPlayerData[i]->bCustomPos[playerid])
-						pSyncData->vecPosition = *pPlayerData[i]->vecCustomPos[playerid];
-				}
-			}
 		}
 
 		// Stats and weapons update
@@ -474,6 +459,35 @@ static BYTE HOOK_GetPacketID(Packet *p)
 		}
 	}
 	return packetId;
+}
+
+//----------------------------------------------------
+
+bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
+{
+	BYTE id;
+	WORD playerid = pRakServer->GetIndexFromPlayerID(playerId);
+
+	parameters->Read(id);
+	
+	switch(id)
+	{
+		case ID_PLAYER_SYNC:
+		{
+			// Sync 
+			for(WORD i = 0; i != MAX_PLAYERS; i++)
+			{
+				if(IsPlayerConnected(i))
+				{
+					if(pPlayerData[i]->bCustomPos[playerid])
+						pSyncData->vecPosition = *pPlayerData[i]->vecCustomPos[playerid];
+				}
+			}
+			break;
+		}
+	}
+
+	return RaknetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
 
 //----------------------------------------------------
