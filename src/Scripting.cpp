@@ -639,6 +639,25 @@ static cell AMX_NATIVE_CALL Natives::SetServerRuleInt(AMX *amx, cell *params)
 	return 0;
 }
 
+// native IsValidServerRule(name[]);
+static cell AMX_NATIVE_CALL Natives::IsValidServerRule(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsValidServerRule");
+
+	char *name;
+	amx_StrParam(amx, params[1], name);
+	if (name)
+	{
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		return ConVar != NULL;
+	}
+	return 0;
+}
+
 // native RemoveServerRule(name[]);
 static cell AMX_NATIVE_CALL Natives::RemoveServerRule(AMX *amx, cell *params)
 {
@@ -658,14 +677,14 @@ static cell AMX_NATIVE_CALL Natives::RemoveServerRule(AMX *amx, cell *params)
 	return 0;
 }
 
-// native ModifyFlag(name[], flags);
-static cell AMX_NATIVE_CALL Natives::ModifyFlag(AMX *amx, cell *params)
+// native SetServerRuleFlags(name[], flags);
+static cell AMX_NATIVE_CALL Natives::SetServerRuleFlags(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(2, "ModifyFlag");
+	CHECK_PARAMS(2, "SetServerRuleFlags");
 	
 	char *name;
 	amx_StrParam(amx, params[1], name);
@@ -673,6 +692,29 @@ static cell AMX_NATIVE_CALL Natives::ModifyFlag(AMX *amx, cell *params)
 	{
 		pServer->ModifyVariableFlags(name, (DWORD)params[2]);
 		return 1;
+	}
+	return 0;
+}
+
+// native GetServerRuleFlags(name[]);
+static cell AMX_NATIVE_CALL Natives::GetServerRuleFlags(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetServerRuleFlags");
+	
+	char *name;
+	amx_StrParam(amx, params[1], name);
+	if (name)
+	{
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		if (ConVar != NULL)
+		{
+			return pServer->GetVariableFlags(name);
+		}
+		return 0;
 	}
 	return 0;
 }
@@ -1144,48 +1186,90 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerFightingStyle(AMX* amx, cell* 
 	return 0;
 }
 
-// native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Floaf:fZ);
+// native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Floaf:fZ, bool:forcesync = true);
 static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* params)
 {
 	// If unknown server version
 	if (!pServer)
 		return 5;
 
-	CHECK_PARAMS(5, "SetPlayerPosForPlayer");
+	CHECK_PARAMS(6, "SetPlayerPosForPlayer");
 
 	int playerid = (int)params[1];
 	int posplayerid = (int)params[2];
+	bool forcesync = !!params[6];
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(posplayerid)) return 0;
+
+	SAFE_DELETE(pPlayerData[playerid]->vecCustomPos[posplayerid]);
+
+	if(!forcesync)
+	{
+		pPlayerData[playerid]->bCustomPos[posplayerid] = false;
+		return 1;
+	}
 
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 	CVector vecPos = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
-	
-	pPlayerData[playerid]->bCustomPos[posplayerid] = true;
-	
-	logprintf("0");
-
-	SAFE_DELETE(pPlayerData[playerid]->vecCustomPos[posplayerid]);
+		
 	pPlayerData[playerid]->vecCustomPos[posplayerid] = new CVector;
+	pPlayerData[playerid]->bCustomPos[posplayerid] = true;
 
-	CSyncData pSyncData;
-	memcpy(&pSyncData, &p->syncData, sizeof(CSyncData));
-	
-	logprintf("1");
 	memcpy(pPlayerData[playerid]->vecCustomPos[posplayerid], &vecPos, sizeof(CVector));
-	logprintf("2");
+	/*
+	RakNet::BitStream bs;
+	bs.Write(ID_PLAYER_SYNC);
+	bs.Write((WORD)posplayerid);
+	RebuildSyncData(&bs, playerid);
+	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false);
+	*/
+	return 1;
+}
 
-	//memset(&pSyncData, 0, sizeof(CSyncData));
+// native SetPlayerRotationQuatForPlayer(playerid, quatplayerid, Float:w, Float:x, Float:y, Float:z, bool:forcesync = true);
+static cell AMX_NATIVE_CALL Natives::SetPlayerRotationQuatForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 5;
 
-	pSyncData.vecPosition = vecPos;
-	logprintf("position: %f, %f, %f, health: %d\n", pPlayerData[playerid]->vecCustomPos[posplayerid]->fX, pPlayerData[playerid]->vecCustomPos[posplayerid]->fY, pPlayerData[playerid]->vecCustomPos[posplayerid]->fZ, pSyncData.byteHealth);
+	CHECK_PARAMS(7, "SetPlayerFacingAngleForPlayer");
+
+	int playerid = (int)params[1];
+	int posplayerid = (int)params[2];
+	bool forcesync = !!params[4];
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(posplayerid)) return 0;
+
+	if(!forcesync)
+	{
+		pPlayerData[playerid]->bCustomQuat[posplayerid] = false;
+		return 1;
+	}
 	
+	CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
+
+	pPlayerData[playerid]->fCustomQuat[posplayerid][0] = amx_ctof(params[3]);
+	pPlayerData[playerid]->fCustomQuat[posplayerid][1] = amx_ctof(params[4]);
+	pPlayerData[playerid]->fCustomQuat[posplayerid][2] = amx_ctof(params[5]);
+	pPlayerData[playerid]->fCustomQuat[posplayerid][3] = amx_ctof(params[6]);
+
+	pPlayerData[playerid]->bCustomQuat[posplayerid] = true;
+
 	RakNet::BitStream bs;
 	bs.Write((BYTE)ID_PLAYER_SYNC);
 	bs.Write((WORD)posplayerid);
 	bs.Write((bool)0); // bHasLR
 	bs.Write((bool)0); // bHasUD
-	bs.Write(pSyncData.wKeys); // bHasUD
-	bs.Write(vecPos);
+	bs.Write(p->syncData.wKeys); // bHasUD
+	
+	if(pPlayerData[playerid]->bCustomPos[posplayerid])
+		bs.Write(*pPlayerData[playerid]->vecCustomPos[posplayerid]);
+	else 
+		bs.Write(p->vecPosition);
+
+	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][0]);
+	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][1]);
+	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][2]);
+	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
 
 	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false);
 	return 1;
@@ -3082,6 +3166,66 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleDead( AMX* amx, cell* params )
 	return pNetGame->pVehiclePool->pVehicle[vehicleid]->bDead;
 }
 
+// native SetVehicleSpawnInfo(vehicleid, modelid, Float:fX, Float:fY, Float:fZ, Float:fAngle, color1, color2);
+static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(8, "IsVehicleDead");
+
+	int vehicleid = (int)params[1];
+	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	
+	int modelid = (int)params[2];
+	if(modelid < 400 || modelid > 611) return 0;
+
+	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid]; 
+	if(!pVehicle) 
+		return 0;
+
+	bool bStreamedIn = false;
+
+	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
+	CVehiclePool *pVehiclePool = pNetGame->pVehiclePool;
+		
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		if(IsPlayerConnected(i))
+		{
+			if(pPlayerPool->pPlayer[i]->byteVehicleStreamedIn[pVehicle->wVehicleID])
+			{
+				bStreamedIn = true;
+				break;
+			}
+		}
+	}
+
+	logprintf("streamedin: %d", bStreamedIn);
+
+	if(!bStreamedIn)
+	{
+		pVehicle->customSpawn.iModelID = modelid;
+		pVehicle->customSpawn.vecPos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+		pVehicle->customSpawn.fRot = amx_ctof(params[6]);
+		pVehicle->customSpawn.iColor1 = (int)params[7];
+		pVehicle->customSpawn.iColor2 = (int)params[8];
+	}
+	else
+	{
+		CVehicleSpawn spawn;
+		spawn.iModelID = modelid;
+		spawn.vecPos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+		spawn.fRot = amx_ctof(params[6]);
+		spawn.iColor1 = (int)params[7];
+		spawn.iColor2 = (int)params[8];
+
+		pServer->vehicleSpawnData.insert(std::make_pair(vehicleid, spawn));
+	}
+	return 1;
+}
+
 // Gangzone functions
 // native IsValidGangZone(zoneid);
 static cell AMX_NATIVE_CALL Natives::IsValidGangZone( AMX* amx, cell* params )
@@ -4276,6 +4420,125 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	return 1;
 }
 
+
+// native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
+static cell AMX_NATIVE_CALL Natives::SendClientMessagef( AMX* amx, cell* params )
+{
+	int playerid = params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	int len;
+	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 3, len);
+	if(!szMessage) return 0;
+
+	RakNet::BitStream bsParams;
+	bsParams.Write((DWORD)params[2]);
+	bsParams.Write((DWORD)len);
+	bsParams.Write(szMessage, len);
+	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	return 1;
+}
+
+// native SendClientMessageToAllf(color, const message[], {Float,_}:...);
+static cell AMX_NATIVE_CALL Natives::SendClientMessageToAllf( AMX* amx, cell* params )
+{
+	int len;
+	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 2, len);
+	if(!szMessage) return 0;
+
+	RakNet::BitStream bsParams;
+	bsParams.Write((DWORD)params[2]);
+	bsParams.Write((DWORD)len);
+	bsParams.Write(szMessage, len);
+	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	return 1;
+}
+
+// native GameTextForPlayerf(playerid, displaytime, style, const message[], {Float,_}:...);
+static cell AMX_NATIVE_CALL Natives::GameTextForPlayerf( AMX* amx, cell* params )
+{
+	int playerid = params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	int len;
+	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 4, len);
+	if(!szMessage) return 0;
+
+	RakNet::BitStream bsParams;
+	bsParams.Write((int)params[3]);
+	bsParams.Write((int)params[2]);
+	bsParams.Write(len);
+	bsParams.Write(szMessage, len);
+	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	return 1;
+}
+
+// native GameTextForAllf(displaytime, style, const message[], {Float,_}:...);
+static cell AMX_NATIVE_CALL Natives::GameTextForAllf( AMX* amx, cell* params )
+{
+	int len;
+	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 3, len);
+	if(!szMessage) return 0;
+
+	RakNet::BitStream bsParams;
+	bsParams.Write((int)params[3]);
+	bsParams.Write((int)params[2]);
+	bsParams.Write(len);
+	bsParams.Write(szMessage, len);
+	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	return 1;
+}
+
+// native SendPlayerMessageToPlayerf(playerid, senderid, const message[], {Float,_}:...);
+static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToPlayerf( AMX* amx, cell* params )
+{
+	int playerid = params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	int senderid = params[2];
+	if(!IsPlayerConnected(senderid)) return 0;
+
+	int len;
+	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 3, len);
+	if(!szMessage) return 0;
+
+	RakNet::BitStream bsParams;
+	bsParams.Write((WORD)senderid);
+	bsParams.Write((BYTE)len);
+	bsParams.Write(szMessage, len);
+	pRakServer->RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	return 1;
+}
+
+// native SendPlayerMessageToAllf(senderid, const message[], {Float,_}:...);
+static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToAllf( AMX* amx, cell* params )
+{
+	int senderid = params[1];
+	if(!IsPlayerConnected(senderid)) return 0;
+
+	int len;
+	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 2, len);
+	if(!szMessage) return 0;
+
+	RakNet::BitStream bsParams;
+	bsParams.Write((WORD)senderid);
+	bsParams.Write((BYTE)len);
+	bsParams.Write(szMessage, len);
+	pRakServer->RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	return 1;
+}
+
+// native SendRconCommandf(command[], {Float,_}:...);
+static cell AMX_NATIVE_CALL Natives::SendRconCommandf( AMX* amx, cell* params )
+{
+	int len;
+	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 1, len);
+	if(!szMessage) return 0;
+
+	CSAMPFunctions::Execute(szMessage);
+	return 1;
+}
+
 // native YSF_AddPlayer(playerid);
 static cell AMX_NATIVE_CALL Natives::YSF_AddPlayer( AMX* amx, cell* params )
 {
@@ -4361,6 +4624,24 @@ static cell AMX_NATIVE_CALL Natives::YSF_StreamOut( AMX* amx, cell* params )
 	pServer->OnPlayerStreamOut((WORD)params[1], (WORD)params[2]);
 */
 	return 1;
+}
+
+// native YSF_SetTickRate(ticks);
+static cell AMX_NATIVE_CALL Natives::YSF_SetTickRate( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(1, "YSF_SetTickRate");
+
+	int rate = (int)params[1];
+	if(rate < -1 || rate == 0) return 0; // -1 = no update
+
+	pServer->SetTickRate(rate);
+	return 1;
+}
+
+// native YSF_GetTickRate();
+static cell AMX_NATIVE_CALL Natives::YSF_GetTickRate( AMX* amx, cell* params )
+{
+	return pServer->GetTickRate();
 }
 
 static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
@@ -5700,8 +5981,11 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"AddServerRule",					Natives::AddServerRule},
 	{"SetServerRule",					Natives::SetServerRule},
 	{"SetServerRuleInt",				Natives::SetServerRuleInt},
+	{"IsValidServerRule",				Natives::IsValidServerRule},
 	{"RemoveServerRule",				Natives::RemoveServerRule}, // Doesn't work!
-	{"ModifyFlag",						Natives::ModifyFlag},
+	{"ModifyFlag",						Natives::SetServerRuleFlags},
+	{"SetServerRuleFlags",				Natives::SetServerRuleFlags},
+	{"GetServerRuleFlags",				Natives::GetServerRuleFlags},
 
 	// Server settings
 	{"GetServerSettings",				Natives::GetServerSettings},
@@ -5734,7 +6018,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerNameForPlayer",			Natives::GetPlayerNameForPlayer }, // R11
 	{ "SetPlayerFightStyleForPlayer",	Natives::SetPlayerFightStyleForPlayer }, // R11
 	{ "GetPlayerFightStyleForPlayer",	Natives::GetPlayerFightStyleForPlayer }, // R11
-	{ "SetPlayerPosForPlayer",			Natives::SetPlayerPosForPlayer}, // R11
+	{ "SetPlayerPosForPlayer",			Natives::SetPlayerPosForPlayer}, // R12
+	{ "SetPlayerRotationQuatForPlayer",	Natives::SetPlayerRotationQuatForPlayer}, // R12
 	{ "ApplyAnimationForPlayer",		Natives::ApplyAnimationForPlayer}, // R11
 	{ "GetPlayerWeather",				Natives::GetPlayerWeather },
 	{ "GetPlayerWorldBounds",			Natives::GetPlayerWorldBounds },
@@ -5959,13 +6244,24 @@ AMX_NATIVE_INFO YSINatives [] =
 	
 	{ "SendRPC",						Natives::SendRPC },
 	{ "SendData",						Natives::SendData },
-
+	/*
 	{ "YSF_AddPlayer",					Natives::YSF_AddPlayer },
 	{ "YSF_RemovePlayer",				Natives::YSF_RemovePlayer },
 	{ "YSF_StreamIn",					Natives::YSF_StreamIn },
 	{ "YSF_StreamOut",					Natives::YSF_StreamOut },
-
+	*/
+	{"YSF_SetTickRate",					Natives::YSF_SetTickRate},
+	{"YSF_GetTickRate",					Natives::YSF_GetTickRate},
 	{ "AttachPlayerObjectToObject",		Natives::AttachPlayerObjectToObject },
+
+	// Format functions
+	{ "SendClientMessagef",				Natives::SendClientMessagef },
+	{ "SendClientMessageToAllf",		Natives::SendClientMessageToAllf },
+	{ "GameTextForPlayerf",				Natives::GameTextForPlayerf },
+	{ "GameTextForAllf",				Natives::GameTextForAllf },
+	{ "SendPlayerMessageToPlayerf",		Natives::SendPlayerMessageToPlayerf },
+	{ "SendPlayerMessageToAllf",		Natives::SendPlayerMessageToAllf },
+	{ "SendRconCommandf",				Natives::SendRconCommandf },
 
 	// Other
 	{"GetColCount",						Natives::GetColCount},

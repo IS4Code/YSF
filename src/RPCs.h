@@ -55,6 +55,9 @@ extern int RPC_SetPlayerSkin;
 extern int RPC_SetPlayerName;
 extern int RPC_SetFightingStyle;
 extern int RPC_ScrApplyAnimation;
+extern int RPC_ClientMessage;
+extern int RPC_ScrDisplayGameText;
+extern int RPC_Chat;
 
 extern int RPC_UpdateScoresPingsIPs;
 extern int RPC_PickedUpPickup;

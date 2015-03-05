@@ -100,7 +100,9 @@ public:
 
 	// Per-player pos
 	bool bCustomPos[MAX_PLAYERS];
+	bool bCustomQuat[MAX_PLAYERS];
 	CVector *vecCustomPos[MAX_PLAYERS];
+	float fCustomQuat[MAX_PLAYERS][4];
 
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];
 
@@ -144,4 +146,6 @@ private:
 	int m_iFightingStyles[MAX_PLAYERS];
 	char m_szNames[MAX_PLAYERS][MAX_PLAYER_NAME];
 };
+
+void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
 #endif

@@ -40,7 +40,9 @@ bool CServer::RemovePlayer(int playerid)
 
 void CServer::Process()
 {
-	if(++m_iTicks == 5)
+	if(m_iTickRate == -1) return;
+
+	if(++m_iTicks >= m_iTickRate)
 	{
 		m_iTicks = 0;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
@@ -403,6 +405,16 @@ void CServer::SetBoolVariable(char* pVarName, bool bBool)
 		if (ConVar->VarType == CON_VARTYPE_BOOL)
 			*(bool*)ConVar->VarPtr = bBool;
 	}
+}
+
+DWORD CServer::GetVariableFlags(char* pVarName)
+{
+	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
+	if (ConVar != NULL)
+	{
+		return ConVar->VarFlags;
+	}
+	return 0;
 }
 
 void CServer::ModifyVariableFlags(char* pVarName, DWORD VarFlags)

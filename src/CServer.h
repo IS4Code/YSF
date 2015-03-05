@@ -38,6 +38,9 @@ public:
 	bool IsNickNameCharacterAllowed(char character);
 	bool IsValidNick(char *szName);
 
+	inline void SetTickRate(int rate) { m_iTickRate = rate; }
+	inline int GetTickRate(void) { return m_iTickRate; }
+
 	WORD GetMaxPlayers_();
 	WORD GetPlayerCount();
 	WORD GetNPCCount();
@@ -56,12 +59,14 @@ public:
 	bool	GetBoolVariable(char *szRule);
 	void	SetBoolVariable(char *szRule, bool value);
 
+	DWORD	GetVariableFlags(char* pVarName);
 	void	ModifyVariableFlags(char* pVarName, DWORD VarFlags);
 	
 	std::map<int, CVehicleSpawn> vehicleSpawnData;
 private:
 	eSAMPVersion m_Version;
 	int m_iTicks;
+	int m_iTickRate;
 
 	std::vector <char> m_vecValidNameCharacters;
 };

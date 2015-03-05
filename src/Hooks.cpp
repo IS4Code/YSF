@@ -387,6 +387,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			if (pSyncData->byteWeapon == 44 || pSyncData->byteWeapon == 45)
 			{
 				pSyncData->wKeys &= ~4;
+				pSyncData->byteWeapon = 0;
 			}
 		}
 
@@ -465,27 +466,15 @@ static BYTE HOOK_GetPacketID(Packet *p)
 
 bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 {
+/*
 	BYTE id;
-	WORD playerid = pRakServer->GetIndexFromPlayerID(playerId);
-
+	WORD playerid;
 	parameters->Read(id);
-	
-	switch(id)
-	{
-		case ID_PLAYER_SYNC:
-		{
-			// Sync 
-			for(WORD i = 0; i != MAX_PLAYERS; i++)
-			{
-				if(IsPlayerConnected(i))
-				{
-					if(pPlayerData[i]->bCustomPos[playerid])
-						pSyncData->vecPosition = *pPlayerData[i]->vecCustomPos[playerid];
-				}
-			}
-			break;
-		}
-	}
+	parameters->Read(playerid);
+
+	logprintf("id: %d - playerid: %d, sendto. %d", id, playerid, pRakServer->GetIndexFromPlayerID(playerId));
+*/
+	RebuildSyncData(parameters, pRakServer->GetIndexFromPlayerID(playerId));
 
 	return RaknetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
@@ -937,8 +926,7 @@ void InstallPreHooks()
 #else
 		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
 #endif
-	}
-	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);	
+	}	
 }
 
 // Things that needs to be hooked after netgame initialied
@@ -959,6 +947,8 @@ void InstallPostHooks()
 	// SetMaxPlayers() fix
 	pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
 	
+	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
+
 	// Recreate GangZone pool
 	pNetGame->pGangZonePool = new CGangZonePool();
 

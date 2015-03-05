@@ -122,9 +122,10 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 		CCallbackManager::OnVehicleSpawn(pVehicle->wVehicleID);
 	}
 	else // Törlés és létrehozás de ez kurvára nem kész itt
-	{
+	{			
+		/*
 		RakNet::BitStream bsVehicleSpawn;
-		CVehicleSpawn spawn = v->second;
+		
 
 		CVehicleModInfo CarModInfo;
 		memset(&CarModInfo,0,sizeof(CVehicleModInfo));
@@ -155,7 +156,7 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 			bsVehicleSpawn.Write(true);
 			bsVehicleSpawn.Write((PCHAR)&CarModInfo, sizeof(CarModInfo));
 		}
-
+		*/
 		pServer->vehicleSpawnData.erase(pVehicle->wVehicleID);
 	}
 }

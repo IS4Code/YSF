@@ -152,7 +152,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 			FUNC_CVehicle__Respawn =					0x8145A70;
 			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80CF230;
-			//FUNC_format_amxstring =						0xTODO;				
+			FUNC_format_amxstring =						0x80D4030;				
 			break;
 		}
 	}

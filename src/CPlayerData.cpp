@@ -62,6 +62,7 @@ CPlayerData::CPlayerData( WORD playerid )
 
 	pCustomSyncData = NULL;
 	memset(bCustomPos, false, MAX_PLAYERS);
+	memset(bCustomQuat, false, MAX_PLAYERS);
 	memset(vecCustomPos, NULL, sizeof(CVector));
 
 	dwFPS = 0;
@@ -295,6 +296,145 @@ void CPlayerData::Process(void)
 			{
 				CCallbackManager::OnPlayerLeavePlayerGangZone(wPlayerID, wClientSidePlayerZoneID[zoneid]);
 			}
+		}
+	}
+}
+
+void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
+{
+	BYTE id;
+	WORD playerid;
+
+	bsSync->Read(id);
+	bsSync->Read(playerid);
+	
+	//logprintf("RebuildSyncData %d - %d", id, playerid);
+	switch(id)
+	{
+		case ID_PLAYER_SYNC:
+		{
+			//logprintf("playerid: %d", playerid);
+
+			bsSync->Reset();
+			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
+	
+			bsSync->Write((BYTE)ID_PLAYER_SYNC);
+			bsSync->Write(playerid);
+
+			// LEFT/RIGHT KEYS
+			if(p->syncData.wLRAnalog) 
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.wLRAnalog);
+			} 
+			else 
+			{
+				bsSync->Write(false);
+			}
+
+			// UP/DOWN KEYS
+			if(p->syncData.wUDAnalog) 
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.wUDAnalog);
+			} 
+			else 
+			{
+				bsSync->Write(false);
+			}
+
+			// Keys
+			bsSync->Write(p->syncData.wKeys);
+	
+			// Position
+			if(pPlayerData[toplayerid]->bCustomPos[playerid])				
+				bsSync->Write(*pPlayerData[toplayerid]->vecCustomPos[playerid]);	
+			else
+				bsSync->Write(p->syncData.vecPosition);
+			
+			// Rotation (in quaternion)
+			if(pPlayerData[toplayerid]->bCustomQuat[playerid])
+				bsSync->WriteNormQuat(pPlayerData[toplayerid]->fCustomQuat[playerid][0], pPlayerData[toplayerid]->fCustomQuat[playerid][1], pPlayerData[toplayerid]->fCustomQuat[playerid][2], pPlayerData[toplayerid]->fCustomQuat[playerid][3]);	
+			else
+				bsSync->WriteNormQuat(p->syncData.fQuaternion[0], p->syncData.fQuaternion[1], p->syncData.fQuaternion[2], p->syncData.fQuaternion[3]);
+
+			// Health & armour compression
+			BYTE byteSyncHealthArmour = 0;
+			if( p->syncData.byteHealth > 0 && p->syncData.byteHealth < 100 ) 
+			{
+				byteSyncHealthArmour = ((BYTE)(p->syncData.byteHealth / 7)) << 4;
+			} 
+			else if(p->syncData.byteHealth >= 100) 
+			{
+				byteSyncHealthArmour = 0xF << 4;
+			}
+
+			if( p->syncData.byteArmour > 0 && p->syncData.byteArmour < 100 ) 
+			{
+				byteSyncHealthArmour |=  (BYTE)(p->syncData.byteArmour / 7);
+			}
+			else if(p->syncData.byteArmour >= 100) 
+			{
+				byteSyncHealthArmour |= 0xF;
+			}
+	
+			bsSync->Write(byteSyncHealthArmour);
+
+			// Current weapon
+			bsSync->Write(p->syncData.byteWeapon);
+
+			// Special action
+			bsSync->Write(p->syncData.byteSpecialAction);
+
+			// Velocity
+			if(p->syncData.vecVelocity.fX != 0.0f) 
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.vecVelocity.fX);
+			} 
+			else bsSync->Write(false);
+
+			if(p->syncData.vecVelocity.fY != 0.0f) 
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.vecVelocity.fY);
+			} 
+			else bsSync->Write(false);
+
+			if(p->syncData.vecVelocity.fZ != 0.0f) 
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.vecVelocity.fZ);
+			} 
+			else bsSync->Write(false);
+	
+			// Vehicle surfing (POSITION RELATIVE TO CAR SYNC)
+			if(p->syncData.wSurfingInfo) 
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.wSurfingInfo);
+				bsSync->Write(p->syncData.vecSurfing.fX);
+				bsSync->Write(p->syncData.vecSurfing.fY);
+				bsSync->Write(p->syncData.vecSurfing.fZ);
+			} 
+			else 
+			{
+				bsSync->Write(false);
+			}
+	
+			// Animation
+			if(p->syncData.iAnimationId)
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.iAnimationId);
+			}
+			else bsSync->Write(false);
+			break;
+		}
+		case ID_VEHICLE_SYNC:
+		{
+		
+			break;
 		}
 	}
 }

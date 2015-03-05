@@ -64,9 +64,11 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetFilterScriptName(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL AddServerRule(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetServerRule(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetServerRuleInt(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL SetServerRuleInt(AMX *amx, cell *params); // R12
+	static cell AMX_NATIVE_CALL IsValidServerRule(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL RemoveServerRule(AMX *amx, cell *params); // Doesn't work!
-	static cell AMX_NATIVE_CALL ModifyFlag(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL SetServerRuleFlags(AMX *amx, cell *params); 
+	static cell AMX_NATIVE_CALL GetServerRuleFlags(AMX *amx, cell *params); // R12
 
 	static cell AMX_NATIVE_CALL GetServerSettings(AMX *amx, cell *params);
 
@@ -92,7 +94,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetPlayerNameForPlayer(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL SetPlayerFightStyleForPlayer(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL GetPlayerFightStyleForPlayer(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL SetPlayerPosForPlayer(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL SetPlayerPosForPlayer(AMX *amx, cell *params); // R12
+	static cell AMX_NATIVE_CALL SetPlayerRotationQuatForPlayer(AMX *amx, cell *params); // R12
 	static cell AMX_NATIVE_CALL ApplyAnimationForPlayer(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL GetPlayerWeather(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerWorldBounds(AMX *amx, cell *params);
@@ -156,7 +159,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetPlayerObjectTarget(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetPlayerObjectAttachedData(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerObjectAttachedOffset(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsPlayerObjectMaterialSlotUsed(AMX *amx, cell *params); // R
+	static cell AMX_NATIVE_CALL IsPlayerObjectMaterialSlotUsed(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetPlayerObjectMaterial(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetPlayerObjectMaterialText(AMX *amx, cell *params); // R6
 
@@ -181,6 +184,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SetVehicleBeenOccupied(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL IsVehicleOccupied(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL IsVehicleDead(AMX *amx, cell *params); // R9
+	static cell AMX_NATIVE_CALL SetVehicleSpawnInfo(AMX *amx, cell *params); // R12
 
 	static cell AMX_NATIVE_CALL IsValidGangZone(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL IsPlayerInGangZone(AMX *amx, cell *params);
@@ -305,9 +309,19 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_RemovePlayer(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_StreamIn(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_StreamOut(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetTickRate(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_GetTickRate(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL AttachPlayerObjectToObject(AMX *amx, cell *params);
 
+	static cell AMX_NATIVE_CALL SendClientMessagef(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL SendClientMessageToAllf(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL GameTextForPlayerf(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL GameTextForAllf(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL SendPlayerMessageToPlayerf(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL SendPlayerMessageToAllf(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL SendRconCommandf(AMX *amx, cell *params);
+	
 	static cell AMX_NATIVE_CALL GetColCount(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetColSphereRadius(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetColSphereOffset(AMX *amx, cell *params);
