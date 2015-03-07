@@ -1232,7 +1232,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerRotationQuatForPlayer(AMX* amx, ce
 	if (!pServer)
 		return 5;
 
-	CHECK_PARAMS(7, "SetPlayerFacingAngleForPlayer");
+	CHECK_PARAMS(7, "SetPlayerRotationQuatForPlayer");
 
 	int playerid = (int)params[1];
 	int posplayerid = (int)params[2];
@@ -3173,7 +3173,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(8, "IsVehicleDead");
+	CHECK_PARAMS(8, "SetVehicleSpawnInfo");
 
 	int vehicleid = (int)params[1];
 	if(vehicleid < 1 || vehicleid >= 2000) return 0;
@@ -3202,27 +3202,29 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 		}
 	}
 
+	CVehicleSpawn spawn;
+	spawn.iModelID = modelid;
+	spawn.vecPos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+	spawn.fRot = amx_ctof(params[6]);
+	spawn.iColor1 = (int)params[7];
+	spawn.iColor2 = (int)params[8];
+	/*
+	pServer->vehicleSpawnData.insert(std::make_pair(vehicleid, spawn));
+
 	logprintf("streamedin: %d", bStreamedIn);
 
 	if(!bStreamedIn)
 	{
 		pVehicle->customSpawn.iModelID = modelid;
-		pVehicle->customSpawn.vecPos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+		pVehicle->vehMatrix.pos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 		pVehicle->customSpawn.fRot = amx_ctof(params[6]);
 		pVehicle->customSpawn.iColor1 = (int)params[7];
 		pVehicle->customSpawn.iColor2 = (int)params[8];
 	}
 	else
 	{
-		CVehicleSpawn spawn;
-		spawn.iModelID = modelid;
-		spawn.vecPos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
-		spawn.fRot = amx_ctof(params[6]);
-		spawn.iColor1 = (int)params[7];
-		spawn.iColor2 = (int)params[8];
-
-		pServer->vehicleSpawnData.insert(std::make_pair(vehicleid, spawn));
 	}
+	*/
 	return 1;
 }
 
@@ -6115,6 +6117,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"SetVehicleBeenOccupied",			Natives::SetVehicleBeenOccupied}, // R9
 	{"IsVehicleOccupied",				Natives::IsVehicleOccupied}, // R9
 	{"IsVehicleDead",					Natives::IsVehicleDead}, // R9
+	{"SetVehicleSpawnInfo",				Natives::SetVehicleSpawnInfo}, // R12
 
 	// Gangzone - Global
 	{"IsValidGangZone",					Natives::IsValidGangZone},

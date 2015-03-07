@@ -47,17 +47,28 @@ static SubHook query_hook;
 static SubHook CVehicle__Respawn_hook;
 
 // RakServer::Send hook - Thanks to Gamer_Z
+#ifdef _WIN32
 class CHookRakServer
 {
 public:
 	static bool __thiscall Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 };
+#else
+class CHookRakServer
+{
+public:
+	static bool __thiscall Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+};
+#endif
 
+#ifdef _WIN32
 typedef bool (__thiscall *FPTR)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+#else
+typedef bool (*FPTR)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+#endif
 
 FPTR RaknetOriginalSend;
 AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
-
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -875,7 +886,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						RconSocketReply("Invalid RCON password.");
 						bRconSocketReply = false;
 
-						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, (!szPassword[0]) ? ("NULL") : (szPassword), false, "NULL");
+						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, false, "NULL");
 					}
 					free(szPassword);
 
@@ -921,11 +932,13 @@ void InstallPreHooks()
 		amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 		GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
 		query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
+/*
 #ifdef WIN32
 		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)HOOK_CVehicle__Respawn);
 #else
 		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
 #endif
+*/
 	}	
 }
 
@@ -964,6 +977,6 @@ void InstallPostHooks()
 	// RakServer::Send hook - Thanks to Gamer_Z
 	int SendFunc = ((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET];
 	RaknetOriginalSend = reinterpret_cast<FPTR>(SendFunc);
-	Unlock((LPVOID)&((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET], 4);
+	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET], 4);
 	((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
 }

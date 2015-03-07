@@ -58,6 +58,7 @@
 	#include <sys/mman.h>
 	#include <fnmatch.h>
 
+	typedef unsigned long DWORD;
 	typedef const char *PCHAR;
 	typedef int SOCKET;
 

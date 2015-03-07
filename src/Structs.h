@@ -314,16 +314,6 @@ typedef struct _PLAYER_SPAWN_INFO // size  46
 	int iSpawnWeaponsAmmo[3];
 } PLAYER_SPAWN_INFO;
 
-
-
- 
-//         ++*(_BYTE *)((unsigned __int16)a2 + v4 + 825); b streamed in
-//        ++*(_DWORD *)(v4 + 8949); - maybe streamedin cars count
-
-// something [1024] - 3825 BYTE
-// bIsPickupStreamedIn[4096] - 4849 BYTE 
-// bStreamedInPickups 8961 DWORD
-
 class CPlayer
 {
 public:
@@ -340,14 +330,14 @@ public:
 	BYTE					byte3DTextLabelStreamedIn[1024];// 3825  - 4849
 	BYTE					bPickupStreamedIn[MAX_PICKUPS]; // 4849 - 8945
 	DWORD					dwStreamedInPlayers;
-	DWORD					dwStreamedInVehicles;
-	DWORD					unk1;
+	DWORD					dwStreamedInVehicles;	// 8949 - 8953
+	DWORD					unk1;					// 8953 - 8957
 	DWORD					dwStreamedIn3DTextLabels; // 8957 - 8961
-	DWORD					dwStreamedInPickups; // 8961 - 8965
-	DWORD					bHasSetVehiclePos; // 8965
-	DWORD					dwSetVehiclePosTick; // 8969 - 8981
+	DWORD					dwStreamedInPickups;// 8961 - 8965
+	DWORD					bHasSetVehiclePos;	// 8965 - 8969
+	DWORD					dwSetVehiclePosTick;// 8969 - 8981
 	CVector					vecVehicleNewPos;	// 8981 - 8985
-	DWORD					bHasSpawnInfo;			// 8985
+	DWORD					bHasSpawnInfo;		// 8985 - 8989
 	BOOL					bUpdateKeys;		// 0x231D - 0x2321     // 8164
 	CVector					vecPosition;		// 0x2321 - 0x232D
 	float					fHealth;			// 0x232D - 0x2331
@@ -636,7 +626,7 @@ class CMenu	// size 0xB84
 {
 public:
 
-	uchar	menuID;														// + 0x0000
+	BYTE	menuID;														// + 0x0000
 	char	title[ MAX_MENU_TEXT_SIZE ];								// + 0x0001
 	char	items[ MAX_ITEMS ][ MAX_COLUMNS ][ MAX_MENU_TEXT_SIZE ];	// + 0x0021
 	char	headers[MAX_COLUMNS][MAX_MENU_TEXT_SIZE];					// + 0x0321
@@ -646,8 +636,8 @@ public:
 	float	posY;														// + 0x0B75
 	float	column1Width;												// + 0x0B79
 	float	column2Width;												// + 0x0B7D
-	uchar	columnsNumber;												// + 0x0B81
-	uchar	itemsCount[ MAX_COLUMNS ];									// + 0x0B82
+	BYTE	columnsNumber;												// + 0x0B81
+	BYTE	itemsCount[ MAX_COLUMNS ];									// + 0x0B82
 
 };
 
@@ -690,8 +680,8 @@ typedef struct Pickup_t // size 0x14
 class CPickupPool_
 {
 public:
-	tPickup			m_Pickup[MAX_PICKUPS];			// + 0x0000
-	BOOL			m_bActive[MAX_PICKUPS];			// + 0xA000
+	tPickup	m_Pickup[MAX_PICKUPS];			// + 0x0000
+	BOOL	m_bActive[MAX_PICKUPS];			// + 0xA000
 	int		m_iWorld[MAX_PICKUPS];		// + 0xC000
 	int		m_iPickupCount;
 };
