@@ -1232,7 +1232,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerRotationQuatForPlayer(AMX* amx, ce
 	if (!pServer)
 		return 5;
 
-	CHECK_PARAMS(7, "SetPlayerFacingAngleForPlayer");
+	CHECK_PARAMS(7, "SetPlayerRotationQuatForPlayer");
 
 	int playerid = (int)params[1];
 	int posplayerid = (int)params[2];
@@ -1749,7 +1749,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerZAim( AMX* amx, cell* params )
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(1, "GetPlayerZAim");
+	CHECK_PARAMS(1, "GetPlayerZAimSetVehicleSpawnInfo");
 
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -3173,7 +3173,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(8, "IsVehicleDead");
+	CHECK_PARAMS(8, "SetVehicleSpawnInfo");
 
 	int vehicleid = (int)params[1];
 	if(vehicleid < 1 || vehicleid >= 2000) return 0;
