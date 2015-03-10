@@ -57,7 +57,7 @@ public:
 class CHookRakServer
 {
 public:
-	static bool __thiscall Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	static bool Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 };
 #endif
 
@@ -475,7 +475,11 @@ static BYTE HOOK_GetPacketID(Packet *p)
 
 //----------------------------------------------------
 
+#ifdef _WIN32
 bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
+#else
+bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
+#endif
 {
 /*
 	BYTE id;

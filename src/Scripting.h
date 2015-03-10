@@ -162,6 +162,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL IsPlayerObjectMaterialSlotUsed(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetPlayerObjectMaterial(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetPlayerObjectMaterialText(AMX *amx, cell *params); // R6
+	static cell AMX_NATIVE_CALL GetObjectType(AMX *amx, cell *params); // R12
 
 	static cell AMX_NATIVE_CALL GetPlayerAttachedObject(AMX *amx, cell *params); // R3
 	static cell AMX_NATIVE_CALL IsPlayerEditingObject(AMX *amx, cell *params); // R9 - do no

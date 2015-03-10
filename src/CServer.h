@@ -38,8 +38,8 @@ public:
 	bool IsNickNameCharacterAllowed(char character);
 	bool IsValidNick(char *szName);
 
-	inline void SetTickRate(int rate) { m_iTickRate = rate; }
-	inline int GetTickRate(void) { return m_iTickRate; }
+	void SetTickRate(int rate) { m_iTickRate = rate; }
+	int GetTickRate(void) { return m_iTickRate; }
 
 	WORD GetMaxPlayers_();
 	WORD GetPlayerCount();

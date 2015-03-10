@@ -2741,6 +2741,30 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 	return 1;
 }
 
+// native GetObjectType(playerid, objectid);
+static cell AMX_NATIVE_CALL Natives::GetObjectType( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "GetObjectType");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= 1000) return 0;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+
+	BYTE ret;
+	if(pNetGame->pObjectPool->m_bObjectSlotState[objectid] && pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid])
+		ret = SELECT_OBJECT_PLAYER_OBJECT;
+	else
+		ret = SELECT_OBJECT_GLOBAL_OBJECT;
+	return ret;
+}
+
 // native GetPlayerAttachedObject(playerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
 static cell AMX_NATIVE_CALL Natives::GetPlayerAttachedObject( AMX* amx, cell* params )
 {
@@ -4643,7 +4667,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetTickRate( AMX* amx, cell* params )
 // native YSF_GetTickRate();
 static cell AMX_NATIVE_CALL Natives::YSF_GetTickRate( AMX* amx, cell* params )
 {
-	return pServer->GetTickRate();
+	return static_cast<cell>(pServer->GetTickRate());
 }
 
 static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
@@ -6093,6 +6117,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"IsPlayerObjectMaterialSlotUsed",	Natives::IsPlayerObjectMaterialSlotUsed}, // R6
 	{"GetPlayerObjectMaterial",			Natives::GetPlayerObjectMaterial}, // R6
 	{"GetPlayerObjectMaterialText",		Natives::GetPlayerObjectMaterialText}, // R6
+	{"GetObjectType",					Natives::GetObjectType}, // R12
 
 	// special - for attached objects
 	{"GetPlayerAttachedObject",			Natives::GetPlayerAttachedObject}, // R3
