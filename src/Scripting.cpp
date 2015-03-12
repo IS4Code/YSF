@@ -2755,13 +2755,13 @@ static cell AMX_NATIVE_CALL Natives::GetObjectType( AMX* amx, cell* params )
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
-
 	BYTE ret;
-	if(pNetGame->pObjectPool->m_bObjectSlotState[objectid] && pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid])
-		ret = SELECT_OBJECT_PLAYER_OBJECT;
-	else
+	if(pNetGame->pObjectPool->m_bObjectSlotState[objectid])
 		ret = SELECT_OBJECT_GLOBAL_OBJECT;
+	else if(pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid])
+		ret = SELECT_OBJECT_PLAYER_OBJECT;
+	else 
+		ret = 0;
 	return ret;
 }
 
