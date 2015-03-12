@@ -352,7 +352,7 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			if(pPlayerData[toplayerid]->bCustomPos[playerid])				
 				bsSync->Write(*pPlayerData[toplayerid]->vecCustomPos[playerid]);	
 			else
-				bsSync->Write(p->syncData.vecPosition);
+				bsSync->Write((char*)&p->syncData.vecPosition, sizeof(CVector));
 			
 			// Rotation (in quaternion)
 			if(pPlayerData[toplayerid]->bCustomQuat[playerid])
@@ -389,27 +389,8 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write(p->syncData.byteSpecialAction);
 
 			// Velocity
-			if(p->syncData.vecVelocity.fX != 0.0f) 
-			{
-				bsSync->Write(true);
-				bsSync->Write(p->syncData.vecVelocity.fX);
-			} 
-			else bsSync->Write(false);
+			bsSync->WriteVector(p->syncData.vecVelocity.fX, p->syncData.vecVelocity.fY, p->syncData.vecVelocity.fZ);
 
-			if(p->syncData.vecVelocity.fY != 0.0f) 
-			{
-				bsSync->Write(true);
-				bsSync->Write(p->syncData.vecVelocity.fY);
-			} 
-			else bsSync->Write(false);
-
-			if(p->syncData.vecVelocity.fZ != 0.0f) 
-			{
-				bsSync->Write(true);
-				bsSync->Write(p->syncData.vecVelocity.fZ);
-			} 
-			else bsSync->Write(false);
-	
 			// Vehicle surfing (POSITION RELATIVE TO CAR SYNC)
 			if(p->syncData.wSurfingInfo) 
 			{
