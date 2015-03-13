@@ -400,6 +400,9 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				pSyncData->wKeys &= ~4;
 				pSyncData->byteWeapon = 0;
 			}
+
+			// Store surfing info because server reset it when player surfing on player object
+			pPlayerData[playerid]->wSurfingInfo = pSyncData->wSurfingInfo;
 		}
 
 		// Stats and weapons update

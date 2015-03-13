@@ -67,6 +67,7 @@ CPlayerData::CPlayerData( WORD playerid )
 
 	dwFPS = 0;
 	dwLastDrunkLevel = 0;
+	wSurfingInfo = 0;
 
 	bAFKState = false;
 	bEverUpdated = false;

@@ -2217,7 +2217,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectDrawDistance( AMX* amx, cell* para
 	CHECK_PARAMS(1, "GetObjectDrawDistance");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->fDrawDistance);
@@ -2233,7 +2233,7 @@ static cell AMX_NATIVE_CALL Natives::SetObjectMoveSpeed( AMX* amx, cell* params 
 	CHECK_PARAMS(2, "SetObjectMoveSpeed");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	pNetGame->pObjectPool->m_pObjects[objectid]->fMoveSpeed = amx_ctof(params[2]);
@@ -2250,7 +2250,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMoveSpeed( AMX* amx, cell* params 
 	CHECK_PARAMS(1, "GetObjectMoveSpeed");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->fMoveSpeed);
@@ -2266,7 +2266,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectTarget( AMX* amx, cell* params )
 	CHECK_PARAMS(4, "GetObjectTarget");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
 	cell* cptr;
@@ -2290,7 +2290,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedData( AMX* amx, cell* para
 	CHECK_PARAMS(3, "GetObjectAttachedData");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
@@ -2313,7 +2313,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedOffset( AMX* amx, cell* pa
 	CHECK_PARAMS(7, "GetObjectAttachedOffset");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
@@ -2344,7 +2344,7 @@ static cell AMX_NATIVE_CALL Natives::IsObjectMaterialSlotUsed( AMX* amx, cell* p
 	CHECK_PARAMS(2, "IsObjectMaterialSlotUsed");
 
 	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	int materialindex = (int)params[2];
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2377,7 +2377,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterial( AMX* amx, cell* params )
 	int objectid = (int)params[1];
 	int materialindex = (int)params[2];
 
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
@@ -2417,7 +2417,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterialText( AMX* amx, cell* para
 	int objectid = (int)params[1];
 	int materialindex = (int)params[2];
 
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
@@ -2467,7 +2467,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectModel( AMX* amx, cell* param
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid > 1000) return 0;
+	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
@@ -2505,7 +2505,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerObjectMoveSpeed( AMX* amx, cell* p
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
@@ -2525,7 +2525,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMoveSpeed( AMX* amx, cell* p
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
@@ -2544,7 +2544,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectTarget( AMX* amx, cell* para
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
@@ -2571,7 +2571,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
@@ -2596,7 +2596,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, ce
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
@@ -2630,7 +2630,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerObjectMaterialSlotUsed( AMX* amx, c
 	int objectid = (int)params[2];
 	int materialindex = (int)params[3];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
@@ -2663,7 +2663,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterial( AMX* amx, cell* pa
 	int objectid = (int)params[2];
 	int materialindex = (int)params[3];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
@@ -2704,7 +2704,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 	int objectid = (int)params[2];
 	int materialindex = (int)params[3];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
@@ -2741,6 +2741,27 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 	return 1;
 }
 
+// native GetPlayerSurfingPlayerObjectID(playerid);
+static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingPlayerObjectID( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPlayerSurfingPlayerObjectID");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
+
+	int surf = pPlayerData[playerid]->wSurfingInfo - MAX_VEHICLES;
+	if(surf >= 0 && surf < MAX_OBJECTS)
+	{
+		if(pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][surf])
+			return surf;
+	}
+	return INVALID_OBJECT_ID;
+}
+
 // native GetObjectType(playerid, objectid);
 static cell AMX_NATIVE_CALL Natives::GetObjectType( AMX* amx, cell* params )
 {
@@ -2753,7 +2774,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectType( AMX* amx, cell* params )
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid >= 1000) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	BYTE ret;
 	if(pNetGame->pObjectPool->m_bObjectSlotState[objectid])
@@ -2777,7 +2798,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerAttachedObject( AMX* amx, cell* pa
 	int playerid = (int)params[1];
 	int slot = (int)params[2];
 	if(!IsPlayerConnected(playerid)) return 0;
-	if(slot < 0 || slot >= 10) return 0;
+	if(slot < 0 || slot >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->attachedObjectSlot[slot]) return 0;
 
 	cell* cptr;
@@ -2857,7 +2878,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params
 	CHECK_PARAMS(7, "GetVehicleSpawnInfo");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -2888,7 +2909,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleColor( AMX* amx, cell* params )
 	CHECK_PARAMS(3, "GetVehicleColor");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -2911,7 +2932,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehiclePaintjob( AMX* amx, cell* params 
 	CHECK_PARAMS(1, "GetVehiclePaintjob");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -2929,7 +2950,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleInterior( AMX* amx, cell* params 
 	CHECK_PARAMS(1, "GetVehicleInterior");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -2947,7 +2968,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleNumberPlate( AMX* amx, cell* para
 	CHECK_PARAMS(3, "GetVehicleNumberPlate");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -2965,7 +2986,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnDelay( AMX* amx, cell* par
 	CHECK_PARAMS(2, "SetVehicleRespawnDelay");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -2984,7 +3005,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnDelay( AMX* amx, cell* par
 	CHECK_PARAMS(1, "GetVehicleRespawnDelay");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3002,7 +3023,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleOccupiedTick( AMX* amx, cell* par
 	CHECK_PARAMS(2, "SetVehicleOccupiedTick");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3021,7 +3042,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleOccupiedTick( AMX* amx, cell* par
 	CHECK_PARAMS(1, "GetVehicleOccupiedTick");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3039,7 +3060,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnTick( AMX* amx, cell* para
 	CHECK_PARAMS(2, "SetVehicleRespawnTick");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3058,7 +3079,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnTick( AMX* amx, cell* para
 	CHECK_PARAMS(1, "GetVehicleRespawnTick");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3076,7 +3097,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleLastDriver( AMX* amx, cell* param
 	CHECK_PARAMS(1, "GetVehicleLastDriver");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3094,7 +3115,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleCab( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetVehicleCab");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3121,7 +3142,7 @@ static cell AMX_NATIVE_CALL Natives::HasVehicleBeenOccupied( AMX* amx, cell* par
 	CHECK_PARAMS(1, "HasVehicleBeenOccupied");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3139,7 +3160,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleBeenOccupied( AMX* amx, cell* par
 	CHECK_PARAMS(2, "SetVehicleBeenOccupied");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3158,7 +3179,7 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleOccupied( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "IsVehicleOccupied");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	CPlayer *pPlayer;
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
@@ -3182,7 +3203,7 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleDead( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "IsVehicleDead");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3200,7 +3221,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 	CHECK_PARAMS(8, "SetVehicleSpawnInfo");
 
 	int vehicleid = (int)params[1];
-	if(vehicleid < 1 || vehicleid >= 2000) return 0;
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	int modelid = (int)params[2];
 	if(modelid < 400 || modelid > 611) return 0;
@@ -6117,6 +6138,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"IsPlayerObjectMaterialSlotUsed",	Natives::IsPlayerObjectMaterialSlotUsed}, // R6
 	{"GetPlayerObjectMaterial",			Natives::GetPlayerObjectMaterial}, // R6
 	{"GetPlayerObjectMaterialText",		Natives::GetPlayerObjectMaterialText}, // R6
+	{"GetPlayerSurfingPlayerObjectID",	Natives::GetPlayerSurfingPlayerObjectID}, // R12
 	{"GetObjectType",					Natives::GetObjectType}, // R12
 
 	// special - for attached objects

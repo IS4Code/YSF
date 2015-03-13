@@ -130,6 +130,7 @@ public:
 	
 	DWORD dwFPS;
 	DWORD dwLastDrunkLevel;
+	WORD wSurfingInfo;
 
 	bool bObjectsRemoved : 1;
 	bool bWidescreen : 1;
