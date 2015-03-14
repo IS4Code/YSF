@@ -73,8 +73,8 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	FUNC_format_amxstring =						FindPattern("\x8B\x54\x24\x08\x56\x8B\x74\x24\x08\x57\x33\xC0", "xxxxxxxxxxxx"); //0x0046ED90;
 
-	logprintf("FUNC_CVehicle__Respawn = 0x%X", FUNC_CVehicle__Respawn);
-	logprintf("FUNC_CPlayerPool__HandleVehicleRespawn = 0x%X", FUNC_CPlayerPool__HandleVehicleRespawn);
+	//logprintf("FUNC_CVehicle__Respawn = 0x%X", FUNC_CVehicle__Respawn);
+	//logprintf("FUNC_CPlayerPool__HandleVehicleRespawn = 0x%X", FUNC_CPlayerPool__HandleVehicleRespawn);
 
 	switch(sampVersion)
 	{
