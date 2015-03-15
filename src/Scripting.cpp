@@ -4494,7 +4494,7 @@ static cell AMX_NATIVE_CALL Natives::SendClientMessageToAllf( AMX* amx, cell* pa
 	if(!szMessage) return 0;
 
 	RakNet::BitStream bsParams;
-	bsParams.Write((DWORD)params[2]);
+	bsParams.Write((DWORD)params[1]);
 	bsParams.Write((DWORD)len);
 	bsParams.Write(szMessage, len);
 	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
@@ -4528,8 +4528,8 @@ static cell AMX_NATIVE_CALL Natives::GameTextForAllf( AMX* amx, cell* params )
 	if(!szMessage) return 0;
 
 	RakNet::BitStream bsParams;
-	bsParams.Write((int)params[3]);
 	bsParams.Write((int)params[2]);
+	bsParams.Write((int)params[1]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
 	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
