@@ -438,7 +438,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				return 0xFF;
 			}
 
-			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_OBJECT || pBulletSync.byteHitType == BULLET_HIT_TYPE_PLAYER_OBJECT && ((pBulletSync.vecCenterOfHit.fX > 1000.0 || pBulletSync.vecCenterOfHit.fX < -1000.0) || (pBulletSync.vecCenterOfHit.fY > 1000.0 || pBulletSync.vecCenterOfHit.fY < -1000.0) || (pBulletSync.vecCenterOfHit.fZ > 1000.0 || pBulletSync.vecCenterOfHit.fZ < -1000.0)))
+			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_OBJECT || pBulletSync.byteHitType == BULLET_HIT_TYPE_PLAYER_OBJECT && ((pBulletSync.vecCenterOfHit.fX > 20000.0 || pBulletSync.vecCenterOfHit.fX < -20000.0) || (pBulletSync.vecCenterOfHit.fY > 20000.0 || pBulletSync.vecCenterOfHit.fY < -20000.0) || (pBulletSync.vecCenterOfHit.fZ > 20000.0 || pBulletSync.vecCenterOfHit.fZ < -20000.0)))
 			{
 				return 0xFF;
 			}
@@ -519,8 +519,11 @@ static void HOOK_logprintf(const char *msg, ...)
 	static char buffer[1024];
 	va_list arguments;
 	va_start(arguments, msg);
+	if(!msg[0]) return;
+
 	vsnprintf(buffer, sizeof(buffer), msg, arguments);
 	va_end(arguments);
+	if(!buffer[0]) return;
 
 	if(CCallbackManager::OnServerMessage(buffer))
 		logprintf(buffer);

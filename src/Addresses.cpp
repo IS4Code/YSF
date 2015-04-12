@@ -112,20 +112,29 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
 	ADDR_CNetGame_GMX_PckupDelete =				NULL;
+
+	
+	VAR_pRestartWaitTime = FindPattern("\x00\x00\x40\x41\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF", "xxxxxxxxxxxxxx");
+	FUNC_Packet_WeaponsUpdate = FindPattern("\x55\x31\xC0\x89\xE5\x81\xEC\x58\x01\x00\x00", "xxxxxxxxxxx");
+	FUNC_ProcessQueryPacket = FindPattern("\x81\xEC\xA8\x00\x00\x00\x89\x5D\xF4\x8B\x5D\x14\x89\x75\xF8", "xxxxxxxxxxxxxxx") - 0x3;
+	FUNC_CConsole__FindVariable = FindPattern("\xB9\xFF\x00\x00\x00\x89\xE5\x81\xEC\x68\x01\x00\x00", "xxxxxxxxxxxxx") - 0x1;
+	FUNC_CConsole__SendRules = FindPattern("\x55\x31\xD2\x89\xE5\x57\x56\x53\x81\xEC\x4C\x04", "xxxxxxxxxxxx");
+	FUNC_CConsole__Execute = FindPattern("\x55\x89\xE5\x57\x56\x53\x81\xEC\x3C\x01\x00\x00\x8B\x45\x0C", "xxxxxxxxxxxxxxx");
+	
+	FUNC_CVehicle__Respawn = FindPattern("\x55\x31\xD2\x89\xE5\x57\xB9\x40\x00\x00\x00", "xxxxxxxxxxx");
+	//FUNC_CPlayerPool__HandleVehicleRespawn = FindPattern(" ", " ");
+	FUNC_format_amxstring = FindPattern("\x55\xB8\x00\x10\x00\x00\x89\xE5\x56\x53\x83\xEC\x20", "xxxxxxxxxxxxx");
 	/*
 	logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
-	logprintf("FUNC_CConsole__AddStringVariable: %X", FUNC_CConsole__AddStringVariable);
-	logprintf("FUNC_CConsole__SetStringVariable: %X", FUNC_CConsole__SetStringVariable);
-	logprintf("FUNC_CConsole__SetIntVariable: %X", FUNC_CConsole__ModifyVariableFlags);
-	logprintf("FUNC_CConsole__ModifyVariableFlags: %X", FUNC_CConsole__ModifyVariableFlags);
+	logprintf("FUNC_Packet_WeaponsUpdate: %X", FUNC_Packet_WeaponsUpdate);
+	logprintf("FUNC_ProcessQueryPacket: %X", FUNC_ProcessQueryPacket);
+	logprintf("FUNC_CConsole__FindVariable: %X", FUNC_CConsole__FindVariable);
+	logprintf("FUNC_CConsole__SendRules: %X", FUNC_CConsole__SendRules);
+	logprintf("FUNC_CConsole__Execute: %X", FUNC_CConsole__Execute);
 	
-	logprintf("FUNC_CFilterscripts__LoadFilterscript: %X", FUNC_CFilterscripts__LoadFilterscript);
-	logprintf("FUNC_CFilterscripts__UnLoadFilterscript: %X", FUNC_CFilterscripts__UnLoadFilterscript);
-
-	logprintf("FUNC_ContainsInvalidChars: %X", FUNC_ContainsInvalidChars);
-	logprintf("FUNC_GetPacketID: %X", FUNC_GetPacketID);
-
-	logprintf("FUNC_CPlayer__SpawnForWorld: %X", FUNC_CPlayer__SpawnForWorld);
+	logprintf("FUNC_CVehicle__Respawn: %X", FUNC_CVehicle__Respawn);
+	//logprintf("FUNC_CPlayerPool__HandleVehicleRespawn: %X", FUNC_CPlayerPool__HandleVehicleRespawn);
+	logprintf("FUNC_format_amxstring: %X", FUNC_format_amxstring);
 	*/
 	switch(sampVersion)
 	{
@@ -147,15 +156,15 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		case SAMP_VERSION_03Z_R4:
 		{
 			VAR_pRestartWaitTime =						0x81514E0; // 12.0
-			FUNC_Packet_WeaponsUpdate =					0x80AAC90;
-			FUNC_ProcessQueryPacket =					0x080D0EB0;
-			FUNC_CConsole__FindVariable =				0x809EA60; 
-			FUNC_CConsole__SendRules =					0x809E4C0;
-			FUNC_CConsole__Execute =					0x809EB40;
+			//FUNC_Packet_WeaponsUpdate =					0x80AAC90;
+			//FUNC_ProcessQueryPacket =					0x080D0EB0;
+			//FUNC_CConsole__FindVariable =				0x809EA60; 
+			//FUNC_CConsole__SendRules =					0x809E4C0;
+			//FUNC_CConsole__Execute =					0x809EB40;
 
 			FUNC_CVehicle__Respawn =					0x8145A70;
 			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80CF230;
-			FUNC_format_amxstring =						0x80D4030;				
+			//FUNC_format_amxstring =						0x80D4030;
 			break;
 		}
 	}
