@@ -62,12 +62,12 @@ public:
 #endif
 
 #ifdef _WIN32
-typedef bool (__thiscall *FPTR)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+typedef bool (__thiscall *RakPeer__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 #else
-typedef bool (*FPTR)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+typedef bool (*RakPeer__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 #endif
 
-FPTR RaknetOriginalSend;
+RakPeer__Send_t RakPeerOriginalSend;
 AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
 
 // Y_Less - original YSF
@@ -294,71 +294,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 		{
 			pPlayerData[playerid]->dwLastUpdateTick = GetTickCount();
 			pPlayerData[playerid]->bEverUpdated = true;
-			
-			if (packetId == ID_VEHICLE_SYNC || packetId == ID_PASSENGER_SYNC || packetId == ID_UNOCCUPIED_SYNC)
-			{
-				static CVector emptyVector = CVector(0.0f, 0.0f, 0.0f);
-				CVector* vecPosition = &emptyVector;
-				CVector* vecVelocity = &emptyVector;
-				float fTrainSpeed = 0.0f;
-				CVehicleSyncData *vd = NULL;
-				CUnoccupiedSyncData *ud = NULL;
-				CPassengerSyncData *pd = NULL;
-
-				switch (packetId) {
-				case ID_VEHICLE_SYNC:
-					vd = (CVehicleSyncData*)(&p->data[1]);
-					vecPosition = &vd->vecPosition;
-					vecVelocity = &vd->vecVelocity;
-					fTrainSpeed = vd->fTrainSpeed;
-					break;
-
-				case ID_UNOCCUPIED_SYNC:
-					ud = (CUnoccupiedSyncData*)(&p->data[1]);
-					vecPosition = &ud->vecPosition;
-					vecVelocity = &ud->vecVelocity;
-					break;
-
-				case ID_PASSENGER_SYNC:
-					pd = (CPassengerSyncData*)(&p->data[1]);
-					vecPosition = &pd->vecPosition;
-					break;
-
-				default:
-					break;
-				}
-				// Fix "player bugger"
-				// Causes this screen: http://scrn.sixtytiger.com/sa-mp-026.png
-				// Happens when a player is in a car with a cheating player, and that cheating player
-				// manipulates the vehicle position to be outside the GTA:SA position range
-				if (vecPosition->fX < -20000.0f || vecPosition->fX > 20000.0f ||
-					vecPosition->fY < -20000.0f || vecPosition->fY > 20000.0f ||
-					vecPosition->fZ < -20000.0f || vecPosition->fZ > 20000.0f ||
-					
-					// MOVE SPEED
-
-					vecVelocity->fX > 35.0f || vecVelocity->fX < -35.0f ||
-					vecVelocity->fY > 35.0f || vecVelocity->fY < -35.0f ||
-					vecVelocity->fZ > 35.0f || vecVelocity->fZ < -35.0f ||
-
-					// infinity checks
-
-					!isfinite(vecPosition->fX) || !isfinite(vecPosition->fY) || !isfinite(vecPosition->fZ) ||
-					!isfinite(vecVelocity->fX) || !isfinite(vecVelocity->fY) || !isfinite(vecVelocity->fZ)
-					)
-				{
-					logprintf("vehicle crasher");
-					return 0xFF;
-				}
-				/*
-				// Fix "bike crash"
-				if (fTrainSpeed > 100000.0f || fTrainSpeed < 0.0f)
-				{
-					return 0xFF;
-				}
-				*/
-			}
-			
+						
 			/*
 			// Based on JernejL's tutorial - http://forum.sa-mp.com/showthread.php?t=172085
 			DWORD dwDrunkNew = pPlayerPool->dwDrunkLevel[playerid];
@@ -418,60 +354,6 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
 			return 0xFF;
 		}
-		
-		// Bullet crasher fix
-		if (packetId == ID_BULLET_SYNC)
-		{
-			RakNet::BitStream bsData(p->data, p->length, false);
-			BULLET_SYNC_DATA pBulletSync;
-
-			bsData.SetReadOffset(8);
-			bsData.Read((char*)&pBulletSync, sizeof(pBulletSync));
-
-			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_PLAYER && ((pBulletSync.vecCenterOfHit.fX > 10.0f || pBulletSync.vecCenterOfHit.fX < -10.0f) || (pBulletSync.vecCenterOfHit.fY > 10.0f || pBulletSync.vecCenterOfHit.fY < -10.0f) || (pBulletSync.vecCenterOfHit.fZ > 10.0f || pBulletSync.vecCenterOfHit.fZ < -10.0f)))
-			{
-				return 0xFF;
-			}
-
-			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_VEHICLE && ((pBulletSync.vecCenterOfHit.fX > 100.0f || pBulletSync.vecCenterOfHit.fX < -100.0f) || (pBulletSync.vecCenterOfHit.fY > 100.0f || pBulletSync.vecCenterOfHit.fY < -100.0f) || (pBulletSync.vecCenterOfHit.fZ > 100.0f || pBulletSync.vecCenterOfHit.fZ < -100.0f)))
-			{
-				return 0xFF;
-			}
-
-			if (pBulletSync.byteHitType == BULLET_HIT_TYPE_OBJECT || pBulletSync.byteHitType == BULLET_HIT_TYPE_PLAYER_OBJECT && ((pBulletSync.vecCenterOfHit.fX > 20000.0 || pBulletSync.vecCenterOfHit.fX < -20000.0) || (pBulletSync.vecCenterOfHit.fY > 20000.0 || pBulletSync.vecCenterOfHit.fY < -20000.0) || (pBulletSync.vecCenterOfHit.fZ > 20000.0 || pBulletSync.vecCenterOfHit.fZ < -20000.0)))
-			{
-				return 0xFF;
-			}
-		}
-
-		if (packetId == ID_AIM_SYNC)
-		{
-			RakNet::BitStream bsData(p->data, p->length, false);
-
-			CAimSyncData *aim = (CAimSyncData*)(&p->data[1]);;
-			int weaponid = pNetGame->pPlayerPool->pPlayer[p->playerIndex]->byteCurrentWeapon;
-
-			CVector vecPos = pNetGame->pPlayerPool->pPlayer[p->playerIndex]->vecPosition;
-			CVector vecDist = aim->vecPosition - vecPos;
-
-			if ((abs(vecDist.fX) + abs(vecDist.fY) + abs(vecDist.fZ)) > 500.0f)
-			{
-				return 0xFF;
-			}
-
-			if (!isfinite(aim->vecPosition.fX) || !isfinite(aim->vecPosition.fY) || !isfinite(aim->vecPosition.fZ) ||
-				!isfinite(aim->vecFront.fX) || !isfinite(aim->vecFront.fY) || !isfinite(aim->vecFront.fZ))
-			{
-				return 0xFF;
-			}
-
-			if (aim->vecFront.fX < -9.9f || aim->vecFront.fX > 9.9f ||
-				aim->vecFront.fY < -9.9f || aim->vecFront.fY > 9.9f ||
-				aim->vecFront.fZ < -9.9f || aim->vecFront.fZ > 9.9f)
-			{
-				return 0xFF;
-			}
-		}
 	}
 	return packetId;
 }
@@ -494,7 +376,7 @@ bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int 
 */
 	RebuildSyncData(parameters, pRakServer->GetIndexFromPlayerID(playerId));
 
-	return RaknetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
+	return RakPeerOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
 
 //----------------------------------------------------
@@ -651,7 +533,9 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					DWORD dwGameModeLen = strlen(szGameMode);
 					if (dwGameModeLen > 30) dwGameModeLen = 30;
 
-					char* szMapName = pServer->GetStringVariable("mapname");
+					char* szLanguage = pServer->GetStringVariable("language");
+					char* szMapName = (!szLanguage[0]) ? pServer->GetStringVariable("mapname") : szLanguage;
+
 					DWORD dwMapNameLen = strlen(szMapName);
 					if (dwMapNameLen > 30) dwMapNameLen = 30;
 
@@ -966,7 +850,7 @@ void InstallPostHooks()
 	// Get pRakServer
 	int (*pfn_GetRakServer)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_RAKSERVER];
 	pRakServer = (RakServer*)pfn_GetRakServer();
-		
+
 	// SetMaxPlayers() fix
 	pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
 	
@@ -986,7 +870,7 @@ void InstallPostHooks()
 
 	// RakServer::Send hook - Thanks to Gamer_Z
 	int SendFunc = ((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET];
-	RaknetOriginalSend = reinterpret_cast<FPTR>(SendFunc);
+	RakPeerOriginalSend = reinterpret_cast<RakPeer__Send_t>(SendFunc);
 	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET], 4);
 	((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
 }

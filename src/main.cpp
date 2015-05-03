@@ -47,6 +47,12 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	bool ret = sampgdk_Load(ppData);
 	logprintf("logprintf = 0x%08X\n", ppData[PLUGIN_DATA_LOGPRINTF]);
 	
+	logprintf("offset: killer: %d, numberplate: %d, health: %d, color1: %d, tirestatus: %d, paramsex: %d", _OFFSET(CVehicle, wKillerID), _OFFSET(CVehicle, szNumberplate), _OFFSET(CVehicle, fHealth),
+		_OFFSET(CVehicle, vehModInfo.iColor1), _OFFSET(CVehicle, vehTireStatus), _OFFSET(CVehicle, vehParamEx.engine));
+
+	// 10473
+//	logprintf("object drawdistance offset: %d", _OFFSET2(RakServer, Send));
+
 #ifndef _WIN32
 	LoadTickCount();
 #endif	
@@ -55,25 +61,10 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	char szVersion[64];
 
 	DWORD addr = (DWORD)ppData[PLUGIN_DATA_LOGPRINTF];
-	if (addr == CAddress::FUNC_Logprintf_03Z)
+	if (addr == CAddress::FUNC_Logprintf_037)
 	{
-		version = SAMP_VERSION_03Z;
-		strcpy(szVersion, "0.3z");
-	}
-	else if (addr == CAddress::FUNC_Logprintf_03ZR2_2)
-	{
-		version = SAMP_VERSION_03Z_R2_2;
-		strcpy(szVersion, "0.3z R2-2");
-	}
-	else if (addr == CAddress::FUNC_Logprintf_03ZR3)
-	{
-		version = SAMP_VERSION_03Z_R3;
-		strcpy(szVersion, "0.3z R3");
-	}
-	else if (addr == CAddress::FUNC_Logprintf_03ZR4)
-	{
-		strcpy(szVersion, "0.3z R4");
-		version = SAMP_VERSION_03Z_R4;
+		version = SAMP_VERSION_037;
+		strcpy(szVersion, "0.3.7");
 	}
 
 	//logprintf("skipgeci: %d", GetServerCfgOption("ysf_skipversioncheck").c_str());
@@ -93,7 +84,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	}
 	else
 	{
-		version = SAMP_VERSION_03Z_R4;
+		version = SAMP_VERSION_037;
 		strcpy(szVersion, "version check skipped");
 		
 		// Create server instance

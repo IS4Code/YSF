@@ -720,14 +720,14 @@ static cell AMX_NATIVE_CALL Natives::GetServerRuleFlags(AMX *amx, cell *params)
 }
 
 // native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, 
-//		&limitplayermarkers, &vehiclefriendlyfire, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
+//		&limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
 static cell AMX_NATIVE_CALL Natives::GetServerSettings(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(13, "GetServerSettings");
+	CHECK_PARAMS(14, "GetServerSettings");
 
 	cell *cptr;
 	amx_GetAddr(amx, params[1], &cptr); *cptr = (cell)pNetGame->bShowPlayerMarkers;
@@ -740,9 +740,10 @@ static cell AMX_NATIVE_CALL Natives::GetServerSettings(AMX *amx, cell *params)
 	amx_GetAddr(amx, params[8], &cptr); *cptr = (cell)pNetGame->bManulVehicleEngineAndLights;
 	amx_GetAddr(amx, params[9], &cptr); *cptr = (cell)pNetGame->bLimitPlayerMarkers;
 	amx_GetAddr(amx, params[10], &cptr); *cptr = (cell)pNetGame->bVehicleFriendlyFire;
-	amx_GetAddr(amx, params[11], &cptr); *cptr = amx_ftoc(pNetGame->fGlobalChatRadius);
-	amx_GetAddr(amx, params[12], &cptr); *cptr = amx_ftoc(pNetGame->fNameTagDrawDistance);
-	amx_GetAddr(amx, params[13], &cptr); *cptr = amx_ftoc(pNetGame->fPlayerMarkesLimit);
+	amx_GetAddr(amx, params[11], &cptr); *cptr = (cell)pNetGame->byteDefaultCameraCollision;
+	amx_GetAddr(amx, params[12], &cptr); *cptr = amx_ftoc(pNetGame->fGlobalChatRadius);
+	amx_GetAddr(amx, params[13], &cptr); *cptr = amx_ftoc(pNetGame->fNameTagDrawDistance);
+	amx_GetAddr(amx, params[14], &cptr); *cptr = amx_ftoc(pNetGame->fPlayerMarkesLimit);
 	return 1;
 }
 
@@ -818,7 +819,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerClass(AMX *amx, cell *params)
 	int classid = (int)params[1];
 	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
 
-	PLAYER_SPAWN_INFO *pSpawn = &pNetGame->AvailableSpawns[classid];
+	CPlayerSpawnInfo *pSpawn = &pNetGame->AvailableSpawns[classid];
 	
 	cell *cptr;
 	amx_GetAddr(amx, params[2], &cptr); *cptr = (cell)pSpawn->byteTeam;
@@ -848,7 +849,7 @@ static cell AMX_NATIVE_CALL Natives::EditPlayerClass(AMX *amx, cell *params)
 	int classid = (int)params[1];
 	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
 
-	PLAYER_SPAWN_INFO *pSpawn = &pNetGame->AvailableSpawns[classid];
+	CPlayerSpawnInfo *pSpawn = &pNetGame->AvailableSpawns[classid];
 
 	pSpawn->byteTeam = (BYTE)params[2];
 	pSpawn->iSkin = (int)params[3];
@@ -871,25 +872,6 @@ static cell AMX_NATIVE_CALL Natives::GetActiveTimers(AMX *amx, cell *params)
 		return 0;
 
 	return pNetGame->pScriptTimers->m_dwTimerCount;
-}
-
-// native SendInvalidPlayerSync(playerid); - raksamp versions will crash
-static cell AMX_NATIVE_CALL Natives::SendInvalidPlayerSync(AMX *amx, cell *params)
-{
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "SendInvalidPlayerSync");
-
-	int playerid = (int)params[1];
-	if (!IsPlayerConnected(playerid)) return 0;
-
-	RakNet::BitStream bs;
-	bs.Write(65530);
-
-	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false);
-	return 1;
 }
 
 // native SetGravity(Float:gravity);
@@ -1511,7 +1493,7 @@ static cell AMX_NATIVE_CALL Natives::GetSpawnInfo( AMX* amx, cell* params )
 	int playerid = (int)params[1];
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	PLAYER_SPAWN_INFO *pSpawn = &pNetGame->pPlayerPool->pPlayer[playerid]->spawn;
+	CPlayerSpawnInfo *pSpawn = &pNetGame->pPlayerPool->pPlayer[playerid]->spawn;
 
 	cell *cptr;
 	amx_GetAddr(amx, params[2], &cptr); *cptr = (cell)pSpawn->byteTeam;
@@ -1891,23 +1873,68 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerFPS(AMX* amx, cell* params)
 
 	CHECK_PARAMS(1, "GetPlayerFPS");
 
-	int playerid = (int)params[1];
-	if (!IsPlayerConnected(playerid)) return 0;
-
-	return pPlayerData[playerid]->dwFPS;
+	// TODO
+	return 1;
 }
 
-// native SendBulletData(sender, hitid, hittype, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
+// native GetActorSpawnInfo(actorid, &skinid, &Float:fX, &Float:fY, &Float:fZ, &Float:fAngle);
+static cell AMX_NATIVE_CALL Natives::GetActorSpawnInfo(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(6, "GetActorSpawnInfo");
+
+	int actorid = (int)params[1];
+	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
+
+	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
+	if(!pActor) return 0;
+
+	cell* cptr;
+	amx_GetAddr(amx, params[2], &cptr);
+	*cptr = (cell)pActor->iSkinID;
+	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = amx_ftoc(pActor->vecSpawnPos.fX);
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = amx_ftoc(pActor->vecSpawnPos.fY);
+	amx_GetAddr(amx, params[5], &cptr);
+	*cptr = amx_ftoc(pActor->vecSpawnPos.fZ);
+	amx_GetAddr(amx, params[6], &cptr);
+	*cptr = amx_ftoc(pActor->fSpawnAngle);
+	return 1;
+}
+
+// native GetActorSkin(actorid);
+static cell AMX_NATIVE_CALL Natives::GetActorSkin(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetActorSkin");
+
+	int actorid = (int)params[1];
+	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
+
+	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
+	if(!pActor) return 0;
+
+	return pActor->iSkinID;
+}
+
+// native SendBulletData(sender, hitid, hittype, weaponid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
 static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params ) 
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(13, "SendBulletData");
+	CHECK_PARAMS(14, "SendBulletData");
 
 	int playerid = (int)params[1];
-	int forplayerid = (int)params[13];
+	int forplayerid = (int)params[14];
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(forplayerid != -1)
@@ -1915,17 +1942,18 @@ static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params )
 		if(!IsPlayerConnected(forplayerid)) return 0;
 	}
 
-	BULLET_SYNC_DATA bulletSync;
+	CBulletSyncData bulletSync;
 	bulletSync.byteHitType = (BYTE)params[3];
 	bulletSync.wHitID = (WORD)params[2];
-	bulletSync.vecHitOrigin = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
-	bulletSync.vecHitTarget = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
-	bulletSync.vecCenterOfHit = CVector(amx_ctof(params[10]), amx_ctof(params[11]), amx_ctof(params[12]));
+	bulletSync.byteWeaponID = (BYTE)params[4];
+	bulletSync.vecHitOrigin = CVector(amx_ctof(params[5]), amx_ctof(params[6]), amx_ctof(params[7]));
+	bulletSync.vecHitTarget = CVector(amx_ctof(params[8]), amx_ctof(params[9]), amx_ctof(params[10]));
+	bulletSync.vecCenterOfHit = CVector(amx_ctof(params[11]), amx_ctof(params[12]), amx_ctof(params[13]));
 
 	RakNet::BitStream bs;
 	bs.Write((BYTE)ID_BULLET_SYNC);
 	bs.Write((WORD)playerid);
-	bs.Write((char*)&bulletSync, sizeof(BULLET_SYNC_DATA));
+	bs.Write((char*)&bulletSync, sizeof(CBulletSyncData));
 
 	if(forplayerid == -1)
 	{
@@ -2090,6 +2118,39 @@ static cell AMX_NATIVE_CALL Natives::SpawnForWorld(AMX* amx, cell* params)
 	return 1;
 }
 
+// native BroadcastDeath(playerid);
+static cell AMX_NATIVE_CALL Natives::BroadcastDeath(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "BroadcastDeath");
+
+	int playerid = (int)params[1];
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	RakNet::BitStream bsData;
+	bsData.Write((WORD)playerid);
+	pRakServer->RPC(&RPC_DeathBroadcast, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), true, false);
+	return 1;
+}
+
+// native IsPlayerCameraTargetEnabled(playerid);
+static cell AMX_NATIVE_CALL Natives::IsPlayerCameraTargetEnabled( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsPlayerCameraTargetEnabled");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return 0;
+
+	return pNetGame->pPlayerPool->pPlayer[playerid]->bCameraTarget;
+}
+
 // Scoreboard manipulation
 // native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
 static cell AMX_NATIVE_CALL Natives::TogglePlayerScoresPingsUpdate(AMX *amx, cell *params)
@@ -2191,22 +2252,6 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPausedTime(AMX *amx, cell *params)
 }
 
 // Objects - global
-// native GetObjectModel(objectid);
-static cell AMX_NATIVE_CALL Natives::GetObjectModel( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "GetObjectModel");
-
-	int objectid = (int)params[1];
-	if(objectid < 0 || objectid >= 1000) return 0;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
-
-	return pNetGame->pObjectPool->m_pObjects[objectid]->iModel;
-}
-
 // native Float:GetObjectDrawDistance(objectid);
 static cell AMX_NATIVE_CALL Natives::GetObjectDrawDistance( AMX* amx, cell* params )
 {
@@ -2455,23 +2500,21 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterialText( AMX* amx, cell* para
 	return 1;
 }
 
-// native GetPlayerObjectModel(playerid, objectid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerObjectModel( AMX* amx, cell* params )
+// native IsObjectNoCameraCol(objectid);
+static cell AMX_NATIVE_CALL Natives::IsObjectNoCameraCol( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(2, "GetPlayerObjectModel");
+	CHECK_PARAMS(1, "IsObjectNoCameraCol");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
-	if(!IsPlayerConnected(playerid)) return 0;
-	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
+	int objectid = (int)params[1];
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
-	return pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->iModel;
+	return pNetGame->pObjectPool->m_pObjects[objectid]->bNoCameraCol;
 }
 
 // native Float:GetPlayerObjectDrawDistance(playerid, objectid);
@@ -2559,14 +2602,14 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectTarget( AMX* amx, cell* para
 	return 1;
 }
 
-// native GetPlayerObjectAttachedData(playerid, objectid, &vehicleid, &objectid);
+// native GetPlayerObjectAttachedData(playerid, objectid, &vehicleid, &objectid, &attachedplayerid);
 static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(2, "GetPlayerObjectAttachedData");
+	CHECK_PARAMS(5, "GetPlayerObjectAttachedData");
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
@@ -2580,7 +2623,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell
 	amx_GetAddr(amx, params[3], &cptr);
 	*cptr = (cell)pObject->wAttachedVehicleID;
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = (cell)pObject->wAttachedVehicleID;
+	*cptr = (cell)pPlayerData[playerid]->stObj[objectid].usObjectID;
+	amx_GetAddr(amx, params[5], &cptr);
+	*cptr = (cell)pPlayerData[playerid]->stObj[objectid].usAttachPlayerID;
 	return 1;
 }
 
@@ -2591,7 +2636,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, ce
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(2, "GetPlayerObjectModel");
+	CHECK_PARAMS(8, "GetPlayerObjectAttachedOffset");
 
 	int playerid = (int)params[1];
 	int objectid = (int)params[2];
@@ -2602,18 +2647,33 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, ce
 
 	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	
+	CVector* vecOffset = NULL;
+	CVector* vecRot = NULL;
+	
+	if(pObject->wAttachedVehicleID)
+	{
+		vecOffset = &pObject->vecAttachedOffset;
+		vecRot = &pObject->vecAttachedRotation;
+	}
+	else
+	{
+		vecOffset = &pPlayerData[playerid]->stObj[objectid].vecOffset;
+		vecRot = &pPlayerData[playerid]->stObj[objectid].vecRot;
+	}
+	
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedOffset.fX);
+	*cptr = amx_ftoc(vecOffset->fX);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedOffset.fY);
+	*cptr = amx_ftoc(vecOffset->fY);
 	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedOffset.fZ);
+	*cptr = amx_ftoc(vecOffset->fZ);
 	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedRotation.fX);
+	*cptr = amx_ftoc(vecRot->fX);
 	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedRotation.fY);
+	*cptr = amx_ftoc(vecRot->fY);
 	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedRotation.fZ);
+	*cptr = amx_ftoc(vecRot->fZ);
 	return 1;
 }
 
@@ -2741,6 +2801,25 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 	return 1;
 }
 
+// native IsPlayerObjectNoCameraCol(playerid, objectid);
+static cell AMX_NATIVE_CALL Natives::IsPlayerObjectNoCameraCol( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "IsPlayerObjectNoCameraCol");
+
+	int playerid = (int)params[1];
+	int objectid = (int)params[2];
+	if(!IsPlayerConnected(playerid)) return 0;
+	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+
+	return pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->bNoCameraCol;
+}
+
 // native GetPlayerSurfingPlayerObjectID(playerid);
 static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingPlayerObjectID( AMX* amx, cell* params )
 {
@@ -2758,6 +2837,30 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingPlayerObjectID( AMX* amx, c
 	{
 		if(pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][surf])
 			return surf;
+	}
+	return INVALID_OBJECT_ID;
+}
+
+// native GetPlayerCameraTargetPlayerObj(playerid);
+static cell AMX_NATIVE_CALL Natives::GetPlayerCameraTargetPlayerObj( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetPlayerCameraTargetPlayerObj");
+
+	int playerid = (int)params[1];
+	if(!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
+	
+	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+	if(!pPlayer->bCameraTarget) return INVALID_OBJECT_ID;
+
+	int target = pNetGame->pPlayerPool->pPlayer[playerid]->aimSyncData.wCameraObject;
+	if(target >= 0 && target < MAX_OBJECTS)
+	{
+		if(pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][target])
+			return target;
 	}
 	return INVALID_OBJECT_ID;
 }
@@ -4442,14 +4545,21 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	if(!pObjectPool->m_pPlayerObjects[forplayerid][wObjectID] || !pObjectPool->m_pPlayerObjects[forplayerid][wAttachTo]) return 0; // Check if object is exist
 
+	// Get data
 	CVector vecOffset = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
 	CVector vecOffsetRot = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
 	BYTE byteSyncRot = !!params[10];
 
+	// Store data
+	pPlayerData[forplayerid]->stObj[wObjectID].usObjectID = wAttachTo;
+	pPlayerData[forplayerid]->stObj[wObjectID].vecOffset = vecOffset;
+	pPlayerData[forplayerid]->stObj[wObjectID].vecRot = vecOffsetRot;
+
+	// Attach it
 	int iModelID = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->iModel;
 	CVector vecPos = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->matWorld.pos;
 	CVector vecRot = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->vecRot;
-	float fDrawDistance = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->fDrawDistance;
+	float fDrawDistance = 300;
 	
 	RakNet::BitStream bs;
 	bs.Write((WORD)wObjectID);
@@ -4718,7 +4828,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneDestroy(AMX *amx, cell *params)
 	CHECK_PARAMS(1, "GangZoneDestroy");
 
 	CGangZonePool *pGangZonePool = pNetGame->pGangZonePool;
-	if (!pGangZonePool->GetSlotState((WORD)params[1])) return 0;
+	if (!pGangZonePool || !pGangZonePool->GetSlotState((WORD)params[1])) return 0;
 
 	pGangZonePool->Delete((WORD)params[1]);
 	return 1;
@@ -6050,9 +6160,6 @@ AMX_NATIVE_INFO YSINatives [] =
 	// Timers
 	{ "GetActiveTimers",				Natives::GetActiveTimers}, // R8
 
-	// RakSAMP crash
-	{ "SendInvalidPlayerSync",			Natives::SendInvalidPlayerSync }, // R10
-
 	// Special
 	{ "SetPlayerGravity",				Natives::SetPlayerGravity },
 	{ "GetPlayerGravity",				Natives::GetPlayerGravity },
@@ -6088,6 +6195,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "IsPlayerSpawned",				Natives::IsPlayerSpawned }, // R9
 	{"IsPlayerControllable",			Natives::IsPlayerControllable}, // R11
 	{ "SpawnForWorld",					Natives::SpawnForWorld }, // R10
+	{ "BroadcastDeath",					Natives::BroadcastDeath }, // R13
+	{ "IsPlayerCameraTargetEnabled",	Natives::IsPlayerCameraTargetEnabled }, // R13
 
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			Natives::GetPlayerSirenState },
@@ -6104,6 +6213,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerLastSyncedTrailerID",	Natives::GetPlayerLastSyncedTrailerID }, // R10
 	{ "GetPlayerFPS", 					Natives::GetPlayerFPS},
 
+	// Actor
+	{ "GetActorSpawnInfo", 				Natives::GetActorSpawnInfo}, // R13
+	{ "GetActorSkin", 					Natives::GetActorSkin}, // R13
+
 	// Scoreboard manipulation
 	{ "TogglePlayerScoresPingsUpdate",	Natives::TogglePlayerScoresPingsUpdate }, // R8
 	{ "TogglePlayerFakePing",			Natives::TogglePlayerFakePing }, // R8
@@ -6116,7 +6229,6 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "GetPlayerPausedTime",			Natives::GetPlayerPausedTime },
 	
 	// Objects get - global
-	{"GetObjectModel",					Natives::GetObjectModel},
 	{"GetObjectDrawDistance",			Natives::GetObjectDrawDistance},
 	{"SetObjectMoveSpeed",				Natives::SetObjectMoveSpeed}, // R6
 	{"GetObjectMoveSpeed",				Natives::GetObjectMoveSpeed}, // R6
@@ -6126,9 +6238,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"IsObjectMaterialSlotUsed",		Natives::IsObjectMaterialSlotUsed}, // R6
 	{"GetObjectMaterial",				Natives::GetObjectMaterial}, // R6
 	{"GetObjectMaterialText",			Natives::GetObjectMaterialText}, // R6
+	{"IsObjectNoCameraCol",				Natives::IsObjectNoCameraCol}, // R13
 
 	// Objects get - player
-	{"GetPlayerObjectModel",			Natives::GetPlayerObjectModel},
 	{"GetPlayerObjectDrawDistance",		Natives::GetPlayerObjectDrawDistance},
 	{"SetPlayerObjectMoveSpeed",		Natives::SetPlayerObjectMoveSpeed}, // R6
 	{"GetPlayerObjectMoveSpeed",		Natives::GetPlayerObjectMoveSpeed}, // R6
@@ -6138,7 +6250,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"IsPlayerObjectMaterialSlotUsed",	Natives::IsPlayerObjectMaterialSlotUsed}, // R6
 	{"GetPlayerObjectMaterial",			Natives::GetPlayerObjectMaterial}, // R6
 	{"GetPlayerObjectMaterialText",		Natives::GetPlayerObjectMaterialText}, // R6
+	{"IsPlayerObjectNoCameraCol",		Natives::IsPlayerObjectNoCameraCol}, // R13
 	{"GetPlayerSurfingPlayerObjectID",	Natives::GetPlayerSurfingPlayerObjectID}, // R12
+	{"GetPlayerCameraTargetPlayerObj",	Natives::GetPlayerCameraTargetPlayerObj}, // R13
 	{"GetObjectType",					Natives::GetObjectType}, // R12
 
 	// special - for attached objects
@@ -6164,7 +6278,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"SetVehicleBeenOccupied",			Natives::SetVehicleBeenOccupied}, // R9
 	{"IsVehicleOccupied",				Natives::IsVehicleOccupied}, // R9
 	{"IsVehicleDead",					Natives::IsVehicleDead}, // R9
-	{"SetVehicleSpawnInfo",				Natives::SetVehicleSpawnInfo}, // R12
+	{"SetVehicleSpawnInfo",				Natives::SetVehicleSpawnInfo}, // DO NOT WORK
 
 	// Gangzone - Global
 	{"IsValidGangZone",					Natives::IsValidGangZone},

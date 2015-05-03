@@ -251,7 +251,7 @@ char *GetPlayerName_(int playerid)
 	if (!IsPlayerConnected(playerid)) return NULL;
 
 	// Get the player name pointer from memory.
-	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x134A4;
+	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
 }
 
 // Created by: https://github.com/Zeex/sampgdk/blob/master/plugins/unlimitedfs/unlimitedfs.cpp

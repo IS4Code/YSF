@@ -13,6 +13,8 @@
 #define SAFE_DELETE(p)	{ if (p) { delete (p); (p) = NULL; } }
 #define SAFE_RELEASE(p)	{ if (p) { (p)->Release(); (p) = NULL; } }
 #define PAD(a, b) char a[b]
+
+#define _OFFSET(p_type, p_member) (size_t)(&((p_type *)NULL)->p_member)
 // ------------
 // VERSION INFO
 // ------------

@@ -82,8 +82,6 @@ namespace Natives
 
 	static cell AMX_NATIVE_CALL GetActiveTimers(AMX *amx, cell *params); // R8
 
-	static cell AMX_NATIVE_CALL SendInvalidPlayerSync(AMX *amx, cell *params); // R10
-
 	static cell AMX_NATIVE_CALL SetPlayerGravity(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerGravity(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetPlayerTeamForPlayer(AMX *amx, cell *params); // R5 - Exp
@@ -117,7 +115,9 @@ namespace Natives
 	static cell AMX_NATIVE_CALL IsPlayerSpawned(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL IsPlayerControllable(AMX *amx, cell *params); // R11
 	static cell AMX_NATIVE_CALL SpawnForWorld(AMX *amx, cell *params); // R10
-
+	static cell AMX_NATIVE_CALL BroadcastDeath(AMX *amx, cell *params); // R13
+	static cell AMX_NATIVE_CALL IsPlayerCameraTargetEnabled(AMX *amx, cell *params); // R13
+	
 	static cell AMX_NATIVE_CALL GetPlayerSirenState(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerLandingGearState(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerHydraReactorAngle(AMX *amx, cell *params);
@@ -132,6 +132,9 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetPlayerLastSyncedTrailerID(AMX *amx, cell *params); // R10
 	static cell AMX_NATIVE_CALL GetPlayerFPS(AMX *amx, cell *params); // R10
 
+	static cell AMX_NATIVE_CALL GetActorSpawnInfo(AMX *amx, cell *params); // R13
+	static cell AMX_NATIVE_CALL GetActorSkin(AMX *amx, cell *params); // R13
+
 	static cell AMX_NATIVE_CALL TogglePlayerScoresPingsUpdate(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL TogglePlayerFakePing(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL SetPlayerFakePing(AMX *amx, cell *params); // R8
@@ -141,7 +144,6 @@ namespace Natives
 	static cell AMX_NATIVE_CALL IsPlayerPaused(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerPausedTime(AMX *amx, cell *params);
 
-	static cell AMX_NATIVE_CALL GetObjectModel(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetObjectDrawDistance(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetObjectMoveSpeed(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetObjectMoveSpeed(AMX *amx, cell *params); // R6
@@ -151,8 +153,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL IsObjectMaterialSlotUsed(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetObjectMaterial(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetObjectMaterialText(AMX *amx, cell *params); // R6
+	static cell AMX_NATIVE_CALL IsObjectNoCameraCol(AMX *amx, cell *params); // R13
 
-	static cell AMX_NATIVE_CALL GetPlayerObjectModel(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerObjectDrawDistance(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetPlayerObjectMoveSpeed(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetPlayerObjectMoveSpeed(AMX *amx, cell *params); // R6
@@ -162,7 +164,9 @@ namespace Natives
 	static cell AMX_NATIVE_CALL IsPlayerObjectMaterialSlotUsed(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetPlayerObjectMaterial(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL GetPlayerObjectMaterialText(AMX *amx, cell *params); // R6
+	static cell AMX_NATIVE_CALL IsPlayerObjectNoCameraCol(AMX *amx, cell *params); // R13
 	static cell AMX_NATIVE_CALL GetPlayerSurfingPlayerObjectID(AMX *amx, cell *params); // R12
+	static cell AMX_NATIVE_CALL GetPlayerCameraTargetPlayerObj(AMX *amx, cell *params); // R13
 	static cell AMX_NATIVE_CALL GetObjectType(AMX *amx, cell *params); // R12
 
 	static cell AMX_NATIVE_CALL GetPlayerAttachedObject(AMX *amx, cell *params); // R3

@@ -407,10 +407,10 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			}
 	
 			// Animation
-			if(p->syncData.iAnimationId)
+			if(p->syncData.dwAnimationData)
 			{
 				bsSync->Write(true);
-				bsSync->Write(p->syncData.iAnimationId);
+				bsSync->Write((int)p->syncData.dwAnimationData);
 			}
 			else bsSync->Write(false);
 			break;

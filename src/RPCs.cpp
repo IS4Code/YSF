@@ -1,12 +1,16 @@
 #include "main.h"
 
+#define testspawn
+
 int RPC_Gravity = 0x92;
 int RPC_Weather = 0x98;
-int RPC_Explosion = 0x4F;
+
 int RPC_CreatePickup = 95;
 int RPC_DestroyPickup = 63;
+
 int RPC_SetPlayerTeam = 45;
 int RPC_CreateObject = 0x2C;
+
 int RPC_DestroyObject = 0x2F;
 int RPC_AttachObject = 0x4B;
 int RPC_Widescreen = 111;
@@ -28,7 +32,7 @@ int RPC_Chat = 0x65;
 
 int RPC_UpdateScoresPingsIPs = 0x9B;
 int RPC_PickedUpPickup = 0x83;
-int RPC_Spawn = 0x81;
+int RPC_Spawn = 0x34;
 int RPC_Death = 0x35;
 int RPC_DeathBroadcast = 0xA6;
 
@@ -60,6 +64,35 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 
 	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, MEDIUM_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
 }
+
+#ifdef testspawn
+void Spawn(RPCParameters *rpcParams)
+{
+	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+	if (pNetGame->iGameState != GAMESTATE_RUNNING) return;
+
+	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
+	if (!IsPlayerConnected(playerid)) return;
+	CPlayer	*pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+	
+	// Sanity checks
+	if (!pPlayer->bHasSpawnInfo) return;
+	int iSpawnClass = pPlayer->spawn.iSkin;
+	if (iSpawnClass < 0 || iSpawnClass > 300) return;
+
+	// Call OnPlayerSpawn
+	CCallbackManager::OnPlayerSpawn(playerid);
+
+	// Reset all their sync attributes.
+	pPlayer->syncData.vecPosition = pPlayer->spawn.vecPos;
+	pPlayer->syncData.fQuaternion[4] =  pPlayer->spawn.fRotation;
+	pPlayer->vecPosition = pPlayer->spawn.vecPos;
+	pPlayer->wVehicleId = 0;
+
+	CSAMPFunctions::SpawnPlayer_(playerid);
+}
+#endif
 
 void Death(RPCParameters* rpcParams)
 {
@@ -181,7 +214,10 @@ void InitRPCs()
 {
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
-
+#ifdef testspawn
+	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Spawn);
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Spawn, Spawn);
+#endif
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
 
