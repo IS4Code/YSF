@@ -47,8 +47,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	bool ret = sampgdk_Load(ppData);
 	logprintf("logprintf = 0x%08X\n", ppData[PLUGIN_DATA_LOGPRINTF]);
 	
-	logprintf("offset: killer: %d, numberplate: %d, health: %d, color1: %d, tirestatus: %d, paramsex: %d", _OFFSET(CVehicle, wKillerID), _OFFSET(CVehicle, szNumberplate), _OFFSET(CVehicle, fHealth),
-		_OFFSET(CVehicle, vehModInfo.iColor1), _OFFSET(CVehicle, vehTireStatus), _OFFSET(CVehicle, vehParamEx.engine));
+	//logprintf("offset: killer: %d", _OFFSET(CVehicle, wKillerID));
 
 	// 10473
 //	logprintf("object drawdistance offset: %d", _OFFSET2(RakServer, Send));

@@ -449,7 +449,6 @@ static cell AMX_NATIVE_CALL Natives::SetModeRestartTime(AMX *amx, cell *params)
 
 	CHECK_PARAMS(1, "SetModeRestartTime");
 
-	if (!CAddress::VAR_pRestartWaitTime) return 0;
 	*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
 	return 1;
 }

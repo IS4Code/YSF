@@ -544,10 +544,10 @@ public:
 	CVehicleModInfo vehModInfo;			// 183 - 206
 	char			szNumberplate[32 + 1]; // 206 - 239
 	CVehicleParams	vehParamEx;			// 239 - 255
-    BYTE			bDeathNotification; // 246 - 247
-    BYTE			bOccupied;			// 247 - 248
-    DWORD			vehOccupiedTick;	// 248 - 252
-    DWORD			vehRespawnTick;		// 252 - 256
+    BYTE			bDeathNotification; // 255 - 256
+    BYTE			bOccupied;			// 256 - 257
+    DWORD			vehOccupiedTick;	// 257 - 261
+    DWORD			vehRespawnTick;		// 261 -265
 };
 
 class CVehiclePool

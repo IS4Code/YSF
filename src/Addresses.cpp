@@ -1,5 +1,6 @@
 #include "main.h"
 
+//#define print_addresses
 #ifdef _WIN32
 DWORD CAddress::FUNC_Logprintf_03Z = 0x00486CB0;
 DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x00487310;
@@ -50,7 +51,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 {
 	// Thx for Whitetiger
 	#ifdef _WIN32
-	VAR_pRestartWaitTime =						FindPattern("\x00\x00\xC8\xC2\x00\x00", "xxxxxx") + 0x4;
+	VAR_pRestartWaitTime =						NULL;
  
 	FUNC_CConsole__AddStringVariable =			FindPattern("\x53\x56\x57\x8B\x7C\x24\x18\x85\xFF", "xxxxxxxxx");
 	FUNC_CConsole__FindVariable =				FindPattern("\x8B\x84\x24\x30\x01\x00\x00\x53\x56\x57", "xxxxxxxxxx") - 0x1B;
@@ -75,10 +76,18 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	FUNC_format_amxstring =						FindPattern("\x8B\x54\x24\x08\x56\x8B\x74\x24\x08\x57\x33\xC0", "xxxxxxxxxxxx");
 
+	switch(sampVersion)
+	{
+		case SAMP_VERSION_037:
+		{
+			VAR_pRestartWaitTime =						0x004F6E28;
+			break;
+		}
+	}	
 	#else
 
 	// Thx for Mellnik
-	VAR_pRestartWaitTime = 						FindPattern("\x00\x00\x40\x41\xFF\xFF\xFF\xFF", "xxxxxxxx");
+	VAR_pRestartWaitTime = 						NULL;
 
 	FUNC_CConsole__AddStringVariable = 			FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\x85\xF6\x74\x00\x89\x34\x24", "xxxxxxx?xx?xxx?xxx");
 	FUNC_CConsole__FindVariable =				FindPattern("\xB9\xFF\x00\x00\x00\x89\xE5\x81\xEC\x68\x01\x00\x00", "xxxxxxxxxxxxx") - 0x1;
@@ -106,12 +115,13 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	{
 		case SAMP_VERSION_037:
 		{
-			VAR_pRestartWaitTime =						0x0;
+			VAR_pRestartWaitTime =						0x081A0840;
 			break;
 		}
 	}
 	#endif
 
+#ifdef print_addresses
 	logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
 
 	logprintf("FUNC_CConsole__AddStringVariable: %X", FUNC_CConsole__AddStringVariable);
@@ -136,7 +146,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	logprintf("ADDR_CNetGame_GMX_PckupDelete: %X", ADDR_CNetGame_GMX_PckupDelete);
 
 	logprintf("FUNC_format_amxstring: %X", FUNC_format_amxstring);
-
+#endif
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
 		Unlock((void*)VAR_pRestartWaitTime, 4);
