@@ -367,7 +367,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SetPickupStreamingEnabled(AMX *amx, cell *params);
 #endif
 	static cell AMX_NATIVE_CALL FIXED_GetWeaponName(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL FIXED_IsPlayerConnected(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL FIXED_IsPlayerConnectedEx(AMX *amx, cell *params);
 };
 
 int InitScripting(AMX *amx);

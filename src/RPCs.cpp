@@ -1,6 +1,6 @@
 #include "main.h"
 
-#define testspawn
+//#define testspawn
 
 int RPC_Gravity = 0x92;
 int RPC_Weather = 0x98;
@@ -41,7 +41,7 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 	RakNet::BitStream bsUpdate;
 	for(WORD i = 0; i < MAX_PLAYERS; i++)
 	{
-		if(IsPlayerConnected(i))
+		if(IsPlayerConnectedEx(i))
 		{
 			bsUpdate.Write(i);
 
@@ -73,7 +73,7 @@ void Spawn(RPCParameters *rpcParams)
 	if (pNetGame->iGameState != GAMESTATE_RUNNING) return;
 
 	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
-	if (!IsPlayerConnected(playerid)) return;
+	if (!IsPlayerConnectedEx(playerid)) return;
 	CPlayer	*pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 	
 	// Sanity checks
@@ -105,13 +105,13 @@ void Death(RPCParameters* rpcParams)
 	bsData.Read(reasonid);
 	bsData.Read(killerid);
 
-	if (!IsPlayerConnected(playerid))
+	if (!IsPlayerConnectedEx(playerid))
 		return;
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 
 	// If another player killed
-	if(IsPlayerConnected(killerid))
+	if(IsPlayerConnectedEx(killerid))
 	{
 		CPlayer *pKiller = pNetGame->pPlayerPool->pPlayer[killerid];
 
@@ -152,7 +152,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 	int pickupid;
 
 	// Just for security..
-	if (!IsPlayerConnected(playerid)) return;
+	if (!IsPlayerConnectedEx(playerid)) return;
 
 	bsData.Read(pickupid);
 

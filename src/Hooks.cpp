@@ -51,23 +51,29 @@ static SubHook CVehicle__Respawn_hook;
 class CHookRakServer
 {
 public:
-	static bool __thiscall Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	static bool __thiscall Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	static bool __thiscall RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 };
 #else
 class CHookRakServer
 {
 public:
-	static bool Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	static bool Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	static bool RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 };
 #endif
 
 #ifdef _WIN32
-typedef bool (__thiscall *RakPeer__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+typedef bool (__thiscall *RakNet__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+typedef bool (__thiscall *RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 #else
-typedef bool (*RakPeer__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+typedef bool (*RakNet__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+typedef bool (*RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 #endif
 
-RakPeer__Send_t RakPeerOriginalSend;
+RakNet__Send_t RakNetOriginalSend;
+RakNet__RPC_t RakNetOriginalRPC;
+
 AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
 
 // Y_Less - original YSF
@@ -287,7 +293,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 
 	//logprintf("packetid: %d, playeird: %d", packetId, playerid);
 
-	if (IsPlayerConnected(playerid))
+	if (IsPlayerConnectedEx(playerid))
 	{
 		// AFK
 		if (IsPlayerUpdatePacket(packetId))
@@ -361,7 +367,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 //----------------------------------------------------
 
 #ifdef _WIN32
-bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
+bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 #else
 bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 #endif
@@ -376,7 +382,19 @@ bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int 
 */
 	RebuildSyncData(parameters, pRakServer->GetIndexFromPlayerID(playerId));
 
-	return RakPeerOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
+	return RakNetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
+}
+
+//----------------------------------------------------
+
+#ifdef _WIN32
+bool __thiscall CHookRakServer::RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
+#else
+bool CHookRakServer::RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
+#endif
+{
+	//logprintf("outgoing rpc: %d", *uniqueID);
+	return RakNetOriginalRPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }
 
 //----------------------------------------------------
@@ -622,7 +640,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						for (WORD r = 0; r < MAX_PLAYERS; r++)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
+							if (IsPlayerConnectedEx(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
 								szName = RemoveHexColorFromString(GetPlayerName_(r));
 								byteNameLen = (BYTE)strlen(szName);
@@ -668,7 +686,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						for (WORD r = 0; r < MAX_PLAYERS; r++)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
+							if (IsPlayerConnectedEx(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
 								memcpy(newdata, &r, sizeof(BYTE));
 								newdata += sizeof(BYTE);
@@ -870,7 +888,13 @@ void InstallPostHooks()
 
 	// RakServer::Send hook - Thanks to Gamer_Z
 	int SendFunc = ((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET];
-	RakPeerOriginalSend = reinterpret_cast<RakPeer__Send_t>(SendFunc);
+	RakNetOriginalSend = reinterpret_cast<RakNet__Send_t>(SendFunc);
 	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET], 4);
 	((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
+
+	// RakServer::RPC hook - Thanks to Gamer_Z
+	int RPCFunc = ((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET];
+	RakNetOriginalRPC = reinterpret_cast<RakNet__RPC_t>(RPCFunc);
+	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET], 4);
+	((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET] = (int)CHookRakServer::RPC;
 }

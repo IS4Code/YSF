@@ -301,7 +301,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamOut(int playerid, int forplayerid)
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerSpawn(int playerid)
 {
-	if (IsPlayerConnected(playerid))
+	if (IsPlayerConnectedEx(playerid))
 	{
 		pPlayerData[playerid]->bControllable = true;
 	}
@@ -310,7 +310,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerSpawn(int playerid)
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnDialogResponse(int playerid, int dialogid, int response, int listitem, const char * inputtext)
 {
-	if (IsPlayerConnected(playerid))
+	if (IsPlayerConnectedEx(playerid))
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->wDialogID = 0;
 	}
@@ -319,7 +319,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnDialogResponse(int playerid, int dialogid, int 
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditObject(int playerid, bool playerobject, int objectid, int response, float fX, float fY, float fZ, float fRotX, float fRotY, float fRotZ)
 {
-	if (IsPlayerConnected(playerid) && response < EDIT_RESPONSE_UPDATE)
+	if (IsPlayerConnectedEx(playerid) && response < EDIT_RESPONSE_UPDATE)
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject = false;
 	}
@@ -328,7 +328,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditObject(int playerid, bool playerobjec
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditAttachedObject(int playerid, int response, int index, int modelid, int boneid, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float fRotZ, float fScaleX, float fScaleY, float fScaleZ)
 {
-	if (IsPlayerConnected(playerid) && response < EDIT_RESPONSE_UPDATE)
+	if (IsPlayerConnectedEx(playerid) && response < EDIT_RESPONSE_UPDATE)
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->bEditAttachedObject = false;
 	}

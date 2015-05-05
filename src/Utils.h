@@ -33,7 +33,7 @@ namespace CUtils
 };
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);
-bool IsPlayerConnected(int playerid);
+bool IsPlayerConnectedEx(int playerid);
 char *GetPlayerName_(int playerid);
 std::string GetServerCfgOption(const std::string &option);
 

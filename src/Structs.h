@@ -436,7 +436,7 @@ public:
 	DWORD				dwLastScoreUpdate[MAX_PLAYERS];			// 16012 - 20012
 	char				szSerial[MAX_PLAYERS][101];				// 20012 - 121012				
 	char				szVersion[MAX_PLAYERS][29];				// 121012 - 150012
-	BOOL				bIsPlayerConnected[MAX_PLAYERS];		// 150012 - 154012
+	BOOL				bIsPlayerConnectedEx[MAX_PLAYERS];		// 150012 - 154012
 	CPlayer				*pPlayer[MAX_PLAYERS];					// 154012 - 158012
 	char				szName[MAX_PLAYERS][25];				// 158012 - 183012
 	BOOL				bIsAnAdmin[MAX_PLAYERS];				// 183012 - 187012

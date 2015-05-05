@@ -148,7 +148,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 		{
 			//logprintf("weather pnetgame: %d", pNetGame->byteWeather);
 			/*
-			if (pNetGame->pPlayerPool->bIsPlayerConnected[0])
+			if (pNetGame->pPlayerPool->bIsPlayerConnectedEx[0])
 			{
 				CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[0];
 				logprintf("driveby: %d, seatflags: %d", pPlayer->passengerSyncData.byteDriveBy, pPlayer->passengerSyncData.byteSeatFlags);
@@ -204,7 +204,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 #endif
 #ifdef anayadfasza
 			//logprintf("players: %d, %d", pRakServer->GetAllowedPlayers(), pRakServer->GetConnectedPlayers());
-			if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
+			if(pNetGame->pPlayerPool->bIsPlayerConnectedEx[4])
 			{
 			
 				//pNetGame->pPlayerPool->bIsNPC[3] = 0;	
@@ -310,7 +310,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 					logprintf("plate %d: %d", i, pVeh->pad1[i]);
 			
 			
-				if(pNetGame->pPlayerPool->bIsPlayerConnected[4])
+				if(pNetGame->pPlayerPool->bIsPlayerConnectedEx[4])
 				{
 					CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[4];
 					logprintf("model: %d, bone: %d, %f, %f, %f, materialcolor: %d, %d, slotstate: %d", pPlayer->attachedObject[0].iModelID, pPlayer->attachedObject[0].iBoneiD, pPlayer->attachedObject[0].vecPos.fX, pPlayer->attachedObject[0].vecPos.fY, pPlayer->attachedObject[0].vecPos.fZ, pPlayer->attachedObject[0].dwMaterialColor1, pPlayer->attachedObject[0].dwMaterialColor2, pPlayer->attachedObjectSlot[0]);

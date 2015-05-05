@@ -309,7 +309,7 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 	bsSync->Read(id);
 	bsSync->Read(playerid);
 	
-	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(toplayerid)) return;
+	if(!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(toplayerid)) return;
 
 	//logprintf("RebuildSyncData %d - %d", id, playerid);
 	switch(id)

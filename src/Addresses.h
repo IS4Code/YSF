@@ -35,8 +35,10 @@
 
 #ifdef _WIN32
 	#define RAKNET_SEND_OFFSET			7
+	#define RAKNET_RPC_OFFSET			32
 #else
 	#define RAKNET_SEND_OFFSET			9
+	#define RAKNET_RPC_OFFSET			35
 #endif
 
 #include <vector>

@@ -41,7 +41,7 @@ float GetDistance3D(CVector *vecPosition, CVector *_vecPosition)
 	return ((float)sqrt(fSX + fSY + fSZ));	
 }
 
-bool IsPlayerConnected(int playerid)
+bool IsPlayerConnectedEx(int playerid)
 {
 	if (playerid < 0 || playerid >= MAX_PLAYERS)
 		return false;
@@ -248,7 +248,7 @@ BYTE CUtils::GetWeaponSlot(BYTE weaponid)
 
 char *GetPlayerName_(int playerid)
 {
-	if (!IsPlayerConnected(playerid)) return NULL;
+	if (!IsPlayerConnectedEx(playerid)) return NULL;
 
 	// Get the player name pointer from memory.
 	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;

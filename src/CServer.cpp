@@ -48,7 +48,7 @@ void CServer::Process()
 		m_iTicks = 0;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 		{
-			if(!IsPlayerConnected(playerid)) continue;
+			if(!IsPlayerConnectedEx(playerid)) continue;
 			
 			// Process player
 			pPlayerData[playerid]->Process();
@@ -72,7 +72,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
 		return 0;
 
-	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
+	if(!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(forplayerid))
 		return 0;
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
@@ -138,7 +138,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
 		return 0;
 
-	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
+	if(!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(forplayerid))
 		return 0;
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
@@ -177,7 +177,7 @@ void CServer::SetGravity_(float fGravity)
 	// Minden játékos gravitációja átállítása arra, amire a szerver gravitációját beállítottuk
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
-		if(IsPlayerConnected(i))
+		if(IsPlayerConnectedEx(i))
 			pPlayerData[i]->fGravity = fGravity; 
 	}
 	
@@ -203,7 +203,7 @@ void CServer::SetWeather_(BYTE byteWeather)
 	// Minden játékos idõjárása átállítása arra, amire a szerver idõjárást beállítottuk
 	for (WORD i = 0; i != MAX_PLAYERS; i++)
 	{
-		if (IsPlayerConnected(i))
+		if (IsPlayerConnectedEx(i))
 			pPlayerData[i]->byteWeather = byteWeather;
 	}
 
@@ -283,7 +283,7 @@ WORD CServer::GetPlayerCount()
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	for (WORD i = 0; i != MAX_PLAYERS; i++)
-		if (IsPlayerConnected(i) && !pPlayerPool->bIsNPC[i] && !pPlayerData[i]->bHidden)
+		if (IsPlayerConnectedEx(i) && !pPlayerPool->bIsNPC[i] && !pPlayerData[i]->bHidden)
 			count++;
 	return count;
 }
@@ -293,7 +293,7 @@ WORD CServer::GetNPCCount()
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	for (WORD i = 0; i != MAX_PLAYERS; i++)
-		if (pPlayerPool->bIsPlayerConnected[i] && pPlayerPool->bIsNPC[i])
+		if (pPlayerPool->bIsPlayerConnectedEx[i] && pPlayerPool->bIsNPC[i])
 			count++;
 	return count;
 }
@@ -312,7 +312,7 @@ void CServer::Packet_StatsUpdate(Packet *p)
 	bsStats.Read(money);
 	bsStats.Read(drunklevel);
 
-	if (!IsPlayerConnected(playerid)) return;
+	if (!IsPlayerConnectedEx(playerid)) return;
 	
 	pPlayerPool->dwMoney[playerid] = money;
 	pPlayerPool->dwDrunkLevel[playerid] = drunklevel;
