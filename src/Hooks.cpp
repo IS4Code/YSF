@@ -369,7 +369,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 #ifdef _WIN32
 bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 #else
-bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
+bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 #endif
 {
 /*
