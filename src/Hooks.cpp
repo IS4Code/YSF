@@ -870,7 +870,7 @@ void InstallPostHooks()
 	pRakServer = (RakServer*)pfn_GetRakServer();
 
 	// SetMaxPlayers() fix
-	// pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
+	pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
 	
 	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
 
