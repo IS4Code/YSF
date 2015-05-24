@@ -158,8 +158,8 @@
   #pragma GCC diagnostic ignored "-Wattributes"
 #endif
 
-#include <sdk/amx/amx.h>
-#include <sdk/plugincommon.h>
+#include "sdk/amx/amx.h"
+#include "sdk/plugincommon.h"
 
 #if defined __INTEL_COMPILER
   /* ... */
@@ -1791,7 +1791,7 @@ SAMPGDK_NATIVE(bool, InterpolateCameraLookAt(int playerid, float FromX, float Fr
  * \ingroup natives
  * \see <a href="http://wiki.sa-mp.com/wiki/IsPlayerConnected">IsPlayerConnected on SA-MP Wiki</a>
  */
-//SAMPGDK_NATIVE(bool, IsPlayerConnected(int playerid));
+SAMPGDK_NATIVE(bool, IsPlayerConnected(int playerid));
 
 /**
  * \ingroup natives
@@ -2926,10 +2926,10 @@ inline bool CreateExplosionForPlayer(int playerid, float X, float Y, float Z, in
 
 #undef  InterpolateCameraLookAt
 #define InterpolateCameraLookAt sampgdk_InterpolateCameraLookAt
-/*
+
 #undef  IsPlayerConnected
 #define IsPlayerConnected sampgdk_IsPlayerConnected
-*/
+
 #undef  IsPlayerInVehicle
 #define IsPlayerInVehicle sampgdk_IsPlayerInVehicle
 
@@ -3365,7 +3365,7 @@ SAMPGDK_NATIVE(bool, ManualVehicleEngineAndLights());
  * \ingroup natives
  * \see <a href="http://wiki.sa-mp.com/wiki/SetVehicleParamsEx">SetVehicleParamsEx on SA-MP Wiki</a>
  */
-SAMPGDK_NATIVE(bool, SetVehicleParamsEx(int vehicleid, bool engine, bool lights, bool alarm, bool doors, bool bonnet, bool boot, bool objective));
+SAMPGDK_NATIVE(bool, SetVehicleParamsEx(int vehicleid, int engine, int lights, int alarm, int doors, int bonnet, int boot, int objective));
 
 /**
  * \ingroup natives
@@ -3383,7 +3383,7 @@ SAMPGDK_NATIVE(int, GetVehicleParamsSirenState(int vehicleid));
  * \ingroup natives
  * \see <a href="http://wiki.sa-mp.com/wiki/SetVehicleParamsCarDoors">SetVehicleParamsCarDoors on SA-MP Wiki</a>
  */
-SAMPGDK_NATIVE(bool, SetVehicleParamsCarDoors(int vehicleid, bool driver, bool passenger, bool backleft, bool backright));
+SAMPGDK_NATIVE(bool, SetVehicleParamsCarDoors(int vehicleid, int driver, int passenger, int backleft, int backright));
 
 /**
  * \ingroup natives
@@ -3395,7 +3395,7 @@ SAMPGDK_NATIVE(bool, GetVehicleParamsCarDoors(int vehicleid, int * driver, int *
  * \ingroup natives
  * \see <a href="http://wiki.sa-mp.com/wiki/SetVehicleParamsCarWindows">SetVehicleParamsCarWindows on SA-MP Wiki</a>
  */
-SAMPGDK_NATIVE(bool, SetVehicleParamsCarWindows(int vehicleid, bool driver, bool passenger, bool backleft, bool backright));
+SAMPGDK_NATIVE(bool, SetVehicleParamsCarWindows(int vehicleid, int driver, int passenger, int backleft, int backright));
 
 /**
  * \ingroup natives
@@ -4600,7 +4600,7 @@ SAMPGDK_NATIVE(bool, GameTextForPlayer(int playerid, const char * text, int time
  * \ingroup natives
  * \see <a href="http://wiki.sa-mp.com/wiki/GetTickCount">GetTickCount on SA-MP Wiki</a>
  */
-//SAMPGDK_NATIVE(int, GetTickCount());
+SAMPGDK_NATIVE(int, GetTickCount());
 
 /**
  * \ingroup natives
@@ -5831,10 +5831,10 @@ inline bool gpci(int playerid, char * buffer, int size) {
 
 #undef  GameTextForPlayer
 #define GameTextForPlayer sampgdk_GameTextForPlayer
-/*
+
 #undef  GetTickCount
 #define GetTickCount sampgdk_GetTickCount
-*/
+
 #undef  GetMaxPlayers
 #define GetMaxPlayers sampgdk_GetMaxPlayers
 

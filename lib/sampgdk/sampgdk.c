@@ -5939,14 +5939,14 @@ SAMPGDK_NATIVE(float, GetVehicleDistanceFromPoint(int vehicleid, float x, float 
   return amx_ctof(retval);
 }
 
-SAMPGDK_NATIVE(int, CreateVehicle(int vehicletype, float x, float y, float z, float rotation, int color1, int color2, int respawn_delay, bool addsiren)) {
+SAMPGDK_NATIVE(int, CreateVehicle(int vehicleType, float x, float y, float z, float rotation, int color1, int color2, int respawn_delay, bool addsiren)) {
   static AMX_NATIVE native;
   cell retval;
   cell params[10];
-  sampgdk_log_debug("CreateVehicle(%d, %f, %f, %f, %f, %d, %d, %d, %d)", vehicletype, x, y, z, rotation, color1, color2, respawn_delay, addsiren);
+  sampgdk_log_debug("CreateVehicle(%d, %f, %f, %f, %f, %d, %d, %d, %d)", vehicleType, x, y, z, rotation, color1, color2, respawn_delay, addsiren);
   native = sampgdk_native_find_flexible("CreateVehicle", native);
   params[0] = 9 * sizeof(cell);
-  params[1] = (cell)vehicletype;
+  params[1] = (cell)vehicleType;
   params[2] = amx_ftoc(x);
   params[3] = amx_ftoc(y);
   params[4] = amx_ftoc(z);
@@ -6112,7 +6112,7 @@ SAMPGDK_NATIVE(bool, ManualVehicleEngineAndLights()) {
   return !!(retval);
 }
 
-SAMPGDK_NATIVE(bool, SetVehicleParamsEx(int vehicleid, bool engine, bool lights, bool alarm, bool doors, bool bonnet, bool boot, bool objective)) {
+SAMPGDK_NATIVE(bool, SetVehicleParamsEx(int vehicleid, int engine, int lights, int alarm, int doors, int bonnet, int boot, int objective)) {
   static AMX_NATIVE native;
   cell retval;
   cell params[9];
@@ -6190,7 +6190,7 @@ SAMPGDK_NATIVE(int, GetVehicleParamsSirenState(int vehicleid)) {
   return (int)(retval);
 }
 
-SAMPGDK_NATIVE(bool, SetVehicleParamsCarDoors(int vehicleid, bool driver, bool passenger, bool backleft, bool backright)) {
+SAMPGDK_NATIVE(bool, SetVehicleParamsCarDoors(int vehicleid, int driver, int passenger, int backleft, int backright)) {
   static AMX_NATIVE native;
   cell retval;
   cell params[6];
@@ -6238,7 +6238,7 @@ SAMPGDK_NATIVE(bool, GetVehicleParamsCarDoors(int vehicleid, int * driver, int *
   return !!(retval);
 }
 
-SAMPGDK_NATIVE(bool, SetVehicleParamsCarWindows(int vehicleid, bool driver, bool passenger, bool backleft, bool backright)) {
+SAMPGDK_NATIVE(bool, SetVehicleParamsCarWindows(int vehicleid, int driver, int passenger, int backleft, int backright)) {
   static AMX_NATIVE native;
   cell retval;
   cell params[6];

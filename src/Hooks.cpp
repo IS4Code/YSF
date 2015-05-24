@@ -369,7 +369,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 #ifdef _WIN32
 bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 #else
-bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
+bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 #endif
 {
 /*
@@ -870,7 +870,7 @@ void InstallPostHooks()
 	pRakServer = (RakServer*)pfn_GetRakServer();
 
 	// SetMaxPlayers() fix
-	pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
+	// pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
 	
 	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
 
@@ -891,10 +891,11 @@ void InstallPostHooks()
 	RakNetOriginalSend = reinterpret_cast<RakNet__Send_t>(SendFunc);
 	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET], 4);
 	((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
-
+#ifdef _WIN32
 	// RakServer::RPC hook - Thanks to Gamer_Z
 	int RPCFunc = ((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET];
 	RakNetOriginalRPC = reinterpret_cast<RakNet__RPC_t>(RPCFunc);
 	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET], 4);
 	((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET] = (int)CHookRakServer::RPC;
+#endif
 }
