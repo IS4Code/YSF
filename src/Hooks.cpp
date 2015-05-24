@@ -897,9 +897,6 @@ void InstallPostHooks()
 	RakNetOriginalRPC = reinterpret_cast<RakNet__RPC_t>(RPCFunc);
 	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET], 4);
 	((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET] = (int)CHookRakServer::RPC;
-<<<<<<< HEAD
 #endif
 }
-=======
-}
->>>>>>> origin/YSF_
+
