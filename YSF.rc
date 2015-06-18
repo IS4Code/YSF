@@ -66,11 +66,11 @@ BEGIN
         BLOCK "04090025"
         BEGIN
             VALUE "FileDescription", "YSF"
-            VALUE "FileVersion", "R10"
-            VALUE "LegalCopyright", "Copyright © 2014 Y_Less, kurta999"
+            VALUE "FileVersion", "R13"
+            VALUE "LegalCopyright", "Copyright Â© 2014 Y_Less, kurta999"
             VALUE "OriginalFilename", "YSF.dll"
             VALUE "ProductName", "YSF - kurta999's version"
-            VALUE "ProductVersion", "R10"
+            VALUE "ProductVersion", "R13"
         END
     END
     BLOCK "VarFileInfo"
