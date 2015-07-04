@@ -1,7 +1,6 @@
 #ifndef YSF_PICKUPPOOL_H
 #define YSF_PICKUPPOOL_H
 
-#include "CTypes.h"
 #include "CVector.h"
 #include <vector>
 #include <bitset>

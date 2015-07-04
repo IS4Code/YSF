@@ -4,7 +4,6 @@
 // Thx to OrMisicL - from FCNPC
 #include <vector>
 #include "sdk/plugin.h"
-#include "CTypes.h"
 
 class CCallbackManager
 {

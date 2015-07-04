@@ -1,4 +1,4 @@
-#include "CModelSizes.h"
+#include "main.h"
 
 double MODELS_gColRadius[19902] =
 		{

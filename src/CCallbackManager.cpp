@@ -312,7 +312,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnDialogResponse(int playerid, int dialogid, int 
 {
 	if (IsPlayerConnectedEx(playerid))
 	{
-		pNetGame->pPlayerPool->pPlayer[playerid]->wDialogID = 0;
+		pPlayerData[playerid]->bResetDialog = true;
 	}
 	return false;
 }
@@ -321,7 +321,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditObject(int playerid, bool playerobjec
 {
 	if (IsPlayerConnectedEx(playerid) && response < EDIT_RESPONSE_UPDATE)
 	{
-		pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject = false;
+		pPlayerData[playerid]->bResetObjectEditResponse = true;
 	}
 	return false;
 }
@@ -330,7 +330,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditAttachedObject(int playerid, int resp
 {
 	if (IsPlayerConnectedEx(playerid) && response < EDIT_RESPONSE_UPDATE)
 	{
-		pNetGame->pPlayerPool->pPlayer[playerid]->bEditAttachedObject = false;
+		pPlayerData[playerid]->bResetAttachedObjectEditResponse = true;
 	}
 	return false;
 }

@@ -6,7 +6,6 @@ class RakServer;
 struct Packet;
 class CVehicleSpawn;
 
-#include "CTypes.h"
 #include "Addresses.h"
 
 #include <vector>

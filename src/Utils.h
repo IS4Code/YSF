@@ -13,7 +13,6 @@
 
 #include "CVector.h"
 #include <vector>
-#include "CTypes.h"
 #include <cstddef>
 #include <algorithm>
 #include <string>

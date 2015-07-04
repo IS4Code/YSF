@@ -95,9 +95,6 @@
     <ClInclude Include="src\CPlayerData.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\CTypes.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\CVector.h">
       <Filter>src</Filter>
     </ClInclude>

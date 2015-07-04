@@ -34,13 +34,12 @@
 #define YSF_STRUCTS_H
 
 #include "CServer.h"
-#include <raknet/BitStream.h>
 #include "CVector.h"
-#include "CTypes.h"
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
 #include <map>
 
+#include <raknet/BitStream.h>
 #include <sampgdk/sampgdk.h>
 
 class CGangZonePool;
@@ -72,15 +71,15 @@ class C3DText  // size 0x21
 {
 public:
 	char* text;                                     // + 0x00
-    uint color;                         // + 0x04
+    unsigned int color;                         // + 0x04
     float posX;                                     // + 0x08
     float posY;                                     // + 0x0C
     float posZ;                                     // + 0x10
     float drawDistance;                     // + 0x14
     bool useLineOfSight;            // + 0x18
     int virtualWorld;                  // + 0x19
-    ushort attachedToPlayerID;    // + 0x1D
-    ushort attachedToVehicleID;   // + 0x1F
+    WORD attachedToPlayerID;    // + 0x1D
+	WORD attachedToVehicleID;   // + 0x1F
 };
 
 class C3DTextPool
@@ -637,7 +636,7 @@ struct t_MenuInteraction
 {
 	BOOL	Menu;
 	BOOL	Row[MAX_ITEMS];
-	uchar	unknown[12];
+	char	unknown[12];
 };
 	
 class CMenu	// size 0xB84

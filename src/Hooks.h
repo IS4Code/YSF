@@ -2,7 +2,6 @@
 #define YSF_HOOKS_H
 
 #include <sampgdk/sampgdk.h>
-#include "CTypes.h"
 
 // Hopefully this will be optimised out
 // Unfortunately I can't get ANY direct cast to work

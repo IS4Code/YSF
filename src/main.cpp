@@ -117,10 +117,10 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 
 	delete pNetGame->pGangZonePool;
 	pNetGame->pGangZonePool = NULL;
-
+#ifdef NEW_PICKUP_SYSTEM
 	delete pNetGame->pPickupPool;
 	pNetGame->pPickupPool = NULL;
-
+#endif
 	delete pServer;
 	pServer = NULL;
 

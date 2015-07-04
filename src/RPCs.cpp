@@ -79,7 +79,7 @@ void Spawn(RPCParameters *rpcParams)
 	// Sanity checks
 	if (!pPlayer->bHasSpawnInfo) return;
 	int iSpawnClass = pPlayer->spawn.iSkin;
-	if (iSpawnClass < 0 || iSpawnClass > 311) return;
+	if (iSpawnClass < 0 || iSpawnClass > 319) return;
 
 	// Call OnPlayerSpawn
 	CCallbackManager::OnPlayerSpawn(playerid);

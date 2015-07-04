@@ -891,12 +891,12 @@ void InstallPostHooks()
 	RakNetOriginalSend = reinterpret_cast<RakNet__Send_t>(SendFunc);
 	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET], 4);
 	((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
-#ifdef _WIN32
+/*
 	// RakServer::RPC hook - Thanks to Gamer_Z
 	int RPCFunc = ((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET];
 	RakNetOriginalRPC = reinterpret_cast<RakNet__RPC_t>(RPCFunc);
 	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET], 4);
 	((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET] = (int)CHookRakServer::RPC;
-#endif
+*/
 }
 

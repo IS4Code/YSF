@@ -1,7 +1,6 @@
 #ifndef YSF_CMODELSIZES_H
 #define YSF_CMODELSIZES_H
 
-#include "CTypes.h"
 #include "CVector.h"
 
 namespace CModelSizes

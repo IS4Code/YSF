@@ -1279,8 +1279,8 @@ static cell AMX_NATIVE_CALL Natives::ApplyAnimationForPlayer(AMX *amx, cell *par
 
 	if(!szAnimLib || !szAnimName) return 0;
 
-	byteAnimLibLen = strlen(szAnimLib);
-	byteAnimNameLen = strlen(szAnimName);
+	byteAnimLibLen = (BYTE)strlen(szAnimLib);
+	byteAnimNameLen = (BYTE)strlen(szAnimName);
 
 	fS = amx_ctof(params[5]);
 	opt1 = !!params[6];
@@ -1391,7 +1391,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 	{
 		if(pPlayerData[playerid]->stObj[objectid].usObjectID != 0xFFFF || pPlayerData[playerid]->stObj[objectid].usAttachPlayerID != INVALID_PLAYER_ID)
 		{
-			pPlayerData[playerid]->stObj[objectid].usObjectID = 0xFFFF;
+			pPlayerData[playerid]->stObj[objectid].usObjectID = INVALID_OBJECT_ID;
 			pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = INVALID_PLAYER_ID;
 			pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(0.0f, 0.0f, 0.0f);
 			pPlayerData[playerid]->stObj[objectid].vecRot = CVector(0.0f, 0.0f, 0.0f);		
@@ -4558,14 +4558,16 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	int iModelID = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->iModel;
 	CVector vecPos = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->matWorld.pos;
 	CVector vecRot = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->vecRot;
-	float fDrawDistance = 300;
-	
+	float fDrawDistance = 299.0;
+	BYTE byteNoCameraCol = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->bNoCameraCol;
+
 	RakNet::BitStream bs;
 	bs.Write((WORD)wObjectID);
 	bs.Write(iModelID);
 	bs.Write(vecPos);
 	bs.Write(vecRot);
 	bs.Write(fDrawDistance); // 159
+	bs.Write(byteNoCameraCol);
 	bs.Write((WORD)-1); // attached vehicle
 	bs.Write((WORD)wAttachTo); // attached object
 	bs.Write(vecOffset);
@@ -5914,7 +5916,7 @@ static cell AMX_NATIVE_CALL Natives::SendRPC( AMX* amx, cell* params )
 			}
 		}
 	}
-	
+
 	if(bBroadcast)
 	{
 		pRakServer->RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
