@@ -2920,35 +2920,6 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerAttachedObject( AMX* amx, cell* pa
 	return 1;
 }
 
-// native IsPlayerEditingObject(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerEditingObject( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "IsPlayerEditingObject");
-
-	int playerid = (int)params[1];
-	if(!IsPlayerConnectedEx(playerid)) return 0;
-
-	return pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject;
-}
-
-// native IsPlayerEditingAttachedObject(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerEditingAttachedObject( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "IsPlayerEditingAttachedObject");
-
-	int playerid = (int)params[1];
-	if(!IsPlayerConnectedEx(playerid)) return 0;
-
-	return pNetGame->pPlayerPool->pPlayer[playerid]->bEditAttachedObject;
-}
 
 // Vehicle functions
 // native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
@@ -6239,8 +6210,6 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// special - for attached objects
 	{"GetPlayerAttachedObject",			Natives::GetPlayerAttachedObject}, // R3
-	{"IsPlayerEditingObject",			Natives::IsPlayerEditingObject}, // R9 - do not reset after player quit from editing
-	{"IsPlayerEditingAttachedObject",	Natives::IsPlayerEditingAttachedObject}, // R9 - do not reset after player quit from editing
 	
 	// Vehicle functions
 	{"GetVehicleSpawnInfo",				Natives::GetVehicleSpawnInfo},

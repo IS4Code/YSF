@@ -170,8 +170,6 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetObjectType(AMX *amx, cell *params); // R12
 
 	static cell AMX_NATIVE_CALL GetPlayerAttachedObject(AMX *amx, cell *params); // R3
-	static cell AMX_NATIVE_CALL IsPlayerEditingObject(AMX *amx, cell *params); // R9 - do no
-	static cell AMX_NATIVE_CALL IsPlayerEditingAttachedObject(AMX *amx, cell *params); // R9
 
 	static cell AMX_NATIVE_CALL GetVehicleSpawnInfo(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetVehicleColor(AMX *amx, cell *params);
