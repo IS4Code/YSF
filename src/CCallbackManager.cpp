@@ -307,30 +307,3 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerSpawn(int playerid)
 	}
 	return true;
 }
-
-PLUGIN_EXPORT bool PLUGIN_CALL OnDialogResponse(int playerid, int dialogid, int response, int listitem, const char * inputtext)
-{
-	if (IsPlayerConnectedEx(playerid))
-	{
-		pPlayerData[playerid]->bResetDialog = true;
-	}
-	return false;
-}
-
-PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditObject(int playerid, bool playerobject, int objectid, int response, float fX, float fY, float fZ, float fRotX, float fRotY, float fRotZ)
-{
-	if (IsPlayerConnectedEx(playerid) && response < EDIT_RESPONSE_UPDATE)
-	{
-		pPlayerData[playerid]->bResetObjectEditResponse = true;
-	}
-	return false;
-}
-
-PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerEditAttachedObject(int playerid, int response, int index, int modelid, int boneid, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float fRotZ, float fScaleX, float fScaleY, float fScaleZ)
-{
-	if (IsPlayerConnectedEx(playerid) && response < EDIT_RESPONSE_UPDATE)
-	{
-		pPlayerData[playerid]->bResetAttachedObjectEditResponse = true;
-	}
-	return false;
-}

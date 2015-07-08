@@ -20,7 +20,7 @@
 // ------------
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R13"
+#define PROJECT_VERSION		"R14"
 
 // ------------
 // OS SPECIFICS
@@ -69,7 +69,7 @@
 	#ifndef stricmp
 		#define stricmp strcasecmp
 	#endif
-	/*
+	
 	typedef unsigned char uchar;
 	typedef unsigned short ushort;
 	typedef unsigned int uint;
@@ -80,11 +80,10 @@
 	typedef unsigned char       BYTE;
 	typedef unsigned short      WORD;
 	typedef float               FLOAT;
-*/
 
-#ifndef MAX_PATH
-#define MAX_PATH          260
-#endif
+	#ifndef MAX_PATH
+		#define MAX_PATH          260
+	#endif
 #endif
 
 // --------

@@ -74,7 +74,7 @@ typedef bool (*RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStrea
 RakNet__Send_t RakNetOriginalSend;
 RakNet__RPC_t RakNetOriginalRPC;
 
-AMX_NATIVE pDestroyPlayerObject = NULL, pCancelEdit = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
+AMX_NATIVE pDestroyPlayerObject = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -205,9 +205,6 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		{
 			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyPlayerObject"))
 				pDestroyPlayerObject = nativelist[i].func;
-
-			if(!pCancelEdit && !strcmp(nativelist[i].name, "CancelEdit"))
-				pCancelEdit = nativelist[i].func;
 
 			if(!pTogglePlayerControllable && !strcmp(nativelist[i].name, "TogglePlayerControllable"))
 				pTogglePlayerControllable = nativelist[i].func;
@@ -871,9 +868,9 @@ void InstallPostHooks()
 
 	// SetMaxPlayers() fix
 	pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
-	
+#ifdef _WIN32
 	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
-
+#endif
 	// Recreate GangZone pool
 	pNetGame->pGangZonePool = new CGangZonePool();
 

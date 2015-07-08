@@ -75,9 +75,6 @@ CPlayerData::CPlayerData( WORD playerid )
 
 	bHidden = false;
 	bControllable = true;
-	bResetDialog = false;
-	bResetObjectEditResponse = false;
-	bResetAttachedObjectEditResponse = false;
 
 	// Private
 	memset(m_iTeams, -1, sizeof(m_iSkins));
@@ -301,23 +298,6 @@ void CPlayerData::Process(void)
 				CCallbackManager::OnPlayerLeavePlayerGangZone(wPlayerID, wClientSidePlayerZoneID[zoneid]);
 			}
 		}
-	}
-
-	// Reset internal variables
-	if (bResetDialog)
-	{
-		pNetGame->pPlayerPool->pPlayer[wPlayerID]->wDialogID = 0xFFFF;
-		bResetDialog = false;
-	}
-	if (bResetObjectEditResponse)
-	{
-		pNetGame->pPlayerPool->pPlayer[wPlayerID]->bEditObject = false;
-		bResetObjectEditResponse = false;
-	}
-	if (bResetAttachedObjectEditResponse)
-	{
-		pNetGame->pPlayerPool->pPlayer[wPlayerID]->bEditAttachedObject = false;
-		bResetAttachedObjectEditResponse = false;
 	}
 }
 

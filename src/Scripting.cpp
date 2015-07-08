@@ -1403,25 +1403,6 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 	return 0;
 }
 
-// native CancelEdit(playerid)
-static cell AMX_NATIVE_CALL Natives::YSF_CancelEdit(AMX* amx, cell* params)
-{
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "CancelEdit");
-
-	int playerid = (int)params[1];
-
-	if(pCancelEdit(amx, params) && IsPlayerConnectedEx(playerid))
-	{
-		pNetGame->pPlayerPool->pPlayer[playerid]->bEditObject = false;
-		return 1;
-	}
-	return 0;
-}
-
 // native TogglePlayerControllable(playerid, bool:toggle)
 static cell AMX_NATIVE_CALL Natives::YSF_TogglePlayerControllable(AMX* amx, cell* params)
 {
@@ -6450,7 +6431,6 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	{ "SetPlayerWeather",				Natives::YSF_SetPlayerWeather },
 	{ "SetPlayerWorldBounds",			Natives::YSF_SetPlayerWorldBounds },
 	{ "DestroyPlayerObject",			Natives::YSF_DestroyPlayerObject },
-	{ "CancelEdit",						Natives::YSF_CancelEdit },
 	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
 	//{ "SetVehicleToRespawn",			Natives::YSF_SetVehicleToRespawn},
 	//{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},

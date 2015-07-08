@@ -131,6 +131,7 @@ public:
 	DWORD dwFPS;
 	DWORD dwLastDrunkLevel;
 	WORD wSurfingInfo;
+	WORD wDialogID;
 
 	bool bObjectsRemoved : 1;
 	bool bWidescreen : 1;
@@ -140,9 +141,6 @@ public:
 	bool bEverUpdated : 1; 
 	bool bHidden : 1;
 	bool bControllable : 1;
-	bool bResetDialog : 1;
-	bool bResetObjectEditResponse : 1;
-	bool bResetAttachedObjectEditResponse : 1;
 
 private:
 	int m_iTeams[MAX_PLAYERS];
