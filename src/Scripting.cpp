@@ -4649,96 +4649,12 @@ static cell AMX_NATIVE_CALL Natives::SendRconCommandf( AMX* amx, cell* params )
 	return 1;
 }
 
-// native YSF_AddPlayer(playerid);
-static cell AMX_NATIVE_CALL Natives::YSF_AddPlayer( AMX* amx, cell* params )
-{
-/*
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
-	// We only allow to call this function from gamemode
-	if (&pNetGame->pGameModePool->m_amx != amx) return 0;
-
-	CHECK_PARAMS(1, "YSF_AddPlayer");
-
-	int playerid = (int)params[1];
-	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);
-	
-	// If player is not connected
-	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
-		return 0;
-
-	cell ret = pServer->AddPlayer(playerid);
-	
-#ifdef NEW_PICKUP_SYSTEM
-	// Initialize pickups
-	if(ret)
-		pNetGame->pPickupPool->InitializeForPlayer(playerid);
-#endif
-	*/
-	return 1;
-}
-
-// native YSF_RemovePlayer(playerid);
-static cell AMX_NATIVE_CALL Natives::YSF_RemovePlayer( AMX* amx, cell* params )
-{
-/*
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	// We only allow to call this function from gamemode
-	if (&pNetGame->pGameModePool->m_amx != amx) return 0;
-
-	CHECK_PARAMS(1, "YSF_RemovePlayer");
-	
-	//logprintf("YSF_RemovePlayer - connected: %d, raknet geci: %d", pNetGame->pPlayerPool->bIsPlayerConnectedEx[(int)params[1]], pRakServer->GetPlayerIDFromIndex((int)params[1]).binaryAddress);
-	int playerid = (int)params[1];
-	pServer->RemovePlayer(playerid);
-*/
-	return 1;
-}
-
-// native YSF_StreamIn(playerid, forplayerid);
-static cell AMX_NATIVE_CALL Natives::YSF_StreamIn( AMX* amx, cell* params )
-{
-/*
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	// We only allow to call this function from gamemode
-	if (&pNetGame->pGameModePool->m_amx != amx) return 0;
-
-	CHECK_PARAMS(2, "YSF_StreamIn");
-
-	pServer->OnPlayerStreamIn((WORD)params[1], (WORD)params[2]);
-*/
-	return 1;
-}
-
-// native YSF_StreamOut(playerid, forplayerid);
-static cell AMX_NATIVE_CALL Natives::YSF_StreamOut( AMX* amx, cell* params )
-{
-/*
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	// We only allow to call this function from gamemode
-	if (&pNetGame->pGameModePool->m_amx != amx) return 0;
-
-	CHECK_PARAMS(2, "YSF_StreamOut");
-
-	pServer->OnPlayerStreamOut((WORD)params[1], (WORD)params[2]);
-*/
-	return 1;
-}
-
 // native YSF_SetTickRate(ticks);
 static cell AMX_NATIVE_CALL Natives::YSF_SetTickRate( AMX* amx, cell* params )
 {
+	if(!pServer)
+		return 1;
+
 	CHECK_PARAMS(1, "YSF_SetTickRate");
 
 	int rate = (int)params[1];
@@ -4751,6 +4667,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetTickRate( AMX* amx, cell* params )
 // native YSF_GetTickRate();
 static cell AMX_NATIVE_CALL Natives::YSF_GetTickRate( AMX* amx, cell* params )
 {
+	if(!pServer)
+		return 1;
+
 	return static_cast<cell>(pServer->GetTickRate());
 }
 

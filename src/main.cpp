@@ -65,7 +65,11 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		version = SAMP_VERSION_037;
 		strcpy(szVersion, "0.3.7");
 	}
-
+	else if (addr == CAddress::FUNC_Logprintf_037_R2)
+	{
+		version = SAMP_VERSION_037_R2;
+		strcpy(szVersion, "0.3.7 R2");
+	}
 	//logprintf("skipgeci: %d", GetServerCfgOption("ysf_skipversioncheck").c_str());
 
 	if (1)
@@ -161,5 +165,8 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
-	pServer->Process();
+	if(pServer)
+	{
+		pServer->Process();
+	}
 }

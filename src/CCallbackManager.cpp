@@ -269,6 +269,9 @@ void CCallbackManager::OnVehicleSpawn(WORD vehicleid)
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 {
+	if(!pServer)
+		return true;
+
 	if (playerid >= 0 && playerid < MAX_PLAYERS)
 	{
 		bool ret = pServer->AddPlayer(playerid);
@@ -283,24 +286,36 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerDisconnect(int playerid, int reason)
 {
+	if(!pServer)
+		return true;
+
 	pServer->RemovePlayer(playerid);
 	return true;
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamIn(int playerid, int forplayerid)
 {
+	if(!pServer)
+		return true;
+
 	pServer->OnPlayerStreamIn(playerid, forplayerid);
 	return true;
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamOut(int playerid, int forplayerid)
 {
+	if(!pServer)
+		return true;
+
 	pServer->OnPlayerStreamOut(playerid, forplayerid);
 	return true;
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerSpawn(int playerid)
 {
+	if(!pServer)
+		return true;
+
 	if (IsPlayerConnectedEx(playerid))
 	{
 		pPlayerData[playerid]->bControllable = true;
