@@ -80,7 +80,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetPlayerClass(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL EditPlayerClass(AMX *amx, cell *params); // R6
 
-	static cell AMX_NATIVE_CALL GetActiveTimers(AMX *amx, cell *params); // R8
+	static cell AMX_NATIVE_CALL GetRunningTimers(AMX *amx, cell *params); // R8
 
 	static cell AMX_NATIVE_CALL SetPlayerGravity(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerGravity(AMX *amx, cell *params);

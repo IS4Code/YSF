@@ -70,6 +70,11 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		version = SAMP_VERSION_037_R2;
 		strcpy(szVersion, "0.3.7 R2");
 	}
+	else if(addr == CAddress::FUNC_Logprintf_037_R2_1)
+	{
+		version = SAMP_VERSION_037_R2;
+		strcpy(szVersion, "0.3.7 R2-1");
+	}
 	//logprintf("skipgeci: %d", GetServerCfgOption("ysf_skipversioncheck").c_str());
 
 	if (1)
@@ -99,7 +104,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	logprintf("\n");
 	logprintf(" ===============================\n");
 	logprintf("        " PROJECT_NAME " - kurta999 version " PROJECT_VERSION " loaded\n");
-	logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2014 kurta999\n");
+	logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2015 kurta999\n");
 	logprintf("    Server version: %s\n", szVersion);
 	logprintf("    Operating System: " OS_NAME "\n");
 	logprintf("    Built on: " __DATE__ " at "__TIME__ "\n");

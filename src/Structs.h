@@ -257,11 +257,11 @@ typedef struct CTextdraw
 	BYTE byteSelectable; // 32
 	float fX; // 33
 	float fY; // 37
-	WORD dwModelIndex; // 41
-	CVector vecRot; 
-	float fZoom;
-	WORD color1;
-	WORD color2;
+	WORD dwModelIndex; // 41 - 43
+	CVector vecRot;  // 43 - 55
+	float fZoom; // 55 - 59
+	WORD color1; // 59 - 61
+	WORD color2; // 61 - 63
 } _CTextdraw;
 
 class CPlayerTextDraw

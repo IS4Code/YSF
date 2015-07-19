@@ -864,7 +864,7 @@ static cell AMX_NATIVE_CALL Natives::EditPlayerClass(AMX *amx, cell *params)
 }
 
 // native GetActiveTimers();
-static cell AMX_NATIVE_CALL Natives::GetActiveTimers(AMX *amx, cell *params)
+static cell AMX_NATIVE_CALL Natives::GetRunningTimers(AMX *amx, cell *params)
 {
 	// If unknown server version
 	if(!pServer)
@@ -3714,7 +3714,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetAlignment( AMX* amx, cell* param
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
-	BYTE ret;
+	BYTE ret = 0;
 
 	if(pTD->byteCenter) ret = 2;
 	else if(pTD->byteLeft) ret = 1;
@@ -3925,17 +3925,6 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetColor( AMX* amx, cell* par
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
-	/*
-	int color = (int)pTD->dwLetterColor;
-	BYTE r, g, b, a;
-
-	r = color & 0xff;
-	g = (color >> 8) & 0xff;;
-	b = (color >> 16) & 0xff;;
-	a = (color >> 24) & 0xff;;
-	logprintf("r: %X, g: %X, b: %X, a: %X", r, g, b, a);
-	return (((DWORD)r) << 24) | (((DWORD)g) << 16) | (((DWORD)b) << 8) | a;
-	*/
 	return ABGR_RGBA(pTD->dwLetterColor);
 }
 
@@ -4080,7 +4069,7 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetAlignment( AMX* amx, cell*
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) return 0;
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
-	BYTE ret;
+	BYTE ret = 0;
 
 	if(pTD->byteCenter) ret = 2;
 	else if(pTD->byteLeft) ret = 1;
@@ -4119,13 +4108,13 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewRot( AMX* amx, cell
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
 	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fX);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fY);
+	*cptr = amx_ftoc(pTD->vecRot.fX);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fZ);
+	*cptr = amx_ftoc(pTD->vecRot.fY);
 	amx_GetAddr(amx, params[5], &cptr);
+	*cptr = amx_ftoc(pTD->vecRot.fZ);
+	amx_GetAddr(amx, params[6], &cptr);
 	*cptr = amx_ftoc(pTD->fZoom);
 	return 1;
 }
@@ -4145,9 +4134,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewVehCol( AMX* amx, c
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
 	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = (cell)pTD->color1;
 	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = (cell)pTD->color1;
+	amx_GetAddr(amx, params[4], &cptr);
 	*cptr = (cell)pTD->color2;
 	return 1;
 }
@@ -6030,7 +6019,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "EditPlayerClass",				Natives::EditPlayerClass}, // R6
 	
 	// Timers
-	{ "GetActiveTimers",				Natives::GetActiveTimers}, // R8
+	{ "GetActiveTimers",				Natives::GetRunningTimers}, // R8
+	{ "GetRunningTimers",				Natives::GetRunningTimers}, // R8
 
 	// Special
 	{ "SetPlayerGravity",				Natives::SetPlayerGravity },

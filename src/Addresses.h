@@ -63,6 +63,7 @@ public:
 	static DWORD			FUNC_Logprintf_03ZR4;
 	static DWORD			FUNC_Logprintf_037;
 	static DWORD			FUNC_Logprintf_037_R2;
+	static DWORD			FUNC_Logprintf_037_R2_1;
 
 	// Pointers
 	static DWORD			VAR_ppNetGame;
