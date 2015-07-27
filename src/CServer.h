@@ -10,6 +10,7 @@ class CVehicleSpawn;
 
 #include <vector>
 #include <set>
+#include <bitset>
 
 class CServer
 {
@@ -62,6 +63,7 @@ public:
 	void	ModifyVariableFlags(char* pVarName, DWORD VarFlags);
 	
 	std::map<int, CVehicleSpawn> vehicleSpawnData;
+	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 private:
 	eSAMPVersion m_Version;
 	int m_iTicks;

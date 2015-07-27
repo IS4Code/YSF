@@ -240,7 +240,7 @@ BYTE CUtils::GetWeaponSlot(BYTE weaponid)
 		result = 12;
 		break;
 	default:
-		result = -1;
+		result = 0xFF;
 		break;
 	}
 	return result;

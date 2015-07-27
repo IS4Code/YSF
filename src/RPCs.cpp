@@ -98,7 +98,7 @@ void Death(RPCParameters* rpcParams)
 {
 	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
 
-	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender),
+	WORD playerid = static_cast<WORD>(pRakServer->GetIndexFromPlayerID(rpcParams->sender)),
 		killerid;
 	BYTE reasonid;
 
@@ -148,7 +148,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 {
 	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
 
-	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
+	WORD playerid = static_cast<WORD>(pRakServer->GetIndexFromPlayerID(rpcParams->sender));
 	int pickupid;
 
 	// Just for security..
@@ -204,7 +204,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 				return;
 			}
 
-			CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);
+			CCallbackManager::OnPlayerPickedUpPickup(playerid, static_cast<WORD>(pickupid));
 		}
 	}
 #endif

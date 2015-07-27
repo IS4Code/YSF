@@ -34,8 +34,8 @@ void CCallbackManager::OnPlayerEnterGangZone(WORD playerid, WORD zoneid)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerEnterGangZone", &idx))
 		{
-			amx_Push(*iter, zoneid);
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(zoneid));
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 
@@ -52,8 +52,8 @@ void CCallbackManager::OnPlayerLeaveGangZone(WORD playerid, WORD zoneid)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerLeaveGangZone", &idx))
 		{
-			amx_Push(*iter, zoneid);
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(zoneid));
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 
@@ -70,8 +70,8 @@ void CCallbackManager::OnPlayerEnterPlayerGangZone(WORD playerid, WORD zoneid)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerEnterPlayerGangZone", &idx))
 		{
-			amx_Push(*iter, zoneid);
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(zoneid));
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 
@@ -88,8 +88,8 @@ void CCallbackManager::OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerLeavePlayerGangZone", &idx))
 		{
-			amx_Push(*iter, zoneid);
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(zoneid));
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 
@@ -106,8 +106,8 @@ void CCallbackManager::OnPlayerPauseStateChange(WORD playerid, bool pausestate)
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerPauseStateChange", &idx))
 		{
-			amx_Push(*iter, pausestate);
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(pausestate));
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 
@@ -124,9 +124,9 @@ void CCallbackManager::OnPlayerDeath(WORD playerid, WORD killerid, BYTE reason)
 	{
 		if (!amx_FindPublic(*iter, "OnPlayerDeath", &idx))
 		{
-			amx_Push(*iter, reason);
-			amx_Push(*iter, killerid);
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(reason));
+			amx_Push(*iter, static_cast<cell>(killerid));
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 
@@ -143,7 +143,7 @@ void CCallbackManager::OnPlayerSpawn(WORD playerid)
 	{
 		if (!amx_FindPublic(*iter, "OnPlayerSpawn", &idx))
 		{
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 
@@ -178,8 +178,8 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 	{
 		if(!amx_FindPublic(*iter, "OnPlayerPickUpPlayerPickup", &idx))
 		{
-			amx_Push(*iter, pickupid);
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(pickupid));
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 
@@ -226,7 +226,7 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 			amx_PushString(*iter, &amx_addr, &phys_addr, command, 0, 0);
 			amx_Push(*iter, static_cast<cell>(success));
 			amx_PushString(*iter, &amx_addr, &phys_addr, password, 0, 0);
-			amx_Push(*iter, port);
+			amx_Push(*iter, static_cast<cell>(port));
 			amx_PushString(*iter, &amx_addr, &phys_addr, inet_ntoa(in), 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
@@ -245,7 +245,7 @@ void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
 	{
 		if (!amx_FindPublic(*iter, "OnPlayerStatsAndWeaponsUpdate", &idx))
 		{
-			amx_Push(*iter, playerid);
+			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
 		}
@@ -274,9 +274,10 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 
 	if (playerid >= 0 && playerid < MAX_PLAYERS)
 	{
-		bool ret = pServer->AddPlayer(playerid);
+		pServer->AddPlayer(playerid);
 		// Initialize pickups
 #ifdef NEW_PICKUP_SYSTEM
+		bool ret = pServer->AddPlayer(playerid);
 		if (ret)
 			pNetGame->pPickupPool->InitializeForPlayer(playerid);
 #endif
@@ -298,7 +299,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamIn(int playerid, int forplayerid)
 	if(!pServer)
 		return true;
 
-	pServer->OnPlayerStreamIn(playerid, forplayerid);
+	pServer->OnPlayerStreamIn(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
 	return true;
 }
 
@@ -307,7 +308,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamOut(int playerid, int forplayerid)
 	if(!pServer)
 		return true;
 
-	pServer->OnPlayerStreamOut(playerid, forplayerid);
+	pServer->OnPlayerStreamOut(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
 	return true;
 }
 

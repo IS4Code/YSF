@@ -86,6 +86,7 @@ char* CSAMPFunctions::format_amxstring(AMX *amx, cell *params, int parm, int &le
 
 void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 {
+/*
 	memset(&pVehicle->vehMatrix, 0, sizeof(MATRIX4X4));
 	memset(&pVehicle->vecVelocity, 0, sizeof(CVector));
 	memset(&pVehicle->vecTurnSpeed, 0, sizeof(CVector));
@@ -123,7 +124,7 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	}
 	else // Törlés és létrehozás de ez kurvára nem kész itt
 	{			
-		/*
+		
 		RakNet::BitStream bsVehicleSpawn;
 		
 
@@ -156,7 +157,8 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 			bsVehicleSpawn.Write(true);
 			bsVehicleSpawn.Write((PCHAR)&CarModInfo, sizeof(CarModInfo));
 		}
-		*/
+		
 		pServer->vehicleSpawnData.erase(pVehicle->wVehicleID);
 	}
+*/
 }

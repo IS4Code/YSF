@@ -42,9 +42,7 @@ WORD CGangZonePool::New(WORD playerid, float fMinX, float fMinY, float fMaxX, fl
 		wZone++;
 	}
 	if (wZone == MAX_GANG_ZONES) return 0xFFFF;
-	
-	CGangZone *pZone = pPlayerData[playerid]->pPlayerZone[wZone];
-	
+		
 	// Allocate memory for gangzone
 	pPlayerData[playerid]->pPlayerZone[wZone] = new CGangZone();
 	pPlayerData[playerid]->pPlayerZone[wZone]->fGangZone[0] = fMinX;
@@ -134,7 +132,6 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 		if(!IsPlayerConnectedEx(playerid)) continue;
 
 		WORD i = 0;
-		CGangZone *pZone = NULL;
 
 		while(i != MAX_GANG_ZONES)
 		{
@@ -165,7 +162,6 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 {
 	WORD i = 0;
-	CGangZone *pZone = NULL;
 
 	// Mark client side zone id as unused
 	if(!bPlayerZone)
@@ -229,7 +225,6 @@ void CGangZonePool::HideForAll(WORD wZone)
 void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
 {
 	WORD i = 0;
-	CGangZone *pZone = NULL;
 
 	// check id
 	if(!bPlayerZone)
@@ -273,7 +268,6 @@ void CGangZonePool::FlashForAll(WORD wZone, DWORD dwColor)
 void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 {
 	WORD i = 0;
-	CGangZone *pZone = NULL;
 
 	// check id
 	if(!bPlayerZone)

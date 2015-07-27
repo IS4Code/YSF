@@ -134,7 +134,7 @@ int CPlayerData::GetPlayerSkinForPlayer(WORD skinplayerid)
 bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, char *name)
 {
 	memcpy(&m_szNames[nameplayerid], name, MAX_PLAYER_NAME);
-	BYTE len = strlen(name);
+	BYTE len = static_cast<BYTE>(strlen(name));
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)nameplayerid);
@@ -148,7 +148,6 @@ bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, char *name)
 
 char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
 {
-	CPlayer *p = pNetGame->pPlayerPool->pPlayer[nameplayerid];
 	if (!m_szNames[nameplayerid][0])
 	{
 		return GetPlayerName_(nameplayerid);

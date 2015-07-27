@@ -74,7 +74,7 @@ typedef bool (*RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStrea
 RakNet__Send_t RakNetOriginalSend;
 RakNet__RPC_t RakNetOriginalRPC;
 
-AMX_NATIVE pDestroyPlayerObject = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL;
+AMX_NATIVE pDestroyPlayerObject = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL, pChangeVehicleColor = NULL, pDestroyVehicle = NULL;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -227,6 +227,12 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			if(!pSetVehicleToRespawn && !strcmp(nativelist[i].name, "SetVehicleToRespawn"))
 				pSetVehicleToRespawn = nativelist[i].func;
 
+			if(!pChangeVehicleColor && !strcmp(nativelist[i].name, "ChangeVehicleColor"))
+				pChangeVehicleColor = nativelist[i].func;
+
+			if(!pDestroyVehicle && !strcmp(nativelist[i].name, "DestroyVehicle"))
+				pDestroyVehicle = nativelist[i].func;
+
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
 			
@@ -377,7 +383,7 @@ bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, Pack
 
 	logprintf("id: %d - playerid: %d, sendto. %d", id, playerid, pRakServer->GetIndexFromPlayerID(playerId));
 */
-	RebuildSyncData(parameters, pRakServer->GetIndexFromPlayerID(playerId));
+	RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
 
 	return RakNetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
@@ -555,7 +561,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (dwMapNameLen > 30) dwMapNameLen = 30;
 
 					WORD wPlayerCount = pServer->GetPlayerCount();
-					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
+//					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 
 					WORD wMaxPlayers = pServer->GetMaxPlayers_();
 
@@ -867,7 +873,7 @@ void InstallPostHooks()
 	pRakServer = (RakServer*)pfn_GetRakServer();
 
 	// SetMaxPlayers() fix
-	pRakServer->Start(MAX_PLAYERS, 0, 5, pServer->GetIntVariable("port"), pServer->GetStringVariable("bind"));
+	pRakServer->Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(pServer->GetIntVariable("port")), pServer->GetStringVariable("bind"));
 #ifdef _WIN32
 	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
 #endif

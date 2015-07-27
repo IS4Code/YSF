@@ -10,7 +10,7 @@
 // just bypasses the compilers checks to do what I want
 #define POINTER_TO_MEMBER(m,n,o) temp = n, m = *(o *)&temp
 
-extern AMX_NATIVE pDestroyPlayerObject, pTogglePlayerControllable, pSetPlayerWorldBounds, pSetPlayerTeam, pSetPlayerSkin, pSetPlayerFightingStyle, pSetPlayerName, pSetVehicleToRespawn;
+extern AMX_NATIVE pDestroyPlayerObject, pTogglePlayerControllable, pSetPlayerWorldBounds, pSetPlayerTeam, pSetPlayerSkin, pSetPlayerFightingStyle, pSetPlayerName, pSetVehicleToRespawn, pChangeVehicleColor, pDestroyVehicle;
 
 // Definitions
 bool Unlock(void *address, size_t len);

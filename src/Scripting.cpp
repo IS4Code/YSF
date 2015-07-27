@@ -474,7 +474,7 @@ static cell AMX_NATIVE_CALL Natives::SetMaxPlayers(AMX *amx, cell *params)
 	if(!pServer)
 		return 0;
 
-	int maxplayers = (int)params[1];
+	int maxplayers = static_cast<int>(params[1]);
 	if(maxplayers < 1 || maxplayers > MAX_PLAYERS) return 0;
 
 	pServer->SetIntVariable("maxplayers", maxplayers);
@@ -488,7 +488,7 @@ static cell AMX_NATIVE_CALL Natives::SetMaxNPCs(AMX *amx, cell *params)
 	if(!pServer)
 		return 0;
 
-	int maxnpcs = (int)params[1];
+	int maxnpcs = static_cast<int>(params[1]);
 	if(maxnpcs < 1 || maxnpcs > MAX_PLAYERS) return 0;
 
 	pServer->SetIntVariable("maxnpc", maxnpcs);
@@ -504,7 +504,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerAdmin(AMX *amx, cell *params)
 
 	CHECK_PARAMS(2, "SetPlayerAdmin");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	pNetGame->pPlayerPool->bIsAnAdmin[playerid] = !!params[2];
@@ -560,7 +560,7 @@ static cell AMX_NATIVE_CALL Natives::GetFilterScriptName(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(3, "GetFilterScriptName");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(id >= MAX_FILTER_SCRIPTS) return 0;
 
 	return set_amxstring(amx, params[2], pNetGame->pFilterScriptPool->m_szFilterScriptName[id], params[3]);
@@ -583,7 +583,7 @@ static cell AMX_NATIVE_CALL Natives::AddServerRule(AMX *amx, cell *params)
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
 		if (ConVar == NULL)
 		{
-			CSAMPFunctions::AddStringVariable(name, (int)params[3], value, NULL);
+			CSAMPFunctions::AddStringVariable(name, static_cast<int>(params[3]), value, NULL);
 			return 1;
 		}
 	}
@@ -630,7 +630,7 @@ static cell AMX_NATIVE_CALL Natives::SetServerRuleInt(AMX *amx, cell *params)
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
 		if (ConVar != NULL)
 		{
-			pServer->SetIntVariable(name, (int)params[2]);
+			pServer->SetIntVariable(name, static_cast<int>(params[2]));
 			return 1;
 		}
 		return 1;
@@ -815,7 +815,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerClass(AMX *amx, cell *params)
 
 	CHECK_PARAMS(13, "GetPlayerClass");
 
-	int classid = (int)params[1];
+	int classid = static_cast<int>(params[1]);
 	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->AvailableSpawns[classid];
@@ -845,21 +845,21 @@ static cell AMX_NATIVE_CALL Natives::EditPlayerClass(AMX *amx, cell *params)
 
 	CHECK_PARAMS(13, "EditPlayerClass");
 
-	int classid = (int)params[1];
+	int classid = static_cast<int>(params[1]);
 	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->AvailableSpawns[classid];
 
-	pSpawn->byteTeam = (BYTE)params[2];
-	pSpawn->iSkin = (int)params[3];
+	pSpawn->byteTeam = static_cast<BYTE>(params[2]);
+	pSpawn->iSkin = static_cast<int>(params[3]);
 	pSpawn->vecPos = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
 	pSpawn->fRotation = amx_ctof(params[7]);
-	pSpawn->iSpawnWeapons[0] = (int)params[8];
-	pSpawn->iSpawnWeaponsAmmo[0] = (int)params[9];
-	pSpawn->iSpawnWeapons[1] = (int)params[10];
-	pSpawn->iSpawnWeaponsAmmo[1] = (int)params[11];
-	pSpawn->iSpawnWeapons[2] = (int)params[12];
-	pSpawn->iSpawnWeaponsAmmo[2] = (int)params[13];
+	pSpawn->iSpawnWeapons[0] = static_cast<int>(params[8]);
+	pSpawn->iSpawnWeaponsAmmo[0] = static_cast<int>(params[9]);
+	pSpawn->iSpawnWeapons[1] = static_cast<int>(params[10]);
+	pSpawn->iSpawnWeaponsAmmo[1] = static_cast<int>(params[11]);
+	pSpawn->iSpawnWeapons[2] = static_cast<int>(params[12]);
+	pSpawn->iSpawnWeaponsAmmo[2] = static_cast<int>(params[13]);
 	return 1;
 }
 
@@ -906,7 +906,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerGravity( AMX* amx, cell* params )
 
 	CHECK_PARAMS(2, "SetPlayerGravity");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	// Update stored values
@@ -927,7 +927,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerGravity( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "GetPlayerGravity");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return amx_ftoc(pPlayerData[playerid]->fGravity);
@@ -942,14 +942,14 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerTeamForPlayer( AMX* amx, cell* par
 
 	CHECK_PARAMS(3, "SetPlayerTeamForPlayer");
 
-	int playerid = (int)params[1];
-	int teamplayerid = (int)params[2];
-	int team = (int)params[3];
+	int playerid = static_cast<int>(params[1]);
+	int teamplayerid = static_cast<int>(params[2]);
+	int team = static_cast<int>(params[3]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(teamplayerid)) return 0;
 	if (team < 0 || team > 255) return 0;
 
-	pPlayerData[playerid]->SetPlayerTeamForPlayer(teamplayerid, team);
+	pPlayerData[playerid]->SetPlayerTeamForPlayer(static_cast<WORD>(teamplayerid), team);
 	return 1;
 }
 
@@ -962,12 +962,12 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerTeamForPlayer( AMX* amx, cell* par
 
 	CHECK_PARAMS(2, "GetPlayerTeamForPlayer");
 
-	int playerid = (int)params[1];
-	int teamplayerid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int teamplayerid = static_cast<int>(params[2]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(teamplayerid)) return 0;
 
-	return pPlayerData[playerid]->GetPlayerTeamForPlayer(teamplayerid);
+	return pPlayerData[playerid]->GetPlayerTeamForPlayer(static_cast<WORD>(teamplayerid));
 }
 
 static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerTeam(AMX* amx, cell* params)
@@ -978,13 +978,13 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerTeam(AMX* amx, cell* params)
 
 	CHECK_PARAMS(2, "SetPlayerTeam");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(pSetPlayerTeam(amx, params))
 	{
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
 			if(IsPlayerConnectedEx(i))
-				pPlayerData[i]->ResetPlayerTeam(playerid);
+				pPlayerData[i]->ResetPlayerTeam(static_cast<WORD>(playerid));
 		}
 		return 1;
 	}
@@ -1000,14 +1000,14 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerSkinForPlayer(AMX* amx, cell* para
 
 	CHECK_PARAMS(3, "SetPlayerSkinForPlayer");
 
-	int playerid = (int)params[1];
-	int skinplayerid = (int)params[2];
-	int skin = (int)params[3];
+	int playerid = static_cast<int>(params[1]);
+	int skinplayerid = static_cast<int>(params[2]);
+	int skin = static_cast<int>(params[3]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(skinplayerid)) return 0;
 	if (skin < 0 || skin > 300) return 0;
 
-	pPlayerData[playerid]->SetPlayerSkinForPlayer(skinplayerid, skin);
+	pPlayerData[playerid]->SetPlayerSkinForPlayer(static_cast<WORD>(skinplayerid), skin);
 	return 1;
 }
 
@@ -1020,12 +1020,12 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSkinForPlayer(AMX* amx, cell* para
 
 	CHECK_PARAMS(2, "GetPlayerSkinForPlayer");
 
-	int playerid = (int)params[1];
-	int skinplayerid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int skinplayerid = static_cast<int>(params[2]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(skinplayerid)) return 0;
 
-	return pPlayerData[playerid]->GetPlayerSkinForPlayer(skinplayerid);
+	return pPlayerData[playerid]->GetPlayerSkinForPlayer(static_cast<WORD>(skinplayerid));
 }
 
 static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerSkin(AMX* amx, cell* params)
@@ -1036,13 +1036,13 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerSkin(AMX* amx, cell* params)
 
 	CHECK_PARAMS(2, "SetPlayerSkin");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(pSetPlayerSkin(amx, params))
 	{
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
 			if(IsPlayerConnectedEx(i))
-				pPlayerData[i]->ResetPlayerSkin(playerid);
+				pPlayerData[i]->ResetPlayerSkin(static_cast<WORD>(playerid));
 		}
 		return 1;
 	}
@@ -1058,8 +1058,8 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerNameForPlayer(AMX* amx, cell* para
 
 	CHECK_PARAMS(3, "SetPlayerNameForPlayer");
 
-	int playerid = (int)params[1];
-	int nameplayerid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int nameplayerid = static_cast<int>(params[2]);
 	char *name = NULL;
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(nameplayerid)) return 0;
@@ -1067,7 +1067,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerNameForPlayer(AMX* amx, cell* para
 	amx_StrParam(amx, params[3], name);
 	logprintf("playername: %s", name);
 
-	pPlayerData[playerid]->SetPlayerNameForPlayer(nameplayerid, name);
+	pPlayerData[playerid]->SetPlayerNameForPlayer(static_cast<WORD>(nameplayerid), name);
 	return 1;
 }
 
@@ -1080,13 +1080,12 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerNameForPlayer(AMX* amx, cell* para
 
 	CHECK_PARAMS(4, "GetPlayerNameForPlayer");
 
-	int playerid = (int)params[1];
-	int nameplayerid = (int)params[2];
-	char *name = NULL;
+	int playerid = static_cast<int>(params[1]);
+	int nameplayerid = static_cast<int>(params[2]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(nameplayerid)) return 0;
 
-	return set_amxstring(amx, params[3], pPlayerData[playerid]->GetPlayerNameForPlayer(nameplayerid), params[4]);
+	return set_amxstring(amx, params[3], pPlayerData[playerid]->GetPlayerNameForPlayer(static_cast<WORD>(nameplayerid)), params[4]);
 }
 
 static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerName(AMX* amx, cell* params)
@@ -1097,13 +1096,13 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerName(AMX* amx, cell* params)
 
 	CHECK_PARAMS(2, "SetPlayerName");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(pSetPlayerName(amx, params))
 	{
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
 			if(IsPlayerConnectedEx(i))
-				pPlayerData[i]->ResetPlayerName(playerid);
+				pPlayerData[i]->ResetPlayerName(static_cast<WORD>(playerid));
 		}
 		return 1;
 	}
@@ -1119,13 +1118,13 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerFightStyleForPlayer(AMX* amx, cell
 
 	CHECK_PARAMS(3, "SetPlayerFightStyleForPlayer");
 
-	int playerid = (int)params[1];
-	int styleplayerid = (int)params[2];
-	int skin = (int)params[3];
+	int playerid = static_cast<int>(params[1]);
+	int styleplayerid = static_cast<int>(params[2]);
+	int style = static_cast<int>(params[3]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(styleplayerid)) return 0;
 
-	pPlayerData[playerid]->SetPlayerFightingStyleForPlayer(styleplayerid, skin);
+	pPlayerData[playerid]->SetPlayerFightingStyleForPlayer(static_cast<WORD>(styleplayerid), style);
 	return 1;
 }
 
@@ -1138,12 +1137,12 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerFightStyleForPlayer(AMX* amx, cell
 
 	CHECK_PARAMS(2, "GetPlayerFightStyleForPlayer");
 
-	int playerid = (int)params[1];
-	int styleplayerid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int styleplayerid = static_cast<int>(params[2]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(styleplayerid)) return 0;
 
-	return pPlayerData[playerid]->GetPlayerFightingStyleForPlayer(styleplayerid);
+	return pPlayerData[playerid]->GetPlayerFightingStyleForPlayer(static_cast<WORD>(styleplayerid));
 }
 
 static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerFightingStyle(AMX* amx, cell* params)
@@ -1154,13 +1153,13 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerFightingStyle(AMX* amx, cell* 
 
 	CHECK_PARAMS(2, "SetPlayerFightingStyle");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(pSetPlayerFightingStyle(amx, params))
 	{
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
 			if(IsPlayerConnectedEx(i))
-				pPlayerData[i]->ResetPlayerFightingStyle(playerid);
+				pPlayerData[i]->ResetPlayerFightingStyle(static_cast<WORD>(playerid));
 		}
 		return 1;
 	}
@@ -1176,8 +1175,8 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* param
 
 	CHECK_PARAMS(6, "SetPlayerPosForPlayer");
 
-	int playerid = (int)params[1];
-	int posplayerid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int posplayerid = static_cast<int>(params[2]);
 	bool forcesync = !!params[6];
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(posplayerid)) return 0;
 
@@ -1189,7 +1188,6 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* param
 		return 1;
 	}
 
-	CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 	CVector vecPos = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 		
 	pPlayerData[playerid]->vecCustomPos[posplayerid] = new CVector;
@@ -1215,9 +1213,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerRotationQuatForPlayer(AMX* amx, ce
 
 	CHECK_PARAMS(7, "SetPlayerRotationQuatForPlayer");
 
-	int playerid = (int)params[1];
-	int posplayerid = (int)params[2];
-	bool forcesync = !!params[4];
+	int playerid = static_cast<int>(params[1]);
+	int posplayerid = static_cast<int>(params[2]);
+	bool forcesync = static_cast<int>(params[4]) != 0;
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(posplayerid)) return 0;
 
 	if(!forcesync)
@@ -1270,8 +1268,8 @@ static cell AMX_NATIVE_CALL Natives::ApplyAnimationForPlayer(AMX *amx, cell *par
 	bool opt1,opt2,opt3,opt4;
 	int time;
 	
-	int playerid = (int)params[1];
-	int animplayerid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int animplayerid = static_cast<int>(params[2]);
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(animplayerid)) return 0;
 
 	amx_StrParam(amx, params[3], szAnimLib);
@@ -1279,15 +1277,15 @@ static cell AMX_NATIVE_CALL Natives::ApplyAnimationForPlayer(AMX *amx, cell *par
 
 	if(!szAnimLib || !szAnimName) return 0;
 
-	byteAnimLibLen = (BYTE)strlen(szAnimLib);
-	byteAnimNameLen = (BYTE)strlen(szAnimName);
+	byteAnimLibLen = static_cast<BYTE>(strlen(szAnimLib));
+	byteAnimNameLen = static_cast<BYTE>(strlen(szAnimName));
 
 	fS = amx_ctof(params[5]);
 	opt1 = !!params[6];
 	opt2 = !!params[7];
 	opt3 = !!params[8];
 	opt4 = !!params[9];
-	time = (int)params[10];
+	time = static_cast<int>(params[10]);
 
 	bsSend.Write((WORD)animplayerid);
 	bsSend.Write(byteAnimLibLen);
@@ -1314,7 +1312,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetWeather( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "SetWeather");
 
-	pServer->SetWeather_((BYTE)params[1]);
+	pServer->SetWeather_(static_cast<BYTE>(params[1]));
 	return 1;
 }
 
@@ -1327,11 +1325,11 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWeather(AMX* amx, cell* params
 
 	CHECK_PARAMS(2, "SetPlayerWeather");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	// Update stored values
-	pPlayerData[playerid]->byteWeather = (BYTE)params[2];
+	pPlayerData[playerid]->byteWeather = static_cast<BYTE>(params[2]);
 
 	RakNet::BitStream bs;
 	bs.Write(pPlayerData[playerid]->byteWeather);
@@ -1348,7 +1346,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerWeather( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "GetPlayerWeather");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pPlayerData[playerid]->byteWeather;
@@ -1363,7 +1361,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWorldBounds(AMX* amx, cell* pa
 
 	CHECK_PARAMS(5, "SetPlayerWorldBounds");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 
 	if(pSetPlayerWorldBounds(amx, params) && IsPlayerConnectedEx(playerid))
 	{
@@ -1384,8 +1382,8 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 
 	CHECK_PARAMS(2, "DestroyPlayerObject");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 
 	if(pDestroyPlayerObject(amx, params) && IsPlayerConnectedEx(playerid))
 	{
@@ -1412,13 +1410,44 @@ static cell AMX_NATIVE_CALL Natives::YSF_TogglePlayerControllable(AMX* amx, cell
 
 	CHECK_PARAMS(2, "TogglePlayerControllable");
 
-	int playerid = (int)params[1];
-	bool toggle = !!params[2];
+	int playerid = static_cast<int>(params[1]);
+	bool toggle = static_cast<int>(params[2]) != 0;
 
 	if(pTogglePlayerControllable(amx, params) && IsPlayerConnectedEx(playerid))
 	{
 		pPlayerData[playerid]->bControllable = toggle;
 		//printf("controllable: %d, %d", toggle, pPlayerData[playerid]->bControllable);
+		return 1;
+	}
+	return 0;
+}
+
+// native ChangeVehicleColor(vehicleid, color1, color2)
+static cell AMX_NATIVE_CALL Natives::YSF_ChangeVehicleColor(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(pChangeVehicleColor(amx, params))
+	{
+		pServer->bChangedVehicleColor[vehicleid] = true;
+		return 1;
+	}
+	return 0;
+}
+
+static cell AMX_NATIVE_CALL Natives::YSF_DestroyVehicle(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(pDestroyVehicle(amx, params))
+	{
+		pServer->bChangedVehicleColor[vehicleid] = false;
 		return 1;
 	}
 	return 0;
@@ -1433,10 +1462,10 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerWidescreen( AMX* amx, cell* par
 
 	CHECK_PARAMS(2, "TogglePlayerWidescreen");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	BYTE set = !!(BYTE)params[2];
+	BYTE set = static_cast<BYTE>(params[2]) != 0;
 	pPlayerData[playerid]->bWidescreen = !!set;
 
 	RakNet::BitStream bs;
@@ -1454,8 +1483,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerWidescreenToggled( AMX* amx, cell* 
 
 	CHECK_PARAMS(1, "IsPlayerWideScreen");
 
-	int playerid = (int)params[1];
-	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pPlayerData[playerid]->bWidescreen;
@@ -1470,7 +1498,7 @@ static cell AMX_NATIVE_CALL Natives::GetSpawnInfo( AMX* amx, cell* params )
 
 	CHECK_PARAMS(13, "GetSpawnInfo");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->pPlayerPool->pPlayer[playerid]->spawn;
@@ -1500,8 +1528,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSkillLevel( AMX* amx, cell* params
 
 	CHECK_PARAMS(4, "GetPlayerSkillLevel");
 
-	int playerid = (int)params[1];
-	int skillid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int skillid = static_cast<int>(params[2]);
 	
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(skillid < 0 || skillid > 10) return -1;
@@ -1518,7 +1546,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerCheckpointActive(AMX* amx, cell* pa
 
 	CHECK_PARAMS(1, "IsPlayerCheckpointActive");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bShowCheckpoint;
@@ -1533,7 +1561,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerCheckpoint( AMX* amx, cell* params
 
 	CHECK_PARAMS(5, "GetPlayerCheckpoint");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	cell* cptr;
@@ -1558,7 +1586,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerRaceCheckpointActive(AMX* amx, cell
 
 	CHECK_PARAMS(1, "IsPlayerRaceCheckpointActive");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bShowRaceCheckpoint;
@@ -1573,7 +1601,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerRaceCheckpoint( AMX* amx, cell* pa
 
 	CHECK_PARAMS(8, "GetPlayerRaceCheckpoint");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	cell* cptr;
@@ -1605,7 +1633,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerWorldBounds( AMX* amx, cell* param
 
 	CHECK_PARAMS(5, "GetPlayerWorldBounds");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	cell* cptr;
@@ -1630,7 +1658,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerInModShop( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "IsPlayerInModShop");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bIsInModShop;
@@ -1645,7 +1673,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSirenState( AMX* amx, cell* params
 
 	CHECK_PARAMS(1, "GetPlayerSirenState");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
@@ -1662,7 +1690,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerLandingGearState( AMX* amx, cell* 
 
 	CHECK_PARAMS(1, "GetPlayerLandingGearState");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
@@ -1679,7 +1707,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerHydraReactorAngle( AMX* amx, cell*
 
 	CHECK_PARAMS(1, "GetPlayerHydraReactorAngle");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
@@ -1696,7 +1724,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerTrainSpeed( AMX* amx, cell* params
 
 	CHECK_PARAMS(1, "GetPlayerTrainSpeed");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
@@ -1713,7 +1741,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerZAim( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "GetPlayerZAim");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return amx_ftoc(pNetGame->pPlayerPool->pPlayer[playerid]->aimSyncData.fZAim);
@@ -1728,7 +1756,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingOffsets( AMX* amx, cell* pa
 
 	CHECK_PARAMS(4, "GetPlayerSurfingOffsets");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	CVector vecPos = pNetGame->pPlayerPool->pPlayer[playerid]->syncData.vecSurfing;
@@ -1752,7 +1780,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerRotationQuat( AMX* amx, cell* para
 
 	CHECK_PARAMS(5, "GetPlayerRotationQuat");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
@@ -1778,7 +1806,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerDialogID( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "GetPlayerDialogID");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->wDialogID;
@@ -1793,7 +1821,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateID( AMX* amx, cell* params
 
 	CHECK_PARAMS(1, "GetPlayerSpectateID");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->wSpectateID;
@@ -1808,7 +1836,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateType( AMX* amx, cell* para
 
 	CHECK_PARAMS(1, "GetPlayerSpectateType");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->byteSpectateType;
@@ -1823,7 +1851,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedVehicleID(AMX* amx, cell
 
 	CHECK_PARAMS(1, "GetPlayerLastSyncedVehicleID");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	return (cell)pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wVehicleId;
@@ -1838,7 +1866,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedTrailerID(AMX* amx, cell
 
 	CHECK_PARAMS(1, "GetPlayerLastSyncedTrailerID");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->trailerSyncData.wTrailerID;  //* (WORD*)(((char*)pNetGame->pPlayerPool->pPlayer[playerid]) + 271);
@@ -1866,7 +1894,7 @@ static cell AMX_NATIVE_CALL Natives::GetActorSpawnInfo(AMX* amx, cell* params)
 
 	CHECK_PARAMS(6, "GetActorSpawnInfo");
 
-	int actorid = (int)params[1];
+	int actorid = static_cast<int>(params[1]);
 	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
 
 	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
@@ -1895,7 +1923,7 @@ static cell AMX_NATIVE_CALL Natives::GetActorSkin(AMX* amx, cell* params)
 
 	CHECK_PARAMS(1, "GetActorSkin");
 
-	int actorid = (int)params[1];
+	int actorid = static_cast<int>(params[1]);
 	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
 
 	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
@@ -1913,8 +1941,8 @@ static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params )
 
 	CHECK_PARAMS(14, "SendBulletData");
 
-	int playerid = (int)params[1];
-	int forplayerid = (int)params[14];
+	int playerid = static_cast<int>(params[1]);
+	int forplayerid = static_cast<int>(params[14]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(forplayerid != -1)
@@ -1923,9 +1951,9 @@ static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params )
 	}
 
 	CBulletSyncData bulletSync;
-	bulletSync.byteHitType = (BYTE)params[3];
-	bulletSync.wHitID = (WORD)params[2];
-	bulletSync.byteWeaponID = (BYTE)params[4];
+	bulletSync.byteHitType = static_cast<BYTE>(params[3]);
+	bulletSync.wHitID = static_cast<WORD>(params[2]);
+	bulletSync.byteWeaponID = static_cast<BYTE>(params[4]);
 	bulletSync.vecHitOrigin = CVector(amx_ctof(params[5]), amx_ctof(params[6]), amx_ctof(params[7]));
 	bulletSync.vecHitTarget = CVector(amx_ctof(params[8]), amx_ctof(params[9]), amx_ctof(params[10]));
 	bulletSync.vecCenterOfHit = CVector(amx_ctof(params[11]), amx_ctof(params[12]), amx_ctof(params[13]));
@@ -1955,10 +1983,10 @@ static cell AMX_NATIVE_CALL Natives::ShowPlayerForPlayer( AMX* amx, cell* params
 
 	CHECK_PARAMS(2, "ShowPlayerForPlayer");
 
-	int forplayerid = (int)params[1];
+	int forplayerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(forplayerid)) return 0;
 
-	int playerid = (int)params[2];
+	int playerid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	RakNet::BitStream bs;
@@ -1976,10 +2004,10 @@ static cell AMX_NATIVE_CALL Natives::HidePlayerForPlayer( AMX* amx, cell* params
 
 	CHECK_PARAMS(2, "HidePlayerForPlayer");
 
-	int forplayerid = (int)params[1];
+	int forplayerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(forplayerid)) return 0;
 
-	int playerid = (int)params[2];
+	int playerid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	RakNet::BitStream bs;
@@ -1997,21 +2025,21 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cel
 
 	CHECK_PARAMS(6, "SetPlayerChatBubbleForPlayer");
 
-	int forplayerid = (int)params[1];
+	int forplayerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(forplayerid)) return 0;
 
-	int playerid = (int)params[2];
+	int playerid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	int color = (int)params[3];
+	int color = static_cast<int>(params[3]);
 	float drawdistance = amx_ctof(params[4]);
-	int expiretime = (int)params[5];
+	int expiretime = static_cast<int>(params[5]);
 
 	char *str;
 	amx_StrParam(amx, params[6], str);
 	if(str)
 	{
-		BYTE len = strlen(str);
+		BYTE len = static_cast<BYTE>(strlen(str));
 		RakNet::BitStream bs;
 		bs.Write((WORD)playerid);
 		bs.Write(color);
@@ -2034,18 +2062,16 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerVersion( AMX* amx, cell* params )
 
 	CHECK_PARAMS(2, "SetPlayerVersion");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	
 	char *version;
 	amx_StrParam(amx, params[2], version);
 
-	logprintf("1 - %s", version);
 	if (version && strlen(version) < 28)
 	{
 		pNetGame->pPlayerPool->szVersion[playerid][0] = NULL;
 		strcpy(pNetGame->pPlayerPool->szVersion[playerid], version);
-		logprintf("2 - %s", pNetGame->pPlayerPool->szVersion[playerid]);
 		return 1;
 	}
 	return 0;
@@ -2060,7 +2086,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerSpawned( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "IsPlayerSpawned");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	int state = pNetGame->pPlayerPool->pPlayer[playerid]->byteState;
@@ -2076,7 +2102,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerControllable( AMX* amx, cell* param
 
 	CHECK_PARAMS(1, "IsPlayerSpawned");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pPlayerData[playerid]->bControllable;
@@ -2091,7 +2117,7 @@ static cell AMX_NATIVE_CALL Natives::SpawnForWorld(AMX* amx, cell* params)
 
 	CHECK_PARAMS(1, "SpawnForWorld");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	CSAMPFunctions::SpawnPlayer_(playerid);
@@ -2107,7 +2133,7 @@ static cell AMX_NATIVE_CALL Natives::BroadcastDeath(AMX* amx, cell* params)
 
 	CHECK_PARAMS(1, "BroadcastDeath");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	RakNet::BitStream bsData;
@@ -2125,7 +2151,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerCameraTargetEnabled( AMX* amx, cell
 
 	CHECK_PARAMS(1, "IsPlayerCameraTargetEnabled");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bCameraTarget;
@@ -2139,8 +2165,8 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerScoresPingsUpdate(AMX *amx, cel
 
 	CHECK_PARAMS(2, "TogglePlayerScoresPingsUpdate");
 
-	int playerid = (int)params[1];
-	bool toggle = !!params[2];
+	int playerid = static_cast<int>(params[1]);
+	bool toggle = static_cast<int>(params[2]) != 0;
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
@@ -2155,8 +2181,8 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerFakePing(AMX *amx, cell *params
 
 	CHECK_PARAMS(2, "TogglePlayerFakePing");
 
-	int playerid = (int)params[1];
-	bool toggle = !!params[2];
+	int playerid = static_cast<int>(params[1]);
+	bool toggle = static_cast<int>(params[2]) != 0;
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
@@ -2171,8 +2197,8 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerFakePing(AMX *amx, cell *params)
 
 	CHECK_PARAMS(2, "SetPlayerFakePing");
 
-	int playerid = (int)params[1];
-	int fakeping = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int fakeping = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
@@ -2187,7 +2213,7 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerOnPlayerList(AMX *amx, cell *pa
 
 	CHECK_PARAMS(2, "TogglePlayerOnPlayerList");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	pPlayerData[playerid]->bHidden = !(!!params[2]);
@@ -2201,7 +2227,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerToggledOnPlayerList(AMX *amx, cell 
 
 	CHECK_PARAMS(1, "IsPlayerToggledOnPlayerList");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 
 	return !pPlayerData[playerid]->bHidden;
@@ -2212,7 +2238,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerPaused(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "IsPlayerPaused");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pPlayerData[playerid]->bAFKState;
@@ -2223,7 +2249,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPausedTime(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "GetPlayerPausedTime");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(!pPlayerData[playerid]->bAFKState) return 0;
@@ -2241,7 +2267,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectDrawDistance( AMX* amx, cell* para
 
 	CHECK_PARAMS(1, "GetObjectDrawDistance");
 
-	int objectid = (int)params[1];
+	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
@@ -2257,7 +2283,7 @@ static cell AMX_NATIVE_CALL Natives::SetObjectMoveSpeed( AMX* amx, cell* params 
 
 	CHECK_PARAMS(2, "SetObjectMoveSpeed");
 
-	int objectid = (int)params[1];
+	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
@@ -2274,7 +2300,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMoveSpeed( AMX* amx, cell* params 
 
 	CHECK_PARAMS(1, "GetObjectMoveSpeed");
 
-	int objectid = (int)params[1];
+	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
@@ -2290,7 +2316,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectTarget( AMX* amx, cell* params )
 
 	CHECK_PARAMS(4, "GetObjectTarget");
 
-	int objectid = (int)params[1];
+	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
 
@@ -2314,7 +2340,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedData( AMX* amx, cell* para
 
 	CHECK_PARAMS(3, "GetObjectAttachedData");
 
-	int objectid = (int)params[1];
+	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
@@ -2337,7 +2363,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedOffset( AMX* amx, cell* pa
 
 	CHECK_PARAMS(7, "GetObjectAttachedOffset");
 
-	int objectid = (int)params[1];
+	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
@@ -2368,10 +2394,10 @@ static cell AMX_NATIVE_CALL Natives::IsObjectMaterialSlotUsed( AMX* amx, cell* p
 
 	CHECK_PARAMS(2, "IsObjectMaterialSlotUsed");
 
-	int objectid = (int)params[1];
+	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	int materialindex = (int)params[2];
+	int materialindex = static_cast<int>(params[2]);
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
@@ -2399,8 +2425,8 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterial( AMX* amx, cell* params )
 
 	CHECK_PARAMS(8, "GetObjectMaterial");
 
-	int objectid = (int)params[1];
-	int materialindex = (int)params[2];
+	int objectid = static_cast<int>(params[1]);
+	int materialindex = static_cast<int>(params[2]);
 
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2439,8 +2465,8 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterialText( AMX* amx, cell* para
 
 	CHECK_PARAMS(12, "GetObjectMaterialText");
 
-	int objectid = (int)params[1];
-	int materialindex = (int)params[2];
+	int objectid = static_cast<int>(params[1]);
+	int materialindex = static_cast<int>(params[2]);
 
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2489,7 +2515,7 @@ static cell AMX_NATIVE_CALL Natives::IsObjectNoCameraCol( AMX* amx, cell* params
 
 	CHECK_PARAMS(1, "IsObjectNoCameraCol");
 
-	int objectid = (int)params[1];
+	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
@@ -2506,8 +2532,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectDrawDistance( AMX* amx, cell
 
 	CHECK_PARAMS(2, "GetPlayerObjectDrawDistance");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= 1000) return 0;
 
@@ -2525,8 +2551,8 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerObjectMoveSpeed( AMX* amx, cell* p
 
 	CHECK_PARAMS(3, "SetPlayerObjectMoveSpeed");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2545,8 +2571,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMoveSpeed( AMX* amx, cell* p
 
 	CHECK_PARAMS(2, "GetPlayerObjectMoveSpeed");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2564,8 +2590,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectTarget( AMX* amx, cell* para
 
 	CHECK_PARAMS(5, "GetPlayerObjectTarget");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2591,8 +2617,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell
 
 	CHECK_PARAMS(5, "GetPlayerObjectAttachedData");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	
@@ -2618,8 +2644,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, ce
 
 	CHECK_PARAMS(8, "GetPlayerObjectAttachedOffset");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2666,9 +2692,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerObjectMaterialSlotUsed( AMX* amx, c
 
 	CHECK_PARAMS(3, "IsPlayerObjectMaterialSlotUsed");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
-	int materialindex = (int)params[3];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
+	int materialindex = static_cast<int>(params[3]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2699,9 +2725,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterial( AMX* amx, cell* pa
 
 	CHECK_PARAMS(9, "GetPlayerObjectMaterial");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
-	int materialindex = (int)params[3];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
+	int materialindex = static_cast<int>(params[3]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2740,9 +2766,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 
 	CHECK_PARAMS(13, "GetPlayerObjectMaterialText");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
-	int materialindex = (int)params[3];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
+	int materialindex = static_cast<int>(params[3]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2790,8 +2816,8 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerObjectNoCameraCol( AMX* amx, cell* 
 
 	CHECK_PARAMS(2, "IsPlayerObjectNoCameraCol");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2809,7 +2835,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingPlayerObjectID( AMX* amx, c
 
 	CHECK_PARAMS(1, "GetPlayerSurfingPlayerObjectID");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return INVALID_OBJECT_ID;
 
 	int surf = pPlayerData[playerid]->wSurfingInfo - MAX_VEHICLES;
@@ -2830,7 +2856,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerCameraTargetPlayerObj( AMX* amx, c
 
 	CHECK_PARAMS(1, "GetPlayerCameraTargetPlayerObj");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return INVALID_OBJECT_ID;
 	
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
@@ -2854,8 +2880,8 @@ static cell AMX_NATIVE_CALL Natives::GetObjectType( AMX* amx, cell* params )
 
 	CHECK_PARAMS(2, "GetObjectType");
 
-	int playerid = (int)params[1];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2878,8 +2904,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerAttachedObject( AMX* amx, cell* pa
 
 	CHECK_PARAMS(15, "GetPlayerAttachedObject");
 
-	int playerid = (int)params[1];
-	int slot = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int slot = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(slot < 0 || slot >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->attachedObjectSlot[slot]) return 0;
@@ -2931,7 +2957,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params
 
 	CHECK_PARAMS(7, "GetVehicleSpawnInfo");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2962,17 +2988,35 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleColor( AMX* amx, cell* params )
 
 	CHECK_PARAMS(3, "GetVehicleColor");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
+	
 	cell* cptr;
+	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
+
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.iColor1;	
+	if(pServer->bChangedVehicleColor[vehicleid])
+	{
+		*cptr = *(cell*)&pVehicle->vehModInfo.iColor1;
+	}
+	else
+	{
+		*cptr = *(cell*)&pVehicle->customSpawn.iColor1;
+	}
+
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.iColor2;
+	if(pServer->bChangedVehicleColor[vehicleid])
+	{
+		*cptr = *(cell*)&pVehicle->vehModInfo.iColor2;
+	}
+	else
+	{
+		*cptr = *(cell*)&pVehicle->customSpawn.iColor2;
+	}
 	return 1;
 }
 
@@ -2985,13 +3029,13 @@ static cell AMX_NATIVE_CALL Natives::GetVehiclePaintjob( AMX* amx, cell* params 
 
 	CHECK_PARAMS(1, "GetVehiclePaintjob");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.bytePaintJob - 1;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.bytePaintJob;
 }
 
 // native GetVehicleInterior(vehicleid);
@@ -3003,7 +3047,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleInterior( AMX* amx, cell* params 
 
 	CHECK_PARAMS(1, "GetVehicleInterior");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3021,7 +3065,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleNumberPlate( AMX* amx, cell* para
 
 	CHECK_PARAMS(3, "GetVehicleNumberPlate");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3039,13 +3083,13 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnDelay( AMX* amx, cell* par
 
 	CHECK_PARAMS(2, "SetVehicleRespawnDelay");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iRespawnTime = ((int)params[2] * 1000);
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iRespawnTime = (static_cast<int>(params[2]) * 1000);
 	return 1;
 }
 
@@ -3058,7 +3102,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnDelay( AMX* amx, cell* par
 
 	CHECK_PARAMS(1, "GetVehicleRespawnDelay");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3076,13 +3120,13 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleOccupiedTick( AMX* amx, cell* par
 
 	CHECK_PARAMS(2, "SetVehicleOccupiedTick");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	pNetGame->pVehiclePool->pVehicle[vehicleid]->vehOccupiedTick = (int)params[2];
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->vehOccupiedTick = static_cast<int>(params[2]);
 	return 1;
 }
 
@@ -3095,7 +3139,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleOccupiedTick( AMX* amx, cell* par
 
 	CHECK_PARAMS(1, "GetVehicleOccupiedTick");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3113,13 +3157,13 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnTick( AMX* amx, cell* para
 
 	CHECK_PARAMS(2, "SetVehicleRespawnTick");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	pNetGame->pVehiclePool->pVehicle[vehicleid]->vehRespawnTick = (int)params[2];
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->vehRespawnTick = static_cast<int>(params[2]);
 	return 1;
 }
 
@@ -3132,7 +3176,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnTick( AMX* amx, cell* para
 
 	CHECK_PARAMS(1, "GetVehicleRespawnTick");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3150,7 +3194,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleLastDriver( AMX* amx, cell* param
 
 	CHECK_PARAMS(1, "GetVehicleLastDriver");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3168,7 +3212,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleCab( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "GetVehicleCab");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3195,7 +3239,7 @@ static cell AMX_NATIVE_CALL Natives::HasVehicleBeenOccupied( AMX* amx, cell* par
 
 	CHECK_PARAMS(1, "HasVehicleBeenOccupied");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3213,7 +3257,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleBeenOccupied( AMX* amx, cell* par
 
 	CHECK_PARAMS(2, "SetVehicleBeenOccupied");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3232,7 +3276,7 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleOccupied( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "IsVehicleOccupied");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	CPlayer *pPlayer;
@@ -3256,7 +3300,7 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleDead( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "IsVehicleDead");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -3274,10 +3318,10 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 
 	CHECK_PARAMS(8, "SetVehicleSpawnInfo");
 
-	int vehicleid = (int)params[1];
+	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
-	int modelid = (int)params[2];
+	int modelid = static_cast<int>(params[2]);
 	if(modelid < 400 || modelid > 611) return 0;
 
 	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid]; 
@@ -3287,7 +3331,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 	bool bStreamedIn = false;
 
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-	CVehiclePool *pVehiclePool = pNetGame->pVehiclePool;
+//	CVehiclePool *pVehiclePool = pNetGame->pVehiclePool;
 		
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
@@ -3305,8 +3349,8 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 	spawn.iModelID = modelid;
 	spawn.vecPos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 	spawn.fRot = amx_ctof(params[6]);
-	spawn.iColor1 = (int)params[7];
-	spawn.iColor2 = (int)params[8];
+	spawn.iColor1 = static_cast<int>(params[7]);
+	spawn.iColor2 = static_cast<int>(params[8]);
 	/*
 	pServer->vehicleSpawnData.insert(std::make_pair(vehicleid, spawn));
 
@@ -3333,10 +3377,10 @@ static cell AMX_NATIVE_CALL Natives::IsValidGangZone( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "IsValidGangZone");
 	
-	int zoneid = (int)params[1];
+	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	return pNetGame->pGangZonePool->GetSlotState(zoneid);
+	return pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid));
 }
 
 // native IsGangZoneVisibleForPlayer(playerid, zoneid);
@@ -3344,14 +3388,14 @@ static cell AMX_NATIVE_CALL Natives::IsGangZoneVisibleForPlayer( AMX* amx, cell*
 {
 	CHECK_PARAMS(2, "IsGangZoneVisibleForPlayer");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
+	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-	return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid) != 0xFF);
+	return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid)) != 0xFF);
 }
 
 // native GangZoneGetColorForPlayer(playerid, zoneid);
@@ -3359,14 +3403,14 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetColorForPlayer( AMX* amx, cell* 
 {
 	CHECK_PARAMS(2, "GangZoneGetColorForPlayer");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
+	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneColor[id];
@@ -3379,14 +3423,14 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetFlashColorForPlayer( AMX* amx, c
 {
 	CHECK_PARAMS(2, "GangZoneGetFlashColorForPlayer");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
+	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneFlashColor[id];
@@ -3399,14 +3443,14 @@ static cell AMX_NATIVE_CALL Natives::IsGangZoneFlashingForPlayer( AMX* amx, cell
 {
 	CHECK_PARAMS(2, "IsGangZoneFlashingForPlayer");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
+	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->bIsGangZoneFlashing[id];
@@ -3419,14 +3463,14 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerInGangZone( AMX* amx, cell* params 
 {
 	CHECK_PARAMS(2, "IsPlayerInGangZone");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(zoneid)) return 0;
+	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->bInGangZone[id];
@@ -3443,10 +3487,10 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetPos( AMX* amx, cell* params )
 
 	CHECK_PARAMS(5, "GangZoneGetPos");
 
-	int zoneid = (int)params[1];
+	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(zoneid))  return 0;
+	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
 	
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -3466,7 +3510,7 @@ static cell AMX_NATIVE_CALL Natives::IsValidTextDraw( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "IsValidTextDraw");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	return pNetGame->pTextDrawPool->bSlotState[textdrawid];
@@ -3477,10 +3521,10 @@ static cell AMX_NATIVE_CALL Natives::IsTextDrawVisibleForPlayer( AMX* amx, cell*
 {
 	CHECK_PARAMS(2, "IsTextDrawVisibleForPlayer");
 	
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(playerid < 0 || playerid >= MAX_PLAYERS) return 0;
 
-	int textdrawid = (int)params[2];
+	int textdrawid = static_cast<int>(params[2]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3497,7 +3541,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetString( AMX* amx, cell* params )
 
 	CHECK_PARAMS(3, "TextDrawGetString");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	const char *szText = (pNetGame->pTextDrawPool->bSlotState[textdrawid]) ? pNetGame->pTextDrawPool->szFontText[textdrawid] : '\0';
@@ -3509,7 +3553,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawSetPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "TextDrawPos");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3525,7 +3569,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetLetterSize( AMX* amx, cell* para
 {
 	CHECK_PARAMS(3, "TextDrawGetLetterSize");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3544,7 +3588,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetFontSize( AMX* amx, cell* params
 {
 	CHECK_PARAMS(3, "TextDrawGetFontSize");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3563,7 +3607,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "TextDrawGetPos");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3582,7 +3626,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetColor( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetColor");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3596,7 +3640,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetBoxColor( AMX* amx, cell* params
 {
 	CHECK_PARAMS(1, "TextDrawGetBoxColor");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3610,7 +3654,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetBackgroundColor( AMX* amx, cell*
 {
 	CHECK_PARAMS(1, "TextDrawGetBackgroundColor");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3624,7 +3668,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetShadow( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetShadow");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3638,7 +3682,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetOutline( AMX* amx, cell* params 
 {
 	CHECK_PARAMS(1, "TextDrawGetOutline");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3652,7 +3696,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetFont( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawGetOutline");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3666,7 +3710,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawIsBox( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "TextDrawIsBox");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3680,7 +3724,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawIsProportional( AMX* amx, cell* par
 {
 	CHECK_PARAMS(1, "TextDrawIsProportional");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3694,7 +3738,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawIsSelectable( AMX* amx, cell* param
 {
 	CHECK_PARAMS(1, "TextDrawIsSelectable");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3708,7 +3752,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetAlignment( AMX* amx, cell* param
 {
 	CHECK_PARAMS(1, "TextDrawGetAlignment");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3727,7 +3771,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewModel( AMX* amx, cell* pa
 {
 	CHECK_PARAMS(1, "TextDrawGetPreviewModel");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3741,7 +3785,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewRot( AMX* amx, cell* para
 {
 	CHECK_PARAMS(5, "TextDrawGetPreviewRot");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3764,7 +3808,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewVehCol( AMX* amx, cell* p
 {
 	CHECK_PARAMS(3, "TextDrawGetPreviewVehCol");
 	
-	int textdrawid = (int)params[1];
+	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3784,8 +3828,8 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayerTextDraw( AMX* amx, cell* para
 {
 	CHECK_PARAMS(2, "IsValidPlayerTextDraw");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3799,8 +3843,8 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerTextDrawVisible( AMX* amx, cell* pa
 {
 	CHECK_PARAMS(2, "IsPlayerTextDrawVisible");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3814,8 +3858,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetString( AMX* amx, cell* pa
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetString");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3832,8 +3876,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawSetPos( AMX* amx, cell* param
 {
 	CHECK_PARAMS(4, "PlayerTextDrawSetPos");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3851,8 +3895,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetLetterSize( AMX* amx, cell
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetLetterSize");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3873,8 +3917,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetFontSize( AMX* amx, cell* 
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetFontSize");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3895,8 +3939,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPos( AMX* amx, cell* param
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetPos");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3917,8 +3961,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetColor( AMX* amx, cell* par
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetColor");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3933,8 +3977,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetBoxColor( AMX* amx, cell* 
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetBoxColor");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3949,8 +3993,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetBackgroundCol( AMX* amx, c
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetBackgroundCol");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3965,8 +4009,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetShadow( AMX* amx, cell* pa
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetShadow");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3981,8 +4025,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetOutline( AMX* amx, cell* p
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetOutline");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3997,8 +4041,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetFont( AMX* amx, cell* para
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetFont");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -4013,8 +4057,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsBox( AMX* amx, cell* params
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsBox");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -4029,8 +4073,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsProportional( AMX* amx, cel
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsProportional");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -4045,8 +4089,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsSelectable( AMX* amx, cell*
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsSelectable");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -4061,8 +4105,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetAlignment( AMX* amx, cell*
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetAlignment");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -4082,8 +4126,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewModel( AMX* amx, ce
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetPreviewModel");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -4098,8 +4142,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewRot( AMX* amx, cell
 {
 	CHECK_PARAMS(6, "PlayerTextDrawGetPreviewRot");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -4124,8 +4168,8 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewVehCol( AMX* amx, c
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetPreviewVehCol");
 	
-	int playerid = (int)params[1];
-	int textdrawid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int textdrawid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -4147,7 +4191,7 @@ static cell AMX_NATIVE_CALL Natives::IsValid3DTextLabel( AMX* amx, cell* params 
 {
 	CHECK_PARAMS(1, "IsValid3DTextLabel");
 	
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	return pNetGame->p3DTextPool->m_bIsCreated[id];
@@ -4158,8 +4202,8 @@ static cell AMX_NATIVE_CALL Natives::Is3DTextLabelStreamedIn( AMX* amx, cell* pa
 {
 	CHECK_PARAMS(2, "Is3DTextLabelStreamedIn");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[1]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4176,7 +4220,7 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelText( AMX* amx, cell* params 
 
 	CHECK_PARAMS(3, "Get3DTextLabelText");
 	
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	const char *szText = (pNetGame->p3DTextPool->m_bIsCreated[id]) ? pNetGame->p3DTextPool->m_TextLabels[id].text : '\0';
@@ -4188,7 +4232,7 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelColor( AMX* amx, cell* params
 {
 	CHECK_PARAMS(1, "Get3DTextLabelColor");
 	
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
@@ -4202,7 +4246,7 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "Get3DTextLabelPos");
 	
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
@@ -4223,7 +4267,7 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelDrawDistance( AMX* amx, cell*
 {
 	CHECK_PARAMS(1, "Get3DTextLabelDrawDistance");
 	
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
@@ -4237,7 +4281,7 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelLOS( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "Get3DTextLabelLOS");
 	
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
@@ -4251,7 +4295,7 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelVirtualWorld( AMX* amx, cell*
 {
 	CHECK_PARAMS(1, "Get3DTextLabelVirtualWorld");
 	
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
@@ -4265,7 +4309,7 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelAttachedData( AMX* amx, cell*
 {
 	CHECK_PARAMS(3, "Get3DTextLabelAttachedData");
 	
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
@@ -4284,8 +4328,8 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayer3DTextLabel( AMX* amx, cell* p
 {
 	CHECK_PARAMS(2, "IsValidPlayer3DTextLabel");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4302,8 +4346,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelText( AMX* amx, cell* p
 
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelText");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4319,8 +4363,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelColor( AMX* amx, cell* 
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelColor");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4336,8 +4380,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelPos( AMX* amx, cell* pa
 {
 	CHECK_PARAMS(5, "GetPlayer3DTextLabelPos");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4360,8 +4404,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelDrawDist( AMX* amx, cel
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelDrawDist");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4377,8 +4421,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelLOS( AMX* amx, cell* pa
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelLOS");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4394,8 +4438,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelVirtualW( AMX* amx, cel
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelVirtualW");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4411,8 +4455,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelAttached( AMX* amx, cel
 {
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelAttached");
 	
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -4436,9 +4480,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 
 	CHECK_PARAMS(9, "AttachPlayerObjectToPlayer");
 
-	int playerid = (int)params[1];
-	int attachplayerid = (int)params[3];
-	int objectid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int attachplayerid = static_cast<int>(params[3]);
+	int objectid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(!IsPlayerConnectedEx(attachplayerid)) return 0;
@@ -4446,7 +4490,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 	
-	pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = attachplayerid;
+	pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = static_cast<WORD>(attachplayerid);
 	pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
 	pPlayerData[playerid]->stObj[objectid].vecRot = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
 
@@ -4473,9 +4517,9 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 
 	CHECK_PARAMS(10, "AttachPlayerObjectToObject");
 
-	int forplayerid = (int)params[1];
-	int wObjectID = (int)params[2];
-	int wAttachTo = (int)params[3];
+	int forplayerid = static_cast<int>(params[1]);
+	int wObjectID = static_cast<int>(params[2]);
+	int wAttachTo = static_cast<int>(params[3]);
 
 	if(!IsPlayerConnectedEx(forplayerid)) return 0;
 
@@ -4491,7 +4535,7 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	BYTE byteSyncRot = !!params[10];
 
 	// Store data
-	pPlayerData[forplayerid]->stObj[wObjectID].usObjectID = wAttachTo;
+	pPlayerData[forplayerid]->stObj[wObjectID].usObjectID = static_cast<WORD>(wAttachTo);
 	pPlayerData[forplayerid]->stObj[wObjectID].vecOffset = vecOffset;
 	pPlayerData[forplayerid]->stObj[wObjectID].vecRot = vecOffsetRot;
 
@@ -4523,7 +4567,7 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 // native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
 static cell AMX_NATIVE_CALL Natives::SendClientMessagef( AMX* amx, cell* params )
 {
-	int playerid = params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	int len;
@@ -4556,7 +4600,7 @@ static cell AMX_NATIVE_CALL Natives::SendClientMessageToAllf( AMX* amx, cell* pa
 // native GameTextForPlayerf(playerid, displaytime, style, const message[], {Float,_}:...);
 static cell AMX_NATIVE_CALL Natives::GameTextForPlayerf( AMX* amx, cell* params )
 {
-	int playerid = params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	int len;
@@ -4591,10 +4635,10 @@ static cell AMX_NATIVE_CALL Natives::GameTextForAllf( AMX* amx, cell* params )
 // native SendPlayerMessageToPlayerf(playerid, senderid, const message[], {Float,_}:...);
 static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToPlayerf( AMX* amx, cell* params )
 {
-	int playerid = params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	int senderid = params[2];
+	int senderid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(senderid)) return 0;
 
 	int len;
@@ -4612,7 +4656,7 @@ static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToPlayerf( AMX* amx, cell*
 // native SendPlayerMessageToAllf(senderid, const message[], {Float,_}:...);
 static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToAllf( AMX* amx, cell* params )
 {
-	int senderid = params[1];
+	int senderid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(senderid)) return 0;
 
 	int len;
@@ -4646,7 +4690,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetTickRate( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "YSF_SetTickRate");
 
-	int rate = (int)params[1];
+	int rate = static_cast<int>(params[1]);
 	if(rate < -1 || rate == 0) return 0; // -1 = no update
 
 	pServer->SetTickRate(rate);
@@ -4689,9 +4733,10 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneDestroy(AMX *amx, cell *params)
 	CHECK_PARAMS(1, "GangZoneDestroy");
 
 	CGangZonePool *pGangZonePool = pNetGame->pGangZonePool;
-	if (!pGangZonePool || !pGangZonePool->GetSlotState((WORD)params[1])) return 0;
+	int zoneid = static_cast<int>(params[1]);
+	if(!pGangZonePool || !pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-	pGangZonePool->Delete((WORD)params[1]);
+	pGangZonePool->Delete(static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4704,15 +4749,15 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForPlayer( AMX* amx, cell* 
 
 	CHECK_PARAMS(3, "GangZoneShowForPlayer");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	DWORD color = (DWORD)params[3];
 
 	// For security
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	return pNetGame->pGangZonePool->ShowForPlayer(playerid, zoneid, color);
+	return pNetGame->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color));
 }
 
 // native YSF_GangZoneHideForPlayer(playerid, zone);
@@ -4724,14 +4769,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForPlayer( AMX* amx, cell* 
 
 	CHECK_PARAMS(2, "GangZoneHideForPlayer");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 
 	// For security
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->HideForPlayer(playerid, zoneid);
+	pNetGame->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4744,10 +4789,10 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForAll( AMX* amx, cell* par
 
 	CHECK_PARAMS(2, "GangZoneShowForAll");
 
-	int zoneid = (int)params[1];
+	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->ShowForAll(zoneid, (DWORD)params[2]);
+	pNetGame->pGangZonePool->ShowForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
 	return 1;
 }
 
@@ -4760,10 +4805,10 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForAll( AMX* amx, cell* par
 
 	CHECK_PARAMS(1, "GangZoneHideForAll");
 
-	int zoneid = (int)params[1];
+	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->HideForAll(zoneid);
+	pNetGame->pGangZonePool->HideForAll(static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4771,14 +4816,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForPlayer(AMX *amx, cell *
 {
 	CHECK_PARAMS(3, "GangZoneFlashForPlayer");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 
 	// For security
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->FlashForPlayer((WORD)playerid, (WORD)zoneid, (DWORD)params[3]);
+	pNetGame->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(params[3]));
 	return 1;
 }
 
@@ -4786,10 +4831,10 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForAll(AMX *amx, cell *par
 {
 	CHECK_PARAMS(2, "GangZoneFlashForAll");
 
-	int zoneid = (int)params[1];
+	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->FlashForAll((WORD)zoneid, (DWORD)params[2]);
+	pNetGame->pGangZonePool->FlashForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
 	return 1;
 }
 
@@ -4797,14 +4842,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForPlayer(AMX *amx, ce
 {
 	CHECK_PARAMS(2, "GangZoneStopFlashForPlayer");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 
 	// For security
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->StopFlashForPlayer((WORD)playerid, (WORD)zoneid);
+	pNetGame->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4812,10 +4857,10 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForAll(AMX *amx, cell 
 {
 	CHECK_PARAMS(1, "GangZoneStopFlashForAll");
 
-	int zoneid = (int)params[1];
+	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->StopFlashForAll((WORD)zoneid);
+	pNetGame->pGangZonePool->StopFlashForAll(static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4825,7 +4870,7 @@ static cell AMX_NATIVE_CALL Natives::IsMenuDisabled( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "IsMenuDisabled");
 	
-	int menuid = (int)params[1];
+	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 	
 	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
@@ -4839,10 +4884,10 @@ static cell AMX_NATIVE_CALL Natives::IsMenuRowDisabled( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "IsMenuRowDisabled");
 	
-	int menuid = (int)params[1];
+	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 	
-	int itemid = (int)params[2];
+	int itemid = static_cast<int>(params[2]);
 	if(itemid < 0 || itemid >= 12) return 0;
 
 	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
@@ -4856,7 +4901,7 @@ static cell AMX_NATIVE_CALL Natives::GetMenuColumns( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "GetMenuColumns");
 	
-	int menuid = (int)params[1];
+	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 	
 	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
@@ -4870,10 +4915,10 @@ static cell AMX_NATIVE_CALL Natives::GetMenuItems( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GetMenuItems");
 	
-	int menuid = (int)params[1];
+	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
-	int column = (int)params[2];
+	int column = static_cast<int>(params[2]);
 	if(menuid < 0 || menuid > 2) return 0;
 
 	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
@@ -4887,41 +4932,35 @@ static cell AMX_NATIVE_CALL Natives::GetMenuPos( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(3, "GetMenuColumns");
 	
-	int menuid = (int)params[1];
+	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
-
-	int column = (int)params[2];
-	if(menuid < 0 || menuid > 2) return 0;
 
 	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
 	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
 
 	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
+	amx_GetAddr(amx, params[2], &cptr);
 	*cptr = amx_ftoc(pMenu->posX);
-	amx_GetAddr(amx, params[4], &cptr);
+	amx_GetAddr(amx, params[3], &cptr);
 	*cptr = amx_ftoc(pMenu->posY);
 	return 1;
 }
 
-// native GetMenuColumnWidth(menuid, column, &Float:fColumn1, &Float:fColumn2);
+// native GetMenuColumnWidth(menuid, &Float:fColumn1, &Float:fColumn2);
 static cell AMX_NATIVE_CALL Natives::GetMenuColumnWidth( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(4, "GetMenuColumnWidth");
 	
-	int menuid = (int)params[1];
+	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
-
-	int column = (int)params[2];
-	if(menuid < 0 || menuid > 2) return 0;
 
 	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
 	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
 
 	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
+	amx_GetAddr(amx, params[2], &cptr);
 	*cptr = amx_ftoc(pMenu->column1Width);
-	amx_GetAddr(amx, params[4], &cptr);
+	amx_GetAddr(amx, params[3], &cptr);
 	*cptr = amx_ftoc(pMenu->column2Width);
 	return 1;
 }
@@ -4931,10 +4970,10 @@ static cell AMX_NATIVE_CALL Natives::GetMenuColumnHeader( AMX* amx, cell* params
 {
 	CHECK_PARAMS(4, "GetMenuColumnHeader");
 	
-	int menuid = (int)params[1];
+	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
-	int column = (int)params[2];
+	int column = static_cast<int>(params[2]);
 	if(menuid < 0 || menuid > 2) return 0;
 
 	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
@@ -4948,13 +4987,13 @@ static cell AMX_NATIVE_CALL Natives::GetMenuItem( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(5, "GetMenuItem");
 	
-	int menuid = (int)params[1];
+	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
-	int column = (int)params[2];
+	int column = static_cast<int>(params[2]);
 	if(menuid < 0 || menuid > 2) return 0;
 
-	int itemid = (int)params[3];
+	int itemid = static_cast<int>(params[3]);
 	if(itemid < 0 || itemid >= 12) return 0;
 
 	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
@@ -4972,7 +5011,7 @@ static cell AMX_NATIVE_CALL Natives::CreatePlayerGangZone( AMX* amx, cell* param
 
 	CHECK_PARAMS(5, "CreatePlayerGangZone");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	float fMinX = amx_ctof(params[2]);
@@ -4988,7 +5027,7 @@ static cell AMX_NATIVE_CALL Natives::CreatePlayerGangZone( AMX* amx, cell* param
 		return -1;
 	}
 
-	WORD ret = pNetGame->pGangZonePool->New(playerid, fMinX, fMinY, fMaxX, fMaxY);
+	WORD ret = pNetGame->pGangZonePool->New(static_cast<WORD>(playerid), fMinX, fMinY, fMaxX, fMaxY);
 	if (ret == 0xFFFF) return -1;
 
 	return ret;
@@ -5003,17 +5042,17 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneShow( AMX* amx, cell* params 
 
 	CHECK_PARAMS(3, "PlayerGangZoneShow");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	DWORD dwColor = (DWORD)params[3];
+	DWORD dwColor = static_cast<DWORD>(params[3]);
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pNetGame->pGangZonePool->ShowForPlayer((WORD)playerid, zoneid, dwColor, true);
+	pNetGame->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
 	return 1;
 }
 
@@ -5026,15 +5065,15 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneHide( AMX* amx, cell* params 
 
 	CHECK_PARAMS(2, "PlayerGangZoneHide");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pNetGame->pGangZonePool->HideForPlayer((WORD)playerid, zoneid, true);
+	pNetGame->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
@@ -5047,17 +5086,17 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneFlash( AMX* amx, cell* params
 
 	CHECK_PARAMS(3, "PlayerGangZoneFlash");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	DWORD dwColor = (DWORD)params[3];
+	DWORD dwColor = static_cast<DWORD>(params[3]);
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pNetGame->pGangZonePool->FlashForPlayer((WORD)playerid, zoneid, dwColor, true);
+	pNetGame->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
 	return 1;
 }
 
@@ -5070,15 +5109,15 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneStopFlash( AMX* amx, cell* pa
 
 	CHECK_PARAMS(2, "PlayerGangZoneStopFlash");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pNetGame->pGangZonePool->StopFlashForPlayer((WORD)playerid, zoneid, true);
+	pNetGame->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
@@ -5091,12 +5130,12 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneDestroy( AMX* amx, cell* para
 
 	CHECK_PARAMS(2, "PlayerGangZoneDestroy");
 
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->HideForPlayer((WORD)playerid, (WORD)zoneid, true);
+	pNetGame->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
@@ -5105,8 +5144,8 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayerGangZone( AMX* amx, cell* para
 {
 	CHECK_PARAMS(2, "IsValidPlayerGangZone");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -5118,14 +5157,14 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerInPlayerGangZone( AMX* amx, cell* p
 {
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->bInGangZone[id];
@@ -5142,15 +5181,15 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetPos( AMX* amx, cell* param
 
 	CHECK_PARAMS(6, "PlayerGangZoneGetPos");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	int zoneid = (int)params[2];
+	int zoneid = static_cast<int>(params[2]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 	
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 	if(id != 0xFFFF) 
 	{
 		cell* cptr;
@@ -5171,14 +5210,14 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneVisible( AMX* amx, cell* pa
 {
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	return pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true) != 0xFFFF;
+	return pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true) != 0xFFFF;
 }
 
 // native PlayerGangZoneGetColor(playerid, zoneid);
@@ -5186,14 +5225,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetColor( AMX* amx, cell* par
 {
 	CHECK_PARAMS(2, "PlayerGangZoneGetColor");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneColor[id];
@@ -5206,14 +5245,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetFlashColor( AMX* amx, cell
 {
 	CHECK_PARAMS(2, "PlayerGangZoneGetFlashColor");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->dwClientSideZoneFlashColor[id];
@@ -5226,14 +5265,14 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneFlashing( AMX* amx, cell* p
 {
 	CHECK_PARAMS(2, "IsPlayerGangZoneFlashing");
 	
-	int playerid = (int)params[1];
-	int zoneid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int zoneid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(zoneid, true);
+	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 	if(id != 0xFFFF) 
 	{
 		return pPlayerData[playerid]->bIsGangZoneFlashing[id];
@@ -5252,7 +5291,7 @@ static cell AMX_NATIVE_CALL Natives::IsValidPickup( AMX* amx, cell* params )
 	
 	CHECK_PARAMS(1, "IsValidPickup");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	return pNetGame->pPickupPool->FindPickup(id) != 0;
@@ -5267,8 +5306,8 @@ static cell AMX_NATIVE_CALL Natives::IsPickupStreamedIn( AMX* amx, cell* params 
 
 	CHECK_PARAMS(2, "IsPickupStreamedIn");
 
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
@@ -5287,7 +5326,7 @@ static cell AMX_NATIVE_CALL Natives::GetPickupPos( AMX* amx, cell* params )
 
 	CHECK_PARAMS(4, "GetPickupPos");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	CPickup *pPickup = pNetGame->pPickupPool->FindPickup(id);
@@ -5312,7 +5351,7 @@ static cell AMX_NATIVE_CALL Natives::GetPickupModel( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "GetPickupModel");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	CPickup *pPickup = pNetGame->pPickupPool->FindPickup(id);
@@ -5330,7 +5369,7 @@ static cell AMX_NATIVE_CALL Natives::GetPickupType( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "GetPickupType");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	CPickup *pPickup = pNetGame->pPickupPool->FindPickup(id);
@@ -5348,7 +5387,7 @@ static cell AMX_NATIVE_CALL Natives::GetPickupVirtualWorld( AMX* amx, cell* para
 
 	CHECK_PARAMS(1, "GetPickupVirtualWorld");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	CPickup *pPickup = pNetGame->pPickupPool->FindPickup(id);
@@ -5366,7 +5405,7 @@ static cell AMX_NATIVE_CALL Natives::CreatePlayerPickup( AMX* amx, cell* params 
 
 	CHECK_PARAMS(7, "CreatePlayerPickup");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])), (int)params[7]);
@@ -5381,8 +5420,8 @@ static cell AMX_NATIVE_CALL Natives::DestroyPlayerPickup( AMX* amx, cell* params
 	
 	CHECK_PARAMS(2, "DestroyPlayerPickup");
 
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5402,8 +5441,8 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayerPickup( AMX* amx, cell* params
 	
 	CHECK_PARAMS(2, "IsValidPlayerPickup");
 
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
@@ -5419,8 +5458,8 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerPickupStreamedIn( AMX* amx, cell* p
 	
 	CHECK_PARAMS(2, "IsPlayerPickupStreamedIn");
 
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5439,8 +5478,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupPos( AMX* amx, cell* params 
 	
 	CHECK_PARAMS(5, "GetPlayerPickupPos");
 
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5466,8 +5505,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupModel( AMX* amx, cell* param
 	
 	CHECK_PARAMS(2, "GetPlayerPickupModel");
 
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5486,8 +5525,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupType( AMX* amx, cell* params
 	
 	CHECK_PARAMS(2, "GetPlayerPickupType");
 
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5506,8 +5545,8 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupVirtualWorld( AMX* amx, cell
 	
 	CHECK_PARAMS(2, "GetPlayerPickupVirtualWorld");
 
-	int playerid = (int)params[1];
-	int id = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int id = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5528,7 +5567,7 @@ static cell AMX_NATIVE_CALL Natives::IsValidPickup(AMX* amx, cell* params)
 
 	CHECK_PARAMS(1, "IsValidPickup");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5544,8 +5583,8 @@ static cell AMX_NATIVE_CALL Natives::IsPickupStreamedIn(AMX* amx, cell* params)
 
 	CHECK_PARAMS(2, "IsPickupStreamedIn");
 
-	int playerid = (int)params[1];
-	int pickupid = (int)params[2];
+	int playerid = static_cast<int>(params[1]);
+	int pickupid = static_cast<int>(params[2]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
 	if (pickupid < 0 || pickupid >= MAX_PICKUPS) return 0;
 
@@ -5561,7 +5600,7 @@ static cell AMX_NATIVE_CALL Natives::GetPickupPos(AMX* amx, cell* params)
 
 	CHECK_PARAMS(4, "GetPickupPos");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5586,7 +5625,7 @@ static cell AMX_NATIVE_CALL Natives::GetPickupModel(AMX* amx, cell* params)
 
 	CHECK_PARAMS(1, "GetPickupModel");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5604,7 +5643,7 @@ static cell AMX_NATIVE_CALL Natives::GetPickupType(AMX* amx, cell* params)
 
 	CHECK_PARAMS(1, "GetPickupType");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5622,7 +5661,7 @@ static cell AMX_NATIVE_CALL Natives::GetPickupVirtualWorld(AMX* amx, cell* param
 
 	CHECK_PARAMS(1, "GetPickupVirtualWorld");
 
-	int id = (int)params[1];
+	int id = static_cast<int>(params[1]);
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5667,8 +5706,8 @@ static cell AMX_NATIVE_CALL Natives::SetTimeoutTime( AMX* amx, cell* params )
 
 	CHECK_PARAMS(2, "SetTimeoutTime");
 	
-	PlayerID playerId = pRakServer->GetPlayerIDFromIndex((int)params[1]);
-	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || !IsPlayerConnectedEx((int)params[1]))
+	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(static_cast<int>(params[1]));
+	if(playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || !IsPlayerConnectedEx(static_cast<int>(params[1])))
 		return 0;
 
 	pRakServer->SetTimeoutTime((RakNetTime)params[2], playerId);
@@ -5684,7 +5723,7 @@ static cell AMX_NATIVE_CALL Natives::SetMTUSize( AMX* amx, cell* params )
 
 	CHECK_PARAMS(1, "SetMTUSize");
 	
-	return pRakServer->SetMTUSize((int)params[1]);
+	return pRakServer->SetMTUSize(static_cast<int>(params[1]));
 }
 
 // native GetMTUSize();
@@ -5717,9 +5756,9 @@ static cell AMX_NATIVE_CALL Natives::SendRPC( AMX* amx, cell* params )
 		return 0;
 
 	bool bBroadcast = !!(params[1] == -1);
-	int rpcid = (int)params[2];
+	int rpcid = static_cast<int>(params[2]);
 	
-	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : pRakServer->GetPlayerIDFromIndex((int)params[1]);
+	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : pRakServer->GetPlayerIDFromIndex(static_cast<int>(params[1]));
 	
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress && !bBroadcast)
 		return 0;
@@ -5796,7 +5835,7 @@ static cell AMX_NATIVE_CALL Natives::SendData( AMX* amx, cell* params )
 		return 0;
 
 	bool bBroadcast = !!(params[1] == -1);
-	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : pRakServer->GetPlayerIDFromIndex((int)params[1]);
+	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : pRakServer->GetPlayerIDFromIndex(static_cast<int>(params[1]));
 
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress && !bBroadcast)
 		return 0;
@@ -5876,7 +5915,7 @@ static cell AMX_NATIVE_CALL Natives::GetColSphereRadius( AMX* amx, cell* params 
 {
 	CHECK_PARAMS(1, "GetColSphereRadius");
 	
-	float fRet = CModelSizes::GetColSphereRadius((int)params[1]);
+	float fRet = CModelSizes::GetColSphereRadius(static_cast<int>(params[1]));
 	return amx_ftoc(fRet);
 }
 
@@ -5885,7 +5924,7 @@ static cell AMX_NATIVE_CALL Natives::GetColSphereOffset( AMX* amx, cell* params 
 {
 	CHECK_PARAMS(4, "GetColSphereOffset");
 
-	CVector vecOffset = CModelSizes::GetColSphereOffset((int)params[1]);
+	CVector vecOffset = CModelSizes::GetColSphereOffset(static_cast<int>(params[1]));
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -5902,7 +5941,7 @@ static cell AMX_NATIVE_CALL Natives::GetWeaponSlot( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(1, "GetWeaponSlot");
 	
-	return CUtils::GetWeaponSlot((BYTE)params[1]);
+	return CUtils::GetWeaponSlot(static_cast<BYTE>(params[1]));
 }
 
 // native GetWeaponName(weaponid, weaponname[], len = sizeof(weaponname));
@@ -5914,7 +5953,7 @@ static cell AMX_NATIVE_CALL Natives::FIXED_GetWeaponName(AMX* amx, cell* params)
 
 	CHECK_PARAMS(3, "GetWeaponName");
 
-	return set_amxstring(amx, params[2], CUtils::GetWeaponName_((BYTE)params[1]), params[3]);
+	return set_amxstring(amx, params[2], CUtils::GetWeaponName_(static_cast<BYTE>(params[1])), params[3]);
 }
 
 // native IsPlayerConnectedEx(playerid);
@@ -5926,22 +5965,10 @@ static cell AMX_NATIVE_CALL Natives::FIXED_IsPlayerConnectedEx(AMX* amx, cell* p
 
 	CHECK_PARAMS(1, "IsPlayerConnectedEx");
 
-	int playerid = (int)params[1];
+	int playerid = static_cast<int>(params[1]);
 	if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;
-}
-
-static cell AMX_NATIVE_CALL Natives::YSF_DestroyVehicle(AMX* amx, cell* params)
-{
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "YSF_DestroyVehicle");
-
-	// TODO
-	return 1;
 }
 
 #ifdef NEW_PICKUP_SYSTEM
@@ -6262,7 +6289,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "IsBanned",						Natives::IsBanned },
 
 	{ "SetTimeoutTime",					Natives::SetTimeoutTime },
-	//{ "SetMTUSize",					Natives::SetMTUSize },
+	{ "SetMTUSize",						Natives::SetMTUSize },
 	{ "GetMTUSize",						Natives::GetMTUSize },
 	{ "GetLocalIP",						Natives::GetLocalIP },
 	
@@ -6311,7 +6338,8 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	{ "DestroyPlayerObject",			Natives::YSF_DestroyPlayerObject },
 	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
 	//{ "SetVehicleToRespawn",			Natives::YSF_SetVehicleToRespawn},
-	//{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
+	{ "ChangeVehicleColor",				Natives::YSF_ChangeVehicleColor},
+	{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
 
 	{ "GangZoneCreate",					Natives::YSF_GangZoneCreate },
 	{ "GangZoneDestroy",				Natives::YSF_GangZoneDestroy },

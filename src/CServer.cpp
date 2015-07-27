@@ -6,7 +6,8 @@ CServer::CServer(eSAMPVersion version)
 	m_iTickRate = 5;
 
 	memset(pPlayerData, NULL, MAX_PLAYERS);
-	
+	bChangedVehicleColor.reset();
+
 	// Initialize addresses
 	CAddress::Initialize(version);
 	// Initialize SAMP Function
@@ -23,7 +24,7 @@ bool CServer::AddPlayer(int playerid)
 {
 	if(!pPlayerData[playerid])
 	{
-		pPlayerData[playerid] = new CPlayerData(playerid);
+		pPlayerData[playerid] = new CPlayerData(static_cast<WORD>(playerid));
 		return 1;
 	}
 	return 0;
@@ -275,7 +276,7 @@ WORD CServer::GetMaxPlayers_()
 	for (WORD i = 0; i != MAX_PLAYERS; i++)
 		if (pPlayerPool->bIsNPC[i])
 			count++;
-	return pServer->GetIntVariable("maxplayers") - count;
+	return static_cast<WORD>(pServer->GetIntVariable("maxplayers")) - count;
 }
 
 WORD CServer::GetPlayerCount()

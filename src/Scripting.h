@@ -340,6 +340,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_SetPlayerWorldBounds(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_DestroyPlayerObject(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_TogglePlayerControllable(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_ChangeVehicleColor(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_DestroyVehicle(AMX *amx, cell *params);
 	
 	static cell AMX_NATIVE_CALL YSF_SetPlayerTeam(AMX *amx, cell *params);
