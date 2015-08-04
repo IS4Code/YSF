@@ -395,7 +395,7 @@ public:
 	BYTE					byteFightingStyle;  // 11312 - 11313
 	BYTE					byteSeatId;			// 11313 - 11314
 	WORD					wVehicleId;			// 11314 - 11316
-	DWORD					iNickNameColor;		// 11316 - 11320
+	DWORD					dwNickNameColor;	// 11316 - 11320
 	BOOL					bShowCheckpoint;	// 11320 - 11324
 	BOOL					bShowRaceCheckpoint;// 11324 - 11328
 	int						iInteriorId;		// 11328 - 11332

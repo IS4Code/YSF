@@ -4,6 +4,7 @@
 // -------
 // DEFINES
 // -------
+#pragma warning(disable: 4995)
 
 //#define NEW_PICKUP_SYSTEM
 

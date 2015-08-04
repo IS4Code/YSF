@@ -2,7 +2,7 @@
 
 CPlayerData::CPlayerData( WORD playerid )
 {
-	static int playercolors[100] = 
+	static DWORD dwPlayerColors[100] = 
 	{
 		0xFF8C13FF,0xC715FFFF,0x20B2AAFF,0xDC143CFF,0x6495EDFF,0xf0e68cFF,0x778899FF,0xFF1493FF,0xF4A460FF,
 		0xEE82EEFF,0xFFD720FF,0x8b4513FF,0x4949A0FF,0x148b8bFF,0x14ff7fFF,0x556b2fFF,0x0FD9FAFF,0x10DC29FF,
@@ -36,7 +36,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	// Fix for GetPlayerColor
 	if(pNetGame->pPlayerPool->pPlayer[playerid])
 	{
-		pNetGame->pPlayerPool->pPlayer[playerid]->iNickNameColor = playercolors[playerid % 100];
+		pNetGame->pPlayerPool->pPlayer[playerid]->dwNickNameColor = dwPlayerColors[playerid % 100];
 	}
 
 	fBounds[0] = 20000.0f;

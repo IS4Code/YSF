@@ -2994,7 +2994,6 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleColor( AMX* amx, cell* params )
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	
 	cell* cptr;
 	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
 

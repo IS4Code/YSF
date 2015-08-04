@@ -465,19 +465,20 @@ bool CheckQueryFlood(unsigned int binaryAddress)
 	static DWORD dwLastQueryTick = 0;
 	static unsigned int lastBinAddr = 0;
 
-	if (!dwLastQueryTick) {
-		dwLastQueryTick = (DWORD)GetTickCount();
+	if(!dwLastQueryTick)
+	{
+		dwLastQueryTick = static_cast<DWORD>(GetTickCount64());
 		lastBinAddr = binaryAddress;
 		return 0;
 	}
-	if (lastBinAddr == binaryAddress) {
-		return 0;
+	if(lastBinAddr != binaryAddress)
+	{
+		if((static_cast<DWORD>(GetTickCount64()) - dwLastQueryTick) < 25)
+			return 1;
+
+		dwLastQueryTick = static_cast<DWORD>(GetTickCount64());
+		lastBinAddr = binaryAddress;
 	}
-	if ((GetTickCount() - dwLastQueryTick) < 25) {
-		return 1;
-	}
-	dwLastQueryTick = GetTickCount();
-	lastBinAddr = binaryAddress;
 	return 0;
 }
 
@@ -547,17 +548,17 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
 					char* szHostname = pServer->GetStringVariable("hostname");
-					DWORD dwHostnameLen = strlen(szHostname);
+					size_t dwHostnameLen = strlen(szHostname);
 					if (dwHostnameLen > 50) dwHostnameLen = 50;
 
 					char* szGameMode = pServer->GetStringVariable("gamemodetext");
-					DWORD dwGameModeLen = strlen(szGameMode);
+					size_t dwGameModeLen = strlen(szGameMode);
 					if (dwGameModeLen > 30) dwGameModeLen = 30;
 
 					char* szLanguage = pServer->GetStringVariable("language");
 					char* szMapName = (!szLanguage[0]) ? pServer->GetStringVariable("mapname") : szLanguage;
 
-					DWORD dwMapNameLen = strlen(szMapName);
+					size_t dwMapNameLen = strlen(szMapName);
 					if (dwMapNameLen > 30) dwMapNameLen = 30;
 
 					WORD wPlayerCount = pServer->GetPlayerCount();
@@ -567,7 +568,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 					BYTE byteIsPassworded = pServer->GetStringVariable("password")[0] != 0;
 
-					DWORD datalen = 28;	// Previous data = 11b
+					size_t datalen = 28;	// Previous data = 11b
 					// IsPassworded = 1b
 					// Player count = 2b
 					// Max player count = 2b
