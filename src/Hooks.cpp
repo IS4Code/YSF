@@ -451,16 +451,16 @@ bool CheckQueryFlood(unsigned int binaryAddress)
 
 	if(!dwLastQueryTick)
 	{
-		dwLastQueryTick = static_cast<DWORD>(GetTickCount64());
+		dwLastQueryTick = static_cast<DWORD>(GetTickCount());
 		lastBinAddr = binaryAddress;
 		return 0;
 	}
 	if(lastBinAddr != binaryAddress)
 	{
-		if((static_cast<DWORD>(GetTickCount64()) - dwLastQueryTick) < 25)
+		if((static_cast<DWORD>(GetTickCount()) - dwLastQueryTick) < 25)
 			return 1;
 
-		dwLastQueryTick = static_cast<DWORD>(GetTickCount64());
+		dwLastQueryTick = static_cast<DWORD>(GetTickCount());
 		lastBinAddr = binaryAddress;
 	}
 	return 0;

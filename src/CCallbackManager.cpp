@@ -274,11 +274,11 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 
 	if (playerid >= 0 && playerid < MAX_PLAYERS)
 	{
+#ifndef NEW_PICKUP_SYSTEM
 		pServer->AddPlayer(playerid);
+#else
 		// Initialize pickups
-#ifdef NEW_PICKUP_SYSTEM
-		bool ret = pServer->AddPlayer(playerid);
-		if (ret)
+		if (pServer->AddPlayer(playerid))
 			pNetGame->pPickupPool->InitializeForPlayer(playerid);
 #endif
 	}
