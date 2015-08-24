@@ -309,12 +309,10 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SendRPC(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SendData(AMX *amx, cell *params);
 
-	static cell AMX_NATIVE_CALL YSF_AddPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_RemovePlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_StreamIn(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_StreamOut(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_SetTickRate(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GetTickRate(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_EnableNightVisionFix(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_IsNightVisionFixEnabled(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL AttachPlayerObjectToObject(AMX *amx, cell *params);
 

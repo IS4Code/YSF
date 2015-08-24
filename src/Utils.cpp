@@ -275,3 +275,16 @@ std::string GetServerCfgOption(const std::string &option)
 	}
 	return "0";
 }
+
+// From raknet
+BYTE GetPacketID(Packet *p)
+{
+	if (p == 0) return 255;
+
+	if ((unsigned char)p->data[0] == 36)
+	{
+		assert(p->length > sizeof(unsigned char) + sizeof(unsigned long));
+		return (unsigned char)p->data[sizeof(unsigned char) + sizeof(unsigned long)];
+	}
+	else return (unsigned char)p->data[0];
+}

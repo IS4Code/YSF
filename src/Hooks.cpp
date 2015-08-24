@@ -190,13 +190,12 @@ bool HOOK_ContainsInvalidChars(char * szString)
 }
 
 //----------------------------------------------------
-
-// amx_Register hook for redirect natives
-bool g_bNativesHooked = false;  
-
 int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 {
 	SubHook::ScopedRemove remove(&amx_Register_hook);
+
+	// amx_Register hook for redirect natives
+	static bool g_bNativesHooked = false;
 
 	if (!g_bNativesHooked && pServer)
 	{
@@ -257,19 +256,6 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 //----------------------------------------------------
 
-// GetPacketID hook
-BYTE GetPacketID(Packet *p)
-{
-	if (p == 0) return 255;
-
-	if ((unsigned char)p->data[0] == 36) 
-	{
-		assert(p->length > sizeof(unsigned char) + sizeof(unsigned long));
-		return (unsigned char)p->data[sizeof(unsigned char) + sizeof(unsigned long)];
-	}
-	else return (unsigned char)p->data[0];
-}
-
 bool IsPlayerUpdatePacket(unsigned char packetId)
 {
 	switch (packetId)
@@ -303,65 +289,66 @@ static BYTE HOOK_GetPacketID(Packet *p)
 		{
 			pPlayerData[playerid]->dwLastUpdateTick = GetTickCount();
 			pPlayerData[playerid]->bEverUpdated = true;
-						
-			/*
-			// Based on JernejL's tutorial - http://forum.sa-mp.com/showthread.php?t=172085
-			DWORD dwDrunkNew = pPlayerPool->dwDrunkLevel[playerid];
-			logprintf("drunknew: %d", dwDrunkNew);
-			if (dwDrunkNew < 100)
-			{
-			
-				RakNet::BitStream bs;
-				bs.Write(2000);
+		}
 
-				int drunk = 0x23;
-				pRakServer->RPC(&drunk, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 2, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
-			}
-			else
+		switch(packetId)
+		{
+			case ID_PLAYER_SYNC:
 			{
-				logprintf("elsegeci: %d", pPlayerData[playerid]->dwLastDrunkLevel != dwDrunkNew);
-				if (pPlayerData[playerid]->dwLastDrunkLevel != dwDrunkNew)
+				CSyncData *pSyncData = reinterpret_cast<CSyncData*>(&p->data[1]);
+
+				if(pServer->IsNightVisionFixEnabled())
 				{
-					DWORD fps = pPlayerData[playerid]->dwLastDrunkLevel - dwDrunkNew;
-					logprintf("fps: %d", dwDrunkNew);
-					if (fps > 0 && fps < 300)
+					// Fix nightvision and infrared sync
+					if (pSyncData->byteWeapon == WEAPON_NIGHTVISION || pSyncData->byteWeapon == WEAPON_INFRARED)
 					{
-						pPlayerData[playerid]->dwFPS = fps;
+						pSyncData->wKeys &= ~4;
+						pSyncData->byteWeapon = 0;
 					}
-
-					pPlayerData[playerid]->dwLastDrunkLevel = dwDrunkNew;
 				}
+
+				// Store surfing info because server reset it when player surfing on player object
+				pPlayerData[playerid]->wSurfingInfo = pSyncData->wSurfingInfo;
+				break;
 			}
-			*/
-		}
-
-		if (packetId == ID_PLAYER_SYNC)
-		{
-			CSyncData *pSyncData = (CSyncData*)(&p->data[1]);
-
-			// Fix nightvision and infrared sync
-			if (pSyncData->byteWeapon == 44 || pSyncData->byteWeapon == 45)
+			case ID_AIM_SYNC:
 			{
-				pSyncData->wKeys &= ~4;
-				pSyncData->byteWeapon = 0;
+				CAimSyncData *pAim = reinterpret_cast<CAimSyncData*>(&p->data[1]);
+
+				// Fix up, down aim sync
+				switch(pNetGame->pPlayerPool->pPlayer[playerid]->byteCurrentWeapon)
+				{
+					case WEAPON_SNIPER:
+					case WEAPON_ROCKETLAUNCHER:
+					case WEAPON_HEATSEEKER:
+					case WEAPON_CAMERA:
+					{
+						pAim->fZAim = -pAim->vecFront.fZ;
+
+						if (pAim->fZAim > 1.0f)
+						{
+							pAim->fZAim = 1.0f;
+						}
+						else if (pAim->fZAim < -1.0f)
+						{
+							pAim->fZAim = -1.0f;
+						}
+						break;
+					}
+				}
+				break;
 			}
-
-			// Store surfing info because server reset it when player surfing on player object
-			pPlayerData[playerid]->wSurfingInfo = pSyncData->wSurfingInfo;
-		}
-
-		// Stats and weapons update
-		if (packetId == ID_STATS_UPDATE)
-		{
-			pServer->Packet_StatsUpdate(p);
-			return 0xFF;
-		}
-		
-		if (packetId == ID_WEAPONS_UPDATE)
-		{
-			CSAMPFunctions::Packet_WeaponsUpdate(p);
-			CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
-			return 0xFF;
+			case ID_STATS_UPDATE:
+			{
+				pServer->Packet_StatsUpdate(p);
+				return 0xFF;
+			}
+			case ID_WEAPONS_UPDATE:
+			{
+				CSAMPFunctions::Packet_WeaponsUpdate(p);
+				CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
+				return 0xFF;
+			}
 		}
 	}
 	return packetId;
@@ -419,14 +406,11 @@ static void HOOK_logprintf(const char *msg, ...)
 {
 	SubHook::ScopedRemove remove(&logprintf_hook);
 
-	static char buffer[1024];
+	char buffer[1024];
 	va_list arguments;
 	va_start(arguments, msg);
-	if(!msg[0]) return;
-
 	vsnprintf(buffer, sizeof(buffer), msg, arguments);
 	va_end(arguments);
-	if(!buffer[0]) return;
 
 	if(CCallbackManager::OnServerMessage(buffer))
 		logprintf(buffer);
@@ -530,6 +514,11 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 			to.sin_family = AF_INET;
 			to.sin_port = htons(port);
 			to.sin_addr.s_addr = binaryAddress;
+
+			if (pServer->GetBoolVariable("logqueries"))
+			{
+				logprintf("[query:%c] from %s", data[10], inet_ntoa(in));
+			}
 
 			switch (data[10])
 			{
@@ -726,11 +715,11 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				case 'x':	// rcon
 				{
 					if (pRakServer && pRakServer->IsBanned(inet_ntoa(in))) return 1;
-
+					
 					// We do not process these queries 'query' is 0
 					if (!pServer->GetBoolVariable("query") || !pServer->GetBoolVariable("rcon")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
-
+					
 					cur_sock = s;
 					cur_data = data;
 					cur_datalen = 11; // How much of the message we send back.
@@ -754,7 +743,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					memcpy(szPassword, data, wStrLen);
 					szPassword[wStrLen] = 0;
 					data += wStrLen;
-
+					
 					if (!strcmp(szPassword, pServer->GetStringVariable("rcon_password")))
 					{
 						// Check there's enough data for another WORD
@@ -773,7 +762,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 							free(szPassword);
 							goto cleanup;	// Malformed packet! Haxy bastard!
 						}
-
+						
 						// Read the command string
 						char* szCommand = (char*)malloc(wStrLen + 1);
 						memcpy(szCommand, data, wStrLen);
@@ -805,12 +794,13 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, false, "NULL");
 					}
 					free(szPassword);
-
+					
 				cleanup:
 					cur_datalen = 0;
 					cur_data = NULL;
 					cur_sock = INVALID_SOCKET;
 					break;
+					
 				}
 			}
 		}
@@ -875,9 +865,13 @@ void InstallPostHooks()
 
 	// SetMaxPlayers() fix
 	pRakServer->Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(pServer->GetIntVariable("port")), pServer->GetStringVariable("bind"));
+/*
 #ifdef _WIN32
 	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
 #endif
+	*/
+	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
+
 	// Recreate GangZone pool
 	pNetGame->pGangZonePool = new CGangZonePool();
 

@@ -207,7 +207,7 @@ bool CCallbackManager::OnServerMessage(char* message)
 			if (!ret) return 0;
 		}
 	}
-	return !!ret;
+	return static_cast<int>(ret) != 0;
 }
 
 bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command)
@@ -234,7 +234,7 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 			if (!ret) return 0;
 		}
 	}
-	return !!ret;
+	return static_cast<int>(ret) != 0;
 }
 
 void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)

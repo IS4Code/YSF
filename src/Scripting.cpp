@@ -1177,7 +1177,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* param
 
 	int playerid = static_cast<int>(params[1]);
 	int posplayerid = static_cast<int>(params[2]);
-	bool forcesync = !!params[6];
+	bool forcesync = static_cast<int>(params[6]) != 0;
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(posplayerid)) return 0;
 
 	SAFE_DELETE(pPlayerData[playerid]->vecCustomPos[posplayerid]);
@@ -3863,7 +3863,7 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetString( AMX* amx, cell* pa
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
 	
-	bool bIsValid = !!pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid];
+	bool bIsValid = static_cast<int>(pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) != 0;
 	if(!bIsValid) return 0;
 
 	const char *szText = (bIsValid) ? pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->szFontText[textdrawid]: '\0';
@@ -4703,6 +4703,27 @@ static cell AMX_NATIVE_CALL Natives::YSF_GetTickRate( AMX* amx, cell* params )
 		return 1;
 
 	return static_cast<cell>(pServer->GetTickRate());
+}
+
+// native YSF_EnableNightVisionFix(enable);
+static cell AMX_NATIVE_CALL Natives::YSF_EnableNightVisionFix(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 1;
+
+	CHECK_PARAMS(1, "YSF_EnableNightVisionFix");
+
+	pServer->EnableNightVisionFix(static_cast<int>(params[1]) != 0);
+	return 1;
+}
+
+// native YSF_IsNightVisionFixEnabled();
+static cell AMX_NATIVE_CALL Natives::YSF_IsNightVisionFixEnabled(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 1;
+
+	return static_cast<cell>(pServer->IsNightVisionFixEnabled());
 }
 
 static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
@@ -5754,7 +5775,7 @@ static cell AMX_NATIVE_CALL Natives::SendRPC( AMX* amx, cell* params )
 	if(!pServer)
 		return 0;
 
-	bool bBroadcast = !!(params[1] == -1);
+	bool bBroadcast = static_cast<int>(params[1]) == -1;
 	int rpcid = static_cast<int>(params[2]);
 	
 	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : pRakServer->GetPlayerIDFromIndex(static_cast<int>(params[1]));
@@ -5833,7 +5854,7 @@ static cell AMX_NATIVE_CALL Natives::SendData( AMX* amx, cell* params )
 	if(!pServer)
 		return 0;
 
-	bool bBroadcast = !!(params[1] == -1);
+	bool bBroadcast = static_cast<int>(params[1]) == -1;
 	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : pRakServer->GetPlayerIDFromIndex(static_cast<int>(params[1]));
 
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress && !bBroadcast)
@@ -6294,14 +6315,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	
 	{ "SendRPC",						Natives::SendRPC },
 	{ "SendData",						Natives::SendData },
-	/*
-	{ "YSF_AddPlayer",					Natives::YSF_AddPlayer },
-	{ "YSF_RemovePlayer",				Natives::YSF_RemovePlayer },
-	{ "YSF_StreamIn",					Natives::YSF_StreamIn },
-	{ "YSF_StreamOut",					Natives::YSF_StreamOut },
-	*/
-	{"YSF_SetTickRate",					Natives::YSF_SetTickRate},
-	{"YSF_GetTickRate",					Natives::YSF_GetTickRate},
+	{ "YSF_SetTickRate",				Natives::YSF_SetTickRate},
+	{ "YSF_GetTickRate",				Natives::YSF_GetTickRate},
+	{ "YSF_EnableNightVisionFix",		Natives::YSF_EnableNightVisionFix },
+	{ "YSF_IsNightVisionFixEnabled",	Natives::YSF_IsNightVisionFixEnabled },
 	{ "AttachPlayerObjectToObject",		Natives::AttachPlayerObjectToObject },
 
 	// Format functions

@@ -1034,8 +1034,9 @@ public:
 	virtual void SetRouterInterface( void *routerInterface );
 	virtual void RemoveRouterInterface( void *routerInterface );
 	virtual int GetIndexFromPlayerID( PlayerID playerId ); // E4
-	virtual PlayerID GetPlayerIDFromIndex( int index ); // E8
-	virtual void AddToBanList( const char *IP, unsigned int milliseconds=0 );
+	virtual PlayerID GetPlayerIDFromIndex( int index ); // E8 - 232 - 236
+	virtual void UNKNOWN(void); // 236 - 240
+	virtual void AddToBanList( const char *IP, unsigned int milliseconds=0 ); // 240 - 244
 	virtual void RemoveFromBanList( const char *IP );
 	virtual void ClearBanList( void );
 	virtual bool IsBanned( const char *IP );
@@ -1113,9 +1114,9 @@ public:
 	virtual void _E0();
 	virtual void _E8();
 	virtual int GetIndexFromPlayerID( PlayerID playerId ); // EC
-	virtual PlayerID GetPlayerIDFromIndex( int index ); // F0
-	virtual void AddToBanList( const char *IP, unsigned int milliseconds=0 );
-	virtual void RemoveFromBanList( const char *IP );
+	virtual PlayerID GetPlayerIDFromIndex( int index ); // F0 - 240 - 244
+	virtual void AddToBanList( const char *IP, unsigned int milliseconds=0 ); // 244 - 248
+	virtual void RemoveFromBanList( const char *IP ); // 248 - 252
 	virtual void ClearBanList( void );
 	virtual bool IsBanned( const char *IP );
 	virtual bool IsActivePlayerID( const PlayerID playerId );

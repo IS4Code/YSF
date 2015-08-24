@@ -41,6 +41,9 @@ public:
 	void SetTickRate(int rate) { m_iTickRate = rate; }
 	int GetTickRate(void) { return m_iTickRate; }
 
+	void EnableNightVisionFix(bool enable) { m_bNightVisionFix = enable; }
+	bool IsNightVisionFixEnabled(void) { return m_bNightVisionFix; }
+
 	WORD GetMaxPlayers_();
 	WORD GetPlayerCount();
 	WORD GetNPCCount();
@@ -68,6 +71,7 @@ private:
 	eSAMPVersion m_Version;
 	int m_iTicks;
 	int m_iTickRate;
+	bool m_bNightVisionFix;
 
 	std::vector <char> m_vecValidNameCharacters;
 };

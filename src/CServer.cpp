@@ -4,6 +4,7 @@ CServer::CServer(eSAMPVersion version)
 {
 	m_iTicks = 0;
 	m_iTickRate = 5;
+	m_bNightVisionFix = true;
 
 	memset(pPlayerData, NULL, MAX_PLAYERS);
 	bChangedVehicleColor.reset();
