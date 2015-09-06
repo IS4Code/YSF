@@ -330,12 +330,14 @@ namespace Natives
 
 	static cell AMX_NATIVE_CALL GetWeaponSlot(AMX *amx, cell *params);
 
+	static cell AMX_NATIVE_CALL YSF_AttachObjectToPlayer(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_AttachPlayerObjectToPlayer(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_SetGravity(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GetGravity(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_SetWeather(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_SetPlayerWeather(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_SetPlayerWorldBounds(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_DestroyObject(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_DestroyPlayerObject(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_TogglePlayerControllable(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_ChangeVehicleColor(AMX *amx, cell *params);

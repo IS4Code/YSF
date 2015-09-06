@@ -1166,7 +1166,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerFightingStyle(AMX* amx, cell* 
 	return 0;
 }
 
-// native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Floaf:fZ, bool:forcesync = true);
+// native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Float:fZ, bool:forcesync = true);
 static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* params)
 {
 	// If unknown server version
@@ -1373,6 +1373,28 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWorldBounds(AMX* amx, cell* pa
 	return 1;
 }
 
+// native DestroyObject(objectid)
+static cell AMX_NATIVE_CALL Natives::YSF_DestroyObject(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "DestroyObject");
+
+	int objectid = static_cast<int>(params[1]);
+
+	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
+	if(!pNetGame->pObjectPool->m_pObjects[objectid]) return 0;
+
+	if(pDestroyObject(amx, params))
+	{
+		pServer->COBJECT_AttachedObjectPlayer[objectid] = INVALID_OBJECT_ID;
+		return 1;
+	}
+	return 0;
+}
+
 // native DestroyPlayerObject(playerid, objectid)
 static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* params)
 {
@@ -1384,6 +1406,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 
 	int playerid = static_cast<int>(params[1]);
 	int objectid = static_cast<int>(params[2]);
+
+	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
+	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	if(pDestroyPlayerObject(amx, params) && IsPlayerConnectedEx(playerid))
 	{
@@ -2331,14 +2356,14 @@ static cell AMX_NATIVE_CALL Natives::GetObjectTarget( AMX* amx, cell* params )
 	return 1;
 }
 
-// native GetObjectAttachedData(objectid, &vehicleid, &objectid);
+// native GetObjectAttachedData(objectid, &vehicleid, &objectid, &attachedplayerid);
 static cell AMX_NATIVE_CALL Natives::GetObjectAttachedData( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(3, "GetObjectAttachedData");
+	CHECK_PARAMS(4, "GetObjectAttachedData");
 
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2351,6 +2376,8 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedData( AMX* amx, cell* para
 	*cptr = (cell)pObject->wAttachedVehicleID;
 	amx_GetAddr(amx, params[3], &cptr);
 	*cptr = (cell)pObject->wAttachedObjectID;
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = (cell)pServer->COBJECT_AttachedObjectPlayer[objectid];
 	return 1;
 }
 
@@ -4471,6 +4498,29 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelAttached( AMX* amx, cel
 	return 1;
 }
 
+// native AttachObjectToPlayer(objectid, playerid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ)
+static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* params )
+{
+	CHECK_PARAMS(8, "AttachObjectToPlayer");
+
+	// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
+	int playerid = static_cast<int>(params[1]);
+	int objectid = static_cast<int>(params[2]);
+	if(!IsPlayerConnectedEx(playerid)) return 0;
+
+	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
+
+	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	if(!pObject) return 0;
+
+	YSF_AttachObjectToPlayer(amx, params);
+	
+	pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+	pObject->vecAttachedRotation = CVector(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
+	return 1;
+}
+
+// native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ)
 static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
@@ -4480,8 +4530,8 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 	CHECK_PARAMS(9, "AttachPlayerObjectToPlayer");
 
 	int playerid = static_cast<int>(params[1]);
-	int attachplayerid = static_cast<int>(params[3]);
 	int objectid = static_cast<int>(params[2]);
+	int attachplayerid = static_cast<int>(params[3]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(!IsPlayerConnectedEx(attachplayerid)) return 0;
@@ -6066,7 +6116,6 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "EditPlayerClass",				Natives::EditPlayerClass}, // R6
 	
 	// Timers
-	{ "GetActiveTimers",				Natives::GetRunningTimers}, // R8
 	{ "GetRunningTimers",				Natives::GetRunningTimers}, // R8
 
 	// Special
@@ -6345,12 +6394,14 @@ AMX_NATIVE_INFO YSINatives [] =
 AMX_NATIVE_INFO RedirectedNatives[] =
 {
 	// File
+	{ "AttachObjectToPlayer",			Natives::YSF_AttachObjectToPlayer },
 	{ "AttachPlayerObjectToPlayer",		Natives::YSF_AttachPlayerObjectToPlayer },
 	{ "SetGravity",						Natives::YSF_SetGravity },
 	{ "GetGravity",						Natives::YSF_GetGravity },
 	{ "SetWeather",						Natives::YSF_SetWeather },
 	{ "SetPlayerWeather",				Natives::YSF_SetPlayerWeather },
 	{ "SetPlayerWorldBounds",			Natives::YSF_SetPlayerWorldBounds },
+	{ "DestroyObject",					Natives::YSF_DestroyObject },
 	{ "DestroyPlayerObject",			Natives::YSF_DestroyPlayerObject },
 	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
 	//{ "SetVehicleToRespawn",			Natives::YSF_SetVehicleToRespawn},

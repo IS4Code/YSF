@@ -67,6 +67,7 @@ public:
 	
 	std::map<int, CVehicleSpawn> vehicleSpawnData;
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
+	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
 private:
 	eSAMPVersion m_Version;
 	int m_iTicks;

@@ -1058,13 +1058,14 @@ public:
 	virtual bool _0(); 
 	virtual void _4();
 	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0;
-	virtual void _C();
+//	virtual void _C();
+	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 	virtual void _10();
 	virtual void _14();
 	virtual void _18();
 	virtual void _1C();
 	virtual void _20();
-	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	virtual bool Send__(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 	virtual void _28();
 	virtual void _2C();
 	virtual void _30();

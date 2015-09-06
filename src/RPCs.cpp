@@ -116,15 +116,14 @@ void Death(RPCParameters* rpcParams)
 		CPlayer *pKiller = pNetGame->pPlayerPool->pPlayer[killerid];
 
 		// If they aren't streamed for each other, then won't call OnPlayerDeath
-		//logprintf("streamed: %d, %d", pKiller->byteStreamedIn[playerid], pPlayer->byteStreamedIn[killerid]);
 		if(!pKiller->byteStreamedIn[playerid] || !pPlayer->byteStreamedIn[killerid])
 			return;
 
-		//logprintf("syncdata: %d, reason: %d, health: %f", pKiller->syncData.byteWeapon, reasonid, pPlayer->fHealth);
-		if( pKiller->syncData.byteWeapon != reasonid && reasonid <= 46 )// 46 = parachute
+		if( pKiller->syncData.byteWeapon != reasonid && reasonid <= 46 && (reasonid != WEAPON_ROCKETLAUNCHER || reasonid != WEAPON_HEATSEEKER) && pKiller->byteState != PLAYER_STATE_DRIVER)// 46 = parachute
+		{
+//			logprintf("onplayerdeath error 1, synced weapon: %d, reason: %d", pKiller->syncData.byteWeapon, reasonid);
 			return;
-		else if( ( reasonid == 48 || reasonid == 49 ) && pKiller->byteState != PLAYER_STATE_DRIVER ) // 48 - carkill // 49 - helikill
-			return;
+		}
 
 		if (pServer->GetIntVariable("chatlogging"))
 			logprintf("[kill] %s killed %s %s", GetPlayerName_(killerid), GetPlayerName_(playerid), CUtils::GetWeaponName_(reasonid));

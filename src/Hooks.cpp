@@ -74,7 +74,7 @@ typedef bool (*RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStrea
 RakNet__Send_t RakNetOriginalSend;
 RakNet__RPC_t RakNetOriginalRPC;
 
-AMX_NATIVE pDestroyPlayerObject = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL, pChangeVehicleColor = NULL, pDestroyVehicle = NULL;
+AMX_NATIVE pDestroyObject = NULL, pDestroyPlayerObject = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL, pChangeVehicleColor = NULL, pDestroyVehicle = NULL, pAttachObjectToPlayer = NULL;
 
 // Y_Less - original YSF
 bool Unlock(void *address, size_t len)
@@ -202,6 +202,9 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		int i = 0;
 		while (nativelist[i].name)
 		{
+			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyObject"))
+				pDestroyObject = nativelist[i].func;
+
 			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyPlayerObject"))
 				pDestroyPlayerObject = nativelist[i].func;
 
@@ -231,6 +234,9 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 			if(!pDestroyVehicle && !strcmp(nativelist[i].name, "DestroyVehicle"))
 				pDestroyVehicle = nativelist[i].func;
+
+			if(!pAttachObjectToPlayer && !strcmp(nativelist[i].name, "AttachObjectToPlayer"))
+				pAttachObjectToPlayer = nativelist[i].func;
 
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
@@ -635,7 +641,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						{
 							if (IsPlayerConnectedEx(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
-								szName = RemoveHexColorFromString(GetPlayerName_(r));
+								szName = GetPlayerName_(r);
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);

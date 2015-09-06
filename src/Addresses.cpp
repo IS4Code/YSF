@@ -7,7 +7,6 @@ DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x00487310;
 DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x00487460;
 DWORD CAddress::FUNC_Logprintf_03ZR4 = 0x004875F0;
 DWORD CAddress::FUNC_Logprintf_037 = 0x0048A0B0;
-DWORD CAddress::FUNC_Logprintf_037_R2 = 0x0048C860;
 DWORD CAddress::FUNC_Logprintf_037_R2_1 = 0x0048C8D0;
 #else
 DWORD CAddress::FUNC_Logprintf_03Z = 0x080A7440;
@@ -15,7 +14,6 @@ DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x080A77D0;
 DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x080A78E0;
 DWORD CAddress::FUNC_Logprintf_03ZR4 = 0x80A7A90;
 DWORD CAddress::FUNC_Logprintf_037 = 0x080A9000;
-DWORD CAddress::FUNC_Logprintf_037_R2 = 0x080A91D0;
 DWORD CAddress::FUNC_Logprintf_037_R2_1 = 0x080A91D0;
 #endif
 

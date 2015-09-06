@@ -6,8 +6,9 @@ CServer::CServer(eSAMPVersion version)
 	m_iTickRate = 5;
 	m_bNightVisionFix = true;
 
-	memset(pPlayerData, NULL, MAX_PLAYERS);
+	memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();
+	memset(&COBJECT_AttachedObjectPlayer, INVALID_PLAYER_ID, sizeof(COBJECT_AttachedObjectPlayer));
 
 	// Initialize addresses
 	CAddress::Initialize(version);

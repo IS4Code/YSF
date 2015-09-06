@@ -65,11 +65,6 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		version = SAMP_VERSION_037;
 		strcpy(szVersion, "0.3.7");
 	}
-	else if (addr == CAddress::FUNC_Logprintf_037_R2)
-	{
-		version = SAMP_VERSION_037_R2;
-		strcpy(szVersion, "0.3.7 R2");
-	}
 	else if(addr == CAddress::FUNC_Logprintf_037_R2_1)
 	{
 		version = SAMP_VERSION_037_R2;
