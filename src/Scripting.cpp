@@ -1551,7 +1551,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSkillLevel( AMX* amx, cell* params
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(4, "GetPlayerSkillLevel");
+	CHECK_PARAMS(2, "GetPlayerSkillLevel");
 
 	int playerid = static_cast<int>(params[1]);
 	int skillid = static_cast<int>(params[2]);
