@@ -871,10 +871,8 @@ void InstallPostHooks()
 
 	// SetMaxPlayers() fix
 	//pRakServer->Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(pServer->GetIntVariable("port")), pServer->GetStringVariable("bind"));
+	//logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
 
-#ifdef _WIN32
-	logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
-#endif
 	
 	// Recreate GangZone pool
 	pNetGame->pGangZonePool = new CGangZonePool();
