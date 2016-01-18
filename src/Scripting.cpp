@@ -2056,12 +2056,12 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cel
 	int playerid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	int color = static_cast<int>(params[3]);
-	float drawdistance = amx_ctof(params[4]);
-	int expiretime = static_cast<int>(params[5]);
+	int color = static_cast<int>(params[4]);
+	float drawdistance = amx_ctof(params[5]);
+	int expiretime = static_cast<int>(params[6]);
 
 	char *str;
-	amx_StrParam(amx, params[6], str);
+	amx_StrParam(amx, params[2], str);
 	if(str)
 	{
 		BYTE len = static_cast<BYTE>(strlen(str));
