@@ -85,6 +85,12 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 			VAR_pRestartWaitTime =						0x004F6E28;
 			break;
 		}
+		case SAMP_VERSION_037_R2:
+		{
+			VAR_pRestartWaitTime =						0x00515BF8;
+			break;
+		}
+
 	}	
 	#else
 
@@ -118,6 +124,11 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		case SAMP_VERSION_037:
 		{
 			VAR_pRestartWaitTime =						0x081A0840;
+			break;
+		}
+		case SAMP_VERSION_037_R2:
+		{
+			VAR_pRestartWaitTime =						0x081CA600;
 			break;
 		}
 	}
