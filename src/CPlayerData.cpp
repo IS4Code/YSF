@@ -316,28 +316,28 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 	{
 		case ID_PLAYER_SYNC:
 		{
-		
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 	
+			bsSync->Reset();
 			bsSync->Write((BYTE)ID_PLAYER_SYNC);
 			bsSync->Write(playerid);
-
-			// LEFT/RIGHT KEYS
-			if(p->syncData.wLRAnalog) 
-			{
-				bsSync->Write(true);
-				bsSync->Write(p->syncData.wLRAnalog);
-			} 
-			else 
-			{
-				bsSync->Write(false);
-			}
 
 			// UP/DOWN KEYS
 			if(p->syncData.wUDAnalog) 
 			{
 				bsSync->Write(true);
 				bsSync->Write(p->syncData.wUDAnalog);
+			} 
+			else 
+			{
+				bsSync->Write(false);
+			}
+
+			// LEFT/RIGHT KEYS
+			if(p->syncData.wLRAnalog) 
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.wLRAnalog);
 			} 
 			else 
 			{
@@ -415,7 +415,81 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		}
 		case ID_VEHICLE_SYNC:
 		{
-		
+			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
+
+			bsSync->Reset();
+			bsSync->Write((BYTE)ID_VEHICLE_SYNC);
+			bsSync->Write(playerid);
+
+			bsSync->Write(p->vehicleSyncData.wVehicleId);
+			bsSync->Write(p->vehicleSyncData.wUDAnalog);
+			bsSync->Write(p->vehicleSyncData.wLRAnalog);
+			bsSync->Write(p->vehicleSyncData.wKeys);
+			bsSync->WriteNormQuat(p->vehicleSyncData.fQuaternionAngle, p->vehicleSyncData.vecQuaternion.fX, p->vehicleSyncData.vecQuaternion.fY, p->vehicleSyncData.vecQuaternion.fZ);
+			bsSync->Write((char*)&p->vehicleSyncData.vecPosition, sizeof(CVector));
+			bsSync->WriteVector(p->vehicleSyncData.vecVelocity.fX, p->vehicleSyncData.vecVelocity.fY, p->vehicleSyncData.vecVelocity.fZ);
+			bsSync->Write((WORD)p->vehicleSyncData.fHealth);
+
+			// Health & armour compression
+			BYTE byteSyncHealthArmour=0;
+			if( p->vehicleSyncData.bytePlayerHealth > 0 && p->vehicleSyncData.bytePlayerHealth < 100 ) 
+			{
+				byteSyncHealthArmour = ((BYTE)(p->vehicleSyncData.bytePlayerHealth / 7)) << 4;
+			} 
+			else if(p->vehicleSyncData.bytePlayerHealth >= 100) 
+			{
+				byteSyncHealthArmour = 0xF << 4;
+			}
+
+			if( p->vehicleSyncData.bytePlayerArmour > 0 && p->vehicleSyncData.bytePlayerArmour < 100 ) 
+			{
+				byteSyncHealthArmour |=  (BYTE)(p->vehicleSyncData.bytePlayerArmour / 7);
+			}
+			else if(p->vehicleSyncData.bytePlayerArmour >= 100) 
+			{
+				byteSyncHealthArmour |= 0xF;
+			}
+
+			bsSync->Write(byteSyncHealthArmour);
+			bsSync->Write(p->vehicleSyncData.bytePlayerWeapon);
+
+			if(p->vehicleSyncData.byteSirenState)
+			{
+				bsSync->Write(true);
+			}
+			else
+			{
+				bsSync->Write(false);
+			}
+			
+			if(p->vehicleSyncData.byteGearState)
+			{
+				bsSync->Write(true);
+			}
+			else
+			{
+				bsSync->Write(false);
+			}
+
+			if(p->vehicleSyncData.fTrainSpeed)
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->vehicleSyncData.fTrainSpeed);
+			}
+			else
+			{
+				bsSync->Write(false);
+			}
+
+			if(p->vehicleSyncData.wTrailerID)
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->vehicleSyncData.wTrailerID);
+			}
+			else
+			{
+				bsSync->Write(false);
+			}
 			break;
 		}
 	}

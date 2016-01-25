@@ -136,7 +136,8 @@ struct CVehicleSyncData
 	float			fHealth;				// 0x004F - 0x0053
 	BYTE			bytePlayerHealth;		// 0x0053 - 0x0054
 	BYTE			bytePlayerArmour;		// 0x0054 - 0x0055
-	BYTE			bytePlayerWeapon;		// 0x0055 - 0x0056
+	BYTE			bytePlayerWeapon : 6;	// 0x0055 - 0x0056
+	BYTE			unk_2 : 2;				// 0x0055 - 0x0056
 	BYTE			byteSirenState;			// 0x0056 - 0x0057
 	BYTE			byteGearState;			// 0x0057 -	0x0058
 	WORD			wTrailerID;				// 0x0058 - 0x005A

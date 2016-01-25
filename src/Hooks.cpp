@@ -314,7 +314,7 @@ bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, Pack
 
 	logprintf("id: %d - playerid: %d, sendto. %d", id, playerid, pRakServer->GetIndexFromPlayerID(playerId));
 	*/
-	//RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
+	RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
 
 	return RakNetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
