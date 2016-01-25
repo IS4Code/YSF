@@ -39,11 +39,13 @@
 
 extern void *pAMXFunctions;
 
-static SubHook Namecheck_hook;
-static SubHook amx_Register_hook;
-static SubHook GetPacketID_hook;
-static SubHook logprintf_hook;
-static SubHook query_hook;
+subhook_t SetWeather_hook;
+subhook_t SetGravity_hook;
+subhook_t Namecheck_hook;
+subhook_t amx_Register_hook;
+subhook_t GetPacketID_hook;
+subhook_t logprintf_hook;
+subhook_t query_hook;
 static SubHook CVehicle__Respawn_hook;
 
 // RakServer::Send hook - Thanks to Gamer_Z
@@ -74,126 +76,66 @@ typedef bool (*RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStrea
 RakNet__Send_t RakNetOriginalSend;
 RakNet__RPC_t RakNetOriginalRPC;
 
-AMX_NATIVE pDestroyObject = NULL, pDestroyPlayerObject = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL, pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL, pChangeVehicleColor = NULL, pDestroyVehicle = NULL, pAttachObjectToPlayer = NULL;
+AMX_NATIVE pDestroyObject = NULL, pDestroyPlayerObject = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL,
+	pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL, 
+	pChangeVehicleColor = NULL, pDestroyVehicle = NULL, pAttachObjectToPlayer = NULL;
 
-// Y_Less - original YSF
-bool Unlock(void *address, size_t len)
-{
-	#ifdef _WIN32
-		DWORD
-			oldp;
-		// Shut up the warnings :D
-		return !!VirtualProtect(address, len, PAGE_EXECUTE_READWRITE, &oldp);
-	#else
-		size_t
-			iPageSize = getpagesize(),
-			iAddr = ((reinterpret_cast <uint32_t>(address) / iPageSize) * iPageSize);
-		return !mprotect(reinterpret_cast <void*>(iAddr), len, PROT_READ | PROT_WRITE | PROT_EXEC);
-	#endif
-}
-/*
-// Y_Less - fixes2
-void AssemblySwap(char * addr, char * dat, int len)
-{
-	char
-		swp;
-	while (len--)
-	{
-		swp = addr[len];
-		addr[len] = dat[len];
-		dat[len] = swp;
-	}
-}
-
-void AssemblyRedirect(void * from, void * to, char * ret)
-{
-	#ifdef LINUX
-		size_t
-			iPageSize = getpagesize(),
-			iAddr = ((reinterpret_cast <uint32_t>(from) / iPageSize) * iPageSize),
-			iCount = (5 / iPageSize) * iPageSize + iPageSize * 2;
-		mprotect(reinterpret_cast <void*>(iAddr), iCount, PROT_READ | PROT_WRITE | PROT_EXEC);
-		//mprotect(from, 5, PROT_READ | PROT_WRITE | PROT_EXEC);
-	#else
-		DWORD
-			old;
-		VirtualProtect(from, 5, PAGE_EXECUTE_READWRITE, &old);
-	#endif
-	*((unsigned char *)ret) = 0xE9;
-	*((char **)(ret + 1)) = (char *)((char *)to - (char *)from) - 5;
-	AssemblySwap((char *)from, ret, 5);
-}
-*/
-bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask)
-{
-	for(; *mask; ++mask, ++data, ++pattern)
-	{
-		if(*mask == 'x' && *data != *pattern)
-			return false;
-	}
-	return (*mask) == NULL;
-}
-
-DWORD FindPattern(char *pattern, char *mask)
-{
-	DWORD i;
-	DWORD size;
-	DWORD address;
-#ifdef _WIN32
-	MODULEINFO info = { 0 };
-
-	address = (DWORD)GetModuleHandle(NULL);
-	GetModuleInformation(GetCurrentProcess(), GetModuleHandle(NULL), &info, sizeof(MODULEINFO));
-	size = (DWORD)info.SizeOfImage;
-#else
-	address = 0x804b480; // around the elf base
-	size = 0x8128B80 - address;
-#endif
-	for(i = 0; i < size; ++i)
-	{
-		if(memory_compare((BYTE *)(address + i), (BYTE *)pattern, mask))
-			return (DWORD)(address + i);
-	}
-	return 0;
-}
-
-void InstallJump(unsigned long addr, void *func)
-{
-#ifdef WIN32
-	unsigned long dwOld;
-	VirtualProtect((LPVOID)addr, 5, PAGE_EXECUTE_READWRITE, &dwOld);
-#else
-	int pagesize = sysconf(_SC_PAGE_SIZE);
-	void *unpraddr = (void *)(((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize;
-	mprotect(unpraddr, pagesize, PROT_WRITE);
-#endif
-	*(unsigned char *)addr = 0xE9;
-	*(unsigned long *)((unsigned long)addr + 0x1) = (unsigned long)func - (unsigned long)addr - 5;
-#ifdef WIN32
-	VirtualProtect((LPVOID)addr, 5, dwOld, &dwOld);
-#else
-	mprotect(unpraddr, pagesize, PROT_READ | PROT_EXEC);
-#endif
-}
 ///////////////////////////////////////////////////////////////
 // Hooks //
 ///////////////////////////////////////////////////////////////
+/* I was unable to hook this function :(
+This needed in future to fix /rcon weather id do not update GetPlayerWeather
+class CHookedNetgame
+{
+	static void __thiscall HOOK_CNetGame__SetWeather(void *pNetGame_, BYTE byteWeather);
+	static void __thiscall HOOK_CNetGame__SetGravity(void *pNetGame_, float fGravity);
+
+};
 
 //----------------------------------------------------
-// Custom name check
+typedef void (__thiscall *FUNC_CNetGame__SetWeather)(void *pNetGame_, BYTE byteWeather);
+void __thiscall HOOK_CNetGame__SetWeather(void *pNetGame_, BYTE byteWeather)
+{
+	subhook_remove(SetWeather_hook);
 
+	((FUNC_CNetGame__SetWeather)CAddress::FUNC_CNetGame__SetWeather)(pNetGame, byteWeather);
+
+	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		if (IsPlayerConnectedEx(i))
+			pPlayerData[i]->byteWeather = byteWeather;
+	}
+
+	subhook_install(SetWeather_hook);
+}
+
+
+//typedef BYTE (*FUNC_GetPacketID)(Packet *p);
+//----------------------------------------------------
+typedef void (__thiscall *FUNC_CNetGame__SetGravity)(void *pNetGame_, float fGravity);
+void HOOK_CNetGame__SetGravity(void *pNetGame_, float fGravity)
+{
+	((FUNC_CNetGame__SetGravity)CAddress::FUNC_CNetGame__SetWeather)(pNetGame_, fGravity);
+
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		if(IsPlayerConnectedEx(i))
+			pPlayerData[i]->fGravity = fGravity; 
+	}
+}
+*/
+//----------------------------------------------------
+// Custom name check
 bool HOOK_ContainsInvalidChars(char * szString)
 {
-	SubHook::ScopedRemove remove(&Namecheck_hook);
-
 	return !pServer->IsValidNick(szString);
 }
 
 //----------------------------------------------------
+
+typedef BYTE (*FUNC_amx_Register)(AMX *amx, AMX_NATIVE_INFO *nativelist, int number);
 int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 {
-	SubHook::ScopedRemove remove(&amx_Register_hook);
-
 	// amx_Register hook for redirect natives
 	static bool g_bNativesHooked = false;
 
@@ -243,12 +185,12 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			
 			while (RedirectedNatives[x].name)
 			{
-				//logprintf("asdasd %s", RedirecedtNatives[x].name);
+				//logprintf("asdasd %s", RedirectedNatives[x].name);
 				if (!strcmp(nativelist[i].name, RedirectedNatives[x].name))
 				{
 					if (!g_bNativesHooked) g_bNativesHooked = true;
 				
-					//logprintf("native: %s, %s", nativelist[i].name, RedirecedtNatives[x].name);
+					//logprintf("native: %s, %s", nativelist[i].name, RedirectedNatives[x].name);
 					nativelist[i].func = RedirectedNatives[x].func;
 				}
 				x++;
@@ -257,37 +199,25 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		}
 	}
 
-	return amx_Register(amx, nativelist, number);
+	return ((FUNC_amx_Register)subhook_get_trampoline(amx_Register_hook))(amx, nativelist, number);
 }
 
 //----------------------------------------------------
 
-bool IsPlayerUpdatePacket(unsigned char packetId)
-{
-	switch (packetId)
-	{
-	case ID_PLAYER_SYNC:
-	case ID_VEHICLE_SYNC:
-	case ID_PASSENGER_SYNC:
-	case ID_SPECTATOR_SYNC:
-	case ID_AIM_SYNC:
-	case ID_TRAILER_SYNC:
-		return true;
-	default:
-		return false;
-	}
-	return false;
-}
-
+typedef BYTE (*FUNC_GetPacketID)(Packet *p);
 static BYTE HOOK_GetPacketID(Packet *p)
 {
-	SubHook::ScopedRemove remove(&GetPacketID_hook);
+	subhook_remove(GetPacketID_hook);
 
-	BYTE packetId = GetPacketID(p);
+	BYTE packetId = ((FUNC_GetPacketID)CAddress::FUNC_GetPacketID)(p);
 	WORD playerid = p->playerIndex;
-
-	//logprintf("packetid: %d, playeird: %d", packetId, playerid);
-
+	
+	if (packetId == 0xFF) 
+	{
+		subhook_install(GetPacketID_hook);
+		return 0xFF;
+	}
+	
 	if (IsPlayerConnectedEx(playerid))
 	{
 		// AFK
@@ -321,7 +251,7 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			{
 				CAimSyncData *pAim = reinterpret_cast<CAimSyncData*>(&p->data[1]);
 
-				// Fix up, down aim sync
+				// Fix up, down aim sync - thx to Slice, from SKY
 				switch(pNetGame->pPlayerPool->pPlayer[playerid]->byteCurrentWeapon)
 				{
 					case WEAPON_SNIPER:
@@ -346,17 +276,25 @@ static BYTE HOOK_GetPacketID(Packet *p)
 			}
 			case ID_STATS_UPDATE:
 			{
-				pServer->Packet_StatsUpdate(p);
+				CSAMPFunctions::Packet_StatsUpdate(p);
+				CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
+
+				subhook_install(GetPacketID_hook);
 				return 0xFF;
 			}
 			case ID_WEAPONS_UPDATE:
 			{
 				CSAMPFunctions::Packet_WeaponsUpdate(p);
 				CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
+
+				subhook_install(GetPacketID_hook);
 				return 0xFF;
 			}
 		}
 	}
+
+	subhook_install(GetPacketID_hook);
+
 	return packetId;
 }
 
@@ -368,15 +306,15 @@ bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* param
 bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 #endif
 {
-/*
+	/*
 	BYTE id;
 	WORD playerid;
 	parameters->Read(id);
 	parameters->Read(playerid);
 
 	logprintf("id: %d - playerid: %d, sendto. %d", id, playerid, pRakServer->GetIndexFromPlayerID(playerId));
-*/
-	RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
+	*/
+	//RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
 
 	return RakNetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
@@ -408,9 +346,11 @@ void RconSocketReply(char* szMessage);
 
 //----------------------------------------------------
 
-static void HOOK_logprintf(const char *msg, ...)
+typedef void (*FUNC_logprintf)(const char *msg, ...);
+
+void HOOK_logprintf(const char *msg, ...)
 {
-	SubHook::ScopedRemove remove(&logprintf_hook);
+	subhook_remove(logprintf_hook);
 
 	char buffer[1024];
 	va_list arguments;
@@ -419,10 +359,27 @@ static void HOOK_logprintf(const char *msg, ...)
 	va_end(arguments);
 
 	if(CCallbackManager::OnServerMessage(buffer))
-		logprintf(buffer);
+	{
+		// Fix crash caused by % symbol (by default this crash at /rcon varlist)
+		int i = 0;
+		bool bDoNotPrint = false;
+		while(buffer[i])
+		{
+			if(buffer[i++] == '%')
+			{
+				bDoNotPrint = true;
+ 				break;
+			}
+		}
 
-	if (bRconSocketReply) 
-		RconSocketReply(buffer);
+		if(!bDoNotPrint)
+			logprintf(buffer);
+	
+		if (bRconSocketReply) 
+			RconSocketReply(buffer);
+	}
+
+	subhook_install(logprintf_hook);
 }
 
 //----------------------------------------------------
@@ -474,36 +431,6 @@ bool CheckQueryFlood(unsigned int binaryAddress)
 
 //----------------------------------------------------
 
-char* RemoveHexColorFromString(char *szMsg) // Thx to P3ti
-{
-/*
-	char szNonColorEmbeddedMsg[257];
-	int iNonColorEmbeddedMsgLen = 0;
-
-	for (size_t pos = 0; pos < strlen(szMsg) && szMsg[pos] != '\0'; pos++)
-	{
-		if (!((*(unsigned char*)(&szMsg[pos]) - 32) >= 0 && (*(unsigned char*)(&szMsg[pos]) - 32) < 224))
-			continue;
-
-		if (pos + 7 < strlen(szMsg))
-		{
-			if (szMsg[pos] == '{' && szMsg[pos + 7] == '}')
-			{
-				pos += 7;
-				continue;
-			}
-		}
-
-		szNonColorEmbeddedMsg[iNonColorEmbeddedMsgLen] = szMsg[pos];
-		iNonColorEmbeddedMsgLen++;
-	}
-	szNonColorEmbeddedMsg[iNonColorEmbeddedMsgLen] = 0;
-	return &szNonColorEmbeddedMsg[0];
-	*/
-	return szMsg;
-}
-
-
 int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s)
 {
 	char* szPassword = NULL;
@@ -521,7 +448,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 			to.sin_port = htons(port);
 			to.sin_addr.s_addr = binaryAddress;
 
-			if (pServer->GetBoolVariable("logqueries"))
+			if (CSAMPFunctions::GetBoolVariable("logqueries"))
 			{
 				logprintf("[query:%c] from %s", data[10], inet_ntoa(in));
 			}
@@ -539,19 +466,19 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				case 'i':	// info
 				{
 					// We do not process these queries 'query' is 0
-					if (!pServer->GetBoolVariable("query")) return 1;
+					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
-					char* szHostname = pServer->GetStringVariable("hostname");
+					char* szHostname = CSAMPFunctions::GetStringVariable("hostname");
 					size_t dwHostnameLen = strlen(szHostname);
 					if (dwHostnameLen > 50) dwHostnameLen = 50;
 
-					char* szGameMode = pServer->GetStringVariable("gamemodetext");
+					char* szGameMode = CSAMPFunctions::GetStringVariable("gamemodetext");
 					size_t dwGameModeLen = strlen(szGameMode);
 					if (dwGameModeLen > 30) dwGameModeLen = 30;
 
-					char* szLanguage = pServer->GetStringVariable("language");
-					char* szMapName = (!szLanguage[0]) ? pServer->GetStringVariable("mapname") : szLanguage;
+					char* szLanguage = CSAMPFunctions::GetStringVariable("language");
+					char* szMapName = (!szLanguage[0]) ? CSAMPFunctions::GetStringVariable("mapname") : szLanguage;
 
 					size_t dwMapNameLen = strlen(szMapName);
 					if (dwMapNameLen > 30) dwMapNameLen = 30;
@@ -561,7 +488,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 					WORD wMaxPlayers = pServer->GetMaxPlayers_();
 
-					BYTE byteIsPassworded = pServer->GetStringVariable("password")[0] != 0;
+					BYTE byteIsPassworded = CSAMPFunctions::GetStringVariable("password")[0] != 0;
 
 					size_t datalen = 28;	// Previous data = 11b
 					// IsPassworded = 1b
@@ -616,7 +543,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				case 'c':	// players
 				{
 					// We do not process these queries 'query' is 0
-					if (!pServer->GetBoolVariable("query")) return 1;
+					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
 					WORD wPlayerCount = pServer->GetPlayerCount();
@@ -662,7 +589,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				case 'd':	// detailed player list id.namelength.name.score.ping
 				{
 					// We do not process these queries 'query' is 0
-					if (!pServer->GetBoolVariable("query")) return 1;
+					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
 					WORD wPlayerCount = pServer->GetPlayerCount();
@@ -712,7 +639,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				case 'r':	// rules
 				{
 					// We do not process these queries 'query' is 0
-					if (!pServer->GetBoolVariable("query")) return 1;
+					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
 					CSAMPFunctions::SendRules(s, data, (sockaddr_in*)&to, sizeof(to));
@@ -720,10 +647,10 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				}
 				case 'x':	// rcon
 				{
-					if (pRakServer && pRakServer->IsBanned(inet_ntoa(in))) return 1;
+					if (pRakServer/* && pRakServer->IsBanned(inet_ntoa(in))*/) return 1;
 					
 					// We do not process these queries 'query' is 0
-					if (!pServer->GetBoolVariable("query") || !pServer->GetBoolVariable("rcon")) return 1;
+					if (!CSAMPFunctions::GetBoolVariable("query") || !CSAMPFunctions::GetBoolVariable("rcon")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 					
 					cur_sock = s;
@@ -750,7 +677,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					szPassword[wStrLen] = 0;
 					data += wStrLen;
 					
-					if (!strcmp(szPassword, pServer->GetStringVariable("rcon_password")))
+					if (!strcmp(szPassword, CSAMPFunctions::GetStringVariable("rcon_password")))
 					{
 						// Check there's enough data for another WORD
 						tmp_datalen += sizeof(WORD);
@@ -776,6 +703,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						if (pConsole)
 						{
+							//logprintf("onremoterconpacket %d, %d, %s - %s", binaryAddress, port, szPassword, szCommand);
 							if (CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, true, szCommand))
 							{ 
 								bRconSocketReply = true;
@@ -818,7 +746,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 	}
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 
 CVehicle *_pVehicle;
 
@@ -840,10 +768,35 @@ void InstallPreHooks()
 {
 	if (pServer)
 	{
-		Namecheck_hook.Install((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
-		amx_Register_hook.Install((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
-		GetPacketID_hook.Install((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
-		//query_hook.Install((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
+	/*
+		SetWeather_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetWeather, (void *)CHookedNetgame::HOOK_CNetGame__SetWeather);
+		subhook_install(SetWeather_hook);
+		
+		SetGravity_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetGravity, (void *)HOOK_CNetGame__SetGravity);
+		subhook_install(SetGravity_hook);
+		*/
+		Namecheck_hook = subhook_new((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
+		subhook_install(Namecheck_hook);
+
+		amx_Register_hook = subhook_new((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
+		subhook_install(amx_Register_hook);
+
+#ifdef _WIN32
+		if(!GetModuleHandle("SKY.dll"))
+#else
+		if(!dlopen("SKY.so", RTLD_LAZY))
+#endif
+		{
+			GetPacketID_hook = subhook_new((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
+			subhook_install(GetPacketID_hook);
+		}
+
+		query_hook = subhook_new((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
+		subhook_install(query_hook);
+/*
+		logprintf_hook = subhook_new((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
+		subhook_install(logprintf_hook);
+*/
 /*
 #ifdef WIN32
 		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)HOOK_CVehicle__Respawn);
@@ -871,11 +824,9 @@ void InstallPostHooks()
 
 	// SetMaxPlayers() fix
 	//pRakServer->Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(pServer->GetIntVariable("port")), pServer->GetStringVariable("bind"));
-	//logprintf_hook.Install((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
-
-	
-	// Recreate GangZone pool
-	pNetGame->pGangZonePool = new CGangZonePool();
+		
+	// Recreate pools
+	pServer->pGangZonePool = new CGangZonePool();
 
 #ifdef NEW_PICKUP_SYSTEM
 	// Recreate Pickup pool
@@ -900,3 +851,47 @@ void InstallPostHooks()
 */
 }
 
+void UninstallHooks()
+{
+	if(SetWeather_hook)
+	{
+		subhook_remove(SetWeather_hook);
+		subhook_free(SetWeather_hook);
+	}
+	
+	if(SetGravity_hook)
+	{
+		subhook_remove(SetGravity_hook);
+		subhook_free(SetGravity_hook);
+	}
+	
+	if(Namecheck_hook)
+	{
+		subhook_remove(Namecheck_hook);
+		subhook_free(Namecheck_hook);
+	}
+
+	if(amx_Register_hook)
+	{
+		subhook_remove(amx_Register_hook);
+		subhook_free(amx_Register_hook);
+	}
+
+	if(GetPacketID_hook)
+	{
+		subhook_remove(GetPacketID_hook);
+		subhook_free(GetPacketID_hook);
+	}
+
+	if(query_hook)
+	{
+		subhook_remove(query_hook);
+		subhook_free(query_hook);
+	}
+
+	if(logprintf_hook)
+	{
+		subhook_remove(logprintf_hook);
+		subhook_free(logprintf_hook);
+	}
+}

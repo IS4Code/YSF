@@ -7,6 +7,7 @@
 #include <cstddef>
 #include "main.h"
 
+#ifdef NEW_PICKUP_SYSTEM
 enum ePickupType : BYTE
 {
 	GLOBAL,
@@ -72,5 +73,5 @@ private:
 
 	bool m_bStreamingEnabled;
 };
-
+#endif
 #endif

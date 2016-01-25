@@ -52,10 +52,10 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
 	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
 //	memset(bIsGangZoneFlashing, false, sizeof(bIsGangZoneFlashing));
-
+#ifdef NEW_PICKUP_SYSTEM
 	// Pickpus
 	ClientPlayerPickups.clear();
-
+#endif
 	bUpdateScoresPingsDisabled = false;
 	bFakePingToggle = false;
 	dwFakePingValue = 0;
@@ -244,7 +244,7 @@ void CPlayerData::Process(void)
 				return;
 			}
 					
-			pGangZone = pNetGame->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
+			pGangZone = pServer->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
 		}
 		else
 		{
@@ -308,6 +308,7 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 	bsSync->Read(id);
 	bsSync->Read(playerid);
 	
+	//logprintf("RebuildSyncData pre %d - %d", id, playerid);
 	if(!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(toplayerid)) return;
 
 	//logprintf("RebuildSyncData %d - %d", id, playerid);
@@ -315,9 +316,7 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 	{
 		case ID_PLAYER_SYNC:
 		{
-			//logprintf("playerid: %d", playerid);
-
-			bsSync->Reset();
+		
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 	
 			bsSync->Write((BYTE)ID_PLAYER_SYNC);
@@ -359,7 +358,7 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->WriteNormQuat(pPlayerData[toplayerid]->fCustomQuat[playerid][0], pPlayerData[toplayerid]->fCustomQuat[playerid][1], pPlayerData[toplayerid]->fCustomQuat[playerid][2], pPlayerData[toplayerid]->fCustomQuat[playerid][3]);	
 			else
 				bsSync->WriteNormQuat(p->syncData.fQuaternion[0], p->syncData.fQuaternion[1], p->syncData.fQuaternion[2], p->syncData.fQuaternion[3]);
-
+			
 			// Health & armour compression
 			BYTE byteSyncHealthArmour = 0;
 			if( p->syncData.byteHealth > 0 && p->syncData.byteHealth < 100 ) 

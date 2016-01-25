@@ -1,12 +1,14 @@
 #ifndef YSF_CSERVER_H
 #define YSF_CSERVER_H
 
-class CNetGame;
+struct CNetGame;
 class RakServer;
 struct Packet;
-class CVehicleSpawn;
+struct CVehicleSpawn;
+class CGangZonePool;
 
 #include "Addresses.h"
+#include "CGangZonePool.h"
 
 #include <vector>
 #include <set>
@@ -50,21 +52,7 @@ public:
 
 	void Packet_StatsUpdate(Packet *p);
 
-	char*	GetStringVariable(char *szRule);
-	void	SetStringVariable(char *szRule, char *szString);
-
-	float	GetFloatVariable(char *szRule);
-	void	SetFloatVariable(char *szRule, float value);
-
-	int		GetIntVariable(char *szRule);
-	void	SetIntVariable(char *szRule, int value);
-
-	bool	GetBoolVariable(char *szRule);
-	void	SetBoolVariable(char *szRule, bool value);
-
-	DWORD	GetVariableFlags(char* pVarName);
-	void	ModifyVariableFlags(char* pVarName, DWORD VarFlags);
-	
+	CGangZonePool *pGangZonePool;
 	std::map<int, CVehicleSpawn> vehicleSpawnData;
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];

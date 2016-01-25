@@ -119,15 +119,11 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 	logprintf("  %s unloaded\n", PROJECT_NAME);
 	logprintf(" ==============");
 
-	delete pNetGame->pGangZonePool;
-	pNetGame->pGangZonePool = NULL;
 #ifdef NEW_PICKUP_SYSTEM
 	delete pNetGame->pPickupPool;
 	pNetGame->pPickupPool = NULL;
 #endif
-	delete pServer;
-	pServer = NULL;
-
+	SAFE_DELETE(pServer);
 	sampgdk_Unload();
 }
 
@@ -160,6 +156,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 {
 	// Remove AMX instance from our amxlist
 	CCallbackManager::UnregisterAMX(amx);
+	UninstallHooks();
 	return AMX_ERR_NONE;
 }
 

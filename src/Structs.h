@@ -44,13 +44,23 @@
 
 class CGangZonePool;
 
+/* -------------------------------------------------------- */
+
+// Defines
 #define	MAX_ATTACHED_OBJECTS		10
 #define	MAX_FILTER_SCRIPTS			16
-#define AFK_ACCURACY					1500
+#define AFK_ACCURACY				1500
 
-typedef int                 INT;
-typedef unsigned int        UINT;
+#define MAX_PVARS					800
+#define MAX_PVAR_NAME				40
 
+#define MAX_MENU_TEXT_SIZE			32
+#define MAX_ITEMS					12
+#define MAX_COLUMNS					2
+
+/* -------------------------------------------------------- */
+
+// Server rules special
 enum CON_VARTYPE { CON_VARTYPE_FLOAT, CON_VARTYPE_INT, CON_VARTYPE_BOOL, CON_VARTYPE_STRING };
 
 #define CON_VARFLAG_DEBUG		1
@@ -59,48 +69,46 @@ enum CON_VARTYPE { CON_VARTYPE_FLOAT, CON_VARTYPE_INT, CON_VARTYPE_BOOL, CON_VAR
 
 typedef void(*VARCHANGEFUNC)();
 
+/* -------------------------------------------------------- */
+typedef struct _MATRIX4X4 
+{
+	CVector right;
+	DWORD  flags;
+	CVector up;
+	float  pad_u;
+	CVector at;
+	float  pad_a;
+	CVector pos;
+	float  pad_p;
+} MATRIX4X4, *PMATRIX4X4;
+
 struct ConsoleVariable_s
 {
-	CON_VARTYPE VarType;
-	DWORD VarFlags;
-	void* VarPtr;
-	VARCHANGEFUNC VarChangeFunc;
+	CON_VARTYPE		VarType;
+	DWORD			VarFlags;
+	void*			VarPtr;
+	VARCHANGEFUNC	VarChangeFunc;
 };
 
-class C3DText  // size 0x21
+struct C3DText  // size 0x21
 {
-public:
-	char* text;                                     // + 0x00
-    unsigned int color;                         // + 0x04
-    float posX;                                     // + 0x08
-    float posY;                                     // + 0x0C
-    float posZ;                                     // + 0x10
-    float drawDistance;                     // + 0x14
-    bool useLineOfSight;            // + 0x18
-    int virtualWorld;                  // + 0x19
-    WORD attachedToPlayerID;    // + 0x1D
-	WORD attachedToVehicleID;   // + 0x1F
+	char*			szText;                                     // + 0x00
+    DWORD			dwColor;                         // + 0x04
+	CVector			vecPos;
+	float			fDrawDistance;                     // + 0x14
+    bool			bLineOfSight;            // + 0x18
+    int				iWorld;                  // + 0x19
+    WORD			attachedToPlayerID;    // + 0x1D
+	WORD			attachedToVehicleID;   // + 0x1F
 };
 
-class C3DTextPool
-{
-public:
-	BOOL                    m_bIsCreated[MAX_3DTEXT_GLOBAL];
-	C3DText					m_TextLabels[MAX_3DTEXT_GLOBAL];
-};
+/* -------------------------------------------------------- */
+// CPlayer
+/* -------------------------------------------------------- */
 
-class CPlayerText3DLabels // size 0x9802
-{
-public:
-	C3DText				TextLabels[ MAX_3DTEXT_PLAYER ];	// + 0x0000
-	BOOL				isCreated[ MAX_3DTEXT_PLAYER ];	// + 0x8400
-	BYTE				unknown9800[MAX_3DTEXT_PLAYER];				// + 0x9400
-	WORD				ownerID;
-};
 // Big thanks to OrMisicL
-class CAimSyncData
+struct CAimSyncData
 {
-public:
 	BYTE			byteCameraMode;			// 0
 	CVector			vecFront;				// 1 - 13
 	CVector			vecPosition;			// 13 - 25
@@ -115,9 +123,8 @@ public:
 	// Size = 39
 };
 
-class CVehicleSyncData
+struct CVehicleSyncData
 {
-public:
 	WORD			wVehicleId;				// 0x001F - 0x0021
 	WORD			wUDAnalog;				// 0x0021 - 0x0023
 	WORD			wLRAnalog;				// 0x0023 - 0x0025
@@ -141,9 +148,8 @@ public:
 	// Size = 63
 };
 
-class CPassengerSyncData
+struct CPassengerSyncData
 {
-public:
 	WORD			wVehicleId;				// 0x005E - 0x0060
 	BYTE			byteSeatFlags : 7;
 	BYTE			byteDriveBy : 1;
@@ -157,9 +163,8 @@ public:
 	// Size = 24
 };
 
-class CSyncData
+struct CSyncData
 {
-public:
 	WORD			wUDAnalog;				// 0x0076 - 0x0078
 	WORD			wLRAnalog;				// 0x0078 - 0x007A
 	WORD			wKeys;					// 0x007A - 0x007C
@@ -167,7 +172,8 @@ public:
 	float			fQuaternion[4];			// 0x0088 - 0x008C
 	BYTE			byteHealth;				// 0x0098 - 0x0099
 	BYTE			byteArmour;				// 0x0099 - 0x009A
-	BYTE			byteWeapon;				// 0x009A - 0x009B
+	BYTE			byteWeapon : 6;				// 0x009A - 0x009B
+	BYTE			_unk_ : 2;
 	BYTE			byteSpecialAction;		// 0x009B - 0x009C
 	CVector			vecVelocity;			// 0x009C - 0x00A8
 	CVector			vecSurfing;				// 0x00A8 - 0x00B4
@@ -184,49 +190,34 @@ public:
 	// Size = 68
 };
 
-class CUnoccupiedSyncData // size 0x43
+struct CUnoccupiedSyncData // size 0x43
 {
-public:
-	WORD wVehicleID;				// + 0x0000
-	BYTE bytePassengerSlot;			// + 0x0002
-	CVector vecRool;				// + 0x0003
-	CVector vecDirection;			// + 0x000F
-	CVector vecPosition;			// + 0x001B
-	CVector vecVelocity;			// + 0x0027
-	CVector vecTurnVelocity;		// + 0x0033
-	float fHealth;					// + 0x003F
+	WORD			wVehicleID;				// + 0x0000
+	BYTE			bytePassengerSlot;			// + 0x0002
+	CVector			vecRool;				// + 0x0003
+	CVector			vecDirection;			// + 0x000F
+	CVector			vecPosition;			// + 0x001B
+	CVector			vecVelocity;			// + 0x0027
+	CVector			vecTurnVelocity;		// + 0x0033
+	float			fHealth;					// + 0x003F
 };
 
-class CSpectatingSyncData		// size 0x12
+struct CSpectatingSyncData		// size 0x12
 {
-public:
-	WORD		wLeftRightKeysOnSpectating;				// + 0x0000
-	WORD		wUpDownKeysOnSpectating;				// + 0x0002
-	WORD		wKeysOnSpectating;						// + 0x0004
-	CVector		vecPosition;							// + 0x0006
+	WORD			wLeftRightKeysOnSpectating;				// + 0x0000
+	WORD			wUpDownKeysOnSpectating;				// + 0x0002
+	WORD			wKeysOnSpectating;						// + 0x0004
+	CVector			vecPosition;							// + 0x0006
 };
 
-class CTrailerSyncData // size 0x36 = 54
+struct CTrailerSyncData // size 0x36 = 54
 {
-public:
-	WORD wTrailerID;				// + 0x0000
-	CVector	vecRoll;				// + 0x0002
-	CVector vecDirection;			// + 0x000E
-	CVector vecPosition;			// + 0x001A
-	CVector vecVelocity;			// + 0x0026
-	DWORD pad;
-};
-
-class CAttachedObject // sizeof = 52 - 0x34
-{
-public:
-    int				iModelID;
-    int				iBoneiD;
-    CVector         vecPos;
-    CVector         vecRot;
-    CVector         vecScale;
-	DWORD			dwMaterialColor1;
-	DWORD			dwMaterialColor2;
+	WORD			wTrailerID;				// + 0x0000
+	CVector			vecRoll;				// + 0x0002
+	CVector			vecDirection;			// + 0x000E
+	CVector			vecPosition;			// + 0x001A
+	CVector			vecVelocity;			// + 0x0026
+	DWORD			pad;
 };
 
 typedef struct CTextdraw
@@ -244,77 +235,66 @@ typedef struct CTextdraw
 			BYTE bytePadding : 3;
 		};
 	};
-	float fLetterWidth;			// 1
-	float fLetterHeight;		// 5
-	DWORD dwLetterColor;		// 9
-	float fLineWidth;			// 13
-	float fLineHeight;			// 17
-	DWORD dwBoxColor;			// 21
-	BYTE byteShadow; // 26
-	BYTE byteOutline; // 27
-	DWORD dwBackgroundColor; // 31
-	BYTE byteStyle; // 32
-	BYTE byteSelectable; // 32
-	float fX; // 33
-	float fY; // 37
-	WORD dwModelIndex; // 41 - 43
-	CVector vecRot;  // 43 - 55
-	float fZoom; // 55 - 59
-	WORD color1; // 59 - 61
-	WORD color2; // 61 - 63
+	float			fLetterWidth;			// 1
+	float			fLetterHeight;		// 5
+	DWORD			dwLetterColor;		// 9
+	float			fLineWidth;			// 13
+	float			fLineHeight;			// 17
+	DWORD			dwBoxColor;			// 21
+	BYTE			byteShadow; // 26
+	BYTE			byteOutline; // 27
+	DWORD			dwBackgroundColor; // 31
+	BYTE			byteStyle; // 32
+	BYTE			byteSelectable; // 32
+	float			fX; // 33
+	float			fY; // 37
+	WORD			dwModelIndex; // 41 - 43
+	CVector			vecRot;  // 43 - 55
+	float			fZoom; // 55 - 59
+	WORD			color1; // 59 - 61
+	WORD			color2; // 61 - 63
 } _CTextdraw;
 
-class CPlayerTextDraw
+struct CPlayerTextDraw
 {
-public:
-	BOOL				bSlotState[MAX_PLAYER_TEXT_DRAWS];
-	CTextdraw		    *TextDraw[MAX_PLAYER_TEXT_DRAWS];
-	char				*szFontText[MAX_PLAYER_TEXT_DRAWS];
-	bool				bHasText[MAX_PLAYER_TEXT_DRAWS];
+	BOOL			bSlotState[MAX_PLAYER_TEXT_DRAWS];
+	CTextdraw	    *TextDraw[MAX_PLAYER_TEXT_DRAWS];
+	char			*szFontText[MAX_PLAYER_TEXT_DRAWS];
+	bool			bHasText[MAX_PLAYER_TEXT_DRAWS];
 };
 
-#define MAX_PVARS               800
-#define MAX_PVAR_NAME			40
-/*
-// PVar enumeration
-#define PLAYER_VARTYPE_NONE		0
-#define PLAYER_VARTYPE_INT		1
-#define PLAYER_VARTYPE_STRING	2
-#define PLAYER_VARTYPE_FLOAT	3
-*/
-typedef struct PVAR_DATA_t
+struct CPlayerText3DLabels // size 0x9802
 {
-        char			pVarName[MAX_PVAR_NAME + 1];
-        BOOL			isReadOnly;
-        int				pVarType;
-        int				intValue;
-        float			floatValue;
-        char*			stringValue;
-} PVAR_DATA;
-
-class CPlayerVar
-{
-public:
-    PVAR_DATA       pVars[MAX_PVARS];
-	BOOL			isPVarActive[MAX_PVARS];
-    int				upperIndex;
+	C3DText			TextLabels[ MAX_3DTEXT_PLAYER ];	// + 0x0000
+	BOOL			isCreated[ MAX_3DTEXT_PLAYER ];	// + 0x8400
+	BYTE			unknown9800[MAX_3DTEXT_PLAYER];				// + 0x9400
+	WORD			wOwnerID;
 };
 
-class CPlayerSpawnInfo // size  46
+struct CAttachedObject // sizeof = 52 - 0x34
 {
-public:
-	BYTE byteTeam;				// 0 - 1
-	int iSkin;					// 1 - 5
-	BYTE unk;					// 5 - 6
-	CVector vecPos;				// 6 - 18
-	float fRotation;			// 18 - 22
-	int iSpawnWeapons[3];		// 22 - 34
-	int iSpawnWeaponsAmmo[3];	// 34 - 46
+    int				iModelID;
+    int				iBoneiD;
+    CVector         vecPos;
+    CVector         vecRot;
+    CVector         vecScale;
+	DWORD			dwMaterialColor1;
+	DWORD			dwMaterialColor2;
 };
 
-class CBulletSyncData // sizeof = 40
+struct CPlayerSpawnInfo // size  46
 {
-public:
+	BYTE			byteTeam;				// 0 - 1
+	int				iSkin;					// 1 - 5
+	BYTE			unk;					// 5 - 6
+	CVector			vecPos;				// 6 - 18
+	float			fRotation;			// 18 - 22
+	int				iSpawnWeapons[3];		// 22 - 34
+	int				iSpawnWeaponsAmmo[3];	// 34 - 46
+};
+
+struct CBulletSyncData // sizeof = 40
+{
 	BYTE			byteHitType;
 	WORD			wHitID;
 	CVector			vecHitOrigin;
@@ -323,10 +303,25 @@ public:
 	BYTE			byteWeaponID;
 }; 
 
-// 10505 - camera target
-class CPlayer
+struct CPVar
 {
-public:
+    char			szVarName[MAX_PVAR_NAME + 1];
+    BOOL			bIsReadOnly;
+    int				iVarType;
+    int				iValue;
+    float			fValue;
+    char*			szValue;
+};
+
+struct CPlayerVar
+{
+    CPVar			Vars[MAX_PVARS];
+	BOOL			bIsPVarActive[MAX_PVARS];
+    int				iUpperIndex;
+};
+
+struct CPlayer
+{
 	CAimSyncData			aimSyncData;			// 0 - 39
 	CVehicleSyncData		vehicleSyncData;		// 39 -
 	CPassengerSyncData		passengerSyncData;		//
@@ -353,7 +348,7 @@ public:
 	CVector					vecVehicleNewPos;	// 10493 - 10505
 	BOOL					bCameraTarget;		// 10505
 	DWORD					bHasSpawnInfo;		// 10509
-	BOOL					bUpdateKeys;		// 50513
+	BOOL					bUpdateKeys;		// 10513
 	CVector					vecPosition;		// 10517
 	float					fHealth;			// 10529 - 10533
 	float					fArmour;			// 10533 - 10537
@@ -422,81 +417,53 @@ public:
 	// Size = 9963
 };
 
-class CPlayerPool // sizeof = 99520
+struct CPlayerPool // sizeof = 99520
 {
-public:
-	DWORD				dwVirtualWorld[MAX_PLAYERS];			// 0 - 4000
-	DWORD				dwPlayersCount;							// 4000 - 4004
-	DWORD				dwlastMarkerUpdate;						// 4004 - 4008
-	float				fUpdatePlayerGameTimers;				// 4008 - 4012
-	DWORD				dwScore[MAX_PLAYERS];					// 4012 - 8012
-	DWORD				dwMoney[MAX_PLAYERS];					// 8012 - 12012
-	DWORD				dwDrunkLevel[MAX_PLAYERS];				// 12012 - 16012
-	DWORD				dwLastScoreUpdate[MAX_PLAYERS];			// 16012 - 20012
-	char				szSerial[MAX_PLAYERS][101];				// 20012 - 121012				
-	char				szVersion[MAX_PLAYERS][29];				// 121012 - 150012
-	BOOL				bIsPlayerConnectedEx[MAX_PLAYERS];		// 150012 - 154012
-	CPlayer				*pPlayer[MAX_PLAYERS];					// 154012 - 158012
-	char				szName[MAX_PLAYERS][25];				// 158012 - 183012
-	BOOL				bIsAnAdmin[MAX_PLAYERS];				// 183012 - 187012
-	BOOL				bIsNPC[MAX_PLAYERS];					// 187012 - 191012
-	PAD(pad0, 8004);											// 191012 - 199016
-	DWORD				dwPlayerPoolSize;						// 199016 - 199020
+	DWORD			dwVirtualWorld[MAX_PLAYERS];			// 0 - 4000
+	DWORD			dwPlayersCount;							// 4000 - 4004
+	DWORD			dwlastMarkerUpdate;						// 4004 - 4008
+	float			fUpdatePlayerGameTimers;				// 4008 - 4012
+	DWORD			dwScore[MAX_PLAYERS];					// 4012 - 8012
+	DWORD			dwMoney[MAX_PLAYERS];					// 8012 - 12012
+	DWORD			dwDrunkLevel[MAX_PLAYERS];				// 12012 - 16012
+	DWORD			dwLastScoreUpdate[MAX_PLAYERS];			// 16012 - 20012
+	char			szSerial[MAX_PLAYERS][101];				// 20012 - 121012				
+	char			szVersion[MAX_PLAYERS][29];				// 121012 - 150012
+	BOOL			bIsPlayerConnectedEx[MAX_PLAYERS];		// 150012 - 154012
+	CPlayer			*pPlayer[MAX_PLAYERS];					// 154012 - 158012
+	char			szName[MAX_PLAYERS][25];				// 158012 - 183012
+	BOOL			bIsAnAdmin[MAX_PLAYERS];				// 183012 - 187012
+	BOOL			bIsNPC[MAX_PLAYERS];					// 187012 - 191012
+	PAD(pad0, 8000);											// 191012 - 199012
+	DWORD			dwConnectedPlayers;						// 199012 - 199016
+	DWORD			dwPlayerPoolSize;						// 199016 - 199020
 };
 
-class CGameMode
+/* -------------------------------------------------------- */
+// CVehicle
+/* -------------------------------------------------------- */
+
+struct CVehicleSpawn // size 36
 {
-public:
-	AMX m_amx;
-	bool m_bInitialised;
-	bool m_bSleeping;
-	float m_fSleepTime;
+	int				iModelID;
+    CVector			vecPos;   
+    float			fRot;
+    int				iColor1;  
+    int				iColor2;  
+    int				iRespawnTime;
+    int				iInterior;
 };
 
-class CFilterScripts
+struct CVehicleModInfo // sizeof = 26
 {
-public:
-	void* m_pFilterScripts[MAX_FILTER_SCRIPTS];
-	char m_szFilterScriptName[MAX_FILTER_SCRIPTS][255];
-	int m_iFilterScriptCount;
+	BYTE			byteModSlots[14];                // + 0x0000
+    BYTE			bytePaintJob;                    // + 0x000E
+    int				iColor1;                             // + 0x000F
+    int				iColor2;                             // + 0x0010
 };
 
-typedef struct _MATRIX4X4 
+struct CVehicleParams // sizeof = 16
 {
-	CVector right;
-	DWORD  flags;
-	CVector up;
-	float  pad_u;
-	CVector at;
-	float  pad_a;
-	CVector pos;
-	float  pad_p;
-} MATRIX4X4, *PMATRIX4X4;
-
-class CVehicleSpawn // size 36
-{
-public:
-	int			iModelID;
-    CVector		vecPos;   
-    float		fRot;
-    int			iColor1;  
-    int			iColor2;  
-    int			iRespawnTime;
-    int			iInterior;
-};
-
-class CVehicleModInfo // sizeof = 26
-{
-public:
-	BYTE byteModSlots[14];                // + 0x0000
-    BYTE bytePaintJob;                    // + 0x000E
-    int iColor1;                             // + 0x000F
-    int iColor2;                             // + 0x0010
-};
-
-class CVehicleParams // sizeof = 16
-{
-public:
 	BYTE engine;
 	BYTE lights;
 	BYTE alarm;
@@ -504,23 +471,19 @@ public:
 	BYTE bonnet;
 	BYTE boot;
 	BYTE objective; // 6
-	
 	BYTE siren; // 7
-
 	BYTE door_driver; // 8
 	BYTE door_passenger;
 	BYTE door_backleft;
 	BYTE door_backright; // 11
-
 	BYTE windows_driver; // 12
 	BYTE windows_passenger;
 	BYTE windows_backleft;
 	BYTE windows_backright; // 15 - 16
 };
 
-class CVehicle
+struct CVehicle
 {
-public:
 	CVector			vecPosition;		// 0 - 12
 	MATRIX4X4		vehMatrix;			// 12 - 76
 	CVector			vecVelocity;		// 76 - 88
@@ -549,19 +512,40 @@ public:
     DWORD			vehRespawnTick;		// 261 -265
 };
 
-class CVehiclePool
+struct CVehiclePool
 {
-public:
-	BYTE				byteVehicleModelsUsed[212];			// 0 - 212
-	int					iVirtualWorld[MAX_VEHICLES];		// 212 - 8212
-	BOOL				bVehicleSlotState[MAX_VEHICLES];	// 8212 - 16212
-	CVehicle			*pVehicle[MAX_VEHICLES];			// 16212 - 24212
-	DWORD				dwVehiclePoolSize;					// 24212
+	BYTE			byteVehicleModelsUsed[212];			// 0 - 212
+	int				iVirtualWorld[MAX_VEHICLES];		// 212 - 8212
+	BOOL			bVehicleSlotState[MAX_VEHICLES];	// 8212 - 16212
+	CVehicle		*pVehicle[MAX_VEHICLES];			// 16212 - 24212
+	DWORD			dwVehiclePoolSize;					// 24212
 };
 
-class CObjectMaterial // sizeof = 212
+/* -------------------------------------------------------- */
+// CPickup
+/* -------------------------------------------------------- */
+
+struct tPickup // size 0x14
 {
-public:
+	int				iModel;
+	int				iType;
+	CVector			vecPos;
+};
+
+struct CPickupPool
+{
+	tPickup			Pickup[MAX_PICKUPS];			// + 0x0000
+	BOOL			bActive[MAX_PICKUPS];			// + 0xA000
+	int				iWorld[MAX_PICKUPS];		// + 0xC000
+	int				iPickupCount;
+};
+
+/* -------------------------------------------------------- */
+// CObject
+/* -------------------------------------------------------- */
+
+struct CObjectMaterial // sizeof = 212
+{
 	BYTE			byteUsed;				// 197 - 198
 	BYTE			byteSlot;				// 198 - 199
 	WORD			wModelID;				// 199 - 201
@@ -577,93 +561,151 @@ public:
 	BYTE			byteAlignment;			// 411 - 412
 };
 
-class CObject // sizeof = 3700
+struct CObject // sizeof = 3700
 {
-public:
-	WORD				wObjectID;			// 0 - 2
-	int					iModel;				// 2 - 6
-	BOOL				bActive;			// 6 - 10
-	MATRIX4X4			matWorld;			// 10 - 74 - pos - Object position
-	CVector				vecRot; 			// 74 - 86 - Object rotation
-	MATRIX4X4			matTarget;			// 86 - 150	- 
-	BYTE				bIsMoving;			// 150 - 151
-	BYTE				bNoCameraCol;		// 151 - 152
-	float				fMoveSpeed;			// 152 - 156
-	DWORD				unk_4;				// 156 -160
-	float				fDrawDistance;		// 160 - 164
-	WORD				wAttachedVehicleID;	// 164 - 166
-	WORD				wAttachedObjectID;	// 166 - 168
-	CVector				vecAttachedOffset;	// 168 - 180
-	CVector				vecAttachedRotation;// 180 - 192
-	BYTE				byteSyncRot;		// 192 - 193
-	DWORD				dwMaterialCount;	// 193 - 197
-	CObjectMaterial		Material[16];		// 197 - 3637
-	char				*szMaterialText[16];// 3637 - 3653
+	WORD			wObjectID;			// 0 - 2
+	int				iModel;				// 2 - 6
+	BOOL			bActive;			// 6 - 10
+	MATRIX4X4		matWorld;			// 10 - 74 - pos - Object position
+	CVector			vecRot; 			// 74 - 86 - Object rotation
+	MATRIX4X4		matTarget;			// 86 - 150	- 
+	BYTE			bIsMoving;			// 150 - 151
+	BYTE			bNoCameraCol;		// 151 - 152
+	float			fMoveSpeed;			// 152 - 156
+	DWORD			unk_4;				// 156 -160
+	float			fDrawDistance;		// 160 - 164
+	WORD			wAttachedVehicleID;	// 164 - 166
+	WORD			wAttachedObjectID;	// 166 - 168
+	CVector			vecAttachedOffset;	// 168 - 180
+	CVector			vecAttachedRotation;// 180 - 192
+	BYTE			byteSyncRot;		// 192 - 193
+	DWORD			dwMaterialCount;	// 193 - 197
+	CObjectMaterial	Material[16];		// 197 - 3637
+	char			*szMaterialText[16];// 3637 - 3653
 };
 
-class CObjectPool
+struct CObjectPool
 {
-public:
-	BOOL m_bPlayerObjectSlotState[MAX_PLAYERS][MAX_OBJECTS];	// 0 
-	BOOL m_bPlayersObject[MAX_OBJECTS];							// 4.000.000
-	CObject *m_pPlayerObjects[MAX_PLAYERS][MAX_OBJECTS];		// 4.004.000
-	BOOL m_bObjectSlotState[MAX_OBJECTS];						// 8.004.000
-	CObject *m_pObjects[MAX_OBJECTS];							// 8.008.000
+	BOOL			bPlayerObjectSlotState[MAX_PLAYERS][MAX_OBJECTS];	// 0 
+	BOOL			bPlayersObject[MAX_OBJECTS];							// 4.000.000
+	CObject			*pPlayerObjects[MAX_PLAYERS][MAX_OBJECTS];		// 4.004.000
+	BOOL			bObjectSlotState[MAX_OBJECTS];						// 8.004.000
+	CObject			*pObjects[MAX_OBJECTS];							// 8.008.000
 };
 
-class CTextDrawPool
+/* -------------------------------------------------------- */
+// CMenu
+/* -------------------------------------------------------- */
+
+struct MenuInteraction
 {
-public:
-	BOOL				bSlotState[MAX_TEXT_DRAWS];
-	CTextdraw		    *TextDraw[MAX_TEXT_DRAWS];
-	char				*szFontText[MAX_TEXT_DRAWS];
-	bool				bHasText[MAX_TEXT_DRAWS][MAX_PLAYERS];
+	BOOL			Menu;
+	BOOL			Row[MAX_ITEMS];
+	char			unknown[12];
+};
+	
+struct CMenu	// size 0xB84
+{
+	BYTE			menuID;														// + 0x0000
+	char			szTitle[ MAX_MENU_TEXT_SIZE ];								// + 0x0001
+	char			szItems[ MAX_ITEMS ][ MAX_COLUMNS ][ MAX_MENU_TEXT_SIZE ];	// + 0x0021
+	char			szHeaders[MAX_COLUMNS][MAX_MENU_TEXT_SIZE];					// + 0x0321
+	BOOL			bIsInitiedForPlayer[MAX_PLAYERS];							// + 0x0361
+	MenuInteraction interaction;												// + 0x0B31
+	float			fPosX;														// + 0x0B71
+	float			fPosY;														// + 0x0B75
+	float			fColumn1Width;												// + 0x0B79
+	float			fColumn2Width;												// + 0x0B7D
+	BYTE			byteColumnsNumber;											// + 0x0B81
+	BYTE			byteItemsCount[ MAX_COLUMNS ];								// + 0x0B82
 };
 
-class CSAMPGangZonePool
+struct CMenuPool
+{
+	CMenu*			pMenu[ MAX_MENUS ];			//	+ 0x0000
+	BOOL			bIsCreated[ MAX_MENUS ];		//	+ 0x0200
+	BOOL			bPlayerMenu[MAX_PLAYERS];	//	+ 0x0400
+};
+
+/* -------------------------------------------------------- */
+// CTextDraw
+/* -------------------------------------------------------- */
+struct CTextDrawPool
+{
+	BOOL			bSlotState[MAX_TEXT_DRAWS];
+	CTextdraw*		TextDraw[MAX_TEXT_DRAWS];
+	char*			szFontText[MAX_TEXT_DRAWS];
+	bool			bHasText[MAX_TEXT_DRAWS][MAX_PLAYERS];
+};
+
+/* -------------------------------------------------------- */
+// C3DText
+/* -------------------------------------------------------- */
+
+class C3DTextPool
 {
 public:
+	BOOL			bIsCreated[MAX_3DTEXT_GLOBAL]; // 0 - 4096 <- OK
+	C3DText			TextLabels[MAX_3DTEXT_GLOBAL];
+};
+
+/* -------------------------------------------------------- */
+// CGangZone
+/* -------------------------------------------------------- */
+
+struct CSAMPGangZonePool
+{
 	float			fGangZone[MAX_GANG_ZONES][4];
 	BOOL			bSlotState[MAX_GANG_ZONES];
 };
 
+/* -------------------------------------------------------- */
+// CActor
+/* -------------------------------------------------------- */
 
-#define MAX_MENU_TEXT_SIZE	32
-#define MAX_ITEMS			12
-#define MAX_COLUMNS			2
-
-struct t_MenuInteraction
+struct CActor
 {
-	BOOL	Menu;
-	BOOL	Row[MAX_ITEMS];
-	char	unknown[12];
-};
-	
-class CMenu	// size 0xB84
-{
-public:
-
-	BYTE	menuID;														// + 0x0000
-	char	title[ MAX_MENU_TEXT_SIZE ];								// + 0x0001
-	char	items[ MAX_ITEMS ][ MAX_COLUMNS ][ MAX_MENU_TEXT_SIZE ];	// + 0x0021
-	char	headers[MAX_COLUMNS][MAX_MENU_TEXT_SIZE];					// + 0x0321
-	BOOL	isInitiedForPlayer[MAX_PLAYERS];							// + 0x0361
-	t_MenuInteraction interaction;										// + 0x0B31
-	float	posX;														// + 0x0B71
-	float	posY;														// + 0x0B75
-	float	column1Width;												// + 0x0B79
-	float	column2Width;												// + 0x0B7D
-	BYTE	columnsNumber;												// + 0x0B81
-	BYTE	itemsCount[ MAX_COLUMNS ];									// + 0x0B82
-
+	BYTE pad0;				// 0
+	int iSkinID;			// 1 - 5
+	CVector vecSpawnPos;	// 5 - 17
+	float fSpawnAngle;		// 17 - 21
+	DWORD pad4;				// 21 - 25
+	DWORD pad5;				// 25 - 29
+	BYTE pad6;				// 29 - 30
+	char animation[140];	// 30 - 170
+	WORD pad7;				// 170 - 171
+	float fHealth;			// 172 - 176
+	DWORD pad;				// 176 - 180
+	float fAngle;			// 180 - 184
+	CVector vecPos;			// 184 - 196
+	DWORD pad8[3];			// 196 - 208
+	BYTE byteInvulnerable;	// 208 - 209
+	WORD wActorID;			// 209 - 211
 };
 
-class CMenuPool
+struct CActorPool
+{
+	int iActorVirtualWorld[MAX_ACTORS];
+	BOOL bValidActor[MAX_ACTORS];
+	CActor* pActor[MAX_ACTORS];
+	DWORD dwActorPoolSize;
+};
+
+class CGameMode
 {
 public:
-	CMenu*		menu[ MAX_MENUS ];			//	+ 0x0000
-	BOOL		isCreated[ MAX_MENUS ];		//	+ 0x0200
-	BOOL		playerMenu[MAX_PLAYERS];	//	+ 0x0400
+	AMX m_amx;
+	bool m_bInitialised;
+	bool m_bSleeping;
+	float m_fSleepTime;
+};
+
+class CFilterScripts
+{
+public:
+	void*				pFilterScripts[MAX_FILTER_SCRIPTS];
+	char				szFilterScriptName[MAX_FILTER_SCRIPTS][255];
+	int					iFilterScriptCount;
 };
 
 struct ScriptTimer_s // sizeof = 0x11B (283)
@@ -687,68 +729,14 @@ public:
 	DWORD m_dwTimerCount;
 };
 
-typedef struct Pickup_t // size 0x14
-{
-	int	iModel;
-	int	iType;
-	CVector		vecPos;
-} tPickup;
 
-class CPickupPool_
+struct CNetGame
 {
-public:
-	tPickup	m_Pickup[MAX_PICKUPS];			// + 0x0000
-	BOOL	m_bActive[MAX_PICKUPS];			// + 0xA000
-	int		m_iWorld[MAX_PICKUPS];		// + 0xC000
-	int		m_iPickupCount;
-};
-
-#define GAMESTATE_STOPPED	 0
-#define GAMESTATE_RUNNING	 1
-#define GAMESTATE_RESTARTING 2
-
-class CActor
-{
-public:
-	BYTE pad0;				// 0
-	int iSkinID;			// 1 - 5
-	CVector vecSpawnPos;	// 5 - 17
-	float fSpawnAngle;		// 17 - 21
-	DWORD pad4;				// 21 - 25
-	DWORD pad5;				// 25 - 29
-	BYTE pad6;				// 29 - 30
-	char animation[140];	// 30 - 170
-	WORD pad7;				// 170 - 171
-	float fHealth;			// 172 - 176
-	DWORD pad;				// 176 - 180
-	float fAngle;			// 180 - 184
-	CVector vecPos;			// 184 - 196
-	DWORD pad8[3];			// 196 - 208
-	BYTE byteInvulnerable;	// 208 - 209
-	WORD wActorID;			// 209 - 211
-};
-
-class CActorPool
-{
-public:
-	int iActorVirtualWorld[1000];
-	BOOL bValidActor[1000];
-	CActor* pActor[1000];
-	DWORD dwActorPoolSize;
-};
-
-class CNetGame
-{
-	public:
 		CGameMode				*pGameModePool;			// 0
 		CFilterScripts			*pFilterScriptPool;		// 4
 		CPlayerPool				*pPlayerPool;			// 8
 		CVehiclePool			*pVehiclePool;			// 12
-#ifndef NEW_PICKUP_SYSTEM
-		CPickupPool_			*pPickupPool;			// 16
-#else
 		CPickupPool				*pPickupPool;			// 16
-#endif
 		CObjectPool				*pObjectPool;			// 20
 		CMenuPool				*pMenuPool;				// 24
 		CTextDrawPool			*pTextDrawPool;			// 28

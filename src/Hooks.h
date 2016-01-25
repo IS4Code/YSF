@@ -12,15 +12,8 @@
 
 extern AMX_NATIVE pDestroyObject, pDestroyPlayerObject, pTogglePlayerControllable, pSetPlayerWorldBounds, pSetPlayerTeam, pSetPlayerSkin, pSetPlayerFightingStyle, pSetPlayerName, pSetVehicleToRespawn, pChangeVehicleColor, pDestroyVehicle, pAttachObjectToPlayer;
 
-// Definitions
-bool Unlock(void *address, size_t len);
-//void AssemblySwap(char * addr, char * dat, int len);
-//void AssemblyRedirect(void * from, void * to, char * ret);
-
-bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask);
-DWORD FindPattern(char *pattern, char *mask);
-
 void InstallPreHooks();
 void InstallPostHooks();
+void UninstallHooks();
 
 #endif

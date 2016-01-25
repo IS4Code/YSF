@@ -125,12 +125,12 @@ void Death(RPCParameters* rpcParams)
 			return;
 		}
 
-		if (pServer->GetIntVariable("chatlogging"))
+		if (CSAMPFunctions::GetIntVariable("chatlogging"))
 			logprintf("[kill] %s killed %s %s", GetPlayerName_(killerid), GetPlayerName_(playerid), CUtils::GetWeaponName_(reasonid));
 	}
 	else
 	{
-		if (pServer->GetIntVariable("chatlogging"))
+		if (CSAMPFunctions::GetIntVariable("chatlogging"))
 			logprintf("[death] %s died %d", GetPlayerName_(playerid), reasonid);
 	}
 	
@@ -195,9 +195,9 @@ void PickedUpPickup(RPCParameters* rpcParams)
 #else
 	if (pickupid >= 0 && pickupid < MAX_PICKUPS)
 	{
-		if (pNetGame->pPickupPool->m_bActive[pickupid])
+		if (pNetGame->pPickupPool->bActive[pickupid])
 		{
-			if (GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &pNetGame->pPickupPool->m_Pickup[pickupid].vecPos) > 15.0)
+			if (GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &pNetGame->pPickupPool->Pickup[pickupid].vecPos) > 15.0)
 			{
 				logprintf("fakepickup %d", pickupid);
 				return;

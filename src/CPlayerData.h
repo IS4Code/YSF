@@ -115,7 +115,7 @@ public:
 	std::bitset<MAX_GANG_ZONES> bIsGangZoneFlashing;
 	DWORD dwClientSideZoneColor[MAX_GANG_ZONES];
 	DWORD dwClientSideZoneFlashColor[MAX_GANG_ZONES];
-
+#ifdef NEW_PICKUP_SYSTEM
 	// Pickpus - clientside (global/player)
 	PickupMap ClientPlayerPickups;
 	std::bitset<MAX_PICKUPS> bClientPickupSlots;
@@ -124,7 +124,7 @@ public:
 	// Pickups - per-player
 	PickupMap PlayerPickups;
 	std::bitset<MAX_PICKUPS> bPlayerPickup;
-
+#endif
 	DWORD dwFakePingValue;
 	DWORD dwLastUpdateTick;
 	

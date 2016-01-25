@@ -18,8 +18,10 @@ CServer::CServer(eSAMPVersion version)
 
 CServer::~CServer()
 {
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	for(int i = 0; i != MAX_PLAYERS; i++)
 		RemovePlayer(i);
+
+	SAFE_DELETE(pGangZonePool);
 }
 
 bool CServer::AddPlayer(int playerid)
@@ -84,7 +86,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
 		{
 			// logprintf("should work");
-			if(!pObjectPool->m_pPlayerObjects[forplayerid][i]) 
+			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
 			{
 				//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
 				return 0;
@@ -93,8 +95,8 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			//logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
 			// First create the object for the player. We don't remove it from the pools, so we need to send RPC for the client to create object
 			RakNet::BitStream bs2;
-			bs2.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
-			bs2.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->iModel);  // iModel
+			bs2.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
+			bs2.Write(pObjectPool->pPlayerObjects[forplayerid][i]->iModel);  // iModel
 
 			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
 			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);
@@ -109,7 +111,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 
 			// Attach created object to player
 			RakNet::BitStream bs;
-			bs.Write(pObjectPool->m_pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
+			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
 			bs.Write(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID); // playerid
 
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
@@ -149,7 +151,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
 		{
-			if(!pObjectPool->m_pPlayerObjects[forplayerid][i]) 
+			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
 			{
 				//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - m_pPlayerObjects = 0");
 				return 0;
@@ -175,7 +177,7 @@ void CServer::SetGravity_(float fGravity)
 	sprintf(szGravity, "%f", fGravity);
 
 	pNetGame->fGravity = fGravity;
-	pServer->SetStringVariable("gravity", szGravity);
+	CSAMPFunctions::SetStringVariable("gravity", szGravity);
 
 	// Minden játékos gravitációja átállítása arra, amire a szerver gravitációját beállítottuk
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
@@ -201,14 +203,9 @@ void CServer::SetWeather_(BYTE byteWeather)
 	sprintf(szWeather, "%d", byteWeather);
 	
 	pNetGame->byteWeather = byteWeather;
-	pServer->SetStringVariable("weather", szWeather);
+	CSAMPFunctions::SetStringVariable("weather", szWeather);
 
 	// Minden játékos idõjárása átállítása arra, amire a szerver idõjárást beállítottuk
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
-	{
-		if (IsPlayerConnectedEx(i))
-			pPlayerData[i]->byteWeather = byteWeather;
-	}
 
 	RakNet::BitStream bs;
 	bs.Write(byteWeather);
@@ -278,7 +275,7 @@ WORD CServer::GetMaxPlayers_()
 	for (WORD i = 0; i != MAX_PLAYERS; i++)
 		if (pPlayerPool->bIsNPC[i])
 			count++;
-	return static_cast<WORD>(pServer->GetIntVariable("maxplayers")) - count;
+	return static_cast<WORD>(CSAMPFunctions::GetIntVariable("maxplayers")) - count;
 }
 
 WORD CServer::GetPlayerCount()
@@ -299,133 +296,4 @@ WORD CServer::GetNPCCount()
 		if (pPlayerPool->bIsPlayerConnectedEx[i] && pPlayerPool->bIsNPC[i])
 			count++;
 	return count;
-}
-
-//----------------------------------------------------
-
-void CServer::Packet_StatsUpdate(Packet *p)
-{
-	RakNet::BitStream bsStats((unsigned char*)p->data, p->length, false);
-	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-	WORD playerid = p->playerIndex;
-	int money;
-	int drunklevel;
-
-	bsStats.SetReadOffset(8);
-	bsStats.Read(money);
-	bsStats.Read(drunklevel);
-
-	if (!IsPlayerConnectedEx(playerid)) return;
-	
-	pPlayerPool->dwMoney[playerid] = money;
-	pPlayerPool->dwDrunkLevel[playerid] = drunklevel;
-
-	CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
-}
-
-char* CServer::GetStringVariable(char* pVarName)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		if (ConVar->VarType == CON_VARTYPE_STRING)
-			return (char*)ConVar->VarPtr;
-	}
-	return NULL;
-}
-
-void CServer::SetStringVariable(char* pVarName, char* pString)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		if (ConVar->VarType == CON_VARTYPE_STRING)
-		{
-			char* str = new char[strlen(pString) + 1];
-			strcpy(str, pString);
-			ConVar->VarPtr = str;
-		}
-	}
-}
-
-float CServer::GetFloatVariable(char* pVarName)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		if (ConVar->VarType == CON_VARTYPE_FLOAT)
-			return *(float*)ConVar->VarPtr;
-	}
-	return 0.0f;
-}
-
-void CServer::SetFloatVariable(char* pVarName, float fFloat)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		if (ConVar->VarType == CON_VARTYPE_FLOAT)
-			*(float*)ConVar->VarPtr = fFloat;
-	}
-}
-
-int CServer::GetIntVariable(char* pVarName)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		if (ConVar->VarType == CON_VARTYPE_INT)
-			return *(int*)ConVar->VarPtr;
-	}
-	return 0;
-}
-
-void CServer::SetIntVariable(char* pVarName, int iInt)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		if (ConVar->VarType == CON_VARTYPE_INT)
-			*(int*)ConVar->VarPtr = iInt;
-	}
-}
-
-bool CServer::GetBoolVariable(char* pVarName)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		if (ConVar->VarType == CON_VARTYPE_BOOL)
-			return *(bool*)ConVar->VarPtr;
-	}
-	return false;
-}
-
-void CServer::SetBoolVariable(char* pVarName, bool bBool)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		if (ConVar->VarType == CON_VARTYPE_BOOL)
-			*(bool*)ConVar->VarPtr = bBool;
-	}
-}
-
-DWORD CServer::GetVariableFlags(char* pVarName)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		return ConVar->VarFlags;
-	}
-	return 0;
-}
-
-void CServer::ModifyVariableFlags(char* pVarName, DWORD VarFlags)
-{
-	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(pVarName);
-	if (ConVar != NULL)
-	{
-		ConVar->VarFlags = VarFlags;
-	}
 }

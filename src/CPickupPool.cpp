@@ -2,6 +2,7 @@
 
 #define MAX_PICKUP_DISTANCE	70.0f
 
+#ifdef NEW_PICKUP_SYSTEM
 CPickupPool::CPickupPool() : m_bStreamingEnabled(1)
 {
 
@@ -318,3 +319,4 @@ bool CPickupPool::IsStreamingEnabled(void)
 {
 	return m_bStreamingEnabled;
 }
+#endif

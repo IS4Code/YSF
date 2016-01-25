@@ -462,7 +462,6 @@ static cell AMX_NATIVE_CALL Natives::GetModeRestartTime(AMX *amx, cell *params)
 
 	if (!CAddress::VAR_pRestartWaitTime) return 0;
 
-	CHECK_PARAMS(1, "SetModeRestartTime");
 	float fRestartTime = *(float*)CAddress::VAR_pRestartWaitTime;
 	return amx_ftoc(fRestartTime);
 }
@@ -477,7 +476,7 @@ static cell AMX_NATIVE_CALL Natives::SetMaxPlayers(AMX *amx, cell *params)
 	int maxplayers = static_cast<int>(params[1]);
 	if(maxplayers < 1 || maxplayers > MAX_PLAYERS) return 0;
 
-	pServer->SetIntVariable("maxplayers", maxplayers);
+	CSAMPFunctions::SetIntVariable("maxplayers", maxplayers);
 	return 1;
 }
 
@@ -491,7 +490,7 @@ static cell AMX_NATIVE_CALL Natives::SetMaxNPCs(AMX *amx, cell *params)
 	int maxnpcs = static_cast<int>(params[1]);
 	if(maxnpcs < 1 || maxnpcs > MAX_PLAYERS) return 0;
 
-	pServer->SetIntVariable("maxnpc", maxnpcs);
+	CSAMPFunctions::SetIntVariable("maxnpc", maxnpcs);
 	return 1;
 }
 
@@ -552,7 +551,7 @@ static cell AMX_NATIVE_CALL Natives::UnLoadFilterScript(AMX *amx, cell *params)
 // native GetFilterScriptCount();
 static cell AMX_NATIVE_CALL Natives::GetFilterScriptCount(AMX *amx, cell *params)
 {
-	return pNetGame->pFilterScriptPool->m_iFilterScriptCount;
+	return pNetGame->pFilterScriptPool->iFilterScriptCount;
 }
 
 // native GetFilterScriptName(id, name[], len = sizeof(name));
@@ -563,7 +562,7 @@ static cell AMX_NATIVE_CALL Natives::GetFilterScriptName(AMX *amx, cell *params)
 	int id = static_cast<int>(params[1]);
 	if(id >= MAX_FILTER_SCRIPTS) return 0;
 
-	return set_amxstring(amx, params[2], pNetGame->pFilterScriptPool->m_szFilterScriptName[id], params[3]);
+	return set_amxstring(amx, params[2], pNetGame->pFilterScriptPool->szFilterScriptName[id], params[3]);
 }
 
 // native AddServerRule(name[], value[], flags = CON_VARFLAG_RULE);
@@ -607,7 +606,7 @@ static cell AMX_NATIVE_CALL Natives::SetServerRule(AMX *amx, cell *params)
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
 		if (ConVar != NULL)
 		{
-			pServer->SetStringVariable(name, value);
+			CSAMPFunctions::SetStringVariable(name, value);
 			return 1;
 		}
 	}
@@ -630,7 +629,7 @@ static cell AMX_NATIVE_CALL Natives::SetServerRuleInt(AMX *amx, cell *params)
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
 		if (ConVar != NULL)
 		{
-			pServer->SetIntVariable(name, static_cast<int>(params[2]));
+			CSAMPFunctions::SetIntVariable(name, static_cast<int>(params[2]));
 			return 1;
 		}
 		return 1;
@@ -689,7 +688,7 @@ static cell AMX_NATIVE_CALL Natives::SetServerRuleFlags(AMX *amx, cell *params)
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		pServer->ModifyVariableFlags(name, (DWORD)params[2]);
+		CSAMPFunctions::ModifyVariableFlags(name, (DWORD)params[2]);
 		return 1;
 	}
 	return 0;
@@ -711,7 +710,7 @@ static cell AMX_NATIVE_CALL Natives::GetServerRuleFlags(AMX *amx, cell *params)
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
 		if (ConVar != NULL)
 		{
-			return pServer->GetVariableFlags(name);
+			return ConVar->VarFlags;
 		}
 		return 0;
 	}
@@ -1385,7 +1384,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyObject(AMX* amx, cell* params)
 	int objectid = static_cast<int>(params[1]);
 
 	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
-	if(!pNetGame->pObjectPool->m_pObjects[objectid]) return 0;
+	if(!pNetGame->pObjectPool->pObjects[objectid]) return 0;
 
 	if(pDestroyObject(amx, params))
 	{
@@ -1408,7 +1407,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 	int objectid = static_cast<int>(params[2]);
 
 	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	if(pDestroyPlayerObject(amx, params) && IsPlayerConnectedEx(playerid))
 	{
@@ -2061,7 +2060,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cel
 	int expiretime = static_cast<int>(params[6]);
 
 	char *str;
-	amx_StrParam(amx, params[2], str);
+	amx_StrParam(amx, params[3], str);
 	if(str)
 	{
 		BYTE len = static_cast<BYTE>(strlen(str));
@@ -2294,9 +2293,9 @@ static cell AMX_NATIVE_CALL Natives::GetObjectDrawDistance( AMX* amx, cell* para
 
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->fDrawDistance);
+	return amx_ftoc(pNetGame->pObjectPool->pObjects[objectid]->fDrawDistance);
 }
 
 // native Float:SetObjectMoveSpeed(objectid, Float:fSpeed);
@@ -2310,9 +2309,9 @@ static cell AMX_NATIVE_CALL Natives::SetObjectMoveSpeed( AMX* amx, cell* params 
 
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	pNetGame->pObjectPool->m_pObjects[objectid]->fMoveSpeed = amx_ctof(params[2]);
+	pNetGame->pObjectPool->pObjects[objectid]->fMoveSpeed = amx_ctof(params[2]);
 	return 1;
 }
 
@@ -2327,9 +2326,9 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMoveSpeed( AMX* amx, cell* params 
 
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	return amx_ftoc(pNetGame->pObjectPool->m_pObjects[objectid]->fMoveSpeed);
+	return amx_ftoc(pNetGame->pObjectPool->pObjects[objectid]->fMoveSpeed);
 }
 
 // native GetObjectTarget(objectid, &Float:fX, &Float:fY, &Float:fZ);
@@ -2343,10 +2342,10 @@ static cell AMX_NATIVE_CALL Natives::GetObjectTarget( AMX* amx, cell* params )
 
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	cell* cptr;
-	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	amx_GetAddr(amx, params[2], &cptr);
 	*cptr = amx_ftoc(pObject->matTarget.pos.fX);
 	amx_GetAddr(amx, params[3], &cptr);
@@ -2368,10 +2367,10 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedData( AMX* amx, cell* para
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	cell* cptr;
-	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	amx_GetAddr(amx, params[2], &cptr);
 	*cptr = (cell)pObject->wAttachedVehicleID;
 	amx_GetAddr(amx, params[3], &cptr);
@@ -2393,10 +2392,10 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedOffset( AMX* amx, cell* pa
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	cell* cptr;
-	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	amx_GetAddr(amx, params[2], &cptr);
 	*cptr = amx_ftoc(pObject->vecAttachedOffset.fX);
 	amx_GetAddr(amx, params[3], &cptr);
@@ -2427,10 +2426,10 @@ static cell AMX_NATIVE_CALL Natives::IsObjectMaterialSlotUsed( AMX* amx, cell* p
 	int materialindex = static_cast<int>(params[2]);
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	int i = 0;
-	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	
 	// Nothing to comment here..
 	while(i != 16)
@@ -2458,10 +2457,10 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterial( AMX* amx, cell* params )
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	int i = 0;
-	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 
 	// Nothing to comment here..
 	while(i != 16)
@@ -2498,10 +2497,10 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterialText( AMX* amx, cell* para
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	int i = 0;
-	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 
 	// Nothing to comment here..
 	while(i != 16)
@@ -2513,7 +2512,7 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterialText( AMX* amx, cell* para
 
 	cell *cptr;
 
-	set_amxstring(amx, params[3], pObject->Material[i].szMaterialTXD, params[4]); 
+	set_amxstring(amx, params[3], pObject->szMaterialText[i], params[4]); 
 
 	amx_GetAddr(amx, params[5], &cptr);
 	*cptr = (cell)pObject->Material[i].byteMaterialSize; // materialsize
@@ -2545,9 +2544,9 @@ static cell AMX_NATIVE_CALL Natives::IsObjectNoCameraCol( AMX* amx, cell* params
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	if(!pNetGame->pObjectPool->m_bObjectSlotState[objectid]) return 0;
+	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	return pNetGame->pObjectPool->m_pObjects[objectid]->bNoCameraCol;
+	return pNetGame->pObjectPool->pObjects[objectid]->bNoCameraCol;
 }
 
 // native Float:GetPlayerObjectDrawDistance(playerid, objectid);
@@ -2564,9 +2563,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectDrawDistance( AMX* amx, cell
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= 1000) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fDrawDistance);
+	return amx_ftoc(pNetGame->pObjectPool->pPlayerObjects[playerid][objectid]->fDrawDistance);
 }
 
 // native Float:SetPlayerObjectMoveSpeed(playerid, objectid, Float:fSpeed);
@@ -2583,9 +2582,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerObjectMoveSpeed( AMX* amx, cell* p
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed = amx_ctof(params[3]);
+	pNetGame->pObjectPool->pPlayerObjects[playerid][objectid]->fMoveSpeed = amx_ctof(params[3]);
 	return 1;
 }
 
@@ -2603,9 +2602,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMoveSpeed( AMX* amx, cell* p
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	return amx_ftoc(pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->fMoveSpeed);
+	return amx_ftoc(pNetGame->pObjectPool->pPlayerObjects[playerid][objectid]->fMoveSpeed);
 }
 
 // native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ);
@@ -2622,10 +2621,10 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectTarget( AMX* amx, cell* para
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	cell* cptr;
-	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	amx_GetAddr(amx, params[3], &cptr);
 	*cptr = amx_ftoc(pObject->matTarget.pos.fX);
 	amx_GetAddr(amx, params[4], &cptr);
@@ -2649,10 +2648,10 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	cell* cptr;
-	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	amx_GetAddr(amx, params[3], &cptr);
 	*cptr = (cell)pObject->wAttachedVehicleID;
 	amx_GetAddr(amx, params[4], &cptr);
@@ -2676,10 +2675,10 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, ce
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	cell* cptr;
-	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
 	CVector* vecOffset = NULL;
 	CVector* vecRot = NULL;
@@ -2726,10 +2725,10 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerObjectMaterialSlotUsed( AMX* amx, c
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	int i = 0;
-	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
 	// Nothing to comment here..
 	while(i != 16)
@@ -2759,11 +2758,11 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterial( AMX* amx, cell* pa
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	cell* cptr;
 	int i = 0;
-	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
 	// Nothing to comment here..
 	while(i != 16)
@@ -2800,11 +2799,11 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	cell* cptr;
 	int i = 0;
-	CObject *pObject = pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid];
+	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
 	// Nothing to comment here..
 	while(i != 16)
@@ -2814,7 +2813,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 	}
 	if(i == 16) return 0;
 
-	set_amxstring(amx, params[4], pObject->Material[i].szMaterialTXD, params[5]); 
+	set_amxstring(amx, params[4], pObject->szMaterialText[i], params[5]); 
 
 	amx_GetAddr(amx, params[6], &cptr);
 	*cptr = (cell)pObject->Material[i].byteMaterialSize; // materialsize
@@ -2848,9 +2847,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerObjectNoCameraCol( AMX* amx, cell* 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	return pNetGame->pObjectPool->m_pPlayerObjects[playerid][objectid]->bNoCameraCol;
+	return pNetGame->pObjectPool->pPlayerObjects[playerid][objectid]->bNoCameraCol;
 }
 
 // native GetPlayerSurfingPlayerObjectID(playerid);
@@ -2868,7 +2867,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingPlayerObjectID( AMX* amx, c
 	int surf = pPlayerData[playerid]->wSurfingInfo - MAX_VEHICLES;
 	if(surf >= 0 && surf < MAX_OBJECTS)
 	{
-		if(pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][surf])
+		if(pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][surf])
 			return surf;
 	}
 	return INVALID_OBJECT_ID;
@@ -2892,7 +2891,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerCameraTargetPlayerObj( AMX* amx, c
 	int target = pNetGame->pPlayerPool->pPlayer[playerid]->aimSyncData.wCameraObject;
 	if(target >= 0 && target < MAX_OBJECTS)
 	{
-		if(pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][target])
+		if(pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][target])
 			return target;
 	}
 	return INVALID_OBJECT_ID;
@@ -2913,9 +2912,9 @@ static cell AMX_NATIVE_CALL Natives::GetObjectType( AMX* amx, cell* params )
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	BYTE ret;
-	if(pNetGame->pObjectPool->m_bObjectSlotState[objectid])
+	if(pNetGame->pObjectPool->bObjectSlotState[objectid])
 		ret = SELECT_OBJECT_GLOBAL_OBJECT;
-	else if(pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid])
+	else if(pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid])
 		ret = SELECT_OBJECT_PLAYER_OBJECT;
 	else 
 		ret = 0;
@@ -3406,7 +3405,7 @@ static cell AMX_NATIVE_CALL Natives::IsValidGangZone( AMX* amx, cell* params )
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	return pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid));
+	return pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid));
 }
 
 // native IsGangZoneVisibleForPlayer(playerid, zoneid);
@@ -3419,7 +3418,7 @@ static cell AMX_NATIVE_CALL Natives::IsGangZoneVisibleForPlayer( AMX* amx, cell*
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid)) != 0xFF);
 }
@@ -3434,7 +3433,7 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetColorForPlayer( AMX* amx, cell* 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
@@ -3454,7 +3453,7 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetFlashColorForPlayer( AMX* amx, c
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
@@ -3474,7 +3473,7 @@ static cell AMX_NATIVE_CALL Natives::IsGangZoneFlashingForPlayer( AMX* amx, cell
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
@@ -3494,7 +3493,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerInGangZone( AMX* amx, cell* params 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
@@ -3516,17 +3515,17 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetPos( AMX* amx, cell* params )
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pNetGame->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
+	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
 	
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pNetGame->pGangZonePool->pGangZone[zoneid]->fGangZone[0]);
+	*cptr = amx_ftoc(pServer->pGangZonePool->pGangZone[zoneid]->fGangZone[0]);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pNetGame->pGangZonePool->pGangZone[zoneid]->fGangZone[1]);
+	*cptr = amx_ftoc(pServer->pGangZonePool->pGangZone[zoneid]->fGangZone[1]);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pNetGame->pGangZonePool->pGangZone[zoneid]->fGangZone[2]);
+	*cptr = amx_ftoc(pServer->pGangZonePool->pGangZone[zoneid]->fGangZone[2]);
 	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pNetGame->pGangZonePool->pGangZone[zoneid]->fGangZone[3]);
+	*cptr = amx_ftoc(pServer->pGangZonePool->pGangZone[zoneid]->fGangZone[3]);
 	return 1;
 }
 
@@ -4220,7 +4219,7 @@ static cell AMX_NATIVE_CALL Natives::IsValid3DTextLabel( AMX* amx, cell* params 
 	int id = static_cast<int>(params[1]);
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
-	return pNetGame->p3DTextPool->m_bIsCreated[id];
+	return pNetGame->p3DTextPool->bIsCreated[id];
 }
 
 // native Is3DTextLabelStreamedIn(playerid, Text3D:id);
@@ -4247,9 +4246,11 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelText( AMX* amx, cell* params 
 	CHECK_PARAMS(3, "Get3DTextLabelText");
 	
 	int id = static_cast<int>(params[1]);
-	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
-	
-	const char *szText = (pNetGame->p3DTextPool->m_bIsCreated[id]) ? pNetGame->p3DTextPool->m_TextLabels[id].text : '\0';
+	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
+
+	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
+
+	const char *szText = pNetGame->p3DTextPool->TextLabels[id].szText;
 	return set_amxstring(amx, params[2], szText, params[3]);
 }
 
@@ -4259,12 +4260,12 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelColor( AMX* amx, cell* params
 	CHECK_PARAMS(1, "Get3DTextLabelColor");
 	
 	int id = static_cast<int>(params[1]);
-	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
-	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
-	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
+	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
+	C3DText &p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
-	return p3DText.color;
+	return p3DText.dwColor;
 }
 
 // native Get3DTextLabelPos(id, &Float:fX, &Float:fY, &Float:fZ);
@@ -4273,18 +4274,18 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelPos( AMX* amx, cell* params )
 	CHECK_PARAMS(4, "Get3DTextLabelPos");
 	
 	int id = static_cast<int>(params[1]);
-	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
-	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
-	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
+	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
+	C3DText p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(p3DText.posX);
+	*cptr = amx_ftoc(p3DText.vecPos.fX);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(p3DText.posY);
+	*cptr = amx_ftoc(p3DText.vecPos.fY);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(p3DText.posZ);
+	*cptr = amx_ftoc(p3DText.vecPos.fZ);
 	return 1;
 }
 
@@ -4294,12 +4295,12 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelDrawDistance( AMX* amx, cell*
 	CHECK_PARAMS(1, "Get3DTextLabelDrawDistance");
 	
 	int id = static_cast<int>(params[1]);
-	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
-	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
-	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
+	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
+	C3DText p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
-	return amx_ftoc(p3DText.drawDistance);
+	return amx_ftoc(p3DText.fDrawDistance);
 }
 
 // native Get3DTextLabelLOS(id);
@@ -4308,12 +4309,12 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelLOS( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "Get3DTextLabelLOS");
 	
 	int id = static_cast<int>(params[1]);
-	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
-	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
-	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
+	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
+	C3DText p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
-	return p3DText.useLineOfSight;
+	return p3DText.bLineOfSight;
 }
 
 // native Get3DTextLabelVirtualWorld(id);
@@ -4322,12 +4323,12 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelVirtualWorld( AMX* amx, cell*
 	CHECK_PARAMS(1, "Get3DTextLabelVirtualWorld");
 	
 	int id = static_cast<int>(params[1]);
-	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
-	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
-	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
+	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
+	C3DText p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
-	return p3DText.virtualWorld;
+	return p3DText.iWorld;
 }
 
 // native Get3DTextLabelAttachedData(id, &attached_playerid, &attached_vehicleid);
@@ -4336,10 +4337,10 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelAttachedData( AMX* amx, cell*
 	CHECK_PARAMS(3, "Get3DTextLabelAttachedData");
 	
 	int id = static_cast<int>(params[1]);
-	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
-	if(!pNetGame->p3DTextPool->m_bIsCreated[id]) return 0;
-	C3DText p3DText = pNetGame->p3DTextPool->m_TextLabels[id];
+	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
+	C3DText p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
@@ -4358,7 +4359,7 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayer3DTextLabel( AMX* amx, cell* p
 	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
-	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	return pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id];
 }
@@ -4376,11 +4377,11 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelText( AMX* amx, cell* p
 	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
-	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
-	const char *szText = (pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id].text) ? pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id].text : '\0';
+	const char *szText = (pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id].szText) ? pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id].szText : '\0';
 	return set_amxstring(amx, params[3], szText, params[4]);
 }
 
@@ -4393,12 +4394,12 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelColor( AMX* amx, cell* 
 	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
-	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
-	return p3DText.color;
+	return p3DText.dwColor;
 }
 
 // native GetPlayer3DTextLabelPos(playerid, PlayerText3D:id, &Float:fX, &Float:fY, &Float:fZ);
@@ -4410,18 +4411,18 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelPos( AMX* amx, cell* pa
 	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
-	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(p3DText.posX);
+	*cptr = amx_ftoc(p3DText.vecPos.fX);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(p3DText.posY);
+	*cptr = amx_ftoc(p3DText.vecPos.fY);
 	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(p3DText.posZ);
+	*cptr = amx_ftoc(p3DText.vecPos.fZ);
 	return 1;
 }
 
@@ -4434,12 +4435,12 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelDrawDist( AMX* amx, cel
 	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
-	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
-	return amx_ftoc(p3DText.drawDistance);
+	return amx_ftoc(p3DText.fDrawDistance);
 }
 
 // native GetPlayer3DTextLabelLOS(playerid, PlayerText3D:id);
@@ -4451,12 +4452,12 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelLOS( AMX* amx, cell* pa
 	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
-	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
-	return p3DText.useLineOfSight;
+	return p3DText.bLineOfSight;
 }
 
 // native GetPlayer3DTextLabelVirtualW(playerid, PlayerText3D:id);
@@ -4468,12 +4469,12 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelVirtualW( AMX* amx, cel
 	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
-	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
-	return p3DText.virtualWorld;
+	return p3DText.iWorld;
 }
 
 // native GetPlayer3DTextLabelAttached(playerid, PlayerText3D:id, &attached_playerid, &attached_vehicleid);
@@ -4485,7 +4486,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelAttached( AMX* amx, cel
 	int id = static_cast<int>(params[2]);
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
-	if(0 < id || id >= MAX_3DTEXT_PLAYER) return 0;
+	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
 	
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
@@ -4510,7 +4511,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 
 	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
 
-	CObject *pObject = pNetGame->pObjectPool->m_pObjects[objectid];
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	if(!pObject) return 0;
 
 	YSF_AttachObjectToPlayer(amx, params);
@@ -4537,7 +4538,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 	if(!IsPlayerConnectedEx(attachplayerid)) return 0;
 
 	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-	if(!pNetGame->pObjectPool->m_bPlayerObjectSlotState[playerid][objectid]) return 0;
+	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 	
 	pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = static_cast<WORD>(attachplayerid);
 	pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
@@ -4576,7 +4577,7 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	if(wAttachTo < 1 || wAttachTo >= MAX_OBJECTS) return 0;
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	if(!pObjectPool->m_pPlayerObjects[forplayerid][wObjectID] || !pObjectPool->m_pPlayerObjects[forplayerid][wAttachTo]) return 0; // Check if object is exist
+	if(!pObjectPool->pPlayerObjects[forplayerid][wObjectID] || !pObjectPool->pPlayerObjects[forplayerid][wAttachTo]) return 0; // Check if object is exist
 
 	// Get data
 	CVector vecOffset = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
@@ -4589,11 +4590,11 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	pPlayerData[forplayerid]->stObj[wObjectID].vecRot = vecOffsetRot;
 
 	// Attach it
-	int iModelID = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->iModel;
-	CVector vecPos = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->matWorld.pos;
-	CVector vecRot = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->vecRot;
+	int iModelID = pObjectPool->pPlayerObjects[forplayerid][wObjectID]->iModel;
+	CVector vecPos = pObjectPool->pPlayerObjects[forplayerid][wObjectID]->matWorld.pos;
+	CVector vecRot = pObjectPool->pPlayerObjects[forplayerid][wObjectID]->vecRot;
 	float fDrawDistance = 299.0;
-	BYTE byteNoCameraCol = pObjectPool->m_pPlayerObjects[forplayerid][wObjectID]->bNoCameraCol;
+	BYTE byteNoCameraCol = pObjectPool->pPlayerObjects[forplayerid][wObjectID]->bNoCameraCol;
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)wObjectID);
@@ -4793,7 +4794,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
 		return -1;
 	}
 
-	WORD ret = pNetGame->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
+	WORD ret = pServer->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
 
 	return (ret == 0xFFFF) ? -1 : ret;
 }
@@ -4802,7 +4803,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneDestroy(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "GangZoneDestroy");
 
-	CGangZonePool *pGangZonePool = pNetGame->pGangZonePool;
+	CGangZonePool *pGangZonePool = pServer->pGangZonePool;
 	int zoneid = static_cast<int>(params[1]);
 	if(!pGangZonePool || !pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
@@ -4827,7 +4828,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForPlayer( AMX* amx, cell* 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	return pNetGame->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color));
+	return pServer->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color));
 }
 
 // native YSF_GangZoneHideForPlayer(playerid, zone);
@@ -4846,7 +4847,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForPlayer( AMX* amx, cell* 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
+	pServer->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4862,7 +4863,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForAll( AMX* amx, cell* par
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->ShowForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
+	pServer->pGangZonePool->ShowForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
 	return 1;
 }
 
@@ -4878,7 +4879,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForAll( AMX* amx, cell* par
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->HideForAll(static_cast<WORD>(zoneid));
+	pServer->pGangZonePool->HideForAll(static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4893,7 +4894,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForPlayer(AMX *amx, cell *
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(params[3]));
+	pServer->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(params[3]));
 	return 1;
 }
 
@@ -4904,7 +4905,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForAll(AMX *amx, cell *par
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->FlashForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
+	pServer->pGangZonePool->FlashForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
 	return 1;
 }
 
@@ -4919,7 +4920,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForPlayer(AMX *amx, ce
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
+	pServer->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4930,7 +4931,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForAll(AMX *amx, cell 
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->StopFlashForAll(static_cast<WORD>(zoneid));
+	pServer->pGangZonePool->StopFlashForAll(static_cast<WORD>(zoneid));
 	return 1;
 }
 
@@ -4943,8 +4944,8 @@ static cell AMX_NATIVE_CALL Natives::IsMenuDisabled( AMX* amx, cell* params )
 	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 	
-	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
-	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
+	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
+	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
 	return !!(!pMenu->interaction.Menu);
 }
@@ -4960,8 +4961,8 @@ static cell AMX_NATIVE_CALL Natives::IsMenuRowDisabled( AMX* amx, cell* params )
 	int itemid = static_cast<int>(params[2]);
 	if(itemid < 0 || itemid >= 12) return 0;
 
-	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
-	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
+	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
+	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
 	return !!(!pMenu->interaction.Row[itemid]);
 }
@@ -4974,10 +4975,10 @@ static cell AMX_NATIVE_CALL Natives::GetMenuColumns( AMX* amx, cell* params )
 	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 	
-	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
-	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
+	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
+	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	return pMenu->columnsNumber;
+	return pMenu->byteColumnsNumber;
 }
 
 // native GetMenuItems(menuid, column);
@@ -4991,10 +4992,10 @@ static cell AMX_NATIVE_CALL Natives::GetMenuItems( AMX* amx, cell* params )
 	int column = static_cast<int>(params[2]);
 	if(menuid < 0 || menuid > 2) return 0;
 
-	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
-	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
+	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
+	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	return pMenu->itemsCount[column];
+	return pMenu->byteItemsCount[column];
 }
 
 // native GetMenuPos(menuid, &Float:fX, &Float:fY);
@@ -5005,14 +5006,14 @@ static cell AMX_NATIVE_CALL Natives::GetMenuPos( AMX* amx, cell* params )
 	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
-	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
-	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
+	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
+	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pMenu->posX);
+	*cptr = amx_ftoc(pMenu->fPosX);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pMenu->posY);
+	*cptr = amx_ftoc(pMenu->fPosY);
 	return 1;
 }
 
@@ -5024,14 +5025,14 @@ static cell AMX_NATIVE_CALL Natives::GetMenuColumnWidth( AMX* amx, cell* params 
 	int menuid = static_cast<int>(params[1]);
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
-	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
-	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
+	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
+	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pMenu->column1Width);
+	*cptr = amx_ftoc(pMenu->fColumn1Width);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pMenu->column2Width);
+	*cptr = amx_ftoc(pMenu->fColumn2Width);
 	return 1;
 }
 
@@ -5046,10 +5047,10 @@ static cell AMX_NATIVE_CALL Natives::GetMenuColumnHeader( AMX* amx, cell* params
 	int column = static_cast<int>(params[2]);
 	if(menuid < 0 || menuid > 2) return 0;
 
-	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
-	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
+	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
+	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	return set_amxstring(amx, params[3], pMenu->headers[column], params[4]);
+	return set_amxstring(amx, params[3], pMenu->szHeaders[column], params[4]);
 }
 
 // native GetMenuItem(menuid, column, itemid, item[], len = sizeof(item));
@@ -5066,10 +5067,10 @@ static cell AMX_NATIVE_CALL Natives::GetMenuItem( AMX* amx, cell* params )
 	int itemid = static_cast<int>(params[3]);
 	if(itemid < 0 || itemid >= 12) return 0;
 
-	if(!pNetGame->pMenuPool->isCreated[menuid]) return 0;
-	CMenu *pMenu = pNetGame->pMenuPool->menu[menuid];
+	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
+	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	return set_amxstring(amx, params[4], pMenu->items[itemid][column], params[5]);
+	return set_amxstring(amx, params[4], pMenu->szItems[itemid][column], params[5]);
 }
 
 // native CreatePlayerGangZone(playerid, Float:minx, Float:miny, Float:maxx, Float:maxy);
@@ -5097,7 +5098,7 @@ static cell AMX_NATIVE_CALL Natives::CreatePlayerGangZone( AMX* amx, cell* param
 		return -1;
 	}
 
-	WORD ret = pNetGame->pGangZonePool->New(static_cast<WORD>(playerid), fMinX, fMinY, fMaxX, fMaxY);
+	WORD ret = pServer->pGangZonePool->New(static_cast<WORD>(playerid), fMinX, fMinY, fMaxX, fMaxY);
 	if (ret == 0xFFFF) return -1;
 
 	return ret;
@@ -5122,7 +5123,7 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneShow( AMX* amx, cell* params 
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pNetGame->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
+	pServer->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
 	return 1;
 }
 
@@ -5143,7 +5144,7 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneHide( AMX* amx, cell* params 
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pNetGame->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+	pServer->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
@@ -5166,7 +5167,7 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneFlash( AMX* amx, cell* params
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pNetGame->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
+	pServer->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
 	return 1;
 }
 
@@ -5187,7 +5188,7 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneStopFlash( AMX* amx, cell* pa
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pNetGame->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+	pServer->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
@@ -5205,7 +5206,7 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneDestroy( AMX* amx, cell* para
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pNetGame->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+	pServer->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
@@ -5641,7 +5642,7 @@ static cell AMX_NATIVE_CALL Natives::IsValidPickup(AMX* amx, cell* params)
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
-	return pNetGame->pPickupPool->m_bActive[id];
+	return pNetGame->pPickupPool->bActive[id];
 }
 
 // native IsPickupStreamedIn(playerid, pickupid);
@@ -5674,15 +5675,15 @@ static cell AMX_NATIVE_CALL Natives::GetPickupPos(AMX* amx, cell* params)
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
-	if (!pNetGame->pPickupPool->m_bActive[id]) return 0;
+	if (!pNetGame->pPickupPool->bActive[id]) return 0;
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pNetGame->pPickupPool->m_Pickup[id].vecPos.fX);
+	*cptr = amx_ftoc(pNetGame->pPickupPool->Pickup[id].vecPos.fX);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pNetGame->pPickupPool->m_Pickup[id].vecPos.fY);
+	*cptr = amx_ftoc(pNetGame->pPickupPool->Pickup[id].vecPos.fY);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pNetGame->pPickupPool->m_Pickup[id].vecPos.fZ);
+	*cptr = amx_ftoc(pNetGame->pPickupPool->Pickup[id].vecPos.fZ);
 	return 1;
 }
 
@@ -5699,9 +5700,9 @@ static cell AMX_NATIVE_CALL Natives::GetPickupModel(AMX* amx, cell* params)
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
-	if (!pNetGame->pPickupPool->m_bActive[id]) return 0;
+	if (!pNetGame->pPickupPool->bActive[id]) return 0;
 
-	return pNetGame->pPickupPool->m_Pickup[id].iModel;
+	return pNetGame->pPickupPool->Pickup[id].iModel;
 }
 
 // native GetPickupType(pickupid);
@@ -5717,9 +5718,9 @@ static cell AMX_NATIVE_CALL Natives::GetPickupType(AMX* amx, cell* params)
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
-	if (!pNetGame->pPickupPool->m_bActive[id]) return 0;
+	if (!pNetGame->pPickupPool->bActive[id]) return 0;
 
-	return pNetGame->pPickupPool->m_Pickup[id].iType;
+	return pNetGame->pPickupPool->Pickup[id].iType;
 }
 
 // native GetPickupVirtualWorld(pickupid);
@@ -5735,9 +5736,9 @@ static cell AMX_NATIVE_CALL Natives::GetPickupVirtualWorld(AMX* amx, cell* param
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
-	if (!pNetGame->pPickupPool->m_bActive[id]) return 0;
+	if (!pNetGame->pPickupPool->bActive[id]) return 0;
 
-	return pNetGame->pPickupPool->m_iWorld[id];
+	return pNetGame->pPickupPool->iWorld[id];
 }
 
 #endif
@@ -6425,7 +6426,7 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	{ "DestroyPickup",					Natives::DestroyPickup },
 #endif
 	{ "GetWeaponName",					Natives::FIXED_GetWeaponName },
-	{ "IsPlayerConnectedEx",				Natives::FIXED_IsPlayerConnectedEx },
+	{ "IsPlayerConnectedEx",			Natives::FIXED_IsPlayerConnectedEx },
 
 	{ "SetPlayerTeam",					Natives::YSF_SetPlayerTeam },
 	{ "SetPlayerSkin",					Natives::YSF_SetPlayerSkin },
