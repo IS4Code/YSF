@@ -6407,7 +6407,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "IsBanned",						Natives::IsBanned },
 
 	{ "SetTimeoutTime",					Natives::SetTimeoutTime },
-	{ "SetMTUSize",						Natives::SetMTUSize },
+//	{ "SetMTUSize",						Natives::SetMTUSize },
 	{ "GetMTUSize",						Natives::GetMTUSize },
 	{ "GetLocalIP",						Natives::GetLocalIP },
 	
