@@ -60,7 +60,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	bFakePingToggle = false;
 	dwFakePingValue = 0;
 
-	pCustomSyncData = NULL;
 	memset(bCustomPos, false, MAX_PLAYERS);
 	memset(bCustomQuat, false, MAX_PLAYERS);
 	memset(vecCustomPos, NULL, sizeof(CVector));
@@ -345,7 +344,9 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			}
 
 			// Keys
-			bsSync->Write(p->syncData.wKeys);
+
+			WORD keys = p->syncData.wKeys &= ~pPlayerData[playerid]->dwDisabledKeys;
+			bsSync->Write(keys);
 	
 			// Position
 			if(pPlayerData[toplayerid]->bCustomPos[playerid])				
@@ -424,7 +425,10 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write(p->vehicleSyncData.wVehicleId);
 			bsSync->Write(p->vehicleSyncData.wUDAnalog);
 			bsSync->Write(p->vehicleSyncData.wLRAnalog);
-			bsSync->Write(p->vehicleSyncData.wKeys);
+			
+			WORD keys = p->vehicleSyncData.wKeys &= ~pPlayerData[playerid]->dwDisabledKeys;
+			bsSync->Write(keys);
+			
 			bsSync->WriteNormQuat(p->vehicleSyncData.fQuaternionAngle, p->vehicleSyncData.vecQuaternion.fX, p->vehicleSyncData.vecQuaternion.fY, p->vehicleSyncData.vecQuaternion.fZ);
 			bsSync->Write((char*)&p->vehicleSyncData.vecPosition, sizeof(CVector));
 			bsSync->WriteVector(p->vehicleSyncData.vecVelocity.fX, p->vehicleSyncData.vecVelocity.fY, p->vehicleSyncData.vecVelocity.fZ);

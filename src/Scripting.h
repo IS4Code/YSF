@@ -77,6 +77,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL IsNickNameCharacterAllowed(AMX *amx, cell *params); // R7
 
 	static cell AMX_NATIVE_CALL GetAvailableClasses(AMX *amx, cell *params); // R6
+	static cell AMX_NATIVE_CALL RemoveLastClass(AMX *amx, cell *params); // R16
 	static cell AMX_NATIVE_CALL GetPlayerClass(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL EditPlayerClass(AMX *amx, cell *params); // R6
 
@@ -117,6 +118,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SpawnForWorld(AMX *amx, cell *params); // R10
 	static cell AMX_NATIVE_CALL BroadcastDeath(AMX *amx, cell *params); // R13
 	static cell AMX_NATIVE_CALL IsPlayerCameraTargetEnabled(AMX *amx, cell *params); // R13
+	static cell AMX_NATIVE_CALL SetPlayerDisabledKeysSync(AMX *amx, cell *params); // R16
+	static cell AMX_NATIVE_CALL GetPlayerDisabledKeysSync(AMX *amx, cell *params); // R16
 	
 	static cell AMX_NATIVE_CALL GetPlayerSirenState(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerLandingGearState(AMX *amx, cell *params);

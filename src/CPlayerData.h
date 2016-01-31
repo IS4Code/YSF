@@ -96,9 +96,9 @@ public:
 	BYTE byteTeam;
 	
 	// Special shits for store sync data
-	CSyncData *pCustomSyncData;
+	WORD dwDisabledKeys;
 
-	// Per-player pos
+		// Per-player pos
 	bool bCustomPos[MAX_PLAYERS];
 	bool bCustomQuat[MAX_PLAYERS];
 	CVector *vecCustomPos[MAX_PLAYERS];

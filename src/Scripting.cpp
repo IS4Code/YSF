@@ -805,6 +805,20 @@ static cell AMX_NATIVE_CALL Natives::GetAvailableClasses(AMX *amx, cell *params)
 	return pNetGame->iSpawnsAvailable;
 }
 
+// native RemoveLastClass();
+static cell AMX_NATIVE_CALL Natives::RemoveLastClass(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	if(pNetGame->iSpawnsAvailable <= 1)
+		return 0;
+
+	pNetGame->iSpawnsAvailable--;
+	return 1;
+}
+
 // native GetPlayerClass(classid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
 static cell AMX_NATIVE_CALL Natives::GetPlayerClass(AMX *amx, cell *params)
 {
@@ -2179,6 +2193,37 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerCameraTargetEnabled( AMX* amx, cell
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bCameraTarget;
+}
+
+// native SetPlayerDisabledKeysSync(playerid, keys);
+static cell AMX_NATIVE_CALL Natives::SetPlayerDisabledKeysSync( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetPlayerDisabledKeySync");
+
+	int playerid = static_cast<int>(params[1]);
+	if(!IsPlayerConnectedEx(playerid)) return 0;
+
+	pPlayerData[playerid]->dwDisabledKeys = static_cast<WORD>(params[2]);
+	return 1;
+}
+
+// native GetPlayerDisabledKeysSync(playerid);
+static cell AMX_NATIVE_CALL Natives::GetPlayerDisabledKeysSync( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "SetPlayerDisabledKeySync");
+
+	int playerid = static_cast<int>(params[1]);
+	if(!IsPlayerConnectedEx(playerid)) return 0;
+
+	return pPlayerData[playerid]->dwDisabledKeys;
 }
 
 // Scoreboard manipulation
@@ -6113,6 +6158,7 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	// Player classes
 	{ "GetAvailableClasses",			Natives::GetAvailableClasses}, // R6
+	{ "RemoveLastClass",				Natives::RemoveLastClass}, // R16
 	{ "GetPlayerClass",					Natives::GetPlayerClass}, // R6
 	{ "EditPlayerClass",				Natives::EditPlayerClass}, // R6
 	
@@ -6156,6 +6202,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SpawnForWorld",					Natives::SpawnForWorld }, // R10
 	{ "BroadcastDeath",					Natives::BroadcastDeath }, // R13
 	{ "IsPlayerCameraTargetEnabled",	Natives::IsPlayerCameraTargetEnabled }, // R13
+	{ "SetPlayerDisabledKeysSync",		Natives::SetPlayerDisabledKeysSync }, // R16
+	{ "GetPlayerDisabledKeysSync",		Natives::GetPlayerDisabledKeysSync }, // R16
 
 	// Special things from syncdata
 	{ "GetPlayerSirenState",			Natives::GetPlayerSirenState },
