@@ -812,7 +812,7 @@ static cell AMX_NATIVE_CALL Natives::RemoveLastClass(AMX *amx, cell *params)
 	if(!pServer)
 		return 0;
 
-	if(pNetGame->iSpawnsAvailable <= 0)
+	if(pNetGame->iSpawnsAvailable <= 1)
 		return 0;
 
 	pNetGame->iSpawnsAvailable--;
