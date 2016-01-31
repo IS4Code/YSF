@@ -14,6 +14,30 @@ CServer::CServer(eSAMPVersion version)
 	CAddress::Initialize(version);
 	// Initialize SAMP Function
 	CSAMPFunctions::Initialize();
+
+	// Initialize default valid name characters
+	for(BYTE i = '0'; i <= '9'; i++)
+	{
+		m_vecValidNameCharacters.push_back(i);
+	}
+	for(BYTE i = 'A'; i <= 'Z'; i++)
+	{
+		m_vecValidNameCharacters.push_back(i);
+	}
+	for(BYTE i = 'a'; i <= 'z'; i++)
+	{
+		m_vecValidNameCharacters.push_back(i);
+	}
+	m_vecValidNameCharacters.push_back(']');
+	m_vecValidNameCharacters.push_back('[');
+	m_vecValidNameCharacters.push_back('_');
+	m_vecValidNameCharacters.push_back('$');
+	m_vecValidNameCharacters.push_back(':');
+	m_vecValidNameCharacters.push_back('=');
+	m_vecValidNameCharacters.push_back('(');
+	m_vecValidNameCharacters.push_back(')');
+	m_vecValidNameCharacters.push_back('@');
+	m_vecValidNameCharacters.push_back('.');
 }
 
 CServer::~CServer()
@@ -221,8 +245,8 @@ void CServer::AllowNickNameCharacter(char character, bool enable)
 {
 	if (enable)
 	{
-		// If vector already doesn't contain item, then add it
-		if (!Contains(m_vecValidNameCharacters, character))
+		std::vector<char>::iterator it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
+		if (it == m_vecValidNameCharacters.end())
 		{
 			m_vecValidNameCharacters.push_back(character);
 		}
@@ -239,30 +263,21 @@ void CServer::AllowNickNameCharacter(char character, bool enable)
 
 bool CServer::IsNickNameCharacterAllowed(char character)
 {
-	return Contains(m_vecValidNameCharacters, character);
+	std::vector<char>::iterator it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
+	return (it != m_vecValidNameCharacters.end());
 }
 
 bool CServer::IsValidNick(char *szName)
 {
 	while (*szName)
 	{
-		if ((*szName >= '0' && *szName <= '9') || (*szName >= 'A' && *szName <= 'Z') || (*szName >= 'a' && *szName <= 'z') ||
-			*szName == ']' || *szName == '[' || *szName == '_' || *szName == '$' || *szName == ':' || *szName == '=' ||
-			*szName == '(' || *szName == ')' || *szName == '@' || *szName == '.')
+		if (IsNickNameCharacterAllowed(*szName))
 		{
-
 			szName++;
 		}
 		else
 		{
-			if (IsNickNameCharacterAllowed(*szName))
-			{
-				szName++;
-			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 	}
 	return true;
