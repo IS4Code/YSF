@@ -42,6 +42,7 @@ bool Unlock(void *address, size_t len);
 
 bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask);
 DWORD FindPattern(char *pattern, char *mask);
+void InstallJump(unsigned long addr, void *func);
 
 bool IsPlayerUpdatePacket(unsigned char packetId);
 #define ABGR_RGBA(color) (((DWORD)color & 0xff) << 24) | (((DWORD)(color >> 8) & 0xff) << 16) | (((DWORD)(color >> 16) & 0xff) << 8) | (color >> 24) & 0xff
@@ -65,13 +66,4 @@ enum
 	BS_FLOAT,
 	BS_STRING
 };
-
-template <typename T>
-const bool Contains(std::vector<T>& Vec, const T& Element)
-{
-	if (std::find(Vec.begin(), Vec.end(), Element) != Vec.end())
-		return true;
-
-	return false;
-}
 #endif
