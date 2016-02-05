@@ -3017,7 +3017,6 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerAttachedObject( AMX* amx, cell* pa
 	return 1;
 }
 
-
 // Vehicle functions
 // native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
 static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params )
@@ -3031,22 +3030,120 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params
 	int vehicleid = static_cast<int>(params[1]);
 	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
 	
-	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+	CVehicle* pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
+	if(!pVehicle) 
 		return 0;
+
+	CVehicleSpawn spawn; 
+	std::map<int, CVehicleSpawn>::iterator v = pServer->vehicleSpawnData.find(vehicleid);
+	if(v == pServer->vehicleSpawnData.end())
+	{
+		spawn.vecPos = pVehicle->customSpawn.vecPos;
+		spawn.fRot = pVehicle->customSpawn.fRot;
+		spawn.iColor1 = pVehicle->customSpawn.iColor1;
+		spawn.iColor2 = pVehicle->customSpawn.iColor2;
+
+	}
+	else
+	{
+		spawn.vecPos = v->second.vecPos;
+		spawn.fRot = v->second.fRot;
+		spawn.iColor1 = v->second.iColor1;
+		spawn.iColor2 = v->second.iColor2;	
+	}
 
 	cell* cptr;
 	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.vecPos.fX);
+	*cptr = amx_ftoc(spawn.vecPos.fX);
 	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.vecPos.fY);
+	*cptr = amx_ftoc(spawn.vecPos.fY);
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.vecPos.fZ);
+	*cptr = amx_ftoc(spawn.vecPos.fZ);
 	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.fRot);
+	*cptr = amx_ftoc(spawn.fRot);
 	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = (cell)pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iColor1;
+	*cptr = (cell)spawn.iColor1;
 	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = (cell)pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iColor2;
+	*cptr = (cell)spawn.iColor2;
+	return 1;
+}
+
+// native SetVehicleSpawnInfo(vehicleid, modelid, Float:fX, Float:fY, Float:fZ, Float:fAngle, color1, color2, respawntime = -2, interior = -2);
+static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(10, "SetVehicleSpawnInfo");
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	
+	int modelid = static_cast<int>(params[2]);
+	if(modelid < 400 || modelid > 611) return 0;
+
+	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid]; 
+	if(!pVehicle) 
+		return 0;
+
+	bool bStreamedIn = false;
+	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;		
+
+	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		if(IsPlayerConnectedEx(i))
+		{
+			if(pPlayerPool->pPlayer[i]->byteVehicleStreamedIn[pVehicle->wVehicleID])
+			{
+				bStreamedIn = true;
+				break;
+			}
+		}
+	}
+
+	CVehicleSpawn spawn;
+	spawn.iModelID = modelid;
+	spawn.vecPos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+	spawn.fRot = amx_ctof(params[6]);
+	spawn.iColor1 = static_cast<int>(params[7]);
+	spawn.iColor2 = static_cast<int>(params[8]);
+	spawn.iRespawnTime = pVehicle->customSpawn.iRespawnTime;
+	spawn.iInterior = pVehicle->customSpawn.iInterior;
+
+	// logprintf("spandata: %d, %d", spawn.iRespawnTime, spawn.iInterior);
+
+	int respawntime = static_cast<int>(params[9]);
+	if(respawntime >= -1)
+	{
+		spawn.iRespawnTime = respawntime;
+	}
+
+	int interior = static_cast<int>(params[10]);
+	if(interior != -2)
+	{
+		spawn.iInterior = interior;
+	}
+	
+	std::map<int, CVehicleSpawn>::iterator v = pServer->vehicleSpawnData.find(pVehicle->wVehicleID);
+	if(v != pServer->vehicleSpawnData.end())
+	{
+		pServer->vehicleSpawnData.erase(v);
+		// logprintf("add custom");
+	}
+	pServer->vehicleSpawnData.insert(std::make_pair(vehicleid, spawn));
+
+	// logprintf("streamedin: %d, iRespawnTime: %d, interior: %d", bStreamedIn, respawntime, interior);
+
+	if(!bStreamedIn)
+	{
+		pVehicle->customSpawn.iModelID = spawn.iModelID;
+		pVehicle->customSpawn.fRot = spawn.fRot;
+		pVehicle->customSpawn.iColor1 = spawn.iColor1;
+		pVehicle->customSpawn.iColor2 = spawn.iColor2;
+		pVehicle->customSpawn.iRespawnTime = spawn.iRespawnTime;
+		pVehicle->customSpawn.iInterior= spawn.iInterior;
+	}
 	return 1;
 }
 
@@ -3377,68 +3474,6 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleDead( AMX* amx, cell* params )
 		return 0;
 
 	return pNetGame->pVehiclePool->pVehicle[vehicleid]->bDead;
-}
-
-// native SetVehicleSpawnInfo(vehicleid, modelid, Float:fX, Float:fY, Float:fZ, Float:fAngle, color1, color2);
-static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(8, "SetVehicleSpawnInfo");
-
-	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
-	
-	int modelid = static_cast<int>(params[2]);
-	if(modelid < 400 || modelid > 611) return 0;
-
-	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid]; 
-	if(!pVehicle) 
-		return 0;
-
-	bool bStreamedIn = false;
-
-	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-//	CVehiclePool *pVehiclePool = pNetGame->pVehiclePool;
-		
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
-	{
-		if(IsPlayerConnectedEx(i))
-		{
-			if(pPlayerPool->pPlayer[i]->byteVehicleStreamedIn[pVehicle->wVehicleID])
-			{
-				bStreamedIn = true;
-				break;
-			}
-		}
-	}
-
-	CVehicleSpawn spawn;
-	spawn.iModelID = modelid;
-	spawn.vecPos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
-	spawn.fRot = amx_ctof(params[6]);
-	spawn.iColor1 = static_cast<int>(params[7]);
-	spawn.iColor2 = static_cast<int>(params[8]);
-	/*
-	pServer->vehicleSpawnData.insert(std::make_pair(vehicleid, spawn));
-
-	logprintf("streamedin: %d", bStreamedIn);
-
-	if(!bStreamedIn)
-	{
-		pVehicle->customSpawn.iModelID = modelid;
-		pVehicle->vehMatrix.pos =  CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
-		pVehicle->customSpawn.fRot = amx_ctof(params[6]);
-		pVehicle->customSpawn.iColor1 = (int)params[7];
-		pVehicle->customSpawn.iColor2 = (int)params[8];
-	}
-	else
-	{
-	}
-	*/
-	return 1;
 }
 
 // Gangzone functions
@@ -6267,6 +6302,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	
 	// Vehicle functions
 	{"GetVehicleSpawnInfo",				Natives::GetVehicleSpawnInfo},
+	{"SetVehicleSpawnInfo",				Natives::SetVehicleSpawnInfo}, // R16
 	{"GetVehicleColor",					Natives::GetVehicleColor},
 	{"GetVehiclePaintjob",				Natives::GetVehiclePaintjob},
 	{"GetVehicleInterior",				Natives::GetVehicleInterior},
@@ -6283,7 +6319,6 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"SetVehicleBeenOccupied",			Natives::SetVehicleBeenOccupied}, // R9
 	{"IsVehicleOccupied",				Natives::IsVehicleOccupied}, // R9
 	{"IsVehicleDead",					Natives::IsVehicleDead}, // R9
-	{"SetVehicleSpawnInfo",				Natives::SetVehicleSpawnInfo}, // DO NOT WORK
 
 	// Gangzone - Global
 	{"IsValidGangZone",					Natives::IsValidGangZone},
@@ -6453,7 +6488,6 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	{ "DestroyObject",					Natives::YSF_DestroyObject },
 	{ "DestroyPlayerObject",			Natives::YSF_DestroyPlayerObject },
 	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
-	//{ "SetVehicleToRespawn",			Natives::YSF_SetVehicleToRespawn},
 	{ "ChangeVehicleColor",				Natives::YSF_ChangeVehicleColor},
 	{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
 

@@ -13,7 +13,7 @@ CServer::CServer(eSAMPVersion version)
 	// Initialize addresses
 	CAddress::Initialize(version);
 	// Initialize SAMP Function
-	CSAMPFunctions::Initialize();
+	CSAMPFunctions::PreInitialize();
 
 	// Initialize default valid name characters
 	for(BYTE i = '0'; i <= '9'; i++)

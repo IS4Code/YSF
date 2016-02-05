@@ -123,6 +123,7 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 	delete pNetGame->pPickupPool;
 	pNetGame->pPickupPool = NULL;
 #endif
+	UninstallHooks();
 	SAFE_DELETE(pServer);
 	sampgdk_Unload();
 }
@@ -156,7 +157,6 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 {
 	// Remove AMX instance from our amxlist
 	CCallbackManager::UnregisterAMX(amx);
-	UninstallHooks();
 	return AMX_ERR_NONE;
 }
 
@@ -166,4 +166,63 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 	{
 		pServer->Process();
 	}
+}
+
+//----------------------------------------------------------
+// SAMP GDK callbacks
+PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
+{
+	if(!pServer)
+		return true;
+
+	if (playerid >= 0 && playerid < MAX_PLAYERS)
+	{
+#ifndef NEW_PICKUP_SYSTEM
+		pServer->AddPlayer(playerid);
+#else
+		// Initialize pickups
+		if (pServer->AddPlayer(playerid))
+			pNetGame->pPickupPool->InitializeForPlayer(playerid);
+#endif
+	}
+	return true;
+}
+
+PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerDisconnect(int playerid, int reason)
+{
+	if(!pServer)
+		return true;
+
+	pServer->RemovePlayer(playerid);
+	return true;
+}
+
+PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamIn(int playerid, int forplayerid)
+{
+	if(!pServer)
+		return true;
+
+	pServer->OnPlayerStreamIn(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
+	return true;
+}
+
+PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerStreamOut(int playerid, int forplayerid)
+{
+	if(!pServer)
+		return true;
+
+	pServer->OnPlayerStreamOut(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
+	return true;
+}
+
+PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerSpawn(int playerid)
+{
+	if(!pServer)
+		return true;
+
+	if (IsPlayerConnectedEx(playerid))
+	{
+		pPlayerData[playerid]->bControllable = true;
+	}
+	return true;
 }

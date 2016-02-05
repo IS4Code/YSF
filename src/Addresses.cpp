@@ -56,9 +56,6 @@ DWORD CAddress::FUNC_Packet_StatsUpdate = NULL;
 DWORD CAddress::FUNC_format_amxstring = NULL;
 
 // Others
-DWORD CAddress::ADDR_CNetGame_GMX_GangZoneDelete = NULL;
-DWORD CAddress::ADDR_CNetGame_GMX_PckupDelete = NULL;
-
 DWORD CAddress::ADDR_GetNetworkStats_VerbosityLevel = NULL;
 DWORD CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel = NULL;
 
@@ -89,17 +86,14 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
 	FUNC_GetPacketID =							FindPattern("\x8B\x44\x24\x04\x85\xC0\x75\x03\x0C\xFF\xC3", "xxxxxxx???x");
-	
+
 	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x56\x8B\xF1\x8B\x86\x3B\x26\x00\x00\x85\xC0\x0F\x84", "xxxxx????xxxx");
 	FUNC_CVehicle__Respawn =					FindPattern("\x53\x33\xC0\x56\x8B\xF1\x57\xB9\x10\x00\x00\x00\x8D\x7E\x0C", "xxxxxxxxx???xxx");
-	FUNC_CPlayerPool__HandleVehicleRespawn =	FindPattern("\x53\x56\x57\x8B\x7C\x24\x10\x8D\xB1", "xxxxxx?xx");
+	FUNC_CPlayerPool__HandleVehicleRespawn =	FindPattern("\x53\x55\x56\x8B\xF1\x8B\xAE\x68\x09", "xxxxxx?xx");
 
 	FUNC_ProcessQueryPacket =					FindPattern("\x83\xEC\x24\x53\x55\x56\x57\x8B\x7C\x24", "xxxxxxxxxx");
 	FUNC_Packet_WeaponsUpdate =					FindPattern("\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x0\x0\x0\x0\x50\x64\x89\x25\x0\x0\x0\x0\x81\xEC\x2C\x01\x00\x00\x55\x56", "xx????xx????xxxx????xxxx??xx");
 	FUNC_Packet_StatsUpdate =					FindPattern("\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x64\x89\x25\x00\x00\x00\x00\x81\xEC\x20\x01\x00\x00\x56\x57", "xxx????xx????xxxxxxxxxxx???xx");
-
-	ADDR_CNetGame_GMX_GangZoneDelete =			FindPattern("\x83\xC4\x04\x89\x5E\x24", "xxxxxx") - 0x8;
-	ADDR_CNetGame_GMX_PckupDelete =				FindPattern("\x83\xC4\x04\x89\x5E\x10", "xxxxxx") - 0x8;
 
 	ADDR_GetNetworkStats_VerbosityLevel =		FindPattern("\x6A\x01\x8D\x4C\x0C", "xxxxx"); // 0x0047362A
 	ADDR_GetPlayerNetworkStats_VerbosityLevel = FindPattern("\x6A\x01\x8D\x44\x04", "xxxxx"); // 0x004730B9;
@@ -128,14 +122,17 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	FUNC_GetPacketID =							FindPattern("\x55\xB8\x00\x00\x00\x00\x89\xE5\x8B\x55\x00\x85\xD2", "xx????xxxx?xx");
 
 	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\xA1\x00\x00\x00\x00", "xxxxxxx?xx?x????");
-	FUNC_CVehicle__Respawn =					FindPattern("\x55\x31\xD2\x89\xE5\x57\xB9\x40\x00\x00\x00", "xxxxxxxxxxx");
+	
+	// 
+	DWORD addr = FindPattern("\x55\x31\xD2\x89\xE5\x57\xB9\x40\x00\x00\x00", "xxxxxxxxxxx");
+	logprintf("addr: %x", addr);
+
+	FUNC_CVehicle__Respawn =					0x814B4C0;
+	FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
 	
 	FUNC_ProcessQueryPacket =					FindPattern("\x81\xEC\xA8\x00\x00\x00\x89\x5D\xF4\x8B\x5D\x14\x89\x75\xF8", "xxxxxxxxxxxxxxx") - 0x3;
 	FUNC_Packet_WeaponsUpdate =					FindPattern("\x55\x31\xC0\x89\xE5\x81\xEC\x58\x01\x00\x00", "xxxxxxxxxxx");
 	FUNC_Packet_StatsUpdate =					FindPattern("\x55\x31\xD2\x89\xE5\x81\xEC\x58\x01\x00\x00\x89\x5D\xF4", "xxxxxxxxxxxxxx"); // 80AD430
-
-	ADDR_CNetGame_GMX_GangZoneDelete =			NULL;
-	ADDR_CNetGame_GMX_PckupDelete =				NULL;
 
 	ADDR_GetNetworkStats_VerbosityLevel =		FindPattern("\xB8\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx");
 	ADDR_GetPlayerNetworkStats_VerbosityLevel = FindPattern("\xBB\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx"); // 080DD7FA
@@ -182,9 +179,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	logprintf("FUNC_ProcessQueryPacket: %X", FUNC_ProcessQueryPacket);
 	logprintf("FUNC_Packet_WeaponsUpdate: %X", FUNC_Packet_WeaponsUpdate);
 	logprintf("FUNC_Packet_StatsUpdate: %X", FUNC_Packet_StatsUpdate);
-
-	logprintf("ADDR_CNetGame_GMX_GangZoneDelete: %X", ADDR_CNetGame_GMX_GangZoneDelete);
-	logprintf("ADDR_CNetGame_GMX_PckupDelete: %X", ADDR_CNetGame_GMX_PckupDelete);
 
 	logprintf("ADDR_GetNetworkStats_VerbosityLevel: %X", ADDR_GetNetworkStats_VerbosityLevel);
 	logprintf("ADDR_GetPlayerNetworkStats_VerbosityLevel: %X", ADDR_GetPlayerNetworkStats_VerbosityLevel);

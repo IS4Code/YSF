@@ -33,10 +33,6 @@
 
 #include "main.h"
 
-#ifndef PAGESIZE
-	#define PAGESIZE (4096)
-#endif
-
 extern void *pAMXFunctions;
 
 subhook_t SetWeather_hook;
@@ -46,35 +42,6 @@ subhook_t amx_Register_hook;
 subhook_t GetPacketID_hook;
 subhook_t logprintf_hook;
 subhook_t query_hook;
-static SubHook CVehicle__Respawn_hook;
-
-// RakServer::Send hook - Thanks to Gamer_Z
-#ifdef _WIN32
-class CHookRakServer
-{
-public:
-	static bool __thiscall Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
-	static bool __thiscall RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
-};
-#else
-class CHookRakServer
-{
-public:
-	static bool Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
-	static bool RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
-};
-#endif
-
-#ifdef _WIN32
-typedef bool (__thiscall *RakNet__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
-typedef bool (__thiscall *RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
-#else
-typedef bool (*RakNet__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
-typedef bool (*RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
-#endif
-
-RakNet__Send_t RakNetOriginalSend;
-RakNet__RPC_t RakNetOriginalRPC;
 
 AMX_NATIVE pDestroyObject = NULL, pDestroyPlayerObject = NULL, pTogglePlayerControllable = NULL, pSetPlayerWorldBounds = NULL,
 	pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL, 
@@ -316,19 +283,19 @@ bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, Pack
 	*/
 	RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
 
-	return RakNetOriginalSend(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
+	return CSAMPFunctions::Send(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
 
 //----------------------------------------------------
 
 #ifdef _WIN32
-bool __thiscall CHookRakServer::RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
+bool __thiscall CHookRakServer::RPC_2(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 #else
-bool CHookRakServer::RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
+bool CHookRakServer::RPC_2(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 #endif
 {
 	//logprintf("outgoing rpc: %d", *uniqueID);
-	return RakNetOriginalRPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
+	return CSAMPFunctions::RPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }
 
 //----------------------------------------------------
@@ -357,8 +324,8 @@ void HOOK_logprintf(const char *msg, ...)
 	va_start(arguments, msg);
 	vsnprintf(buffer, sizeof(buffer), msg, arguments);
 	va_end(arguments);
-
-	if(CCallbackManager::OnServerMessage(buffer))
+	// CCallbackManager::OnServerMessage(buffer)
+	if(true)
 	{
 		// Fix crash caused by % symbol (by default this crash at /rcon varlist)
 		int i = 0;
@@ -775,17 +742,15 @@ void InstallPreHooks()
 		SetGravity_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetGravity, (void *)HOOK_CNetGame__SetGravity);
 		subhook_install(SetGravity_hook);
 		*/
-		Namecheck_hook = subhook_new((void *)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
+		//InstallJump((DWORD)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
+
+		Namecheck_hook = subhook_new((void*)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
 		subhook_install(Namecheck_hook);
 
 		amx_Register_hook = subhook_new((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 		subhook_install(amx_Register_hook);
 
-#ifdef _WIN32
-		if(!GetModuleHandle("SKY.dll"))
-#else
-		if(!dlopen("SKY.so", RTLD_LAZY))
-#endif
+		if(CAddress::FUNC_GetPacketID)
 		{
 			GetPacketID_hook = subhook_new((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
 			subhook_install(GetPacketID_hook);
@@ -793,34 +758,22 @@ void InstallPreHooks()
 
 		query_hook = subhook_new((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
 		subhook_install(query_hook);
-/*
+
 		logprintf_hook = subhook_new((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
 		subhook_install(logprintf_hook);
-*/
-/*
+
 #ifdef WIN32
 		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)HOOK_CVehicle__Respawn);
 #else
 		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
 #endif
-*/
 	}	
 }
 
 // Things that needs to be hooked after netgame initialied
 void InstallPostHooks()
 {
-	// Get pNetGame
-	int (*pfn_GetNetGame)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_NETGAME];
-	pNetGame = (CNetGame*)pfn_GetNetGame();
-
-	// Get pConsole
-	int (*pfn_GetConsole)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_CONSOLE];
-	pConsole = (void*)pfn_GetConsole();
-
-	// Get pRakServer
-	int (*pfn_GetRakServer)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_RAKSERVER];
-	pRakServer = (RakServer*)pfn_GetRakServer();
+	CSAMPFunctions::PostInitialize();
 
 	// SetMaxPlayers() fix
 	//pRakServer->Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(pServer->GetIntVariable("port")), pServer->GetStringVariable("bind"));
@@ -836,19 +789,6 @@ void InstallPostHooks()
 	InitRPCs();
 
 	//logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
-
-	// RakServer::Send hook - Thanks to Gamer_Z
-	int SendFunc = ((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET];
-	RakNetOriginalSend = reinterpret_cast<RakNet__Send_t>(SendFunc);
-	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET], 4);
-	((int*)(*(void**)pRakServer))[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
-/*
-	// RakServer::RPC hook - Thanks to Gamer_Z
-	int RPCFunc = ((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET];
-	RakNetOriginalRPC = reinterpret_cast<RakNet__RPC_t>(RPCFunc);
-	Unlock((void*)&((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET], 4);
-	((int*)(*(void**)pRakServer))[RAKNET_RPC_OFFSET] = (int)CHookRakServer::RPC;
-*/
 }
 
 void UninstallHooks()

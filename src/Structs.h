@@ -477,10 +477,10 @@ struct CVehicleParams // sizeof = 16
 	BYTE door_passenger;
 	BYTE door_backleft;
 	BYTE door_backright; // 11
-	BYTE windows_driver; // 12
-	BYTE windows_passenger;
-	BYTE windows_backleft;
-	BYTE windows_backright; // 15 - 16
+	BYTE window_driver; // 12
+	BYTE window_passenger;
+	BYTE window_backleft;
+	BYTE window_backright; // 15 - 16
 };
 
 struct CVehicle

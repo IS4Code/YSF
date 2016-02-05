@@ -5,64 +5,56 @@
 
 #ifdef _WIN32
 #include <winsock2.h>
+
+#define STDCALL __stdcall
+#define THISCALL __thiscall
 #else
 typedef int SOCKET;
+
+#define STDCALL
+#define THISCALL
+#define CDECL
 #endif
 
 struct Packet;
 struct ConsoleVariable_s;
 
-#ifdef _WIN32
+typedef void (THISCALL *CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);
+typedef char* (THISCALL *CConsole__GetStringVariable_t)(void *pConsole, char *szRule);
+typedef void (THISCALL *CConsole__SetStringVariable_t)(void *pConsole, char *szRule, char *szString);
+typedef int (THISCALL *CConsole__GetIntVariable_t)(void *pConsole, char *szRule);
+typedef void (THISCALL *CConsole__SetIntVariable_t)(void *pConsole, char *szRule, int value);
+typedef bool (THISCALL *CConsole__GetBoolVariable_t)(void *pConsole, char *szRule);
+typedef void (THISCALL *CConsole__ModifyVariableFlags_t)(void *pConsole, char *szRule, int value);
+typedef ConsoleVariable_s* (THISCALL *CConsole__FindVariable_t)(void *pConsole, char *szRule);
+typedef void (THISCALL *CConsole__SendRules_t)(void *pConsole, SOCKET s, char* data, const sockaddr_in* to, int tolen);
+typedef void (THISCALL *CConsole__Execute_t)(void *pConsole, char* pExecLine);
 
-typedef void(__thiscall *CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);
-typedef char*(__thiscall *CConsole__GetStringVariable_t)(void *pConsole, char *szRule);
-typedef void(__thiscall *CConsole__SetStringVariable_t)(void *pConsole, char *szRule, char *szString);
-typedef int(__thiscall *CConsole__GetIntVariable_t)(void *pConsole, char *szRule);
-typedef void(__thiscall *CConsole__SetIntVariable_t)(void *pConsole, char *szRule, int value);
-typedef bool(__thiscall *CConsole__GetBoolVariable_t)(void *pConsole, char *szRule);
-typedef void(__thiscall *CConsole__ModifyVariableFlags_t)(void *pConsole, char *szRule, int value);
-typedef ConsoleVariable_s *(__thiscall *CConsole__FindVariable_t)(void *pConsole, char *szRule);
-typedef void(__thiscall *CConsole__SendRules_t)(void *pConsole, SOCKET s, char* data, const sockaddr_in* to, int tolen);
-typedef void(__thiscall *CConsole__Execute_t)(void *pConsole, char* pExecLine);
+typedef bool (THISCALL *CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, char *szName);
+typedef bool (THISCALL *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
 
-typedef bool(__thiscall *CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, char *szName);
-typedef bool(__thiscall *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
+typedef void (THISCALL *CPlayer__SpawnForWorld_t)(void *pPlayer);
+typedef DWORD (THISCALL *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
 
-typedef void(__thiscall *CPlayer__SpawnForWorld_t)(void *pPlayer);
-typedef DWORD(__thiscall *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
+typedef int (THISCALL *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
+typedef int (THISCALL *Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
+typedef char* (CDECL *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
 
-typedef int(__thiscall *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
-typedef int(__thiscall *Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
-typedef char *(__cdecl *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
+class CHookRakServer
+{
+public:
+	static bool THISCALL Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	static bool THISCALL RPC_2(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
+};
 
-#else
-typedef void(*CConsole__AddStringVariable_t)(void *pConsole, char *szRule, int flags, char *szString, void *changefunc);
-typedef char*(*CConsole__GetStringVariable_t)(void *pConsole, char *szRule);
-typedef void(*CConsole__SetStringVariable_t)(void *pConsole, char *szRule, char *szString);
-typedef int(*CConsole__GetIntVariable_t)(void *pConsole, char *szRule);
-typedef void(*CConsole__SetIntVariable_t)(void *pConsole, char *szRule, int value);
-typedef bool(*CConsole__GetBoolVariable_t)(void *pConsole, char *szRule);
-typedef void(*CConsole__ModifyVariableFlags_t)(void *pConsole, char *szRule, int value);
-typedef ConsoleVariable_s *(*CConsole__FindVariable_t)(void *pConsole, char *szRule);
-typedef void(*CConsole__SendRules_t)(void *pConsole, SOCKET s, char* data, const struct sockaddr_in* to, int tolen);
-typedef void(*CConsole__Execute_t)(void *pConsole, char* pExecLine);
-
-typedef bool(*CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, char *szName);
-typedef bool(*CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
-             
-typedef void(*CPlayer__SpawnForWorld_t)(void *pPlayer);
-typedef DWORD(*CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
-
-typedef int (*Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
-typedef int (*Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
-typedef char *(*format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
-
-#endif
+typedef bool (THISCALL *RakNet__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+typedef bool (THISCALL *RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 
 class CSAMPFunctions
 {
 public:
-	static void		Initialize();
+	static void		PreInitialize();
+	static void		PostInitialize();
 	
 	static void		AddStringVariable(char *szRule, int flags, char *szString, void *changefunc);
 	static char*	GetStringVariable(char *szRule);
@@ -85,6 +77,9 @@ public:
 	static void		Packet_StatsUpdate(Packet *p);
 
 	static char*	format_amxstring(AMX *amx, cell *params, int parm, int &len);
+
+	static bool		Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	static bool		RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 
 	static void		RespawnVehicle(CVehicle *pVehicle);
 
@@ -113,6 +108,10 @@ public:
 	static Packet_WeaponsUpdate_t					pfn__Packet_WeaponsUpdate;
 	static Packet_WeaponsUpdate_t					pfn__Packet_StatsUpdate;
 	static format_amxstring_t						pfn__format_amxstring;
+
+	// RakServer
+	static RakNet__Send_t							pfn__RakNet__Send;
+	static RakNet__RPC_t							pfn__RakNet__RPC;
 };
 
 #endif
