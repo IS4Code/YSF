@@ -940,20 +940,20 @@ struct RakNetStatisticsStruct
 struct Packet
 {
 	/// Server only - this is the index into the player array that this playerId maps to
-	PlayerIndex playerIndex;
+	PlayerIndex playerIndex; // 0 - 2
 
 	/// The system that send this packet.
-	PlayerID playerId;
+	PlayerID playerId; // 2  - 8
 
 	/// The length of the data in bytes
 	/// \deprecated You should use bitSize.
-	unsigned int length;
+	unsigned int length; // 8 - 12
 
 	/// The length of the data in bits
-	unsigned int bitSize;
+	unsigned int bitSize; // 12 - 16
 
 	/// The data from the sender
-	unsigned char* data;
+	unsigned char* data; // 16 - 20
 
 	/// @internal
 	/// Indicates whether to delete the data, or to simply delete the packet.
@@ -975,7 +975,7 @@ public:
 	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);	// 28
 	virtual void _20(); // 
 	virtual void _24();
-	virtual Packet* Receive( void );
+	virtual Packet* ReceiveEx( void );
 	virtual void Kick( const PlayerID playerId ); // 0x2C
 	virtual void DeallocatePacket(Packet* asd);
 	virtual void SetAllowedPlayers(unsigned short numberAllowed); // 0x34

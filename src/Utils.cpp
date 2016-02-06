@@ -376,7 +376,20 @@ void InstallJump(unsigned long addr, void *func)
 #endif
 }
 
-bool IsPlayerUpdatePacket(unsigned char packetId)
+// From raknet
+BYTE GetPacketID(Packet *p)
+{
+	if (p == 0) return 255;
+
+	if ((unsigned char)p->data[0] == 40) // ID_TIMESTAMP - 0.3.7
+	{
+		assert(p->length > sizeof(unsigned char) + sizeof(unsigned long));
+		return (unsigned char)p->data[sizeof(unsigned char) + sizeof(unsigned long)];
+	}
+	else return (unsigned char)p->data[0];
+}
+
+bool IsPlayerUpdatePacket(BYTE packetId)
 {
 	switch (packetId)
 	{

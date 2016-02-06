@@ -24,6 +24,7 @@ format_amxstring_t						CSAMPFunctions::pfn__format_amxstring = NULL;
 
 RakNet__Send_t							CSAMPFunctions::pfn__RakNet__Send = NULL;
 RakNet__RPC_t							CSAMPFunctions::pfn__RakNet__RPC = NULL;
+RakNet__Receive_t						CSAMPFunctions::pfn__RakNet__Receive = NULL;
 
 void CSAMPFunctions::PreInitialize()
 {
@@ -70,12 +71,15 @@ void CSAMPFunctions::PostInitialize()
 
 	Unlock((void*)&pRakServer_VTBL[RAKNET_SEND_OFFSET], 4);
 	Unlock((void*)&pRakServer_VTBL[RAKNET_RPC_OFFSET], 4);
+	Unlock((void*)&pRakServer_VTBL[RAKNET_RECEIVE_OFFSET], 4);
 
 	pfn__RakNet__Send = (RakNet__Send_t)(pRakServer_VTBL[RAKNET_SEND_OFFSET]);
 	pfn__RakNet__RPC = (RakNet__RPC_t)(pRakServer_VTBL[RAKNET_RPC_OFFSET]);
+	pfn__RakNet__Receive = (RakNet__Receive_t)(pRakServer_VTBL[RAKNET_RECEIVE_OFFSET]);
 
 	pRakServer_VTBL[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
 	pRakServer_VTBL[RAKNET_RPC_OFFSET] = (int)CHookRakServer::RPC_2;
+	pRakServer_VTBL[RAKNET_RECEIVE_OFFSET] = (int)CHookRakServer::Receive;
 }
 
 void CSAMPFunctions::AddStringVariable(char *szRule, int flags, char *szString, void *changefunc)
@@ -166,6 +170,11 @@ bool CSAMPFunctions::Send(void* ppRakServer, RakNet::BitStream* parameters, Pack
 bool CSAMPFunctions::RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
 	return pfn__RakNet__RPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
+}
+
+Packet* CSAMPFunctions::Receive(void* ppRakServer)
+{
+	return pfn__RakNet__Receive(ppRakServer);
 }
 
 void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)

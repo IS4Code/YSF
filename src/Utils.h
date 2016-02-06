@@ -44,7 +44,9 @@ bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask);
 DWORD FindPattern(char *pattern, char *mask);
 void InstallJump(unsigned long addr, void *func);
 
-bool IsPlayerUpdatePacket(unsigned char packetId);
+BYTE GetPacketID(Packet *p);
+bool IsPlayerUpdatePacket(BYTE packetId);
+
 #define ABGR_RGBA(color) (((DWORD)color & 0xff) << 24) | (((DWORD)(color >> 8) & 0xff) << 16) | (((DWORD)(color >> 16) & 0xff) << 8) | (color >> 24) & 0xff
 #define RGBA_ABGR(color) (((color >> 24) & 0x000000FF) | ((color >> 8) & 0x0000FF00) | ((color << 8) & 0x00FF0000) | ((color << 24) & 0xFF000000))
 

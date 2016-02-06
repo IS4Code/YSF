@@ -153,7 +153,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		}
 	}
 	#endif
-
+/*
 	logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
 
 	logprintf("FUNC_CConsole__AddStringVariable: %X", FUNC_CConsole__AddStringVariable);
@@ -184,7 +184,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	logprintf("ADDR_GetPlayerNetworkStats_VerbosityLevel: %X", ADDR_GetPlayerNetworkStats_VerbosityLevel);
 
 	logprintf("FUNC_format_amxstring: %X", FUNC_format_amxstring);
-
+	*/
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
 		Unlock((void*)VAR_pRestartWaitTime, 4);

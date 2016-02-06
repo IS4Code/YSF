@@ -45,10 +45,12 @@ class CHookRakServer
 public:
 	static bool THISCALL Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 	static bool THISCALL RPC_2(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
+	static Packet* THISCALL Receive(void* ppRakServer);
 };
 
 typedef bool (THISCALL *RakNet__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 typedef bool (THISCALL *RakNet__RPC_t)(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
+typedef Packet* (THISCALL *RakNet__Receive_t)(void* ppRakServer);
 
 class CSAMPFunctions
 {
@@ -80,6 +82,7 @@ public:
 
 	static bool		Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 	static bool		RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
+	static Packet*	Receive(void* ppRakServer);
 
 	static void		RespawnVehicle(CVehicle *pVehicle);
 
@@ -112,6 +115,7 @@ public:
 	// RakServer
 	static RakNet__Send_t							pfn__RakNet__Send;
 	static RakNet__RPC_t							pfn__RakNet__RPC;
+	static RakNet__Receive_t						pfn__RakNet__Receive;
 };
 
 #endif

@@ -39,7 +39,6 @@ subhook_t SetWeather_hook;
 subhook_t SetGravity_hook;
 subhook_t Namecheck_hook;
 subhook_t amx_Register_hook;
-subhook_t GetPacketID_hook;
 subhook_t logprintf_hook;
 subhook_t query_hook;
 
@@ -171,19 +170,40 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 //----------------------------------------------------
 
-typedef BYTE (*FUNC_GetPacketID)(Packet *p);
-static BYTE HOOK_GetPacketID(Packet *p)
+bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 {
-	subhook_remove(GetPacketID_hook);
+	/*
+	BYTE id;
+	WORD playerid;
+	parameters->Read(id);
+	parameters->Read(playerid);
 
-	BYTE packetId = ((FUNC_GetPacketID)CAddress::FUNC_GetPacketID)(p);
+	logprintf("id: %d - playerid: %d, sendto. %d", id, playerid, pRakServer->GetIndexFromPlayerID(playerId));
+	*/
+	RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
+
+	return CSAMPFunctions::Send(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
+}
+
+//----------------------------------------------------
+
+bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
+{
+	//logprintf("outgoing rpc: %d", *uniqueID);
+	return CSAMPFunctions::RPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
+}
+
+//----------------------------------------------------
+
+Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
+{
+	Packet* p = CSAMPFunctions::Receive(ppRakServer);
+	BYTE packetId = GetPacketID(p);
+	if(packetId == 0xFF) return p;
+
 	WORD playerid = p->playerIndex;
-	
-	if (packetId == 0xFF) 
-	{
-		subhook_install(GetPacketID_hook);
-		return 0xFF;
-	}
+
+	//logprintf("Receive packet playerid: %d, id: %d", playerid, packetId);
 	
 	if (IsPlayerConnectedEx(playerid))
 	{
@@ -246,56 +266,20 @@ static BYTE HOOK_GetPacketID(Packet *p)
 				CSAMPFunctions::Packet_StatsUpdate(p);
 				CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
 
-				subhook_install(GetPacketID_hook);
-				return 0xFF;
+				p->data[0] = 0xFF;
+				break;
 			}
 			case ID_WEAPONS_UPDATE:
 			{
 				CSAMPFunctions::Packet_WeaponsUpdate(p);
 				CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
 
-				subhook_install(GetPacketID_hook);
-				return 0xFF;
+				p->data[0] = 0xFF;
+				break;
 			}
 		}
 	}
-
-	subhook_install(GetPacketID_hook);
-
-	return packetId;
-}
-
-//----------------------------------------------------
-
-#ifdef _WIN32
-bool __thiscall CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
-#else
-bool CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
-#endif
-{
-	/*
-	BYTE id;
-	WORD playerid;
-	parameters->Read(id);
-	parameters->Read(playerid);
-
-	logprintf("id: %d - playerid: %d, sendto. %d", id, playerid, pRakServer->GetIndexFromPlayerID(playerId));
-	*/
-	RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
-
-	return CSAMPFunctions::Send(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
-}
-
-//----------------------------------------------------
-
-#ifdef _WIN32
-bool __thiscall CHookRakServer::RPC_2(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
-#else
-bool CHookRakServer::RPC_2(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
-#endif
-{
-	//logprintf("outgoing rpc: %d", *uniqueID);
-	return CSAMPFunctions::RPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
+	return p;
 }
 
 //----------------------------------------------------
@@ -742,19 +726,11 @@ void InstallPreHooks()
 		SetGravity_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetGravity, (void *)HOOK_CNetGame__SetGravity);
 		subhook_install(SetGravity_hook);
 		*/
-		//InstallJump((DWORD)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
-
 		Namecheck_hook = subhook_new((void*)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
 		subhook_install(Namecheck_hook);
 
 		amx_Register_hook = subhook_new((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
 		subhook_install(amx_Register_hook);
-
-		if(CAddress::FUNC_GetPacketID)
-		{
-			GetPacketID_hook = subhook_new((void*)CAddress::FUNC_GetPacketID, (void*)HOOK_GetPacketID);
-			subhook_install(GetPacketID_hook);
-		}
 
 		query_hook = subhook_new((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
 		subhook_install(query_hook);
@@ -815,12 +791,6 @@ void UninstallHooks()
 	{
 		subhook_remove(amx_Register_hook);
 		subhook_free(amx_Register_hook);
-	}
-
-	if(GetPacketID_hook)
-	{
-		subhook_remove(GetPacketID_hook);
-		subhook_free(GetPacketID_hook);
 	}
 
 	if(query_hook)
