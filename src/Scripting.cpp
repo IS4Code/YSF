@@ -1312,7 +1312,7 @@ static cell AMX_NATIVE_CALL Natives::ApplyAnimationForPlayer(AMX *amx, cell *par
 	bsSend.Write(opt4);
 	bsSend.Write(time);
 
-	pRakServer->RPC(&RPC_ScrApplyAnimation, &bsSend, HIGH_PRIORITY, UNRELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_ScrApplyAnimation, &bsSend, MEDIUM_PRIORITY, UNRELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -1346,7 +1346,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWeather(AMX* amx, cell* params
 
 	RakNet::BitStream bs;
 	bs.Write(pPlayerData[playerid]->byteWeather);
-	pRakServer->RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	pRakServer->RPC(&RPC_Weather, &bs, MEDIUM_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -2085,7 +2085,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cel
 		bs.Write(expiretime);
 		bs.Write(len);
 		bs.Write(str, len);
-		pRakServer->RPC(&RPC_ChatBubble, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+		pRakServer->RPC(&RPC_ChatBubble, &bs, LOW_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
 		return 1;
 	}
 	return 0;
@@ -4738,7 +4738,7 @@ static cell AMX_NATIVE_CALL Natives::SendClientMessagef( AMX* amx, cell* params 
 	bsParams.Write((DWORD)params[2]);
 	bsParams.Write((DWORD)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_ClientMessage, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -4753,7 +4753,7 @@ static cell AMX_NATIVE_CALL Natives::SendClientMessageToAllf( AMX* amx, cell* pa
 	bsParams.Write((DWORD)params[1]);
 	bsParams.Write((DWORD)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	pRakServer->RPC(&RPC_ClientMessage, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
@@ -4772,7 +4772,7 @@ static cell AMX_NATIVE_CALL Natives::GameTextForPlayerf( AMX* amx, cell* params 
 	bsParams.Write((int)params[2]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -4788,7 +4788,7 @@ static cell AMX_NATIVE_CALL Natives::GameTextForAllf( AMX* amx, cell* params )
 	bsParams.Write((int)params[1]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
@@ -4809,7 +4809,7 @@ static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToPlayerf( AMX* amx, cell*
 	bsParams.Write((WORD)senderid);
 	bsParams.Write((BYTE)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_Chat, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -4827,7 +4827,7 @@ static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToAllf( AMX* amx, cell* pa
 	bsParams.Write((WORD)senderid);
 	bsParams.Write((BYTE)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	pRakServer->RPC(&RPC_Chat, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
