@@ -3688,10 +3688,10 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetLetterSize( AMX* amx, cell* para
 	return 1;
 }
 
-// native TextDrawGetFontSize(textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetFontSize( AMX* amx, cell* params )
+// native TextDrawGetTextSize(textdrawid, &Float:fX, &Float:fY);
+static cell AMX_NATIVE_CALL Natives::TextDrawGetTextSize( AMX* amx, cell* params )
 {
-	CHECK_PARAMS(3, "TextDrawGetFontSize");
+	CHECK_PARAMS(3, "TextDrawGetTextSize");
 	
 	int textdrawid = static_cast<int>(params[1]);
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -4017,10 +4017,10 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetLetterSize( AMX* amx, cell
 	return 1;
 }
 
-// native PlayerTextDrawGetFontSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetFontSize( AMX* amx, cell* params )
+// native PlayerTextDrawGetTextSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
+static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetTextSize( AMX* amx, cell* params )
 {
-	CHECK_PARAMS(4, "PlayerTextDrawGetFontSize");
+	CHECK_PARAMS(4, "PlayerTextDrawGetTextSize");
 	
 	int playerid = static_cast<int>(params[1]);
 	int textdrawid = static_cast<int>(params[2]);
@@ -4693,6 +4693,36 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	return 1;
 }
 
+// native SetRecordingDirectory(const dir[]);
+static cell AMX_NATIVE_CALL Natives::SetRecordingDirectory( AMX* amx, cell* params )
+{
+	char *dir;
+	amx_StrParam(amx, params[1], dir);
+	if (!dir) return 0;
+
+	strcpy(gRecordingDataPath, dir);
+	strcpy(gRecordingDataPath, "/%s.rec");
+	return 1;
+}
+
+// native GetRecordingDirectory(dir[], len = sizeof(dir));
+static cell AMX_NATIVE_CALL Natives::GetRecordingDirectory( AMX* amx, cell* params )
+{
+	char *dir;
+	amx_StrParam(amx, params[1], dir);
+	if (!dir) return 0;
+
+	strcpy(gRecordingDataPath, dir);
+	strcpy(gRecordingDataPath, "/%s.rec");
+
+	char temp[MAX_PATH];
+	int len = strlen(gRecordingDataPath);
+	strcpy(temp, gRecordingDataPath);
+	temp[len - 7] = 0;
+
+	logprintf("temp: %s, dir: %s", temp, gRecordingDataPath);
+	return  set_amxstring(amx, params[1], temp, params[2]);
+}
 
 // native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
 static cell AMX_NATIVE_CALL Natives::SendClientMessagef( AMX* amx, cell* params )
@@ -6350,7 +6380,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"TextDrawGetString",				Natives::TextDrawGetString},
 	{"TextDrawSetPos",					Natives::TextDrawSetPos},
 	{"TextDrawGetLetterSize",			Natives::TextDrawGetLetterSize},
-	{"TextDrawGetFontSize",				Natives::TextDrawGetFontSize},
+	{"TextDrawGetFontSize",				Natives::TextDrawGetTextSize},
+	{"TextDrawGetTextSize",				Natives::TextDrawGetTextSize},
 	{"TextDrawGetPos",					Natives::TextDrawGetPos},
 	{"TextDrawGetColor",				Natives::TextDrawGetColor},
 	{"TextDrawGetBoxColor",				Natives::TextDrawGetBoxColor},
@@ -6372,7 +6403,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"PlayerTextDrawGetString",			Natives::PlayerTextDrawGetString},
 	{"PlayerTextDrawSetPos",			Natives::PlayerTextDrawSetPos},
 	{"PlayerTextDrawGetLetterSize",		Natives::PlayerTextDrawGetLetterSize},
-	{"PlayerTextDrawGetFontSize",		Natives::PlayerTextDrawGetFontSize},
+	{"PlayerTextDrawGetFontSize",		Natives::PlayerTextDrawGetTextSize},
+	{"PlayerTextDrawGetTextSize",		Natives::PlayerTextDrawGetTextSize},
 	{"PlayerTextDrawGetPos",			Natives::PlayerTextDrawGetPos},
 	{"PlayerTextDrawGetColor",			Natives::PlayerTextDrawGetColor},
 	{"PlayerTextDrawGetBoxColor",		Natives::PlayerTextDrawGetBoxColor},
@@ -6453,6 +6485,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "YSF_EnableNightVisionFix",		Natives::YSF_EnableNightVisionFix },
 	{ "YSF_IsNightVisionFixEnabled",	Natives::YSF_IsNightVisionFixEnabled },
 	{ "AttachPlayerObjectToObject",		Natives::AttachPlayerObjectToObject },
+	
+	// Recording functions
+	{ "SetRecordingDirectory",			Natives::SetRecordingDirectory }, // R17
+	{ "GetRecordingDirectory",			Natives::GetRecordingDirectory }, // R17
 
 	// Format functions
 	{ "SendClientMessagef",				Natives::SendClientMessagef },

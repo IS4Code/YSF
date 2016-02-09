@@ -106,11 +106,11 @@ public:
 	static DWORD			FUNC_format_amxstring;
 
 	// Others
-	static DWORD			ADDR_CNetGame_GMX_GangZoneDelete;
-	static DWORD			ADDR_CNetGame_GMX_PckupDelete;
-
 	static DWORD			ADDR_GetNetworkStats_VerbosityLevel;
 	static DWORD			ADDR_GetPlayerNetworkStats_VerbosityLevel;
+
+	static DWORD			ADDR_RecordingDirectory;
+
 };
 
 #endif

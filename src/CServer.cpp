@@ -129,14 +129,18 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fX);
 			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fY);
 			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-			bs2.Write(300.0f); // fDrawDistance
+			bs2.Write(pObjectPool->pPlayerObjects[forplayerid][i]->fDrawDistance);
+			bs2.Write(pObjectPool->pPlayerObjects[forplayerid][i]->bNoCameraCol); 
+			bs2.Write((WORD)-1); // wAttachedVehicleID
+			bs2.Write((WORD)-1); // wAttachedObjectID
+			bs2.Write((BYTE)0); // dwMaterialCount
 
 			pRakServer->RPC(&RPC_CreateObject, &bs2, HIGH_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
 
 			// Attach created object to player
 			RakNet::BitStream bs;
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
-			bs.Write(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID); // playerid
+			bs.Write((WORD)pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
+			bs.Write((WORD)pPlayerData[forplayerid]->stObj[i].usAttachPlayerID); // playerid
 
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);

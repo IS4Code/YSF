@@ -46,6 +46,8 @@ AMX_NATIVE pDestroyObject = NULL, pDestroyPlayerObject = NULL, pTogglePlayerCont
 	pSetPlayerTeam = NULL, pSetPlayerSkin = NULL, pSetPlayerFightingStyle = NULL, pSetPlayerName = NULL, pSetVehicleToRespawn = NULL, 
 	pChangeVehicleColor = NULL, pDestroyVehicle = NULL, pAttachObjectToPlayer = NULL;
 
+char gRecordingDataPath[MAX_PATH];
+
 ///////////////////////////////////////////////////////////////
 // Hooks //
 ///////////////////////////////////////////////////////////////
@@ -743,6 +745,10 @@ void InstallPreHooks()
 #else
 		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
 #endif
+
+		strcpy(gRecordingDataPath, "scriptfiles/%s.rec");
+		Unlock((void*)CAddress::ADDR_RecordingDirectory, 5);
+		*(DWORD*)(CAddress::ADDR_RecordingDirectory + 1) = (DWORD)&gRecordingDataPath;
 	}	
 }
 

@@ -12,6 +12,8 @@
 
 extern AMX_NATIVE pDestroyObject, pDestroyPlayerObject, pTogglePlayerControllable, pSetPlayerWorldBounds, pSetPlayerTeam, pSetPlayerSkin, pSetPlayerFightingStyle, pSetPlayerName, pSetVehicleToRespawn, pChangeVehicleColor, pDestroyVehicle, pAttachObjectToPlayer;
 
+extern char gRecordingDataPath[MAX_PATH];
+
 void InstallPreHooks();
 void InstallPostHooks();
 void UninstallHooks();

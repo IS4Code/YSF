@@ -220,7 +220,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL TextDrawGetString(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL TextDrawSetPos(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL TextDrawGetLetterSize(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetFontSize(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL TextDrawGetTextSize(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL TextDrawGetPos(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL TextDrawGetColor(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL TextDrawGetBoxColor(AMX *amx, cell *params);
@@ -241,7 +241,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL PlayerTextDrawGetString(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL PlayerTextDrawSetPos(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL PlayerTextDrawGetLetterSize(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetFontSize(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL PlayerTextDrawGetTextSize(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL PlayerTextDrawGetPos(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL PlayerTextDrawGetColor(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL PlayerTextDrawGetBoxColor(AMX *amx, cell *params);
@@ -318,6 +318,9 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_IsNightVisionFixEnabled(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL AttachPlayerObjectToObject(AMX *amx, cell *params);
+
+	static cell AMX_NATIVE_CALL SetRecordingDirectory(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL GetRecordingDirectory(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL SendClientMessagef(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SendClientMessageToAllf(AMX *amx, cell *params);
