@@ -1970,6 +1970,41 @@ static cell AMX_NATIVE_CALL Natives::GetActorSkin(AMX* amx, cell* params)
 	return pActor->iSkinID;
 }
 
+
+// native GetActorAnimation(actorid, animlib[], animlibsize = sizeof(animlib), animname[], animnamesize = sizeof(animname), &Float:fDelta, &loop, &lockx, &locky, &freeze, &time)
+static cell AMX_NATIVE_CALL Natives::GetActorAnimation(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(11, "GetActorAnimation");
+
+	int actorid = static_cast<int>(params[1]);
+	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
+
+	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
+	if(!pActor) return 0;
+
+	set_amxstring(amx, params[2], pActor->anim.szAnimLib, params[3]);
+	set_amxstring(amx, params[4], pActor->anim.szAnimName, params[5]);
+
+	cell* cptr;
+	amx_GetAddr(amx, params[6], &cptr);
+	*cptr = amx_ftoc(pActor->anim.fDelta);
+	amx_GetAddr(amx, params[7], &cptr);
+	*cptr = *(cell*)pActor->anim.byteLoop;
+	amx_GetAddr(amx, params[8], &cptr);
+	*cptr = *(cell*)pActor->anim.byteLockX;
+	amx_GetAddr(amx, params[9], &cptr);
+	*cptr = *(cell*)pActor->anim.byteLockY;
+	amx_GetAddr(amx, params[10], &cptr);
+	*cptr = *(cell*)pActor->anim.byteFreeze;
+	amx_GetAddr(amx, params[11], &cptr);
+	*cptr = *(cell*)pActor->anim.iTime;
+	return 1;
+}
+
 // native SendBulletData(sender, hitid, hittype, weaponid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
 static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params ) 
 {

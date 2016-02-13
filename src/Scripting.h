@@ -137,6 +137,7 @@ namespace Natives
 
 	static cell AMX_NATIVE_CALL GetActorSpawnInfo(AMX *amx, cell *params); // R13
 	static cell AMX_NATIVE_CALL GetActorSkin(AMX *amx, cell *params); // R13
+	static cell AMX_NATIVE_CALL GetActorAnimation(AMX *amx, cell *params); // R17
 
 	static cell AMX_NATIVE_CALL TogglePlayerScoresPingsUpdate(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL TogglePlayerFakePing(AMX *amx, cell *params); // R8

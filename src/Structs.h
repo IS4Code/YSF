@@ -664,6 +664,18 @@ struct CSAMPGangZonePool
 // CActor
 /* -------------------------------------------------------- */
 
+struct CAnim // 140
+{
+	char szAnimLib[64]; // 0 - 64
+	char szAnimName[64]; // 64 - 128
+	float fDelta;		// 128 - 132
+	BYTE byteLoop;		// 132 - 133
+	BYTE byteLockX;			// 133 - 134
+	BYTE byteLockY;			// 134 - 135
+	BYTE byteFreeze;		// 135 - 136
+	int iTime;				//  136 - 140
+};
+
 struct CActor
 {
 	BYTE pad0;				// 0
@@ -672,9 +684,9 @@ struct CActor
 	float fSpawnAngle;		// 17 - 21
 	DWORD pad4;				// 21 - 25
 	DWORD pad5;				// 25 - 29
-	BYTE pad6;				// 29 - 30
-	char animation[140];	// 30 - 170
-	WORD pad7;				// 170 - 171
+	BYTE byteLoopAnim;		// 29 - 30
+	CAnim anim;
+	WORD wTime;				// 170 - 171
 	float fHealth;			// 172 - 176
 	DWORD pad;				// 176 - 180
 	float fAngle;			// 180 - 184
@@ -964,7 +976,7 @@ struct Packet
 class RakServer
 {
 public:
-	~RakServer();
+	~RakServer(); // THIS NOT
 	virtual void _0();
 	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0; // 4
 	virtual void DisableSecurity( void ); // 8
@@ -1047,14 +1059,13 @@ public:
 	virtual bool _0(); 
 	virtual void _4();
 	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0;
-//	virtual void _C();
-	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	virtual void _C();
 	virtual void _10();
 	virtual void _14();
 	virtual void _18();
 	virtual void _1C();
-	virtual void _20();
-	virtual bool Send__(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	virtual bool SendGECI(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
+	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 	virtual void _28();
 	virtual void _2C();
 	virtual void _30();
