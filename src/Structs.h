@@ -40,7 +40,7 @@
 #include <map>
 
 #include <raknet/BitStream.h>
-#include <sampgdk/sampgdk.h>
+//#include <sampgdk/sampgdk.h>
 
 class CGangZonePool;
 
@@ -129,8 +129,7 @@ struct CVehicleSyncData
 	WORD			wUDAnalog;				// 0x0021 - 0x0023
 	WORD			wLRAnalog;				// 0x0023 - 0x0025
 	WORD			wKeys;					// 0x0025 - 0x0027
-	float			fQuaternionAngle;		// 0x0027 - 0x002B
-	CVector			vecQuaternion;			// 0x002B - 0x0037
+	float			fQuaternion[4];			// 0x0027 - 0x0037
 	CVector			vecPosition;			// 0x0037 - 0x0043
 	CVector			vecVelocity;			// 0x0043 - 0x004F
 	float			fHealth;				// 0x004F - 0x0053

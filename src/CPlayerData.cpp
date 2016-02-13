@@ -429,7 +429,7 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			WORD keys = p->vehicleSyncData.wKeys &= ~pPlayerData[playerid]->dwDisabledKeys;
 			bsSync->Write(keys);
 			
-			bsSync->WriteNormQuat(p->vehicleSyncData.fQuaternionAngle, p->vehicleSyncData.vecQuaternion.fX, p->vehicleSyncData.vecQuaternion.fY, p->vehicleSyncData.vecQuaternion.fZ);
+			bsSync->WriteNormQuat(p->vehicleSyncData.fQuaternion[0], p->vehicleSyncData.fQuaternion[1], p->vehicleSyncData.fQuaternion[2], p->vehicleSyncData.fQuaternion[0]);
 			bsSync->Write((char*)&p->vehicleSyncData.vecPosition, sizeof(CVector));
 			bsSync->WriteVector(p->vehicleSyncData.vecVelocity.fX, p->vehicleSyncData.vecVelocity.fY, p->vehicleSyncData.vecVelocity.fZ);
 			bsSync->Write((WORD)p->vehicleSyncData.fHealth);
