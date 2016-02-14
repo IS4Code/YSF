@@ -27,7 +27,7 @@ public:
 
 	bool ShowForPlayer(WORD bytePlayer, WORD wZone, DWORD dwColor, bool bPlayerZone = false);
 	void ShowForAll(WORD wZone, DWORD dwColor);
-	bool HideForPlayer(WORD bytePlayer, WORD wZone, bool bPlayerZone = false);
+	bool HideForPlayer(WORD bytePlayer, WORD wZone, bool bPlayerZone = false, bool bCallCallback = false);
 	void HideForAll(WORD wZone);
 	void FlashForPlayer(WORD bytePlayer, WORD wZone, DWORD dwColor, bool bPlayerZone = false);
 	void FlashForAll(WORD wZone, DWORD dwColor);
