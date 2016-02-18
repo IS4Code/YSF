@@ -883,7 +883,7 @@ static cell AMX_NATIVE_CALL Natives::GetRunningTimers(AMX *amx, cell *params)
 	if(!pServer)
 		return 0;
 
-	return pNetGame->pScriptTimers->m_dwTimerCount;
+	return pNetGame->pScriptTimers->dwTimerCount;
 }
 
 // native SetGravity(Float:gravity);

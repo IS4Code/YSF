@@ -120,7 +120,7 @@ bool CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 	bsParams.Write(pZone->fGangZone[2]);
 	bsParams.Write(pZone->fGangZone[3]);
 	bsParams.Write(RGBA_ABGR(dwColor));
-	pRakServer->RPC(&RPC_ShowGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_ShowGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -141,7 +141,8 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 		if (i == MAX_GANG_ZONES) return;
 
 		// Hide the old one, if showed
-		HideForPlayer(playerid, wZone);
+		if(pPlayerData[playerid]->byteClientSideZoneIDUsed[i] != 0xFF)
+			HideForPlayer(playerid, wZone, false, false);
 
 		// Mark client side zone id as used
 		pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0;
@@ -155,11 +156,11 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 		bsParams.Write(pGangZone[wZone]->fGangZone[2]);
 		bsParams.Write(pGangZone[wZone]->fGangZone[3]);
 		bsParams.Write(RGBA_ABGR(dwColor));
-		pRakServer->RPC(&RPC_ShowGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+		pRakServer->RPC(&RPC_ShowGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	}
 }
 
-bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
+bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone, bool bCallCallback)
 {
 	WORD i = 0;
 
@@ -173,7 +174,7 @@ bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 		}
 		if(i == MAX_GANG_ZONES) return 0;
 
-		if (pPlayerData[playerid]->bInGangZone[i])
+		if (pPlayerData[playerid]->bInGangZone[i] && bCallCallback)
 		{
 			CCallbackManager::OnPlayerLeaveGangZone(playerid, pPlayerData[playerid]->wClientSideGlobalZoneID[i]);
 		}
@@ -189,7 +190,7 @@ bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 		}
 		if(i == MAX_GANG_ZONES) return 0;
 		
-		if (pPlayerData[playerid]->bInGangZone[i])
+		if (pPlayerData[playerid]->bInGangZone[i] && bCallCallback)
 		{
 			CCallbackManager::OnPlayerLeavePlayerGangZone(playerid, pPlayerData[playerid]->wClientSidePlayerZoneID[i]);
 		}
@@ -207,7 +208,7 @@ bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
-	pRakServer->RPC(&RPC_HideGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_HideGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -251,7 +252,7 @@ void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, boo
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
 	bsParams.Write(RGBA_ABGR(dwColor));
-	pRakServer->RPC(&RPC_FlashGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_FlashGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 }
 
 void CGangZonePool::FlashForAll(WORD wZone, DWORD dwColor)
@@ -293,7 +294,7 @@ void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZo
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
-	pRakServer->RPC(&RPC_StopFlashGangZone, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_StopFlashGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 }
 
 void CGangZonePool::StopFlashForAll(WORD wZone)
