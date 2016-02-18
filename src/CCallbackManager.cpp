@@ -5,7 +5,7 @@ std::vector<AMX *> CCallbackManager::m_vecAMX;
 void CCallbackManager::RegisterAMX(AMX *pAMX)
 {
 	// Add gamemode to the first position in vector
-	if (pNetGame && pNetGame->pGameModePool && &pNetGame->pGameModePool->m_amx == pAMX)
+	if (pNetGame && pNetGame->pGameModePool && &pNetGame->pGameModePool->amx == pAMX)
 	{
 		std::vector<AMX*>::iterator it = m_vecAMX.begin();
 		m_vecAMX.insert(it, pAMX);
