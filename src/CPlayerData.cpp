@@ -344,7 +344,6 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			}
 
 			// Keys
-
 			WORD keys = p->syncData.wKeys &= ~pPlayerData[playerid]->dwDisabledKeys;
 			bsSync->Write(keys);
 	
@@ -494,6 +493,79 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			{
 				bsSync->Write(false);
 			}
+			break;
+		}
+	}
+}
+
+void RebuildRPCData(int uniqueID, RakNet::BitStream *bsSync, WORD playerid)
+{
+	switch(uniqueID)
+	{
+		case RPC_InitGame:
+		{
+			bool usecjwalk = static_cast<int>(pNetGame->bUseCJWalk) != 0;
+			bool limitglobalchat = static_cast<int>(pNetGame->bLimitGlobalChatRadius) != 0;
+			float globalchatradius = pNetGame->fGlobalChatRadius;
+			float nametagdistance = pNetGame->fNameTagDrawDistance;
+			bool disableenterexits = static_cast<int>(pNetGame->byteDisableEnterExits) != 0;
+			bool nametaglos = static_cast<int>(pNetGame->byteNameTagLOS) != 0;
+			bool manualvehengineandlights = static_cast<int>(pNetGame->bManulVehicleEngineAndLights) != 0;
+			int spawnsavailable = pNetGame->iSpawnsAvailable;
+			bool shownametags = static_cast<int>(pNetGame->byteShowNameTags) != 0;
+			bool showplayermarkers = static_cast<int>(pNetGame->bShowPlayerMarkers) != 0;
+			int onfoot_rate = CSAMPFunctions::GetIntVariable("onfoot_rate");
+			int incar_rate = CSAMPFunctions::GetIntVariable("incar_rate");
+			int weapon_rate = CSAMPFunctions::GetIntVariable("weapon_rate");
+			int lacgompmode = CSAMPFunctions::GetIntVariable("lagcompmode");
+			bool vehiclefriendlyfire = static_cast<int>(pNetGame->bVehicleFriendlyFire) != 0;
+
+			CCallbackManager::OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
+				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
+
+			bsSync->Reset();
+			bsSync->Write((bool)!!pNetGame->unklofasz);
+			bsSync->Write((bool)usecjwalk);
+			bsSync->Write(pNetGame->byteAllowWeapons);
+			bsSync->Write(limitglobalchat);
+			bsSync->Write(globalchatradius);
+			bsSync->Write((bool)!!pNetGame->byteStuntBonus);
+			bsSync->Write(nametagdistance);
+			bsSync->Write(disableenterexits);
+			bsSync->Write(nametaglos);
+			bsSync->Write(manualvehengineandlights);
+			bsSync->Write(pNetGame->iSpawnsAvailable);
+			bsSync->Write(playerid);
+			bsSync->Write(shownametags);
+			bsSync->Write((DWORD)showplayermarkers);
+			bsSync->Write((bool)!!pNetGame->bTirePopping);
+			bsSync->Write(pNetGame->byteWeather);
+			bsSync->Write(pNetGame->fGravity);
+			bsSync->Write((bool)!!pNetGame->bLanMode);
+			bsSync->Write(pNetGame->iDeathDropMoney);
+			bsSync->Write(false);
+			bsSync->Write(onfoot_rate);
+			bsSync->Write(incar_rate);
+			bsSync->Write(weapon_rate);
+			bsSync->Write((int)2);
+			bsSync->Write(lacgompmode);
+
+			char* szHostName = CSAMPFunctions::GetStringVariable("hostname");
+			if(szHostName)
+			{
+				size_t len = strlen(szHostName);
+				bsSync->Write((BYTE)len);
+				bsSync->Write(szHostName, len);
+			}
+			else
+			{
+				bsSync->Write((BYTE)0);
+			}
+
+			char modelsUsed[212];
+			memcpy(modelsUsed, pNetGame->pVehiclePool->byteVehicleModelsUsed, sizeof(modelsUsed));
+			bsSync->Write(modelsUsed, 212);
+			bsSync->Write((DWORD)vehiclefriendlyfire);
 			break;
 		}
 	}

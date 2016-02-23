@@ -5,7 +5,7 @@ std::vector<AMX *> CCallbackManager::m_vecAMX;
 void CCallbackManager::RegisterAMX(AMX *pAMX)
 {
 	// Add gamemode to the first position in vector
-	if (pNetGame && pNetGame->pGameModePool && &pNetGame->pGameModePool->m_amx == pAMX)
+	if (pNetGame && pNetGame->pGameModePool && &pNetGame->pGameModePool->amx == pAMX)
 	{
 		std::vector<AMX*>::iterator it = m_vecAMX.begin();
 		m_vecAMX.insert(it, pAMX);
@@ -263,6 +263,69 @@ void CCallbackManager::OnVehicleSpawn(WORD vehicleid)
 			amx_Push(*iter, vehicleid);
 
 			amx_Exec(*iter, &ret, idx);
+		}
+	}
+}
+
+void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bool* limitglobalchat, float* globalchatradius, float* nametagdistance, 
+	bool* disableenterexits, bool* nametaglos, bool* manualvehengineandlights, int* spawnsavailable, bool* shownametags, bool* showplayermarkers, 
+	int* onfoot_rate, int* incar_rate, int* weapon_rate, int* lacgompmode, bool* vehiclefriendlyfire)
+{
+	int idx = -1;
+	cell ret = 1;
+	DWORD dwTemp;
+	for (std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if (!amx_FindPublic(*iter, "OnPlayerClientGameInit", &idx))
+		{
+			cell addr = NULL, amx_addr, amx_addr_last = NULL, *phys_ptr, *temp_ptr;
+
+			dwTemp = *vehiclefriendlyfire;
+			amx_PushArray(*iter, &amx_addr, &phys_ptr, reinterpret_cast<cell*>(&dwTemp), 1);							// 0
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(lacgompmode), 1);					// 1
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(weapon_rate), 1);					// 2
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(incar_rate), 1);					// 3
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(onfoot_rate), 1);					// 4
+			dwTemp = *showplayermarkers;
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 5
+			dwTemp = *shownametags;
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 6
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(spawnsavailable), 1);				// 7
+			dwTemp = *manualvehengineandlights;
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 8
+			dwTemp = *nametaglos;
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 9
+			dwTemp = *disableenterexits;
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 10
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(nametagdistance)), 1);		// 11
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(globalchatradius)), 1);	// 12
+			dwTemp = *limitglobalchat;
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 13
+			dwTemp = *usecjwalk;
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 14
+		
+			amx_Push(*iter, static_cast<cell>(playerid));
+			amx_Exec(*iter, &ret, idx);
+			for(int i = 0; i != ((amx_addr_last - amx_addr) / 4); i++)
+			{
+				amx_Release(*iter, amx_addr + (i * 4));
+			}
+			
+			*vehiclefriendlyfire = static_cast<int>(phys_ptr[0]) != 0;
+			*lacgompmode = static_cast<int>(phys_ptr[1]);
+			*weapon_rate = static_cast<int>(phys_ptr[2]);
+			*incar_rate = static_cast<int>(phys_ptr[3]);
+			*onfoot_rate = static_cast<int>(phys_ptr[4]);
+			*showplayermarkers = static_cast<int>(phys_ptr[5]) != 0;
+			*shownametags = static_cast<int>(phys_ptr[6]) != 0;
+			*spawnsavailable = static_cast<int>(phys_ptr[7]);
+			*manualvehengineandlights = static_cast<int>(phys_ptr[8]) != 0;
+			*nametaglos = static_cast<int>(phys_ptr[9]) != 0;
+			*disableenterexits = static_cast<int>(phys_ptr[10]) != 0;
+			*nametagdistance = amx_ctof(phys_ptr[11]);
+			*globalchatradius = amx_ctof(phys_ptr[12]);
+			*limitglobalchat = static_cast<int>(phys_ptr[13]) != 0;
+			*usecjwalk = static_cast<int>(phys_ptr[14]) != 0;
 		}
 	}
 }

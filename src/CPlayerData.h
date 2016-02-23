@@ -150,4 +150,5 @@ private:
 };
 
 void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
+void RebuildRPCData(int uniqueID, RakNet::BitStream *bsSync, WORD playerid);
 #endif

@@ -118,29 +118,29 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 
 			//logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
 			// First create the object for the player. We don't remove it from the pools, so we need to send RPC for the client to create object
-			RakNet::BitStream bs2;
-			bs2.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
-			bs2.Write(pObjectPool->pPlayerObjects[forplayerid][i]->iModel);  // iModel
-
-			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
-			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);
-			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fZ);
-
-			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fX);
-			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fY);
-			bs2.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-			bs2.Write(pObjectPool->pPlayerObjects[forplayerid][i]->fDrawDistance);
-			bs2.Write(pObjectPool->pPlayerObjects[forplayerid][i]->bNoCameraCol); 
-			bs2.Write((WORD)-1); // wAttachedVehicleID
-			bs2.Write((WORD)-1); // wAttachedObjectID
-			bs2.Write((BYTE)0); // dwMaterialCount
-
-			pRakServer->RPC(&RPC_CreateObject, &bs2, HIGH_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
-
-			// Attach created object to player
 			RakNet::BitStream bs;
-			bs.Write((WORD)pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
-			bs.Write((WORD)pPlayerData[forplayerid]->stObj[i].usAttachPlayerID); // playerid
+			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
+			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->iModel);  // iModel
+
+			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
+			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);
+			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fZ);
+
+			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fX);
+			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fY);
+			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
+			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->fDrawDistance);
+			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->bNoCameraCol); 
+			bs.Write((WORD)-1); // wAttachedVehicleID
+			bs.Write((WORD)-1); // wAttachedObjectID
+			bs.Write((BYTE)0); // dwMaterialCount
+
+			pRakServer->RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
+			
+			// Attach created object to player
+			bs.Reset();
+			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
+			bs.Write(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID); // playerid
 
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);
@@ -150,7 +150,8 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fY);
 			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
 
-			pRakServer->RPC(&RPC_AttachObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
+			pRakServer->RPC(&RPC_AttachObject, &bs, MEDIUM_PRIORITY, RELIABLE, 0, forplayerId, 0, 0);
+			
 			/*
 			logprintf("join, modelid: %d, %d, %f, %f, %f, %f, %f, %f",pObjectPool->m_pPlayerObjects[forplayerid][i]->m_iModel,
 				gAOData[forplayerid][i].AttachPlayerID,
