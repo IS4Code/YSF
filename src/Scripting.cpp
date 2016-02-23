@@ -4731,32 +4731,27 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 // native SetRecordingDirectory(const dir[]);
 static cell AMX_NATIVE_CALL Natives::SetRecordingDirectory( AMX* amx, cell* params )
 {
+	CHECK_PARAMS(1, "SetRecordingDirectory");
+
 	char *dir;
 	amx_StrParam(amx, params[1], dir);
 	if (!dir) return 0;
 
 	strcpy(gRecordingDataPath, dir);
-	strcpy(gRecordingDataPath, "/%s.rec");
+	strcat(gRecordingDataPath, "/%s.rec");
 	return 1;
 }
 
 // native GetRecordingDirectory(dir[], len = sizeof(dir));
 static cell AMX_NATIVE_CALL Natives::GetRecordingDirectory( AMX* amx, cell* params )
 {
-	char *dir;
-	amx_StrParam(amx, params[1], dir);
-	if (!dir) return 0;
-
-	strcpy(gRecordingDataPath, dir);
-	strcpy(gRecordingDataPath, "/%s.rec");
-
+	CHECK_PARAMS(2, "GetRecordingDirectory");
 	char temp[MAX_PATH];
 	int len = strlen(gRecordingDataPath);
 	strcpy(temp, gRecordingDataPath);
 	temp[len - 7] = 0;
 
-	logprintf("temp: %s, dir: %s", temp, gRecordingDataPath);
-	return  set_amxstring(amx, params[1], temp, params[2]);
+	return set_amxstring(amx, params[1], temp, params[2]);
 }
 
 // native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
