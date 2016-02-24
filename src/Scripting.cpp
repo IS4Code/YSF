@@ -4620,8 +4620,8 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 	CHECK_PARAMS(8, "AttachObjectToPlayer");
 
 	// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
-	int playerid = static_cast<int>(params[1]);
-	int objectid = static_cast<int>(params[2]);
+	int playerid = static_cast<int>(params[2]);
+	int objectid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
