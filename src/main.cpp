@@ -60,38 +60,21 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	char szVersion[64];
 
 	DWORD addr = (DWORD)ppData[PLUGIN_DATA_LOGPRINTF];
-	if (addr == CAddress::FUNC_Logprintf_037)
-	{
-		version = SAMP_VERSION_037;
-		strcpy(szVersion, "0.3.7");
-	}
-	else if(addr == CAddress::FUNC_Logprintf_037_R2_1)
+	if(addr == CAddress::FUNC_Logprintf_037_R2_1)
 	{
 		version = SAMP_VERSION_037_R2;
 		strcpy(szVersion, "0.3.7 R2-1");
 	}
-	//logprintf("skipgeci: %d", GetServerCfgOption("ysf_skipversioncheck").c_str());
 
-	if (1)
+	if (version != SAMP_VERSION_UNKNOWN)
 	{
-		if (version != SAMP_VERSION_UNKNOWN)
-		{
-			// Create server instance
-			pServer = new CServer(version);
-		}
-		else
-		{
-			logprintf("Error: Unknown " OS_NAME " server version\n");
-			return true;
-		}
+		// Create server instance
+		pServer = new CServer(version);
 	}
 	else
 	{
-		version = SAMP_VERSION_037;
-		strcpy(szVersion, "version check skipped");
-		
-		// Create server instance
-		pServer = new CServer(version);
+		logprintf("Error: Unknown " OS_NAME " server version\n");
+		return true;
 	}
 
 	InstallPreHooks();
