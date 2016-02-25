@@ -193,6 +193,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL IsVehicleOccupied(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL IsVehicleDead(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL SetVehicleSpawnInfo(AMX *amx, cell *params); // R12
+	static cell AMX_NATIVE_CALL GetVehicleModelCount(AMX *amx, cell *params); // R17
+	static cell AMX_NATIVE_CALL GetVehicleModelsUsed(AMX *amx, cell *params); // R17
 
 	static cell AMX_NATIVE_CALL IsValidGangZone(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL IsPlayerInGangZone(AMX *amx, cell *params);
@@ -317,7 +319,9 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_GetTickRate(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_EnableNightVisionFix(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_IsNightVisionFixEnabled(AMX *amx, cell *params);
-
+	static cell AMX_NATIVE_CALL YSF_SetAFKAccuracy(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_GetAFKAccuracy(AMX *amx, cell *params);
+	
 	static cell AMX_NATIVE_CALL AttachPlayerObjectToObject(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL SetRecordingDirectory(AMX *amx, cell *params);

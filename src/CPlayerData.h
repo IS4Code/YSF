@@ -127,7 +127,9 @@ public:
 #endif
 	DWORD dwFakePingValue;
 	DWORD dwLastUpdateTick;
-	
+	DWORD dwCreateAttachedObj;
+	WORD dwObjectID;
+
 	DWORD dwFPS;
 	DWORD dwLastDrunkLevel;
 	WORD wSurfingInfo;

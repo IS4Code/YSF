@@ -40,27 +40,30 @@ public:
 	bool IsNickNameCharacterAllowed(char character);
 	bool IsValidNick(char *szName);
 
-	void SetTickRate(int rate) { m_iTickRate = rate; }
-	int GetTickRate(void) { return m_iTickRate; }
+	void inline SetTickRate(int rate) { m_iTickRate = rate; }
+	int inline GetTickRate(void) { return m_iTickRate; }
 
-	void EnableNightVisionFix(bool enable) { m_bNightVisionFix = enable; }
-	bool IsNightVisionFixEnabled(void) { return m_bNightVisionFix; }
+	void inline EnableNightVisionFix(bool enable) { m_bNightVisionFix = enable; }
+	bool inline IsNightVisionFixEnabled(void) { return m_bNightVisionFix; }
+
+	void inline SetAFKAccuracy(DWORD time_ms) { m_dwAFKAccuracy = time_ms; }
+	DWORD inline GetAFKAccuracy(void) { return m_dwAFKAccuracy; }
 
 	WORD GetMaxPlayers_();
 	WORD GetPlayerCount();
 	WORD GetNPCCount();
 
-	void Packet_StatsUpdate(Packet *p);
-
 	CGangZonePool *pGangZonePool;
 	std::map<int, CVehicleSpawn> vehicleSpawnData;
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
+
 private:
 	eSAMPVersion m_Version;
 	int m_iTicks;
 	int m_iTickRate;
 	bool m_bNightVisionFix;
+	DWORD m_dwAFKAccuracy;
 
 	std::vector <char> m_vecValidNameCharacters;
 };

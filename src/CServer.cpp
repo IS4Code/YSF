@@ -5,6 +5,7 @@ CServer::CServer(eSAMPVersion version)
 	m_iTicks = 0;
 	m_iTickRate = 5;
 	m_bNightVisionFix = true;
+	m_dwAFKAccuracy = 1500;
 
 	memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();
@@ -109,14 +110,14 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
 		{
-			// logprintf("should work");
+			logprintf("should work");
 			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
 			{
-				//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
+				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
 				return 0;
 			}
 
-			//logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
+			logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
 			// First create the object for the player. We don't remove it from the pools, so we need to send RPC for the client to create object
 			RakNet::BitStream bs;
 			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
@@ -137,26 +138,13 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 
 			pRakServer->RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
 			
-			// Attach created object to player
-			bs.Reset();
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
-			bs.Write(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID); // playerid
-
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fZ);
-
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fX);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fY);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-
-			pRakServer->RPC(&RPC_AttachObject, &bs, MEDIUM_PRIORITY, RELIABLE, 0, forplayerId, 0, 0);
-			
+			pPlayerData[forplayerid]->dwCreateAttachedObj = GetTickCount();
+			pPlayerData[forplayerid]->dwObjectID = i;
 			/*
-			logprintf("join, modelid: %d, %d, %f, %f, %f, %f, %f, %f",pObjectPool->m_pPlayerObjects[forplayerid][i]->m_iModel,
-				gAOData[forplayerid][i].AttachPlayerID,
-				gAOData[forplayerid][i].vecOffset.fX, gAOData[forplayerid][i].vecOffset.fY, gAOData[forplayerid][i].vecOffset.fZ,
-				gAOData[forplayerid][i].vecRot.fX, gAOData[forplayerid][i].vecRot.fY, gAOData[forplayerid][i].vecRot.fZ);
+			logprintf("join, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
+				pPlayerData[forplayerid]->stObj[i].usAttachPlayerID,
+				pPlayerData[forplayerid]->stObj[i].vecOffset.fX, pPlayerData[forplayerid]->stObj[i].vecOffset.fY, pPlayerData[forplayerid]->stObj[i].vecOffset.fZ,
+				pPlayerData[forplayerid]->stObj[i].vecRot.fX, pPlayerData[forplayerid]->stObj[i].vecRot.fY, pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
 			*/
 		}
 	}
@@ -182,17 +170,18 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 		{
 			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
 			{
-				//logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - m_pPlayerObjects = 0");
+				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - m_pPlayerObjects = 0");
 				return 0;
 			}
 
 			//logprintf("remove objects i: %d, forplayerid: %d", i, forplayerid);
 			pPlayerData[playerid]->DestroyObject_(i);
-
+			pPlayerData[playerid]->dwCreateAttachedObj = 0;
 			/*
-			logprintf("leave %d, %f, %f, %f, %f, %f, %f", gAOData[forplayerid][i].AttachPlayerID,
-				gAOData[forplayerid][i].vecOffset.fX, gAOData[forplayerid][i].vecOffset.fY, gAOData[forplayerid][i].vecOffset.fZ,
-				gAOData[forplayerid][i].vecRot.fX, gAOData[forplayerid][i].vecRot.fY, gAOData[forplayerid][i].vecRot.fZ);
+			logprintf("leave, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
+				pPlayerData[forplayerid]->stObj[i].usAttachPlayerID,
+				pPlayerData[forplayerid]->stObj[i].vecOffset.fX, pPlayerData[forplayerid]->stObj[i].vecOffset.fY, pPlayerData[forplayerid]->stObj[i].vecOffset.fZ,
+				pPlayerData[forplayerid]->stObj[i].vecRot.fX, pPlayerData[forplayerid]->stObj[i].vecRot.fY, pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
 			*/
 		}
 	}

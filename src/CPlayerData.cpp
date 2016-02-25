@@ -21,7 +21,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	// Null object data
 	for(int i = 0; i != MAX_OBJECTS; i++)
 	{
-		this->stObj[i].usObjectID = 0xFFFF;
+		this->stObj[i].usObjectID = INVALID_OBJECT_ID;
 		this->stObj[i].usAttachPlayerID = INVALID_PLAYER_ID;
 		this->stObj[i].vecOffset = CVector(0.0f, 0.0f, 0.0f);
 		this->stObj[i].vecRot = CVector(0.0f, 0.0f, 0.0f);
@@ -71,6 +71,8 @@ CPlayerData::CPlayerData( WORD playerid )
 	bAFKState = false;
 	bEverUpdated = false;
 	dwLastUpdateTick = 0;
+	dwCreateAttachedObj = 0;
+	dwObjectID = INVALID_OBJECT_ID;
 
 	bHidden = false;
 	bControllable = true;
@@ -213,19 +215,41 @@ void CPlayerData::Process(void)
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	if (bEverUpdated && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_NONE && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_WASTED)
 	{
-		if(bAFKState == false && dwTickCount - dwLastUpdateTick > AFK_ACCURACY)
+		if(bAFKState == false && dwTickCount - dwLastUpdateTick > pServer->GetAFKAccuracy())
 		{
 			bAFKState = true;
 
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 
-		else if(bAFKState == true && dwTickCount - dwLastUpdateTick < AFK_ACCURACY)
+		else if(bAFKState == true && dwTickCount - dwLastUpdateTick < pServer->GetAFKAccuracy())
 		{
 			bAFKState = false;
 
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
+	}
+
+	if((dwTickCount - dwCreateAttachedObj > 100) && dwCreateAttachedObj != 0)
+	{
+		logprintf("wPlayerID: %d, stObj[i].usAttachPlayerID: %d - %d", wPlayerID, stObj[dwObjectID].usAttachPlayerID, dwObjectID);
+
+		// Attach created object to player
+		RakNet::BitStream bs;
+		bs.Write(pNetGame->pObjectPool->pPlayerObjects[wPlayerID][dwObjectID]->wObjectID); // m_wObjectID
+		bs.Write(stObj[dwObjectID].usAttachPlayerID); // playerid
+
+		bs.Write(stObj[dwObjectID].vecOffset.fX);
+		bs.Write(stObj[dwObjectID].vecOffset.fY);
+		bs.Write(stObj[dwObjectID].vecOffset.fZ);
+
+		bs.Write(stObj[dwObjectID].vecRot.fX);
+		bs.Write(stObj[dwObjectID].vecRot.fY);
+		bs.Write(stObj[dwObjectID].vecRot.fZ);
+
+		pRakServer->RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+		dwCreateAttachedObj = 0;
+		dwObjectID = INVALID_OBJECT_ID;
 	}
 
 	// Process gangzones

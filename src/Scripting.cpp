@@ -4952,6 +4952,27 @@ static cell AMX_NATIVE_CALL Natives::YSF_IsNightVisionFixEnabled(AMX* amx, cell*
 	return static_cast<cell>(pServer->IsNightVisionFixEnabled());
 }
 
+// native YSF_SetAFKAccuracy(time_ms);
+static cell AMX_NATIVE_CALL Natives::YSF_SetAFKAccuracy(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 1;
+
+	CHECK_PARAMS(1, "YSF_SetAFKAccuracy");
+
+	pServer->SetAFKAccuracy(static_cast<DWORD>(params[1]));
+	return 1;
+}
+
+// native YSF_GetAFKAccuracy();
+static cell AMX_NATIVE_CALL Natives::YSF_GetAFKAccuracy(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 1;
+
+	return static_cast<cell>(pServer->GetAFKAccuracy());
+}
+
 static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(4, "GangZoneCreate");
@@ -6551,6 +6572,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "YSF_GetTickRate",				Natives::YSF_GetTickRate},
 	{ "YSF_EnableNightVisionFix",		Natives::YSF_EnableNightVisionFix },
 	{ "YSF_IsNightVisionFixEnabled",	Natives::YSF_IsNightVisionFixEnabled },
+	{ "YSF_SetAFKAccuracy",				Natives::YSF_SetAFKAccuracy },
+	{ "YSF_GetAFKAccuracy",				Natives::YSF_GetAFKAccuracy },
+
 	{ "AttachPlayerObjectToObject",		Natives::AttachPlayerObjectToObject },
 	
 	// Recording functions

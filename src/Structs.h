@@ -49,7 +49,6 @@ class CGangZonePool;
 // Defines
 #define	MAX_ATTACHED_OBJECTS		10
 #define	MAX_FILTER_SCRIPTS			16
-#define AFK_ACCURACY				1500
 
 #define MAX_PVARS					800
 #define MAX_PVAR_NAME				40
