@@ -1402,7 +1402,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyObject(AMX* amx, cell* params)
 
 	if(pDestroyObject(amx, params))
 	{
-		pServer->COBJECT_AttachedObjectPlayer[objectid] = INVALID_OBJECT_ID;
+		pServer->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
 		return 1;
 	}
 	return 0;
@@ -1431,6 +1431,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 			pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = INVALID_PLAYER_ID;
 			pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(0.0f, 0.0f, 0.0f);
 			pPlayerData[playerid]->stObj[objectid].vecRot = CVector(0.0f, 0.0f, 0.0f);		
+			pPlayerData[playerid]->dwCreateAttachedObj = 0;
 
 			//logprintf("remove attached shit");
 		}
@@ -4661,10 +4662,12 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	if(!pObject) return 0;
 
-	YSF_AttachObjectToPlayer(amx, params);
-	
-	pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
-	pObject->vecAttachedRotation = CVector(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
+	if(YSF_AttachObjectToPlayer(amx, params))
+	{
+		pServer->COBJECT_AttachedObjectPlayer[objectid] = playerid;
+		pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+		pObject->vecAttachedRotation = CVector(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
+	}
 	return 1;
 }
 
