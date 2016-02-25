@@ -3063,7 +3063,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params
 	CHECK_PARAMS(7, "GetVehicleSpawnInfo");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	CVehicle* pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
 	if(!pVehicle) 
@@ -3113,7 +3113,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 	CHECK_PARAMS(10, "SetVehicleSpawnInfo");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	int modelid = static_cast<int>(params[2]);
 	if(modelid < 400 || modelid > 611) return 0;
@@ -3192,7 +3192,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleColor( AMX* amx, cell* params )
 	CHECK_PARAMS(3, "GetVehicleColor");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3232,7 +3232,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehiclePaintjob( AMX* amx, cell* params 
 	CHECK_PARAMS(1, "GetVehiclePaintjob");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3250,7 +3250,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleInterior( AMX* amx, cell* params 
 	CHECK_PARAMS(1, "GetVehicleInterior");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3268,7 +3268,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleNumberPlate( AMX* amx, cell* para
 	CHECK_PARAMS(3, "GetVehicleNumberPlate");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3286,7 +3286,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnDelay( AMX* amx, cell* par
 	CHECK_PARAMS(2, "SetVehicleRespawnDelay");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3305,7 +3305,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnDelay( AMX* amx, cell* par
 	CHECK_PARAMS(1, "GetVehicleRespawnDelay");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3323,7 +3323,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleOccupiedTick( AMX* amx, cell* par
 	CHECK_PARAMS(2, "SetVehicleOccupiedTick");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3342,7 +3342,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleOccupiedTick( AMX* amx, cell* par
 	CHECK_PARAMS(1, "GetVehicleOccupiedTick");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3360,7 +3360,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnTick( AMX* amx, cell* para
 	CHECK_PARAMS(2, "SetVehicleRespawnTick");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3379,7 +3379,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnTick( AMX* amx, cell* para
 	CHECK_PARAMS(1, "GetVehicleRespawnTick");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3397,7 +3397,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleLastDriver( AMX* amx, cell* param
 	CHECK_PARAMS(1, "GetVehicleLastDriver");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3415,7 +3415,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleCab( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "GetVehicleCab");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3442,7 +3442,7 @@ static cell AMX_NATIVE_CALL Natives::HasVehicleBeenOccupied( AMX* amx, cell* par
 	CHECK_PARAMS(1, "HasVehicleBeenOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3460,7 +3460,7 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleBeenOccupied( AMX* amx, cell* par
 	CHECK_PARAMS(2, "SetVehicleBeenOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
@@ -3479,7 +3479,7 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleOccupied( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "IsVehicleOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	CPlayer *pPlayer;
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
@@ -3503,7 +3503,7 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleDead( AMX* amx, cell* params )
 	CHECK_PARAMS(1, "IsVehicleDead");
 
 	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid >= MAX_VEHICLES) return 0;
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
