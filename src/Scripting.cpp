@@ -3182,6 +3182,38 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 	return 1;
 }
 
+// native GetVehicleModelCount(modelid);
+static cell AMX_NATIVE_CALL Natives::GetVehicleModelCount( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "GetVehicleModelCount");
+
+	int modelid = static_cast<int>(params[1]);
+	if(modelid < 400 || modelid > 611) return 0;
+	
+	return pNetGame->pVehiclePool->byteVehicleModelsUsed[modelid - 400];
+}
+
+// native GetVehicleModelsUsed();
+static cell AMX_NATIVE_CALL Natives::GetVehicleModelsUsed( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	BYTE byteModelsUsed = 0;
+	for(BYTE i = 0; i != 212; i++)
+	{
+		if(pNetGame->pVehiclePool->byteVehicleModelsUsed[i] != 0)
+			byteModelsUsed++;
+	}
+
+	return byteModelsUsed;
+}
+
 // native GetVehicleColor(vehicleid, &color1, &color2);
 static cell AMX_NATIVE_CALL Natives::GetVehicleColor( AMX* amx, cell* params )
 {
@@ -6379,6 +6411,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"SetVehicleBeenOccupied",			Natives::SetVehicleBeenOccupied}, // R9
 	{"IsVehicleOccupied",				Natives::IsVehicleOccupied}, // R9
 	{"IsVehicleDead",					Natives::IsVehicleDead}, // R9
+	{"GetVehicleModelCount",			Natives::GetVehicleModelCount}, // R17
+	{"GetVehicleModelsUsed",			Natives::GetVehicleModelsUsed}, // R17
 
 	// Gangzone - Global
 	{"IsValidGangZone",					Natives::IsValidGangZone},
