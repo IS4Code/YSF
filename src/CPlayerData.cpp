@@ -526,7 +526,7 @@ void RebuildRPCData(int uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 			bsSync->Reset();
 			bsSync->Write((bool)!!pNetGame->unklofasz);
 			bsSync->Write((bool)usecjwalk);
-			bsSync->Write(pNetGame->byteAllowWeapons);
+			bsSync->Write((bool)!!pNetGame->byteAllowWeapons);
 			bsSync->Write(limitglobalchat);
 			bsSync->Write(globalchatradius);
 			bsSync->Write((bool)!!pNetGame->byteStuntBonus);
@@ -537,8 +537,8 @@ void RebuildRPCData(int uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 			bsSync->Write(pNetGame->iSpawnsAvailable);
 			bsSync->Write(playerid);
 			bsSync->Write(shownametags);
-			bsSync->Write((DWORD)showplayermarkers);
-			bsSync->Write((bool)!!pNetGame->bTirePopping);
+			bsSync->Write((int)showplayermarkers);
+			bsSync->Write(pNetGame->bTirePopping);
 			bsSync->Write(pNetGame->byteWeather);
 			bsSync->Write(pNetGame->fGravity);
 			bsSync->Write((bool)!!pNetGame->bLanMode);
@@ -561,10 +561,7 @@ void RebuildRPCData(int uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 			{
 				bsSync->Write((BYTE)0);
 			}
-
-			char modelsUsed[212];
-			memcpy(modelsUsed, pNetGame->pVehiclePool->byteVehicleModelsUsed, sizeof(modelsUsed));
-			bsSync->Write(modelsUsed, 212);
+			bsSync->Write((char*)&pNetGame->pVehiclePool, 212); // modelsUsed
 			bsSync->Write((DWORD)vehiclefriendlyfire);
 			break;
 		}
