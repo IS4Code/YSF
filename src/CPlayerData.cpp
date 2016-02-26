@@ -21,8 +21,8 @@ CPlayerData::CPlayerData( WORD playerid )
 	// Null object data
 	for(int i = 0; i != MAX_OBJECTS; i++)
 	{
-		this->stObj[i].usObjectID = INVALID_OBJECT_ID;
-		this->stObj[i].usAttachPlayerID = INVALID_PLAYER_ID;
+		this->stObj[i].wObjectID = INVALID_OBJECT_ID;
+		this->stObj[i].wAttachPlayerID = INVALID_PLAYER_ID;
 		this->stObj[i].vecOffset = CVector(0.0f, 0.0f, 0.0f);
 		this->stObj[i].vecRot = CVector(0.0f, 0.0f, 0.0f);
 	}
@@ -232,12 +232,12 @@ void CPlayerData::Process(void)
 
 	if((dwTickCount - dwCreateAttachedObj > 100) && dwCreateAttachedObj != 0)
 	{
-		logprintf("wPlayerID: %d, stObj[i].usAttachPlayerID: %d - %d", wPlayerID, stObj[dwObjectID].usAttachPlayerID, dwObjectID);
+		logprintf("wPlayerID: %d, stObj[i].wAttachPlayerID: %d - %d", wPlayerID, stObj[dwObjectID].wAttachPlayerID, dwObjectID);
 
 		// Attach created object to player
 		RakNet::BitStream bs;
 		bs.Write(pNetGame->pObjectPool->pPlayerObjects[wPlayerID][dwObjectID]->wObjectID); // m_wObjectID
-		bs.Write(stObj[dwObjectID].usAttachPlayerID); // playerid
+		bs.Write(stObj[dwObjectID].wAttachPlayerID); // playerid
 
 		bs.Write(stObj[dwObjectID].vecOffset.fX);
 		bs.Write(stObj[dwObjectID].vecOffset.fY);

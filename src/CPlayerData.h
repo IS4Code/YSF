@@ -81,8 +81,8 @@ public:
 
 	struct sObj
 	{
-		WORD usObjectID;
-		WORD usAttachPlayerID;
+		WORD wObjectID;
+		WORD wAttachPlayerID;
 		CVector vecOffset;
 		CVector vecRot;
 	} stObj[MAX_OBJECTS];

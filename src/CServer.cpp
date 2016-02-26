@@ -108,7 +108,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	for(WORD i = 0; i != MAX_OBJECTS; i++)
 	{
-		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
+		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid)
 		{
 			logprintf("should work");
 			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
@@ -142,7 +142,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			pPlayerData[forplayerid]->dwObjectID = i;
 			/*
 			logprintf("join, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
-				pPlayerData[forplayerid]->stObj[i].usAttachPlayerID,
+				pPlayerData[forplayerid]->stObj[i].wAttachPlayerID,
 				pPlayerData[forplayerid]->stObj[i].vecOffset.fX, pPlayerData[forplayerid]->stObj[i].vecOffset.fY, pPlayerData[forplayerid]->stObj[i].vecOffset.fZ,
 				pPlayerData[forplayerid]->stObj[i].vecRot.fX, pPlayerData[forplayerid]->stObj[i].vecRot.fY, pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
 			*/
@@ -166,7 +166,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	for(WORD i = 0; i != MAX_OBJECTS; i++)
 	{
-		if(pPlayerData[forplayerid]->stObj[i].usAttachPlayerID == playerid)
+		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid)
 		{
 			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
 			{
@@ -179,7 +179,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 			pPlayerData[playerid]->dwCreateAttachedObj = 0;
 			/*
 			logprintf("leave, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
-				pPlayerData[forplayerid]->stObj[i].usAttachPlayerID,
+				pPlayerData[forplayerid]->stObj[i].wAttachPlayerID,
 				pPlayerData[forplayerid]->stObj[i].vecOffset.fX, pPlayerData[forplayerid]->stObj[i].vecOffset.fY, pPlayerData[forplayerid]->stObj[i].vecOffset.fZ,
 				pPlayerData[forplayerid]->stObj[i].vecRot.fX, pPlayerData[forplayerid]->stObj[i].vecRot.fY, pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
 			*/

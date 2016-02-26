@@ -1425,10 +1425,10 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 
 	if(pDestroyPlayerObject(amx, params) && IsPlayerConnectedEx(playerid))
 	{
-		if(pPlayerData[playerid]->stObj[objectid].usObjectID != 0xFFFF || pPlayerData[playerid]->stObj[objectid].usAttachPlayerID != INVALID_PLAYER_ID)
+		if(pPlayerData[playerid]->stObj[objectid].wObjectID != 0xFFFF || pPlayerData[playerid]->stObj[objectid].wAttachPlayerID != INVALID_PLAYER_ID)
 		{
-			pPlayerData[playerid]->stObj[objectid].usObjectID = INVALID_OBJECT_ID;
-			pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = INVALID_PLAYER_ID;
+			pPlayerData[playerid]->stObj[objectid].wObjectID = INVALID_OBJECT_ID;
+			pPlayerData[playerid]->stObj[objectid].wAttachPlayerID = INVALID_PLAYER_ID;
 			pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(0.0f, 0.0f, 0.0f);
 			pPlayerData[playerid]->stObj[objectid].vecRot = CVector(0.0f, 0.0f, 0.0f);		
 			pPlayerData[playerid]->dwCreateAttachedObj = 0;
@@ -2736,9 +2736,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell
 	amx_GetAddr(amx, params[3], &cptr);
 	*cptr = (cell)pObject->wAttachedVehicleID;
 	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = (cell)pPlayerData[playerid]->stObj[objectid].usObjectID;
+	*cptr = (cell)pPlayerData[playerid]->stObj[objectid].wObjectID;
 	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = (cell)pPlayerData[playerid]->stObj[objectid].usAttachPlayerID;
+	*cptr = (cell)pPlayerData[playerid]->stObj[objectid].wAttachPlayerID;
 	return 1;
 }
 
@@ -4690,7 +4690,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 	
-	pPlayerData[playerid]->stObj[objectid].usAttachPlayerID = static_cast<WORD>(attachplayerid);
+	pPlayerData[playerid]->stObj[objectid].wAttachPlayerID = static_cast<WORD>(attachplayerid);
 	pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
 	pPlayerData[playerid]->stObj[objectid].vecRot = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
 
@@ -4735,7 +4735,7 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	BYTE byteSyncRot = !!params[10];
 
 	// Store data
-	pPlayerData[forplayerid]->stObj[wObjectID].usObjectID = static_cast<WORD>(wAttachTo);
+	pPlayerData[forplayerid]->stObj[wObjectID].wObjectID = static_cast<WORD>(wAttachTo);
 	pPlayerData[forplayerid]->stObj[wObjectID].vecOffset = vecOffset;
 	pPlayerData[forplayerid]->stObj[wObjectID].vecRot = vecOffsetRot;
 
