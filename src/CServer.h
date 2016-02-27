@@ -46,6 +46,9 @@ public:
 	void inline EnableNightVisionFix(bool enable) { m_bNightVisionFix = enable; }
 	bool inline IsNightVisionFixEnabled(void) { return m_bNightVisionFix; }
 
+	void SetExtendedNetStatsEnabled(bool enable);
+	bool IsExtendedNetStatsEnabled(void);
+
 	void inline SetAFKAccuracy(DWORD time_ms) { m_dwAFKAccuracy = time_ms; }
 	DWORD inline GetAFKAccuracy(void) { return m_dwAFKAccuracy; }
 
@@ -62,7 +65,8 @@ private:
 	eSAMPVersion m_Version;
 	int m_iTicks;
 	int m_iTickRate;
-	bool m_bNightVisionFix;
+	bool m_bNightVisionFix : 1;
+	bool m_bExtendedNetStats : 1;
 	DWORD m_dwAFKAccuracy;
 
 	std::vector <char> m_vecValidNameCharacters;

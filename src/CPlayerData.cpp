@@ -230,7 +230,7 @@ void CPlayerData::Process(void)
 		}
 	}
 
-	if((dwTickCount - dwCreateAttachedObj > 100) && dwCreateAttachedObj != 0)
+	if((dwTickCount - dwCreateAttachedObj > 700) && dwCreateAttachedObj != 0)
 	{
 		logprintf("wPlayerID: %d, stObj[i].wAttachPlayerID: %d - %d", wPlayerID, stObj[dwObjectID].wAttachPlayerID, dwObjectID);
 
@@ -247,7 +247,7 @@ void CPlayerData::Process(void)
 		bs.Write(stObj[dwObjectID].vecRot.fY);
 		bs.Write(stObj[dwObjectID].vecRot.fZ);
 
-		pRakServer->RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+		pRakServer->RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
 		dwCreateAttachedObj = 0;
 		dwObjectID = INVALID_OBJECT_ID;
 	}

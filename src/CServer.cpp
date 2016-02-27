@@ -277,6 +277,24 @@ bool CServer::IsValidNick(char *szName)
 	return true;
 }
 
+void CServer::SetExtendedNetStatsEnabled(bool enable)
+{
+	if(CAddress::ADDR_GetNetworkStats_VerbosityLevel)
+	{
+		*(BYTE*)(CAddress::ADDR_GetNetworkStats_VerbosityLevel + 1) = enable ? 2 : 1;
+		*(BYTE*)(CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel + 1) = enable ? 2 : 1;
+	}
+}
+
+bool CServer::IsExtendedNetStatsEnabled(void)
+{
+	if(CAddress::ADDR_GetNetworkStats_VerbosityLevel)
+	{
+		return static_cast<int>(*(BYTE*)(CAddress::ADDR_GetNetworkStats_VerbosityLevel + 1) != 1);
+	}
+	return false;
+}
+
 WORD CServer::GetMaxPlayers_()
 {
 	WORD count = 0;

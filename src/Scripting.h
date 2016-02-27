@@ -319,6 +319,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_GetTickRate(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_EnableNightVisionFix(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_IsNightVisionFixEnabled(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_SetExtendedNetStatsEnabled(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_IsExtendedNetStatsEnabled(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_SetAFKAccuracy(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GetAFKAccuracy(AMX *amx, cell *params);
 	

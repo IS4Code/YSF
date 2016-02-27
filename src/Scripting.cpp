@@ -4662,7 +4662,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	if(!pObject) return 0;
 
-	if(YSF_AttachObjectToPlayer(amx, params))
+	if(pAttachObjectToPlayer(amx, params))
 	{
 		pServer->COBJECT_AttachedObjectPlayer[objectid] = playerid;
 		pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
@@ -4952,6 +4952,27 @@ static cell AMX_NATIVE_CALL Natives::YSF_IsNightVisionFixEnabled(AMX* amx, cell*
 	return static_cast<cell>(pServer->IsNightVisionFixEnabled());
 }
 
+// native YSF_SetExtendedNetStatsEnabled(enable);
+static cell AMX_NATIVE_CALL Natives::YSF_SetExtendedNetStatsEnabled(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 1;
+
+	CHECK_PARAMS(1, "YSF_SetExtendedNetStatsEnabled");
+
+	pServer->SetExtendedNetStatsEnabled(static_cast<int>(params[1]) != 0);
+	return 1;
+}
+
+// native YSF_IsExtendedNetStatsEnabled();
+static cell AMX_NATIVE_CALL Natives::YSF_IsExtendedNetStatsEnabled(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 1;
+
+	return static_cast<cell>(pServer->IsExtendedNetStatsEnabled());
+}
+
 // native YSF_SetAFKAccuracy(time_ms);
 static cell AMX_NATIVE_CALL Natives::YSF_SetAFKAccuracy(AMX* amx, cell* params)
 {
@@ -4963,6 +4984,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetAFKAccuracy(AMX* amx, cell* params)
 	pServer->SetAFKAccuracy(static_cast<DWORD>(params[1]));
 	return 1;
 }
+
 
 // native YSF_GetAFKAccuracy();
 static cell AMX_NATIVE_CALL Natives::YSF_GetAFKAccuracy(AMX* amx, cell* params)
@@ -6572,8 +6594,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "YSF_GetTickRate",				Natives::YSF_GetTickRate},
 	{ "YSF_EnableNightVisionFix",		Natives::YSF_EnableNightVisionFix },
 	{ "YSF_IsNightVisionFixEnabled",	Natives::YSF_IsNightVisionFixEnabled },
-	{ "YSF_SetAFKAccuracy",				Natives::YSF_SetAFKAccuracy },
-	{ "YSF_GetAFKAccuracy",				Natives::YSF_GetAFKAccuracy },
+	{ "YSF_SetExtendedNetStatsEnabled",	Natives::YSF_SetExtendedNetStatsEnabled }, // R17
+	{ "YSF_IsExtendedNetStatsEnabled",	Natives::YSF_IsExtendedNetStatsEnabled }, // R17
+	{ "YSF_SetAFKAccuracy",				Natives::YSF_SetAFKAccuracy }, // R17
+	{ "YSF_GetAFKAccuracy",				Natives::YSF_GetAFKAccuracy }, // R17
 
 	{ "AttachPlayerObjectToObject",		Natives::AttachPlayerObjectToObject },
 	

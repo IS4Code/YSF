@@ -156,7 +156,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		}
 	}
 	#endif
-/*
+	/*
 	logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
 
 	logprintf("FUNC_CConsole__AddStringVariable: %X", FUNC_CConsole__AddStringVariable);
@@ -200,7 +200,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 #else
 		Unlock((void*)ADDR_GetNetworkStats_VerbosityLevel, 5);
 #endif
-		*(BYTE*)(ADDR_GetNetworkStats_VerbosityLevel + 1) = 2;
 	}
 
 	// Patch GetPlayerNetworkStats to get more advanced stats than default
@@ -211,6 +210,5 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 #else
 		Unlock((void*)ADDR_GetPlayerNetworkStats_VerbosityLevel, 5);
 #endif
-		*(BYTE*)(ADDR_GetPlayerNetworkStats_VerbosityLevel + 1) = 2;
 	}
 }
