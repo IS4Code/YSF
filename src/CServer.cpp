@@ -33,7 +33,6 @@ CServer::CServer(eSAMPVersion version)
 	m_vecValidNameCharacters.push_back('[');
 	m_vecValidNameCharacters.push_back('_');
 	m_vecValidNameCharacters.push_back('$');
-	m_vecValidNameCharacters.push_back(':');
 	m_vecValidNameCharacters.push_back('=');
 	m_vecValidNameCharacters.push_back('(');
 	m_vecValidNameCharacters.push_back(')');
