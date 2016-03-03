@@ -167,7 +167,7 @@ bool CSAMPFunctions::Send(void* ppRakServer, RakNet::BitStream* parameters, Pack
 	return pfn__RakNet__Send(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
 
-bool CSAMPFunctions::RPC(void* ppRakServer, int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
+bool CSAMPFunctions::RPC(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
 	return pfn__RakNet__RPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }
