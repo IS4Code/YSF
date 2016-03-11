@@ -741,11 +741,14 @@ void InstallPreHooks()
 		logprintf_hook = subhook_new((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
 		subhook_install(logprintf_hook);
 
+		if(CAddress::FUNC_CVehicle__Respawn)
+		{
 #ifdef WIN32
-		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)HOOK_CVehicle__Respawn);
+			InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)HOOK_CVehicle__Respawn);
 #else
-		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
+			InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
 #endif
+		}
 
 		if(CAddress::ADDR_RecordingDirectory)
 		{

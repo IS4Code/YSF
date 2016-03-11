@@ -3109,7 +3109,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params
 static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params )
 {
 	// If unknown server version
-	if(!pServer)
+	if(!pServer || !CAddress::FUNC_CVehicle__Respawn)
 		return 0;
 
 	CHECK_PARAMS(10, "SetVehicleSpawnInfo");
