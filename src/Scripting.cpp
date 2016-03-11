@@ -2312,12 +2312,12 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerFakePing(AMX *amx, cell *params)
 	return 1;
 }
 
-// native TogglePlayerOnPlayerList(playerid, bool:toggle);
-static cell AMX_NATIVE_CALL Natives::TogglePlayerOnPlayerList(AMX *amx, cell *params)
+// native TogglePlayerInServerQuery(playerid, bool:toggle);
+static cell AMX_NATIVE_CALL Natives::TogglePlayerInServerQuery(AMX *amx, cell *params)
 {
 	if (!pServer) return 0;
 
-	CHECK_PARAMS(2, "TogglePlayerOnPlayerList");
+	CHECK_PARAMS(2, "TogglePlayerInServerQuery");
 
 	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
@@ -2326,12 +2326,12 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerOnPlayerList(AMX *amx, cell *pa
 	return 1;
 }
 
-// native IsPlayerToggledOnPlayerList(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerToggledOnPlayerList(AMX *amx, cell *params)
+// native IsPlayerToggledInServerQuery(playerid);
+static cell AMX_NATIVE_CALL Natives::IsPlayerToggledInServerQuery(AMX *amx, cell *params)
 {
 	if (!pServer) return 0;
 
-	CHECK_PARAMS(1, "IsPlayerToggledOnPlayerList");
+	CHECK_PARAMS(1, "IsPlayerToggledInServerQuery");
 
 	int playerid = static_cast<int>(params[1]);
 	if (!IsPlayerConnectedEx(playerid)) return 0;
@@ -6418,8 +6418,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "TogglePlayerScoresPingsUpdate",	Natives::TogglePlayerScoresPingsUpdate }, // R8
 	{ "TogglePlayerFakePing",			Natives::TogglePlayerFakePing }, // R8
 	{ "SetPlayerFakePing",				Natives::SetPlayerFakePing }, // R8
-	{ "TogglePlayerOnPlayerList",		Natives::TogglePlayerOnPlayerList }, // R11
-	{ "IsPlayerToggledOnPlayerList",	Natives::IsPlayerToggledOnPlayerList }, // R11
+	{ "TogglePlayerOnPlayerList",		Natives::TogglePlayerInServerQuery }, // R11
+	{ "IsPlayerToggledOnPlayerList",	Natives::IsPlayerToggledInServerQuery }, // R11
+	{ "TogglePlayerInServerQuery",		Natives::TogglePlayerInServerQuery }, // R11
+	{ "IsPlayerToggledInServerQuery",	Natives::IsPlayerToggledInServerQuery }, // R11
 
 	// AFK
 	{ "IsPlayerPaused",					Natives::IsPlayerPaused },

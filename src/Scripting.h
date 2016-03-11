@@ -142,8 +142,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL TogglePlayerScoresPingsUpdate(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL TogglePlayerFakePing(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL SetPlayerFakePing(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL TogglePlayerOnPlayerList(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL IsPlayerToggledOnPlayerList(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL TogglePlayerInServerQuery(AMX *amx, cell *params); // R11
+	static cell AMX_NATIVE_CALL IsPlayerToggledInServerQuery(AMX *amx, cell *params); // R11
 
 	static cell AMX_NATIVE_CALL IsPlayerPaused(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL GetPlayerPausedTime(AMX *amx, cell *params);
