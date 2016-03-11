@@ -76,6 +76,7 @@ CPlayerData::CPlayerData( WORD playerid )
 
 	bHidden = false;
 	bControllable = true;
+	bAttachedObjectCreated = false;
 
 	// Private
 	memset(m_iTeams, -1, sizeof(m_iSkins));
@@ -230,9 +231,9 @@ void CPlayerData::Process(void)
 		}
 	}
 
-	if((dwTickCount - dwCreateAttachedObj > 700) && dwCreateAttachedObj != 0)
+	if((dwTickCount - dwCreateAttachedObj > 3000) && dwCreateAttachedObj != 0)
 	{
-		logprintf("wPlayerID: %d, stObj[i].wAttachPlayerID: %d - %d", wPlayerID, stObj[dwObjectID].wAttachPlayerID, dwObjectID);
+		//logprintf("wPlayerID: %d, stObj[i].wAttachPlayerID: %d - %d", wPlayerID, stObj[dwObjectID].wAttachPlayerID, dwObjectID);
 
 		// Attach created object to player
 		RakNet::BitStream bs;
@@ -250,6 +251,7 @@ void CPlayerData::Process(void)
 		pRakServer->RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
 		dwCreateAttachedObj = 0;
 		dwObjectID = INVALID_OBJECT_ID;
+		bAttachedObjectCreated = true;
 	}
 
 	// Process gangzones
@@ -522,7 +524,7 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 	}
 }
 
-void RebuildRPCData(int uniqueID, RakNet::BitStream *bsSync, WORD playerid)
+void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 {
 	switch(uniqueID)
 	{

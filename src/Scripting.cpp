@@ -1110,16 +1110,17 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerName(AMX* amx, cell* params)
 	CHECK_PARAMS(2, "SetPlayerName");
 
 	int playerid = static_cast<int>(params[1]);
-	if(pSetPlayerName(amx, params))
+	int ret = pSetPlayerName(amx, params);
+
+	if(ret == 1)
 	{
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
 			if(IsPlayerConnectedEx(i))
 				pPlayerData[i]->ResetPlayerName(static_cast<WORD>(playerid));
 		}
-		return 1;
 	}
-	return 0;
+	return ret;
 }
 
 // native SetPlayerFightStyleForPlayer(playerid, styleplayerid, style);
@@ -1432,6 +1433,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 			pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(0.0f, 0.0f, 0.0f);
 			pPlayerData[playerid]->stObj[objectid].vecRot = CVector(0.0f, 0.0f, 0.0f);		
 			pPlayerData[playerid]->dwCreateAttachedObj = 0;
+			pPlayerData[playerid]-> bAttachedObjectCreated = false;
 
 			//logprintf("remove attached shit");
 		}
@@ -1455,7 +1457,6 @@ static cell AMX_NATIVE_CALL Natives::YSF_TogglePlayerControllable(AMX* amx, cell
 	if(pTogglePlayerControllable(amx, params) && IsPlayerConnectedEx(playerid))
 	{
 		pPlayerData[playerid]->bControllable = toggle;
-		//printf("controllable: %d, %d", toggle, pPlayerData[playerid]->bControllable);
 		return 1;
 	}
 	return 0;
@@ -4671,18 +4672,19 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 	return 1;
 }
 
-// native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ)
+// native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ, onlyaddtoinstance = 0)
 static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, cell* params )
 {
 	// If unknown server version
 	if(!pServer)
 		return 0;
 
-	CHECK_PARAMS(9, "AttachPlayerObjectToPlayer");
+//	CHECK_PARAMS(9, "AttachPlayerObjectToPlayer");
 
 	int playerid = static_cast<int>(params[1]);
 	int objectid = static_cast<int>(params[2]);
 	int attachplayerid = static_cast<int>(params[3]);
+	bool bOnlyAddToInstance = static_cast<int>(params[10]) != 0;
 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(!IsPlayerConnectedEx(attachplayerid)) return 0;
@@ -4694,17 +4696,31 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 	pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
 	pPlayerData[playerid]->stObj[objectid].vecRot = CVector(amx_ctof(params[7]), amx_ctof(params[8]), amx_ctof(params[9]));
 
-	RakNet::BitStream bs;
-	bs.Write((WORD)objectid); // wObjectID
-	bs.Write((WORD)attachplayerid); // playerid
-	bs.Write(amx_ctof(params[4]));
-	bs.Write(amx_ctof(params[5]));
-	bs.Write(amx_ctof(params[6]));
-	bs.Write(amx_ctof(params[7]));
-	bs.Write(amx_ctof(params[8]));
-	bs.Write(amx_ctof(params[9]));
+	if(!bOnlyAddToInstance)
+	{
+		if(pNetGame->pPlayerPool->pPlayer[playerid]->byteStreamedIn[attachplayerid])
+		{
+			RakNet::BitStream bs;
+			bs.Write((WORD)objectid); // wObjectID
+			bs.Write((WORD)attachplayerid); // playerid
+			bs.Write(amx_ctof(params[4]));
+			bs.Write(amx_ctof(params[5]));
+			bs.Write(amx_ctof(params[6]));
+			bs.Write(amx_ctof(params[7]));
+			bs.Write(amx_ctof(params[8]));
+			bs.Write(amx_ctof(params[9]));
+			pRakServer->RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
 
-	pRakServer->RPC(&RPC_AttachObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+			pPlayerData[playerid]->bAttachedObjectCreated = true;
+		}
+	}
+	else
+	{
+			pPlayerData[playerid]->dwCreateAttachedObj = GetTickCount();
+			pPlayerData[playerid]->dwObjectID = objectid;
+			pPlayerData[playerid]->bAttachedObjectCreated = true;
+		
+	}
 	return 1;
 }
 
@@ -4803,7 +4819,7 @@ static cell AMX_NATIVE_CALL Natives::SendClientMessagef( AMX* amx, cell* params 
 	bsParams.Write((DWORD)params[2]);
 	bsParams.Write((DWORD)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ClientMessage, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -4818,7 +4834,7 @@ static cell AMX_NATIVE_CALL Natives::SendClientMessageToAllf( AMX* amx, cell* pa
 	bsParams.Write((DWORD)params[1]);
 	bsParams.Write((DWORD)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ClientMessage, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
@@ -4837,7 +4853,7 @@ static cell AMX_NATIVE_CALL Natives::GameTextForPlayerf( AMX* amx, cell* params 
 	bsParams.Write((int)params[2]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -4853,7 +4869,7 @@ static cell AMX_NATIVE_CALL Natives::GameTextForAllf( AMX* amx, cell* params )
 	bsParams.Write((int)params[1]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
@@ -4874,7 +4890,7 @@ static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToPlayerf( AMX* amx, cell*
 	bsParams.Write((WORD)senderid);
 	bsParams.Write((BYTE)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_Chat, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -4892,7 +4908,7 @@ static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToAllf( AMX* amx, cell* pa
 	bsParams.Write((WORD)senderid);
 	bsParams.Write((BYTE)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_Chat, &bsParams, MEDIUM_PRIORITY, RELIABLE, 0, UNASSIGNED_PLAYER_ID, true, false);
+	pRakServer->RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
@@ -6396,6 +6412,7 @@ AMX_NATIVE_INFO YSINatives [] =
 	// Actor
 	{ "GetActorSpawnInfo", 				Natives::GetActorSpawnInfo}, // R13
 	{ "GetActorSkin", 					Natives::GetActorSkin}, // R13
+	{ "GetActorAnimation", 				Natives::GetActorAnimation}, // R17
 
 	// Scoreboard manipulation
 	{ "TogglePlayerScoresPingsUpdate",	Natives::TogglePlayerScoresPingsUpdate }, // R8

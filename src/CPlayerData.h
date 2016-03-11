@@ -143,6 +143,7 @@ public:
 	bool bEverUpdated : 1; 
 	bool bHidden : 1;
 	bool bControllable : 1;
+	bool bAttachedObjectCreated : 1;
 
 private:
 	int m_iTeams[MAX_PLAYERS];
@@ -152,5 +153,5 @@ private:
 };
 
 void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
-void RebuildRPCData(int uniqueID, RakNet::BitStream *bsSync, WORD playerid);
+void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
 #endif

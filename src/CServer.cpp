@@ -107,7 +107,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	for(WORD i = 0; i != MAX_OBJECTS; i++)
 	{
-		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid)
+		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && !pPlayerData[forplayerid]->bAttachedObjectCreated)
 		{
 			logprintf("should work");
 			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
@@ -139,6 +139,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			
 			pPlayerData[forplayerid]->dwCreateAttachedObj = GetTickCount();
 			pPlayerData[forplayerid]->dwObjectID = i;
+			pPlayerData[forplayerid]->bAttachedObjectCreated = true;
 			/*
 			logprintf("join, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
 				pPlayerData[forplayerid]->stObj[i].wAttachPlayerID,
@@ -165,7 +166,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	for(WORD i = 0; i != MAX_OBJECTS; i++)
 	{
-		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid)
+		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && pPlayerData[forplayerid]->bAttachedObjectCreated)
 		{
 			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
 			{
@@ -174,8 +175,12 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 			}
 
 			//logprintf("remove objects i: %d, forplayerid: %d", i, forplayerid);
-			pPlayerData[playerid]->DestroyObject_(i);
+			if(pPlayerData[playerid]->bAttachedObjectCreated)
+			{
+				pPlayerData[playerid]->DestroyObject_(i);
+			}
 			pPlayerData[playerid]->dwCreateAttachedObj = 0;
+			pPlayerData[forplayerid]->bAttachedObjectCreated = false;
 			/*
 			logprintf("leave, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
 				pPlayerData[forplayerid]->stObj[i].wAttachPlayerID,

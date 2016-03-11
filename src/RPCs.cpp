@@ -62,7 +62,7 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 		}
 	}
 
-	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, MEDIUM_PRIORITY, RELIABLE, 0, rpcParams->sender, false, false);
+	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, LOW_PRIORITY, UNRELIABLE, 0, rpcParams->sender, false, false);
 }
 
 #ifdef testspawn
