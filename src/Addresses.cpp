@@ -129,9 +129,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	// 
 	DWORD addr = FindPattern("\x55\x31\xD2\x89\xE5\x57\xB9\x40\x00\x00\x00", "xxxxxxxxxxx");
 	logprintf("addr: %x", addr);
-
-	FUNC_CVehicle__Respawn =					0x814B4C0;
-	FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
 	
 	FUNC_ProcessQueryPacket =					FindPattern("\x81\xEC\xA8\x00\x00\x00\x89\x5D\xF4\x8B\x5D\x14\x89\x75\xF8", "xxxxxxxxxxxxxxx") - 0x3;
 	FUNC_Packet_WeaponsUpdate =					FindPattern("\x55\x31\xC0\x89\xE5\x81\xEC\x58\x01\x00\x00", "xxxxxxxxxxx");
@@ -141,7 +138,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	ADDR_GetNetworkStats_VerbosityLevel =		FindPattern("\xB8\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx");
 	ADDR_GetPlayerNetworkStats_VerbosityLevel = FindPattern("\xBB\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx"); // 080DD7FA
 
-	ADDR_RecordingDirectory =					0x080CC7D1;
 	switch(sampVersion)
 	{
 		case SAMP_VERSION_037:
@@ -152,6 +148,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		case SAMP_VERSION_037_R2:
 		{
 			VAR_pRestartWaitTime =						0x0815A528; // 12.0
+			ADDR_RecordingDirectory =					0x080CC7D1;
+			FUNC_CVehicle__Respawn =					0x814B4C0;
+			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
 			break;
 		}
 	}
