@@ -4786,7 +4786,7 @@ static cell AMX_NATIVE_CALL Natives::SetRecordingDirectory( AMX* amx, cell* para
 
 	char *dir;
 	amx_StrParam(amx, params[1], dir);
-	if (!dir) return 0;
+	if (!dir || !CAddress::ADDR_RecordingDirectory) return 0;
 
 	strcpy(gRecordingDataPath, dir);
 	strcat(gRecordingDataPath, "/%s.rec");
@@ -4797,6 +4797,9 @@ static cell AMX_NATIVE_CALL Natives::SetRecordingDirectory( AMX* amx, cell* para
 static cell AMX_NATIVE_CALL Natives::GetRecordingDirectory( AMX* amx, cell* params )
 {
 	CHECK_PARAMS(2, "GetRecordingDirectory");
+	
+	if(!CAddress::ADDR_RecordingDirectory) return 0;
+
 	char temp[MAX_PATH];
 	int len = strlen(gRecordingDataPath);
 	strcpy(temp, gRecordingDataPath);

@@ -747,9 +747,12 @@ void InstallPreHooks()
 		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
 #endif
 
-		strcpy(gRecordingDataPath, "scriptfiles/%s.rec");
-		Unlock((void*)CAddress::ADDR_RecordingDirectory, 5);
-		*(DWORD*)(CAddress::ADDR_RecordingDirectory + 1) = (DWORD)&gRecordingDataPath;
+		if(CAddress::ADDR_RecordingDirectory)
+		{
+			strcpy(gRecordingDataPath, "scriptfiles/%s.rec");
+			Unlock((void*)CAddress::ADDR_RecordingDirectory, 5);
+			*(DWORD*)(CAddress::ADDR_RecordingDirectory + 1) = (DWORD)&gRecordingDataPath;
+		}
 	}	
 }
 
