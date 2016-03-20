@@ -764,15 +764,22 @@ void InstallPostHooks()
 {
 	CSAMPFunctions::PostInitialize();
 
-	// SetMaxPlayers() fix
-	//pRakServer->Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(pServer->GetIntVariable("port")), pServer->GetStringVariable("bind"));
-		
+	// !!! READ !!!
+	// If "myriad 1" present in server.cfg, then the internal raknet player "pool" will start with MAX_PLAYERS - needed for SetMaxPlayers if you want to increase your slots, eg. add +30 slot for 30 bot, and you paid for 60 slots only.
+	// This isn't enabled by default, because if it's enabled, then doesn't matter which value used for maxplayers in server.cfg, 
+	// server will allow up to connect MAX_PLAYERS at same time (currently 1000). 
+	// use this only if you want to have much NPC to trick hosts to allow them insted of paying for more slots for bots.
+	if(CSAMPFunctions::GetBoolVariable("myriad"))
+	{
+		pRakServer->Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
+	}
+
 	// Recreate pools
 	pServer->pGangZonePool = new CGangZonePool();
 
 #ifdef NEW_PICKUP_SYSTEM
 	// Recreate Pickup pool
-	pNetGame->pPickupPool = new CPickupPool();
+	pServer->pPickupPool = new CYSFPickupPool();
 #endif
 	// Re-init some RPCs
 	InitRPCs();

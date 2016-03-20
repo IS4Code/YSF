@@ -165,7 +165,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL OnPlayerConnect(int playerid)
 #else
 		// Initialize pickups
 		if (pServer->AddPlayer(playerid))
-			pNetGame->pPickupPool->InitializeForPlayer(playerid);
+			pServer->pPickupPool->InitializeForPlayer(playerid);
 #endif
 	}
 	return true;

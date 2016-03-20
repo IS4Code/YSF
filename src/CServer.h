@@ -6,6 +6,7 @@ class RakServer;
 struct Packet;
 struct CVehicleSpawn;
 class CGangZonePool;
+class CYSFPickupPool;
 
 #include "Addresses.h"
 #include "CGangZonePool.h"
@@ -57,6 +58,8 @@ public:
 	WORD GetNPCCount();
 
 	CGangZonePool *pGangZonePool;
+	CYSFPickupPool *pPickupPool;
+
 	std::map<int, CVehicleSpawn> vehicleSpawnData;
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];

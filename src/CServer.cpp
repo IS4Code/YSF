@@ -83,10 +83,8 @@ void CServer::Process()
 			pPlayerData[playerid]->Process();
 		}
 #ifdef NEW_PICKUP_SYSTEM
-		if(pNetGame)
-		{
-			pNetGame->pPickupPool->Process();
-		}
+		if(pServer->pPickupPool)
+			pServer->pPickupPool->Process();
 #endif
 	}
 }

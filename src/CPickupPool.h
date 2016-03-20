@@ -41,11 +41,11 @@ typedef std::unordered_map<int, CPickup*> PickupMap;
 typedef std::map<int, CPickup*> PickupMap;
 #endif
 
-class CPickupPool
+class CYSFPickupPool
 {
 public:
-	CPickupPool();
-	~CPickupPool();
+	CYSFPickupPool();
+	~CYSFPickupPool();
 
 	void InitializeForPlayer(WORD playerid);
 

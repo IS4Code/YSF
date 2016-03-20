@@ -174,7 +174,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 		if (p->second->type == GLOBAL)
 		{
 			// Find global pickup ID by player pickup pointer
-			WORD pickupid = pNetGame->pPickupPool->FindPickup(p->second);
+			WORD pickupid = pServer->pPickupPool->FindPickup(p->second);
 			if (pickupid != 0xFFFF)
 			{
 				CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);

@@ -3,31 +3,18 @@
 #define MAX_PICKUP_DISTANCE	70.0f
 
 #ifdef NEW_PICKUP_SYSTEM
-CPickupPool::CPickupPool() : m_bStreamingEnabled(1)
+CYSFPickupPool::CYSFPickupPool() : m_bStreamingEnabled(0)
 {
 
 }
 
-CPickupPool::~CPickupPool()
+CYSFPickupPool::~CYSFPickupPool()
 {
 
 }
 
-void CPickupPool::InitializeForPlayer(WORD playerid)
+void CYSFPickupPool::InitializeForPlayer(WORD playerid)
 {
-	/*
-	CPickup pPickup(1337, 0, CVector(0.0, 0.0, 0.0), 0, GLOBAL);
-	
-	int id = 0;
-	for(int x = 0; x != 6; x++)
-	{
-		for(int i = 0; i != 200; i++, id++)
-		{
-			ShowPickup(id, playerid, &pPickup);
-			HidePickup(id, playerid);
-		}
-	}
-	*/
 	int count = 0;
 	for (PickupMap::iterator p = m_Pickups.begin(); p != m_Pickups.end(); p++)
 	{
@@ -40,7 +27,7 @@ void CPickupPool::InitializeForPlayer(WORD playerid)
 	}
 }
 
-int CPickupPool::New(int modelid, int type, CVector vecPos, int world)
+int CYSFPickupPool::New(int modelid, int type, CVector vecPos, int world)
 {
 	if(m_Pickups.size() < MAX_PICKUPS)
 	{
@@ -95,7 +82,7 @@ int CPickupPool::New(int modelid, int type, CVector vecPos, int world)
 	return 0xFFFF;
 }
 
-int CPickupPool::New(WORD playerid, int modelid, int type, CVector vecPos, int world)
+int CYSFPickupPool::New(WORD playerid, int modelid, int type, CVector vecPos, int world)
 {
 	// Skip unconnected players
 	if(!IsPlayerConnectedEx(playerid)) return 0xFFFF;
@@ -143,7 +130,7 @@ int CPickupPool::New(WORD playerid, int modelid, int type, CVector vecPos, int w
 	return slot;
 }
 
-void CPickupPool::Destroy(int pickupid)
+void CYSFPickupPool::Destroy(int pickupid)
 {
 	// If valid pickup
 	PickupMap::iterator it = m_Pickups.find(pickupid);
@@ -178,7 +165,7 @@ void CPickupPool::Destroy(int pickupid)
 	}
 }
 
-void CPickupPool::Destroy(WORD playerid, int pickupid)
+void CYSFPickupPool::Destroy(WORD playerid, int pickupid)
 {
 	// If valid pickup
 	PickupMap::iterator it = pPlayerData[playerid]->PlayerPickups.find(pickupid);
@@ -205,7 +192,7 @@ void CPickupPool::Destroy(WORD playerid, int pickupid)
 	}
 }
 
-void CPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup *pPickup)
+void CYSFPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup *pPickup)
 {
 	HidePickup(pickupid, playerid);
 
@@ -216,17 +203,17 @@ void CPickupPool::ShowPickup(int pickupid, WORD playerid, CPickup *pPickup)
 	bsPickup.Write(pPickup->vecPos.fX);
 	bsPickup.Write(pPickup->vecPos.fY);
 	bsPickup.Write(pPickup->vecPos.fZ);
-	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 }
 
-void CPickupPool::HidePickup(int pickupid, WORD playerid)
+void CYSFPickupPool::HidePickup(int pickupid, WORD playerid)
 {
 	RakNet::BitStream bsPickup;
 	bsPickup.Write(pickupid);
 	pRakServer->RPC(&RPC_CreatePickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
 }
 
-bool CPickupPool::IsStreamed(WORD playerid, CPickup* pPickup)
+bool CYSFPickupPool::IsStreamed(WORD playerid, CPickup* pPickup)
 {
 	for(PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
 	{
@@ -236,7 +223,7 @@ bool CPickupPool::IsStreamed(WORD playerid, CPickup* pPickup)
 	return 0;
 }
 
-CPickup* CPickupPool::FindPickup(int pickupid)
+CPickup* CYSFPickupPool::FindPickup(int pickupid)
 {
 	PickupMap::iterator p = m_Pickups.find(pickupid);
 	if(p != m_Pickups.end())
@@ -246,7 +233,7 @@ CPickup* CPickupPool::FindPickup(int pickupid)
 	return NULL;
 }
 
-CPickup* CPickupPool::FindPickup(WORD playerid, int pickupid)
+CPickup* CYSFPickupPool::FindPickup(WORD playerid, int pickupid)
 {
 	PickupMap::iterator p = pPlayerData[playerid]->PlayerPickups.find(pickupid);
 	if(p != m_Pickups.end())
@@ -256,7 +243,7 @@ CPickup* CPickupPool::FindPickup(WORD playerid, int pickupid)
 	return NULL;
 }
 
-int CPickupPool::FindPickup(CPickup *pPickup)
+int CYSFPickupPool::FindPickup(CPickup *pPickup)
 {
 	for (PickupMap::iterator p = m_Pickups.begin(); p != m_Pickups.end(); p++)
 	{
@@ -266,7 +253,7 @@ int CPickupPool::FindPickup(CPickup *pPickup)
 	return 0xFFFF;
 }
 
-int CPickupPool::FindPickup(WORD playerid, CPickup *pPickup)
+int CYSFPickupPool::FindPickup(WORD playerid, CPickup *pPickup)
 {
 	for (PickupMap::iterator p = pPlayerData[playerid]->PlayerPickups.begin(); p != pPlayerData[playerid]->PlayerPickups.end(); p++)
 	{
@@ -276,7 +263,7 @@ int CPickupPool::FindPickup(WORD playerid, CPickup *pPickup)
 	return 0xFFFF;
 }
 
-void CPickupPool::Process(void)
+void CYSFPickupPool::Process(void)
 {
 	if (m_bStreamingEnabled)
 	{
@@ -310,12 +297,12 @@ void CPickupPool::Process(void)
 	}
 }
 
-void CPickupPool::SetStreamingEnabled(bool enabled)
+void CYSFPickupPool::SetStreamingEnabled(bool enabled)
 {
 	m_bStreamingEnabled = enabled;
 }
 
-bool CPickupPool::IsStreamingEnabled(void)
+bool CYSFPickupPool::IsStreamingEnabled(void)
 {
 	return m_bStreamingEnabled;
 }
