@@ -2064,6 +2064,8 @@ static cell AMX_NATIVE_CALL Natives::ShowPlayerForPlayer( AMX* amx, cell* params
 	int playerid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
+	if(playerid == forplayerid) return 0;
+
 	RakNet::BitStream bs;
 	bs.Write((WORD)playerid);
 	pRakServer->RPC(&RPC_WorldPlayerAdd, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
@@ -2085,9 +2087,66 @@ static cell AMX_NATIVE_CALL Natives::HidePlayerForPlayer( AMX* amx, cell* params
 	int playerid = static_cast<int>(params[2]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
+	if(playerid == forplayerid) return 0;
+
 	RakNet::BitStream bs;
 	bs.Write((WORD)playerid);
 	pRakServer->RPC(&RPC_WorldPlayerRemove, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	return 1;
+}
+
+// native AddPlayerForPlayer(forplayerid, playerid, isnpc = 0);
+static cell AMX_NATIVE_CALL Natives::AddPlayerForPlayer( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(3, "AddPlayerForPlayer");
+
+	int forplayerid = static_cast<int>(params[1]);
+	if(!IsPlayerConnectedEx(forplayerid)) return 0;
+
+	int playerid = static_cast<int>(params[2]);
+	if(!IsPlayerConnectedEx(playerid)) return 0;
+
+	if(playerid == forplayerid) return 0;
+
+	bool npc = static_cast<int>(params[3]) != 0;
+	char* szName = GetPlayerName_(playerid);
+	BYTE len = static_cast<BYTE>(strlen(szName));
+
+	RakNet::BitStream bs;
+	bs.Write((WORD)playerid);
+	bs.Write((DWORD)0);
+	bs.Write((BYTE)npc); //  // isNPC
+	bs.Write(len);
+	bs.Write(szName, len);
+	pRakServer->RPC(&RPC_ServerJoin, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	return 1;
+}
+
+// native RemovePlayerForPlayer(forplayerid, playerid);
+static cell AMX_NATIVE_CALL Natives::RemovePlayerForPlayer( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "RemovePlayerForPlayer");
+
+	int forplayerid = static_cast<int>(params[1]);
+	if(!IsPlayerConnectedEx(forplayerid)) return 0;
+
+	int playerid = static_cast<int>(params[2]);
+	if(!IsPlayerConnectedEx(playerid)) return 0;
+
+	if(playerid == forplayerid) return 0;
+
+	RakNet::BitStream bs;
+	bs.Write((WORD)playerid);
+	bs.Write((BYTE)0); 
+	pRakServer->RPC(&RPC_ServerQuit, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
@@ -6387,6 +6446,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "SendBulletData",					Natives::SendBulletData }, // R6
 	{ "ShowPlayerForPlayer",			Natives::ShowPlayerForPlayer }, // R8
 	{ "HidePlayerForPlayer",			Natives::HidePlayerForPlayer }, // R8
+	{ "AddPlayerForPlayer",				Natives::AddPlayerForPlayer }, // R17
+	{ "RemovePlayerForPlayer",			Natives::RemovePlayerForPlayer }, // R17
 	{ "SetPlayerChatBubbleForPlayer",	Natives::SetPlayerChatBubbleForPlayer}, // R10
 	{ "SetPlayerVersion",				Natives::SetPlayerVersion }, // R9
 	{ "IsPlayerSpawned",				Natives::IsPlayerSpawned }, // R9

@@ -49,6 +49,12 @@ void Redirect(AMX * amx, char const * const from, ucell to, AMX_NATIVE * store)
 	}
 }
 */
+
+cell* get_amxaddr(AMX *amx, cell amx_addr)
+{
+  return (cell *)(amx->base + (int)(((AMX_HEADER *)amx->base)->dat + amx_addr));
+}
+
 int set_amxstring(AMX *amx, cell amx_addr, const char *source, int max)
 {
 	cell* dest = (cell *)(amx->base + (int)(((AMX_HEADER *)amx->base)->dat + amx_addr));

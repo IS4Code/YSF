@@ -64,6 +64,9 @@ extern int RPC_Spawn;
 extern int RPC_Death;
 extern int RPC_DeathBroadcast;
 
+extern int RPC_ServerJoin;
+extern int RPC_ServerQuit;
+
 void InitRPCs();
 
 enum PacketEnumeration : unsigned char

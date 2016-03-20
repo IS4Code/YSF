@@ -111,6 +111,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SendBulletData(AMX *amx, cell *params); // R6
 	static cell AMX_NATIVE_CALL ShowPlayerForPlayer(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL HidePlayerForPlayer(AMX *amx, cell *params); // R8
+	static cell AMX_NATIVE_CALL AddPlayerForPlayer(AMX *amx, cell *params); // R17
+	static cell AMX_NATIVE_CALL RemovePlayerForPlayer(AMX *amx, cell *params); // R17
 	static cell AMX_NATIVE_CALL SetPlayerChatBubbleForPlayer(AMX *amx, cell *params); // R10
 	static cell AMX_NATIVE_CALL SetPlayerVersion(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL IsPlayerSpawned(AMX *amx, cell *params); // R9
