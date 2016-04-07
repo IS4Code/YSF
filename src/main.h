@@ -33,6 +33,9 @@
 
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN
+	#ifndef PSAPI_VERSION
+	#define PSAPI_VERSION 2
+	#endif
 	#define SLEEP(x) { Sleep(x); }
 	#define OS_NAME "Windows"
 
