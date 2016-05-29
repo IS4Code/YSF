@@ -601,7 +601,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				}
 				case 'x':	// rcon
 				{
-					if (pRakServer/* && pRakServer->IsBanned(inet_ntoa(in))*/) return 1;
+					if (pRakServer && pRakServer->IsBanned(inet_ntoa(in))) return 1;
 					
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query") || !CSAMPFunctions::GetBoolVariable("rcon")) return 1;
