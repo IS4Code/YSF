@@ -1,16 +1,22 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 14.00
-# Visual Studio 2015
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "YSF", "YSF.vcxproj", "{0843F08F-F40F-4B9B-1D29-394309558029}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|Win32 = Debug|Win32
+		Release|Any CPU = Release|Any CPU
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0843F08F-F40F-4B9B-1D29-394309558029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0843F08F-F40F-4B9B-1D29-394309558029}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0843F08F-F40F-4B9B-1D29-394309558029}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0843F08F-F40F-4B9B-1D29-394309558029}.Debug|Win32.Build.0 = Debug|Win32
+		{0843F08F-F40F-4B9B-1D29-394309558029}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0843F08F-F40F-4B9B-1D29-394309558029}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0843F08F-F40F-4B9B-1D29-394309558029}.Release|Win32.ActiveCfg = Release|Win32
 		{0843F08F-F40F-4B9B-1D29-394309558029}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
