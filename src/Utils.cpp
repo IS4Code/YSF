@@ -9,6 +9,8 @@
   =========================================*/
 
 #include "main.h"
+#pragma comment( lib, "psapi.lib" )
+
 
 // Linux GetTickCount
 #ifndef _WIN32
