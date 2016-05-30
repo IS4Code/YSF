@@ -82,7 +82,8 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	logprintf("\n");
 	logprintf(" ===============================\n");
 	logprintf("        " PROJECT_NAME " - kurta999 version " PROJECT_VERSION " loaded\n");
-	logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2015 kurta999\n");
+	logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2016 kurta999\n");
+	logprintf("    Fork by IllidanS4\n");
 	logprintf("    Server version: %s\n", szVersion);
 	logprintf("    Operating System: " OS_NAME "\n");
 	logprintf("    Built on: " __DATE__ " at " __TIME__ "\n");
