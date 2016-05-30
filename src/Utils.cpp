@@ -366,7 +366,7 @@ void InstallJump(unsigned long addr, void *func)
 	VirtualProtect((LPVOID)addr, 5, PAGE_EXECUTE_READWRITE, &dwOld);
 #else
 	int pagesize = sysconf(_SC_PAGE_SIZE);
-	void *unpraddr = (void *)(((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize;
+	void *unpraddr = (void *)((((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize);
 	mprotect(unpraddr, pagesize, PROT_WRITE);
 #endif
 	*(unsigned char *)addr = 0xE9;

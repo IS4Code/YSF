@@ -69,7 +69,11 @@ extern int RPC_ServerQuit;
 
 void InitRPCs();
 
+#ifdef WIN32
 enum PacketEnumeration : unsigned char
+#else
+enum PacketEnumeration
+#endif
 {	
 	RPC_InitGame = 0x8B, 
 
