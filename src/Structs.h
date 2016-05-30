@@ -543,7 +543,7 @@ struct CPickupPool
 // CObject
 /* -------------------------------------------------------- */
 
-struct CObjectMaterial // sizeof = 212
+struct CObjectMaterial // sizeof = 215
 {
 	BYTE			byteUsed;				// 197 - 198
 	BYTE			byteSlot;				// 198 - 199
@@ -560,7 +560,7 @@ struct CObjectMaterial // sizeof = 212
 	BYTE			byteAlignment;			// 411 - 412
 };
 
-struct CObject // sizeof = 3700
+struct CObject // sizeof = 3712
 {
 	WORD			wObjectID;			// 0 - 2
 	int				iModel;				// 2 - 6
@@ -571,7 +571,7 @@ struct CObject // sizeof = 3700
 	BYTE			bIsMoving;			// 150 - 151
 	BYTE			bNoCameraCol;		// 151 - 152
 	float			fMoveSpeed;			// 152 - 156
-	DWORD			unk_4;				// 156 -160
+	DWORD			unk_4;				// 156 - 160
 	float			fDrawDistance;		// 160 - 164
 	WORD			wAttachedVehicleID;	// 164 - 166
 	WORD			wAttachedObjectID;	// 166 - 168

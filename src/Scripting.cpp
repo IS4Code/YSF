@@ -4722,12 +4722,11 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	if(!pObject) return 0;
 
-	if(pAttachObjectToPlayer(amx, params))
-	{
-		pServer->COBJECT_AttachedObjectPlayer[objectid] = playerid;
-		pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
-		pObject->vecAttachedRotation = CVector(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
-	}
+	pAttachObjectToPlayer(amx, params); //so we shouldn't depend on the return, should we?
+	pServer->COBJECT_AttachedObjectPlayer[objectid] = playerid;
+	pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+	pObject->vecAttachedRotation = CVector(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
+	//Apparently SA-MP doesn't store AttachObjectToPlayer anywhere
 	return 1;
 }
 
