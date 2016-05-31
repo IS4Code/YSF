@@ -56,6 +56,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetModeRestartTime(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetMaxPlayers(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL SetMaxNPCs(AMX *amx, cell *params); // R8
+	static cell AMX_NATIVE_CALL GetSyncBounds(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL SetSyncBounds(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL SetPlayerAdmin(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL LoadFilterScript(AMX *amx, cell *params);

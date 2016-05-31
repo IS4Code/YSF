@@ -494,6 +494,53 @@ static cell AMX_NATIVE_CALL Natives::SetMaxNPCs(AMX *amx, cell *params)
 	return 1;
 }
 
+// native GetSyncBounds(&Float:hmin, &Float:hmax, &Float:vmin, &Float:vmax)
+static cell AMX_NATIVE_CALL Natives::GetSyncBounds(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+	
+	CHECK_PARAMS(4, "SetSyncBounds");
+	
+	cell *cptr;
+
+	for(BYTE i = 0; i < 4; i++)
+	{
+		if(CAddress::VAR_pPosSyncBounds[i])
+		{
+			amx_GetAddr(amx, params[i+1], &cptr);
+			*cptr = (cell)(*(float*)CAddress::VAR_pPosSyncBounds[i]);
+		}else{
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+// native SetSyncBounds(Float:hmin, Float:hmax, Float:vmin, Float:vmax)
+static cell AMX_NATIVE_CALL Natives::SetSyncBounds(AMX *amx, cell *params)
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+	
+	CHECK_PARAMS(4, "SetSyncBounds");
+	
+	for(BYTE i = 0; i < 4; i++)
+	{
+		if(CAddress::VAR_pPosSyncBounds[i])
+		{
+			*(float*)CAddress::VAR_pPosSyncBounds[i] = amx_ctof(params[i+1]);
+		}else{
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
 // native SetPlayerAdmin(playerid, bool:admin);
 static cell AMX_NATIVE_CALL Natives::SetPlayerAdmin(AMX *amx, cell *params)
 {
@@ -6382,6 +6429,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetModeRestartTime",				Natives::GetModeRestartTime},
 	{"SetMaxPlayers",					Natives::SetMaxPlayers}, // R8
 	{"SetMaxNPCs",						Natives::SetMaxNPCs}, // R8
+	{"GetSyncBounds",					Natives::GetSyncBounds},
+	{"SetSyncBounds",					Natives::SetSyncBounds},
 
 	{"SetPlayerAdmin",					Natives::SetPlayerAdmin},
 	{"LoadFilterScript",				Natives::LoadFilterScript},

@@ -74,6 +74,7 @@ public:
 
 	// Variables
 	static DWORD			VAR_pRestartWaitTime;
+	static DWORD			VAR_pPosSyncBounds[4];
 
 	// Functions
 	static DWORD			FUNC_CConsole__AddStringVariable;
