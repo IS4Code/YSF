@@ -501,7 +501,7 @@ static cell AMX_NATIVE_CALL Natives::GetSyncBounds(AMX *amx, cell *params)
 	if(!pServer)
 		return 0;
 	
-	CHECK_PARAMS(4, "SetSyncBounds");
+	CHECK_PARAMS(4, "GetSyncBounds");
 	
 	cell *cptr;
 
@@ -509,8 +509,10 @@ static cell AMX_NATIVE_CALL Natives::GetSyncBounds(AMX *amx, cell *params)
 	{
 		if(CAddress::VAR_pPosSyncBounds[i])
 		{
+			logprintf("%d %f", i, (*(float*)CAddress::VAR_pPosSyncBounds[i]));
 			amx_GetAddr(amx, params[i+1], &cptr);
-			*cptr = (cell)(*(float*)CAddress::VAR_pPosSyncBounds[i]);
+			*cptr = amx_ftoc(*(float*)CAddress::VAR_pPosSyncBounds[i]);
+			//params[i+1] = amx_ftoc(*(float*)CAddress::VAR_pPosSyncBounds[i]);
 		}else{
 			return 0;
 		}

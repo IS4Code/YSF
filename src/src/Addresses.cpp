@@ -218,6 +218,13 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
 		Unlock((void*)VAR_pRestartWaitTime, 4);
+	for(BYTE i = 0; i < 4; i++)
+	{
+		if(VAR_pPosSyncBounds[i])
+		{
+			Unlock((void*)VAR_pPosSyncBounds[i], 4);
+		}
+	}
 
 	// Patch GetNetworkStats to get more advanced stats than default
 	if(ADDR_GetNetworkStats_VerbosityLevel)
