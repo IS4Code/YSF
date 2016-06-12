@@ -71,14 +71,14 @@ typedef void(*VARCHANGEFUNC)();
 /* -------------------------------------------------------- */
 typedef struct _MATRIX4X4 
 {
-	CVector right;
-	DWORD  flags;
-	CVector up;
-	float  pad_u;
-	CVector at;
-	float  pad_a;
-	CVector pos;
-	float  pad_p;
+	CVector right;	// 0 - 12
+	DWORD  flags;	// 12 - 16
+	CVector up;		// 16 - 28
+	float  pad_u;	// 28 - 32
+	CVector at;		// 32 - 44
+	float  pad_a;	// 44 - 48
+	CVector pos;	// 48 - 60
+	float  pad_p;	// 60 - 64
 } MATRIX4X4, *PMATRIX4X4;
 
 struct ConsoleVariable_s
@@ -508,7 +508,9 @@ struct CVehicle
     BYTE			bDeathNotification; // 255 - 256
     BYTE			bOccupied;			// 256 - 257
     DWORD			vehOccupiedTick;	// 257 - 261
-    DWORD			vehRespawnTick;		// 261 -265
+    DWORD			vehRespawnTick;		// 261 - 265
+	BYTE			sirenEnabled;		// 265 - 266
+	BYTE			newSirenState;		// 266 - 267 passed to OnVehicleSirenStateChange
 };
 
 struct CVehiclePool

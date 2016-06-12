@@ -3382,6 +3382,171 @@ static cell AMX_NATIVE_CALL Natives::GetVehiclePaintjob( AMX* amx, cell* params 
 	return pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.bytePaintJob;
 }
 
+// native SetVehicleParamsSirenState(vehicleid, sirenState);
+static cell AMX_NATIVE_CALL Natives::SetVehicleParamsSirenState( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "SetVehicleParamsSirenState");
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+	
+	BYTE sirenState = static_cast<BYTE>(params[2]);
+
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->vehParamEx.siren = sirenState;
+	return 1;
+}
+
+// native ToggleVehicleSirenEnabled(vehicleid, enabled);
+static cell AMX_NATIVE_CALL Natives::ToggleVehicleSirenEnabled( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "ToggleVehicleSirenEnabled");
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+	
+	BYTE enabled = static_cast<BYTE>(params[2]);
+
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->sirenEnabled = enabled;
+	return 1;
+}
+
+// native IsVehicleSirenEnabled(vehicleid);
+static cell AMX_NATIVE_CALL Natives::IsVehicleSirenEnabled( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "IsVehicleSirenEnabled");
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+	
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->sirenEnabled;
+}
+
+// native GetVehicleAngularVelocity(vehicleid, &Float:x, &Float:y, &Float:z);
+static cell AMX_NATIVE_CALL Natives::GetVehicleAngularVelocity( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(4, "GetVehicleAngularVelocity");
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+	
+	CVector* vel = &pNetGame->pVehiclePool->pVehicle[vehicleid]->vecVelocity;
+
+	cell *cptr;
+	amx_GetAddr(amx, params[2], &cptr);
+	*cptr = amx_ftoc(vel->fX);
+	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = amx_ftoc(vel->fY);
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = amx_ftoc(vel->fZ);
+
+	return 1;
+}
+
+// native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY, &Float:rightZ, &Float:upX, &Float:upY, &Float:upZ, &Float:atX, &Float:atY, &Float:atZ);
+static cell AMX_NATIVE_CALL Natives::GetVehicleMatrix( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(10, "GetVehicleMatrix");
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+	
+	MATRIX4X4* matrix = &pNetGame->pVehiclePool->pVehicle[vehicleid]->vehMatrix;
+
+	cell *cptr;
+	amx_GetAddr(amx, params[2], &cptr);
+	*cptr = amx_ftoc(matrix->right.fX);
+	amx_GetAddr(amx, params[3], &cptr);
+	*cptr = amx_ftoc(matrix->right.fY);
+	amx_GetAddr(amx, params[4], &cptr);
+	*cptr = amx_ftoc(matrix->right.fZ);
+	
+	amx_GetAddr(amx, params[5], &cptr);
+	*cptr = amx_ftoc(matrix->up.fX);
+	amx_GetAddr(amx, params[6], &cptr);
+	*cptr = amx_ftoc(matrix->up.fY);
+	amx_GetAddr(amx, params[7], &cptr);
+	*cptr = amx_ftoc(matrix->up.fZ);
+	
+	amx_GetAddr(amx, params[8], &cptr);
+	*cptr = amx_ftoc(matrix->at.fX);
+	amx_GetAddr(amx, params[9], &cptr);
+	*cptr = amx_ftoc(matrix->at.fY);
+	amx_GetAddr(amx, params[10], &cptr);
+	*cptr = amx_ftoc(matrix->at.fZ);
+
+	//IS4 Note for the future - vehicles remotely updated have the "at" vector zeroed, which corrupts results from GetVehicleRotationQuat
+	//Might be a reasonable method to replace IsValidQuaternion from i_quat
+
+	return 1;
+}
+
+// native SetVehicleMatrix(vehicleid, Float:rightX, Float:rightY, Float:rightZ, Float:upX, Float:upY, Float:upZ, Float:atX, Float:atY, Float:atZ);
+static cell AMX_NATIVE_CALL Natives::SetVehicleMatrix( AMX* amx, cell* params )
+{
+	// If unknown server version
+	if(!pServer)
+		return 0;
+
+	CHECK_PARAMS(10, "SetVehicleMatrix");
+
+	int vehicleid = static_cast<int>(params[1]);
+	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+	
+	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
+		return 0;
+	
+	MATRIX4X4* matrix = &pNetGame->pVehiclePool->pVehicle[vehicleid]->vehMatrix;
+
+	matrix->right.fX = amx_ctof(params[2]);
+	matrix->right.fY = amx_ctof(params[3]);
+	matrix->right.fZ = amx_ctof(params[4]);
+
+	matrix->up.fX = amx_ctof(params[5]);
+	matrix->up.fY = amx_ctof(params[6]);
+	matrix->up.fZ = amx_ctof(params[7]);
+
+	matrix->at.fX = amx_ctof(params[8]);
+	matrix->at.fY = amx_ctof(params[9]);
+	matrix->at.fZ = amx_ctof(params[10]);
+
+	return 1;
+}
+
 // native GetVehicleInterior(vehicleid);
 static cell AMX_NATIVE_CALL Natives::GetVehicleInterior( AMX* amx, cell* params )
 {
@@ -4764,7 +4929,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 	// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
 	int playerid = static_cast<int>(params[2]);
 	int objectid = static_cast<int>(params[1]);
-	if(!IsPlayerConnectedEx(playerid)) return 0;
+	if(!IsPlayerConnectedEx(playerid) && playerid != INVALID_PLAYER_ID) return 0;
 
 	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
 
@@ -6431,8 +6596,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"GetModeRestartTime",				Natives::GetModeRestartTime},
 	{"SetMaxPlayers",					Natives::SetMaxPlayers}, // R8
 	{"SetMaxNPCs",						Natives::SetMaxNPCs}, // R8
-	{"GetSyncBounds",					Natives::GetSyncBounds},
-	{"SetSyncBounds",					Natives::SetSyncBounds},
+	{"GetSyncBounds",					Natives::GetSyncBounds}, // R17-2
+	{"SetSyncBounds",					Natives::SetSyncBounds}, // R17-2
 
 	{"SetPlayerAdmin",					Natives::SetPlayerAdmin},
 	{"LoadFilterScript",				Natives::LoadFilterScript},
@@ -6592,6 +6757,12 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"IsVehicleDead",					Natives::IsVehicleDead}, // R9
 	{"GetVehicleModelCount",			Natives::GetVehicleModelCount}, // R17
 	{"GetVehicleModelsUsed",			Natives::GetVehicleModelsUsed}, // R17
+	{"SetVehicleParamsSirenState",		Natives::SetVehicleParamsSirenState}, //R17-3
+	{"ToggleVehicleSirenEnabled",		Natives::ToggleVehicleSirenEnabled}, //R17-3
+	{"IsVehicleSirenEnabled",			Natives::IsVehicleSirenEnabled}, //R17-3
+	{"GetVehicleAngularVelocity",		Natives::GetVehicleAngularVelocity}, //R17-3
+	{"GetVehicleMatrix",				Natives::GetVehicleMatrix}, //R17-3
+	{"SetVehicleMatrix",				Natives::SetVehicleMatrix}, //R17-3
 
 	// Gangzone - Global
 	{"IsValidGangZone",					Natives::IsValidGangZone},

@@ -214,6 +214,12 @@ native IsVehicleOccupied(vehicleid);
 native IsVehicleDead(vehicleid);
 native GetVehicleModelCount(modelid);
 native GetVehicleModelsUsed();
+native SetVehicleParamsSirenState(vehicleid, sirenState);
+native ToggleVehicleSirenEnabled(vehicleid, bool:enabled);
+native IsVehicleSirenEnabled(vehicleid);
+native GetVehicleAngularVelocity(vehicleid, &Float:x, &Float:y, &Float:z);
+native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY, &Float:rightZ, &Float:upX, &Float:upY, &Float:upZ, &Float:atX, &Float:atY, &Float:atZ);
+native SetVehicleMatrix(vehicleid, Float:rightX, Float:rightY, Float:rightZ, Float:upX, Float:upY, Float:upZ, Float:atX, Float:atY, Float:atZ);
 
 // Gangzones - Global
 native IsValidGangZone(zoneid);

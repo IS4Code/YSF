@@ -199,6 +199,12 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SetVehicleSpawnInfo(AMX *amx, cell *params); // R12
 	static cell AMX_NATIVE_CALL GetVehicleModelCount(AMX *amx, cell *params); // R17
 	static cell AMX_NATIVE_CALL GetVehicleModelsUsed(AMX *amx, cell *params); // R17
+	static cell AMX_NATIVE_CALL SetVehicleParamsSirenState(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL ToggleVehicleSirenEnabled(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL IsVehicleSirenEnabled(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL GetVehicleAngularVelocity(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL GetVehicleMatrix(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL SetVehicleMatrix(AMX *amx, cell *params); // R17-3
 
 	static cell AMX_NATIVE_CALL IsValidGangZone(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL IsPlayerInGangZone(AMX *amx, cell *params);
