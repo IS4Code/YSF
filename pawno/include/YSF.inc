@@ -119,6 +119,8 @@ native GetPlayerLastSyncedTrailerID(playerid);
 native SendBulletData(sender, hitid, hittype, weaponid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
 native ShowPlayerForPlayer(forplayerid, playerid);
 native HidePlayerForPlayer(forplayerid, playerid);
+native AddPlayerForPlayer(forplayerid, playerid, isnpc = 0);
+native RemovePlayerForPlayer(forplayerid, playerid);
 native SetPlayerChatBubbleForPlayer(forplayerid, playerid, const text[], color, Float:drawdistance, expiretime);
 native SetPlayerVersion(playerid, const version[]);
 native IsPlayerSpawned(playerid);
