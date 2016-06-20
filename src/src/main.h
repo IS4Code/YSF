@@ -25,7 +25,7 @@
 // ------------
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R17-3"
+#define PROJECT_VERSION		"2.0.0"
 
 // ------------
 // OS SPECIFICS
