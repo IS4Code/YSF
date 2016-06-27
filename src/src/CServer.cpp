@@ -107,14 +107,14 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && !pPlayerData[forplayerid]->bAttachedObjectCreated)
 		{
-			logprintf("should work");
+			//logprintf("should work");
 			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
 			{
 				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
 				return 0;
 			}
 
-			logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
+			//logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
 			// First create the object for the player. We don't remove it from the pools, so we need to send RPC for the client to create object
 			RakNet::BitStream bs;
 			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID

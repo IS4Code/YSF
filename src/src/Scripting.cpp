@@ -509,7 +509,7 @@ static cell AMX_NATIVE_CALL Natives::GetSyncBounds(AMX *amx, cell *params)
 	{
 		if(CAddress::VAR_pPosSyncBounds[i])
 		{
-			logprintf("%d %f", i, (*(float*)CAddress::VAR_pPosSyncBounds[i]));
+			//logprintf("%d %f", i, (*(float*)CAddress::VAR_pPosSyncBounds[i]));
 			amx_GetAddr(amx, params[i+1], &cptr);
 			*cptr = amx_ftoc(*(float*)CAddress::VAR_pPosSyncBounds[i]);
 			//params[i+1] = amx_ftoc(*(float*)CAddress::VAR_pPosSyncBounds[i]);
@@ -1127,7 +1127,7 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerNameForPlayer(AMX* amx, cell* para
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(nameplayerid)) return 0;
 
 	amx_StrParam(amx, params[3], name);
-	logprintf("playername: %s", name);
+	//logprintf("playername: %s", name);
 
 	pPlayerData[playerid]->SetPlayerNameForPlayer(static_cast<WORD>(nameplayerid), name);
 	return 1;
@@ -5601,8 +5601,8 @@ static cell AMX_NATIVE_CALL Natives::CreatePlayerGangZone( AMX* amx, cell* param
 	// If coordinates are wrong, then won't create bugged zone!
 	if(fMaxX <= fMinX || fMaxY <= fMinY) 
 	{
-		logprintf("CreatePlayerGangZone: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
-		logprintf("CreatePlayerGangZone: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
+		//logprintf("CreatePlayerGangZone: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
+		//logprintf("CreatePlayerGangZone: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
 		return -1;
 	}
 
