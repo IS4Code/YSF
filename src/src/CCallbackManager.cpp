@@ -329,3 +329,26 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 		}
 	}
 }
+
+bool CCallbackManager::OnOutcomeScmEvent(WORD playerid, WORD issuerid, int eventid, int vehicleid, int arg1, int arg2)
+{
+	int idx = -1;
+	cell ret = 1;
+	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if(!amx_FindPublic(*iter, "OnOutcomeScmEvent", &idx))
+		{
+			amx_Push(*iter, static_cast<cell>(arg2));
+			amx_Push(*iter, static_cast<cell>(arg1));
+			amx_Push(*iter, static_cast<cell>(vehicleid));
+			amx_Push(*iter, static_cast<cell>(eventid));
+			amx_Push(*iter, static_cast<cell>(issuerid));
+			amx_Push(*iter, static_cast<cell>(playerid));
+
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return false;
+		}
+	}
+	return static_cast<int>(ret) != 0;
+}

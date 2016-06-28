@@ -524,10 +524,23 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 	}
 }
 
-void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
+bool RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 {
 	switch(uniqueID)
 	{
+		case RPC_ScmEvent:
+		{
+			bsSync->ResetReadPointer();
+			WORD issuerid;
+			bsSync->Read<WORD>(issuerid);
+			int data[4];
+			bsSync->Read<int>(data[0]);
+			bsSync->Read<int>(data[1]);
+			bsSync->Read<int>(data[2]);
+			bsSync->Read<int>(data[3]);
+			if(!CCallbackManager::OnOutcomeScmEvent(playerid, issuerid, data[0], data[1], data[2], data[3])) return false;
+			break;
+		}
 		case RPC_InitGame:
 		{
 			bool usecjwalk = static_cast<int>(pNetGame->bUseCJWalk) != 0;
@@ -592,4 +605,5 @@ void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 			break;
 		}
 	}
+	return true;
 }

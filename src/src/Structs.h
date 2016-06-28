@@ -1030,21 +1030,21 @@ public:
 	virtual PlayerID GetInternalID( void ) const;
 	virtual void PushBackPacket( Packet *packet, bool pushAtHead );
 	virtual void SetRouterInterface( void *routerInterface );
-	virtual void RemoveRouterInterface( void *routerInterface );
-	virtual int GetIndexFromPlayerID( PlayerID playerId ); // E4
+	virtual void RemoveRouterInterface( void *routerInterface ); // 224
+	virtual int GetIndexFromPlayerID( PlayerID playerId ); // E4 - 228
 	virtual PlayerID GetPlayerIDFromIndex( int index ); // E8 - 232 - 236
 	virtual void UNKNOWN(void); // 236 - 240
 	virtual void AddToBanList( const char *IP, unsigned int milliseconds=0 ); // 240 - 244
-	virtual void RemoveFromBanList( const char *IP );
-	virtual void ClearBanList( void );
-	virtual bool IsBanned( const char *IP );
-	virtual bool IsActivePlayerID( const PlayerID playerId );
-	virtual void SetTimeoutTime( RakNetTime timeMS, const PlayerID target );
-	virtual bool SetMTUSize( int size );
-	virtual int GetMTUSize( void ) const;
-	virtual void AdvertiseSystem( const char *host, unsigned short remotePort, const char *data, int dataLength );
-	virtual RakNetStatisticsStruct * const GetStatistics( const PlayerID playerId );
-	virtual void ApplyNetworkSimulator( double maxSendBPS, unsigned short minExtraPing, unsigned short extraPingVariance);
+	virtual void RemoveFromBanList( const char *IP ); // 244
+	virtual void ClearBanList( void ); // 248
+	virtual bool IsBanned( const char *IP ); // 252
+	virtual bool IsActivePlayerID( const PlayerID playerId ); // 256
+	virtual void SetTimeoutTime( RakNetTime timeMS, const PlayerID target ); // 260
+	virtual bool SetMTUSize( int size ); // 264
+	virtual int GetMTUSize( void ) const; // 268
+	virtual void AdvertiseSystem( const char *host, unsigned short remotePort, const char *data, int dataLength ); // 272
+	virtual RakNetStatisticsStruct * const GetStatistics( const PlayerID playerId ); // 276
+	virtual void ApplyNetworkSimulator( double maxSendBPS, unsigned short minExtraPing, unsigned short extraPingVariance); // 280
 };
 
 #else

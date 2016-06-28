@@ -191,7 +191,7 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
-	RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
+	if(!RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)))) return true;
 
 	return CSAMPFunctions::RPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }

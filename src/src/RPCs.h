@@ -71,7 +71,8 @@ void InitRPCs();
 
 enum PacketEnumeration // : unsigned char
 {	
-	RPC_InitGame = 0x8B, 
+	RPC_InitGame = 0x8B,
+	RPC_ScmEvent = 96,
 
 	ID_TIMESTAMP = 40,
 	ID_VEHICLE_SYNC = 200,
