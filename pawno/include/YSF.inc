@@ -366,6 +366,16 @@ forward OnRemoteRCONPacket(const ipaddr[], port, const password[], success, cons
 forward OnServerMessage(const msg[]);
 forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights, &spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
 
+enum
+{
+    SCM_EVENT_PAINTJOB = 1,
+    SCM_EVENT_MOD = 2,
+    SCM_EVENT_RESPRAY = 3,
+    SCM_EVENT_MOD_SHOP = 4
+}
+
+forward OnOutcomeScmEvent(playerid, issuerid, eventid, vehicleid, arg1, arg2);
+
 //////////////////////////////////////////////////////////////
 // Fixes
 //////////////////////////////////////////////////////////////
