@@ -1129,7 +1129,9 @@ public:
 	virtual void AddToBanList( const char *IP, unsigned int milliseconds=0 ); // 244 - 248
 	virtual void RemoveFromBanList( const char *IP ); // 248 - 252
 	virtual void ClearBanList( void ); // 252
+private:
 	virtual bool _IsBanned( const char *IP ); // 256
+public:
 	virtual bool IsActivePlayerID( const PlayerID playerId );
 	virtual void SetTimeoutTime( RakNetTime timeMS, const PlayerID target );
 	virtual bool SetMTUSize( int size );
