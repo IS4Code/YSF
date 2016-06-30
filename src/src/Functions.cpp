@@ -1,4 +1,7 @@
 #include "main.h"
+#if !defined(_WIN32) && !defined(CUSTOM_BANLIST)
+#include <fnmatch.h>
+#endif
 
 CConsole__AddStringVariable_t			CSAMPFunctions::pfn__CConsole__AddStringVariable = NULL;
 CConsole__GetStringVariable_t			CSAMPFunctions::pfn__CConsole__GetStringVariable = NULL;
@@ -25,6 +28,83 @@ format_amxstring_t						CSAMPFunctions::pfn__format_amxstring = NULL;
 RakNet__Send_t							CSAMPFunctions::pfn__RakNet__Send = NULL;
 RakNet__RPC_t							CSAMPFunctions::pfn__RakNet__RPC = NULL;
 RakNet__Receive_t						CSAMPFunctions::pfn__RakNet__Receive = NULL;
+
+#ifdef CUSTOM_BANLIST
+RakNet__AddToBanList_t					CSAMPFunctions::pfn__RakNet__AddToBanList = NULL;
+RakNet__RemoveFromBanList_t				CSAMPFunctions::pfn__RakNet__RemoveFromBanList = NULL;
+RakNet__ClearBanList_t					CSAMPFunctions::pfn__RakNet__ClearBanList = NULL;
+
+struct BanRecord
+{
+	unsigned long ip;
+	unsigned long mask;
+
+	BanRecord(const char *addr)
+	{
+		/*logprintf(addr);
+		size_t len = strlen(addr);
+		char *str = (char*)alloca(len+1);
+		memcpy(str, addr, len);
+		str[len] = 0;*/
+
+		ip = 0;
+		mask = 0;
+
+		int pos = 0;
+		bool next = false;
+		size_t len = strlen(addr);
+		for(unsigned int i = 0; i < len; i++)
+		{
+			if(addr[i] == '*')
+			{
+				mask |= 0xFF << (pos*8);
+				next = true;
+				pos++;
+			}else if(addr[i] == '.')
+			{
+				next = false;
+			}else{
+				if(!next)
+				{
+					ip |= strtol(addr+i, NULL, 10) << (pos*8);
+					next = true;
+					pos++;
+				}
+			}
+		}
+		mask = ~mask;
+
+		logprintf("%x & %x", ip, mask);
+		
+		/*int pos;
+		char *p = strtok(str, ".");
+		while(p != NULL)
+		{
+			if(p[0] != '*')
+			{
+				ip |= strtol(p, NULL, 10) << (pos*8);
+			}else{
+				mask |= 0xFF << (pos*8);
+			}
+			p = strtok(NULL, ".");
+			pos++;
+		}
+		mask = ~mask;*/
+	}
+
+	bool operator==(const BanRecord &rec) const
+	{
+		return (ip == rec.ip && mask == rec.mask);
+	}
+
+    /*bool operator <(const BanRecord &rec) const
+    {
+       return ip < rec.ip;
+    }*/
+};
+
+std::vector<BanRecord> banList;
+#endif
 
 void CSAMPFunctions::PreInitialize()
 {
@@ -80,6 +160,29 @@ void CSAMPFunctions::PostInitialize()
 	pRakServer_VTBL[RAKNET_SEND_OFFSET] = (int)CHookRakServer::Send;
 	pRakServer_VTBL[RAKNET_RPC_OFFSET] = (int)CHookRakServer::RPC_2;
 	pRakServer_VTBL[RAKNET_RECEIVE_OFFSET] = (int)CHookRakServer::Receive;
+
+#ifdef CUSTOM_BANLIST
+	Unlock((void*)&pRakServer_VTBL[RAKNET_ADD_BAN_OFFSET], 4);
+	Unlock((void*)&pRakServer_VTBL[RAKNET_REMOVE_BAN_OFFSET], 4);
+	Unlock((void*)&pRakServer_VTBL[RAKNET_CLEAR_BANS_OFFSET], 4);
+	
+	pfn__RakNet__AddToBanList = (RakNet__AddToBanList_t)(pRakServer_VTBL[RAKNET_ADD_BAN_OFFSET]);
+	pfn__RakNet__RemoveFromBanList = (RakNet__RemoveFromBanList_t)(pRakServer_VTBL[RAKNET_REMOVE_BAN_OFFSET]);
+	pfn__RakNet__ClearBanList = (RakNet__ClearBanList_t)(pRakServer_VTBL[RAKNET_CLEAR_BANS_OFFSET]);
+	
+	pRakServer_VTBL[RAKNET_ADD_BAN_OFFSET] = (int)CHookRakServer::AddToBanList;
+	pRakServer_VTBL[RAKNET_REMOVE_BAN_OFFSET] = (int)CHookRakServer::RemoveFromBanList;
+	pRakServer_VTBL[RAKNET_CLEAR_BANS_OFFSET] = (int)CHookRakServer::ClearBanList;
+	
+	int bans = pRakServer->GetBanListSize();
+	char ***banlist = pRakServer->GetBanList();
+	for(int i = 0; i < bans; i++)
+	{
+		banList.push_back(BanRecord(*banlist[i]));
+	}
+
+	logprintf("added %d, count %d", bans, banList.size());
+#endif
 }
 
 void CSAMPFunctions::AddStringVariable(char *szRule, int flags, char *szString, void *changefunc)
@@ -176,6 +279,60 @@ Packet* CSAMPFunctions::Receive(void* ppRakServer)
 {
 	return pfn__RakNet__Receive(ppRakServer);
 }
+
+bool CSAMPFunctions::IsBanned(const char *IP)
+{
+#ifdef CUSTOM_BANLIST
+	unsigned long addr = inet_addr(IP);
+	std::vector<BanRecord>::iterator iter;
+	for(iter = banList.begin(); iter != banList.end(); ++iter)
+	{
+		if((addr & iter->mask) == (iter->ip & iter->mask)) return true;
+	}
+	return false;
+#elif defined(_WIN32)
+	return pRakServer->_IsBanned(IP);
+#else
+	RakBanList *banlist = pRakServer->GetBanList();
+	for(unsigned int i = 0; i < banlist->list_size; i++)
+	{
+		RakBanStruct *ban = banlist->listArray[i];
+		if(!fnmatch(ban->IP, IP, 0)) return true;
+	}
+	return false;
+#endif
+}
+
+#ifdef CUSTOM_BANLIST
+
+void CSAMPFunctions::AddToBanList(void* ppRakServer, const char *IP, unsigned int milliseconds)
+{
+	BanRecord rec = BanRecord(IP);
+
+	if(rec.ip != 0x0100007F) //SA-MP prevents banning NPCs
+	{
+		banList.push_back(rec);
+	}
+
+	pfn__RakNet__AddToBanList(ppRakServer, IP, milliseconds);
+}
+
+void CSAMPFunctions::RemoveFromBanList(void* ppRakServer, const char *IP)
+{
+	BanRecord rec = BanRecord(IP);
+
+	banList.erase(std::remove(banList.begin(), banList.end(), rec), banList.end());
+	
+	pfn__RakNet__RemoveFromBanList(ppRakServer, IP);
+}
+
+void CSAMPFunctions::ClearBanList(void* ppRakServer)
+{
+	banList.clear();
+
+	pfn__RakNet__ClearBanList(ppRakServer);
+}
+#endif
 
 void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 {

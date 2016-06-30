@@ -46,11 +46,23 @@ public:
 	static bool THISCALL Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 	static bool THISCALL RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 	static Packet* THISCALL Receive(void* ppRakServer);
+
+#ifdef CUSTOM_BANLIST
+	static void THISCALL AddToBanList(void* ppRakServer, const char *IP, unsigned int milliseconds=0);
+	static void THISCALL RemoveFromBanList(void* ppRakServer, const char *IP);
+	static void THISCALL ClearBanList(void* ppRakServer);
+#endif
 };
 
 typedef bool (THISCALL *RakNet__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 typedef bool (THISCALL *RakNet__RPC_t)(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 typedef Packet* (THISCALL *RakNet__Receive_t)(void* ppRakServer);
+
+#ifdef CUSTOM_BANLIST
+typedef void (THISCALL *RakNet__AddToBanList_t)(void* ppRakServer, const char *IP, unsigned int milliseconds);
+typedef void (THISCALL *RakNet__RemoveFromBanList_t)(void* ppRakServer, const char *IP);
+typedef void (THISCALL *RakNet__ClearBanList_t)(void* ppRakServer);
+#endif
 
 class CSAMPFunctions
 {
@@ -82,6 +94,13 @@ public:
 	static bool		Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
 	static bool		RPC(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
 	static Packet*	Receive(void* ppRakServer);
+
+	static bool		IsBanned(const char *IP);
+#ifdef CUSTOM_BANLIST
+	static void		AddToBanList(void* ppRakServer, const char *IP, unsigned int milliseconds=0);
+	static void		RemoveFromBanList(void* ppRakServer, const char *IP);
+	static void		ClearBanList(void* ppRakServer);
+#endif
 
 	static void		RespawnVehicle(CVehicle *pVehicle);
 
@@ -115,6 +134,12 @@ public:
 	static RakNet__Send_t							pfn__RakNet__Send;
 	static RakNet__RPC_t							pfn__RakNet__RPC;
 	static RakNet__Receive_t						pfn__RakNet__Receive;
+
+#ifdef CUSTOM_BANLIST
+	static RakNet__AddToBanList_t					pfn__RakNet__AddToBanList;
+	static RakNet__RemoveFromBanList_t				pfn__RakNet__RemoveFromBanList;
+	static RakNet__ClearBanList_t					pfn__RakNet__ClearBanList;
+#endif
 };
 
 #endif

@@ -6273,7 +6273,8 @@ static cell AMX_NATIVE_CALL Natives::IsBanned( AMX* amx, cell* params )
 
 	char *ip;
 	amx_StrParam(amx, params[1], ip);
-	return (ip) ? pRakServer->IsBanned(ip) : 0;
+	//return (ip) ? pRakServer->IsBanned(ip) : 0;
+	return (ip) ? CSAMPFunctions::IsBanned(ip) : 0;
 }
 
 // native SetTimeoutTime(playerid, time);

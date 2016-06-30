@@ -286,6 +286,25 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 }
 
 //----------------------------------------------------
+#ifdef CUSTOM_BANLIST
+
+void THISCALL CHookRakServer::AddToBanList(void* ppRakServer, const char *IP, unsigned int milliseconds)
+{
+	CSAMPFunctions::AddToBanList(ppRakServer, IP, milliseconds);
+}
+
+void THISCALL CHookRakServer::RemoveFromBanList(void* ppRakServer, const char *IP)
+{
+	CSAMPFunctions::RemoveFromBanList(ppRakServer, IP);
+}
+
+void THISCALL CHookRakServer::ClearBanList(void* ppRakServer)
+{
+	CSAMPFunctions::ClearBanList(ppRakServer);
+}
+
+#endif
+//----------------------------------------------------
 
 bool	bRconSocketReply = false;
 
@@ -633,7 +652,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				}
 				case 'x':	// rcon
 				{
-					if (pRakServer && pRakServer->IsBanned(inet_ntoa(in))) return 1;
+					if (CSAMPFunctions::IsBanned(inet_ntoa(in))) return 1;
 					
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query") || !CSAMPFunctions::GetBoolVariable("rcon")) return 1;

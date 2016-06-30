@@ -414,8 +414,8 @@ bool CCallbackManager::OnServerQueryInfo(unsigned int binaryAddress, char (&host
 			amx_Release(*iter, amx_addr);
 
 			if(ret) return true;
-			ret = 1;
+			if(ret != -1) ret = 1;
 		}
 	}
-	return static_cast<int>(ret) != 0;
+	return static_cast<int>(ret) == 1;
 }

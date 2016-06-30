@@ -7,6 +7,7 @@
 #pragma warning(disable: 4995)
 
 //#define NEW_PICKUP_SYSTEM
+//#define CUSTOM_BANLIST
 
 #define PI 3.14159265
 
