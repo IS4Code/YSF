@@ -13,6 +13,14 @@ enum E_SERVER_RULE_FLAGS (<<= 1)
 	CON_VARFLAG_UNREMOVABLE
 }
 
+enum E_SCM_EVENT_TYPE
+{
+    SCM_EVENT_PAINTJOB = 1,
+    SCM_EVENT_MOD = 2,
+    SCM_EVENT_RESPRAY = 3,
+    SCM_EVENT_MOD_SHOP = 4
+}
+
 // File functions
 native ffind(const pattern[], filename[], len, &idx);
 native frename(const oldname[], const newname[]);
@@ -365,16 +373,8 @@ forward OnPlayerStatsAndWeaponsUpdate(playerid);
 forward OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const command[]);
 forward OnServerMessage(const msg[]);
 forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights, &spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
-
-enum
-{
-    SCM_EVENT_PAINTJOB = 1,
-    SCM_EVENT_MOD = 2,
-    SCM_EVENT_RESPRAY = 3,
-    SCM_EVENT_MOD_SHOP = 4
-}
-
-forward OnOutcomeScmEvent(playerid, issuerid, eventid, vehicleid, arg1, arg2);
+forward OnOutcomeScmEvent(playerid, issuerid, E_SCM_EVENT_TYPE:eventid, vehicleid, arg1, arg2);
+forward OnServerQueryInfo(addr[], hostname[51], gameMode[31], language[31]);
 
 //////////////////////////////////////////////////////////////
 // Fixes
@@ -405,7 +405,7 @@ enum
 	BS_STRING
 };
 
-// Deleloper functions
+// Developer functions
 native SendRPC(playerid, RPC, {Float,_}:...); // playerid == -1 -> broadcast
 native SendData(playerid, {Float,_}:...); // playerid == -1 -> broadcast
 

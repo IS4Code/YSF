@@ -212,6 +212,10 @@ bool CCallbackManager::OnServerMessage(char* message)
 
 bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command)
 {
+	in_addr in;
+	in.s_addr = binaryAddress;
+	char *addr = inet_ntoa(in);
+
 	int idx = -1;
 	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
@@ -220,14 +224,12 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 		{
 			cell amx_addr, *phys_addr;
 			
-			in_addr in;
-			in.s_addr = binaryAddress;
 
 			amx_PushString(*iter, &amx_addr, &phys_addr, command, 0, 0);
 			amx_Push(*iter, static_cast<cell>(success));
 			amx_PushString(*iter, &amx_addr, &phys_addr, password, 0, 0);
 			amx_Push(*iter, static_cast<cell>(port));
-			amx_PushString(*iter, &amx_addr, &phys_addr, inet_ntoa(in), 0, 0);
+			amx_PushString(*iter, &amx_addr, &phys_addr, addr, 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
 
@@ -348,6 +350,71 @@ bool CCallbackManager::OnOutcomeScmEvent(WORD playerid, WORD issuerid, int event
 			amx_Exec(*iter, &ret, idx);
 
 			if (!ret) return false;
+		}
+	}
+	return static_cast<int>(ret) != 0;
+}
+
+bool CCallbackManager::OnServerQueryInfo(unsigned int binaryAddress, char (&hostname)[51], char (&gameMode)[31], char (&language)[31])
+{
+	in_addr in;
+	in.s_addr = binaryAddress;
+	char *addr = inet_ntoa(in);
+
+	int idx = -1;
+	cell ret = 0;
+	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if(!amx_FindPublic(*iter, "OnServerQueryInfo", &idx))
+		{
+			cell amx_addr, *phys_addr;
+			
+			cell *cellArray;
+
+			cell *outputHostname, *outputGameMode, *outputLanguage;
+
+			cellArray = reinterpret_cast<cell*>(alloca(sizeof(cell)*sizeof(language)));
+			for(int i = 0; i < sizeof(language); i++)
+			{
+				cellArray[i] = language[i];
+			}
+			amx_PushArray(*iter, &amx_addr, &outputLanguage, cellArray, sizeof(language));
+
+			cellArray = reinterpret_cast<cell*>(alloca(sizeof(cell)*sizeof(gameMode)));
+			for(int i = 0; i < sizeof(gameMode); i++)
+			{
+				cellArray[i] = gameMode[i];
+			}
+			amx_PushArray(*iter, &amx_addr, &outputGameMode, cellArray, sizeof(gameMode));
+
+			cellArray = reinterpret_cast<cell*>(alloca(sizeof(cell)*sizeof(hostname)));
+			for(int i = 0; i < sizeof(hostname); i++)
+			{
+				cellArray[i] = hostname[i];
+			}
+			amx_PushArray(*iter, &amx_addr, &outputHostname, cellArray, sizeof(hostname));
+
+			amx_PushString(*iter, &amx_addr, &phys_addr, addr, 0, 0);
+
+			amx_Exec(*iter, &ret, idx);
+			
+			for(int i = 0; i < sizeof(hostname); i++)
+			{
+				hostname[i] = outputHostname[i];
+			}
+			for(int i = 0; i < sizeof(gameMode); i++)
+			{
+				gameMode[i] = outputGameMode[i];
+			}
+			for(int i = 0; i < sizeof(language); i++)
+			{
+				language[i] = outputLanguage[i];
+			}
+
+			amx_Release(*iter, amx_addr);
+
+			if(ret) return true;
+			ret = 1;
 		}
 	}
 	return static_cast<int>(ret) != 0;

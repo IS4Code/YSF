@@ -423,7 +423,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
-					char* szHostname = CSAMPFunctions::GetStringVariable("hostname");
+					/*char* szHostname = CSAMPFunctions::GetStringVariable("hostname");
 					size_t dwHostnameLen = strlen(szHostname);
 					if (dwHostnameLen > 50) dwHostnameLen = 50;
 
@@ -435,7 +435,39 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					char* szMapName = (!szLanguage[0]) ? CSAMPFunctions::GetStringVariable("mapname") : szLanguage;
 
 					size_t dwMapNameLen = strlen(szMapName);
+					if (dwMapNameLen > 30) dwMapNameLen = 30;*/
+
+					char *gamerule;
+
+					char szHostname[51];
+					gamerule = CSAMPFunctions::GetStringVariable("hostname");
+					size_t dwHostnameLen = strlen(gamerule);
+					if (dwHostnameLen > 50) dwHostnameLen = 50;
+					memcpy(szHostname, gamerule, dwHostnameLen);
+					szHostname[dwHostnameLen] = 0;
+
+					char szGameMode[31];
+					gamerule = CSAMPFunctions::GetStringVariable("gamemodetext");
+					size_t dwGameModeLen = strlen(gamerule);
+					if (dwGameModeLen > 30) dwGameModeLen = 30;
+					memcpy(szGameMode, gamerule, dwGameModeLen);
+					szGameMode[dwGameModeLen] = 0;
+
+					char szMapName[31];
+					gamerule = CSAMPFunctions::GetStringVariable("language");
+					if(!gamerule[0]) gamerule = CSAMPFunctions::GetStringVariable("mapname");
+					size_t dwMapNameLen = strlen(gamerule);
 					if (dwMapNameLen > 30) dwMapNameLen = 30;
+					memcpy(szMapName, gamerule, dwMapNameLen);
+					szMapName[dwMapNameLen] = 0;
+
+					bool stringsChanged = CCallbackManager::OnServerQueryInfo(binaryAddress, szHostname, szGameMode, szMapName);
+					if(stringsChanged)
+					{
+						dwHostnameLen = strlen(szHostname);
+						dwGameModeLen = strlen(szGameMode);
+						dwMapNameLen = strlen(szMapName);
+					}
 
 					WORD wPlayerCount = pServer->GetPlayerCount();
 //					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
