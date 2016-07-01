@@ -202,7 +202,6 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SetVehicleParamsSirenState(AMX *amx, cell *params); // R17-3
 	static cell AMX_NATIVE_CALL ToggleVehicleSirenEnabled(AMX *amx, cell *params); // R17-3
 	static cell AMX_NATIVE_CALL IsVehicleSirenEnabled(AMX *amx, cell *params); // R17-3
-	static cell AMX_NATIVE_CALL GetVehicleAngularVelocity(AMX *amx, cell *params); // R17-3
 	static cell AMX_NATIVE_CALL GetVehicleMatrix(AMX *amx, cell *params); // R17-3
 	static cell AMX_NATIVE_CALL SetVehicleMatrix(AMX *amx, cell *params); // R17-3
 

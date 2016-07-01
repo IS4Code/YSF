@@ -3442,34 +3442,6 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleSirenEnabled( AMX* amx, cell* para
 	return pNetGame->pVehiclePool->pVehicle[vehicleid]->sirenEnabled;
 }
 
-// native GetVehicleAngularVelocity(vehicleid, &Float:x, &Float:y, &Float:z);
-static cell AMX_NATIVE_CALL Natives::GetVehicleAngularVelocity( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(4, "GetVehicleAngularVelocity");
-
-	int vehicleid = static_cast<int>(params[1]);
-	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
-	
-	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
-		return 0;
-	
-	CVector* vel = &pNetGame->pVehiclePool->pVehicle[vehicleid]->vecVelocity;
-
-	cell *cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(vel->fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(vel->fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(vel->fZ);
-
-	return 1;
-}
-
 // native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY, &Float:rightZ, &Float:upX, &Float:upY, &Float:upZ, &Float:atX, &Float:atY, &Float:atZ);
 static cell AMX_NATIVE_CALL Natives::GetVehicleMatrix( AMX* amx, cell* params )
 {
@@ -6761,7 +6733,6 @@ AMX_NATIVE_INFO YSINatives [] =
 	{"SetVehicleParamsSirenState",		Natives::SetVehicleParamsSirenState}, //R17-3
 	{"ToggleVehicleSirenEnabled",		Natives::ToggleVehicleSirenEnabled}, //R17-3
 	{"IsVehicleSirenEnabled",			Natives::IsVehicleSirenEnabled}, //R17-3
-	{"GetVehicleAngularVelocity",		Natives::GetVehicleAngularVelocity}, //R17-3
 	{"GetVehicleMatrix",				Natives::GetVehicleMatrix}, //R17-3
 	{"SetVehicleMatrix",				Natives::SetVehicleMatrix}, //R17-3
 
