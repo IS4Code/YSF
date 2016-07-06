@@ -299,8 +299,8 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 9
 			dwTemp = *disableenterexits;
 			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 10
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(nametagdistance)), 1);		// 11
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(globalchatradius)), 1);	// 12
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, &amx_ftoc(*nametagdistance), 1);							// 11
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, &amx_ftoc(*globalchatradius), 1);							// 12
 			dwTemp = *limitglobalchat;
 			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 13
 			dwTemp = *usecjwalk;
