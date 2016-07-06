@@ -339,11 +339,11 @@ enum {
  * changing the bit pattern
  */
 #if PAWN_CELL_SIZE==32
-  #define amx_ftoc(f)   ( * ((cell*)&f) )   /* float to cell */
-  #define amx_ctof(c)   ( * ((float*)&c) )  /* cell to float */
+  #define amx_ftoc(f)   ( * reinterpret_cast<const cell*>(&static_cast<const float&>(f)) )   /* float to cell */
+  #define amx_ctof(c)   ( * reinterpret_cast<const float*>(&static_cast<const cell&>(c)) )  /* cell to float */
 #elif PAWN_CELL_SIZE==64
-  #define amx_ftoc(f)   ( * ((cell*)&f) )   /* float to cell */
-  #define amx_ctof(c)   ( * ((double*)&c) ) /* cell to float */
+  #define amx_ftoc(f)   ( * reinterpret_cast<const cell*>(&static_cast<const double&>(f)) )   /* float to cell */
+  #define amx_ctof(c)   ( * reinterpret_cast<const double*>(&static_cast<const cell&>(c)) )  /* cell to float */
 #else
   #error Unsupported cell size
 #endif
