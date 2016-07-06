@@ -371,7 +371,7 @@ forward OnPlayerPauseStateChange(playerid, pausestate);
 forward OnPlayerStatsAndWeaponsUpdate(playerid);
 forward OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const command[]);
 forward OnServerMessage(const msg[]);
-forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights, &spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
+forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights, &spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
 forward OnOutcomeScmEvent(playerid, issuerid, E_SCM_EVENT_TYPE:eventid, vehicleid, arg1, arg2);
 forward OnServerQueryInfo(addr[], hostname[51], gameMode[31], language[31]);
 
