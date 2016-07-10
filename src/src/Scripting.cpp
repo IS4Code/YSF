@@ -2249,7 +2249,7 @@ static cell AMX_NATIVE_CALL Natives::ResetPlayerMarkerForPlayer(AMX* amx, cell* 
 	int resetplayerid = static_cast<int>(params[2]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(resetplayerid)) return 0;
-	logprintf("testsad");
+
 	return pPlayerData[playerid]->ResetPlayerMarkerForPlayer(static_cast<WORD>(resetplayerid));
 }
 
