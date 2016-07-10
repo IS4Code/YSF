@@ -83,6 +83,15 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(m_iSkins, -1, sizeof(m_iSkins));
 	memset(m_iFightingStyles, -1, sizeof(m_iFightingStyles));
 	memset(m_szNames, NULL, sizeof(m_szNames));
+
+	if(pNetGame->pPlayerPool->bIsNPC[playerid])
+	{
+		PlayerID id = pRakServer->GetPlayerIDFromIndex(playerid);
+		if(id.binaryAddress == 0x0100007F)
+		{
+			npcPid = CSAMPFunctions::FindNPCProcessID(playerid);
+		}
+	}
 }
 
 CPlayerData::~CPlayerData( void )

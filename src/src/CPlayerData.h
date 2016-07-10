@@ -94,6 +94,8 @@ public:
 	float fBounds[4];
 
 	BYTE byteTeam;
+
+	int npcPid;
 	
 	// Special shits for store sync data
 	WORD dwDisabledKeys;

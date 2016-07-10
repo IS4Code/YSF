@@ -104,6 +104,9 @@ public:
 
 	static void		RespawnVehicle(CVehicle *pVehicle);
 
+	static char*	GetNPCCommandLine(WORD npcid);
+	static int		FindNPCProcessID(WORD npcid);
+
 	// Function
 	// Rules
 	static CConsole__AddStringVariable_t			pfn__CConsole__AddStringVariable;
