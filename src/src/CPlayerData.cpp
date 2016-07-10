@@ -99,6 +99,17 @@ CPlayerData::~CPlayerData( void )
 
 }
 
+bool CPlayerData::ResetPlayerMarkerForPlayer(WORD resetplayerid)
+{
+	CPlayer *p = pNetGame->pPlayerPool->pPlayer[resetplayerid];
+
+	RakNet::BitStream bs;
+	bs.Write(resetplayerid);
+	bs.Write(p->dwNickNameColor);
+	pRakServer->RPC(&RPC_SetPlayerColor, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	return true;
+}
+
 bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
 {
 	m_iTeams[teamplayerid] = team;

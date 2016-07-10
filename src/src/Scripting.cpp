@@ -2236,6 +2236,23 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cel
 	return 0;
 }
 
+// native ResetPlayerMarkerForPlayer(playerid, resetplayerid)
+static cell AMX_NATIVE_CALL Natives::ResetPlayerMarkerForPlayer(AMX* amx, cell* params)
+{
+	// If unknown server version
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(2, "ResetPlayerMarkerForPlayer");
+
+	int playerid = static_cast<int>(params[1]);
+	int resetplayerid = static_cast<int>(params[2]);
+
+	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(resetplayerid)) return 0;
+	logprintf("testsad");
+	return pPlayerData[playerid]->ResetPlayerMarkerForPlayer(static_cast<WORD>(resetplayerid));
+}
+
 // native SetPlayerVersion(playerid, version[];
 static cell AMX_NATIVE_CALL Natives::SetPlayerVersion( AMX* amx, cell* params )
 {
@@ -6636,7 +6653,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "HidePlayerForPlayer",			Natives::HidePlayerForPlayer }, // R8
 	{ "AddPlayerForPlayer",				Natives::AddPlayerForPlayer }, // R17
 	{ "RemovePlayerForPlayer",			Natives::RemovePlayerForPlayer }, // R17
-	{ "SetPlayerChatBubbleForPlayer",	Natives::SetPlayerChatBubbleForPlayer}, // R10
+	{ "SetPlayerChatBubbleForPlayer",   Natives::SetPlayerChatBubbleForPlayer }, // R10
+	{ "ResetPlayerMarkerForPlayer",     Natives::ResetPlayerMarkerForPlayer },
 	{ "SetPlayerVersion",				Natives::SetPlayerVersion }, // R9
 	{ "IsPlayerSpawned",				Natives::IsPlayerSpawned }, // R9
 	{"IsPlayerControllable",			Natives::IsPlayerControllable}, // R11
