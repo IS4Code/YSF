@@ -130,6 +130,7 @@ native HidePlayerForPlayer(forplayerid, playerid);
 native AddPlayerForPlayer(forplayerid, playerid, isnpc = 0);
 native RemovePlayerForPlayer(forplayerid, playerid);
 native SetPlayerChatBubbleForPlayer(forplayerid, playerid, const text[], color, Float:drawdistance, expiretime);
+native ResetPlayerMarkerForPlayer(playerid, resetplayerid);
 native SetPlayerVersion(playerid, const version[]);
 native IsPlayerSpawned(playerid);
 native IsPlayerControllable(playerid);

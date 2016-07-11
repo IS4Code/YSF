@@ -58,6 +58,8 @@ public:
 	CPlayerData(WORD playerid);
 	~CPlayerData(void);
 
+	bool ResetPlayerMarkerForPlayer(WORD resetplayerid);
+
 	bool SetPlayerTeamForPlayer(WORD teamplayerid, int team);
 	int GetPlayerTeamForPlayer(WORD teamplayerid);
 	inline void ResetPlayerTeam(WORD playerid) { m_iTeams[playerid] = -1; }
