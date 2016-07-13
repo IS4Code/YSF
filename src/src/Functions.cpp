@@ -416,6 +416,7 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 
 char* CSAMPFunctions::GetNPCCommandLine(WORD npcid)
 {
+	if(!pPlayerData[npcid]) return NULL;
 	int pid = pPlayerData[npcid]->npcPid;
 	char *line = NULL;
 

@@ -308,7 +308,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 					if (!fnmatch(szFile, ep->d_name, FNM_NOESCAPE))
 					{
 						// Check if this is a directory
-						// There MUST be an easier way to do this!
+						// There MUST be an easier way to do this!CommandLine
 						char
 							*full = (char *)malloc(strlen(ep->d_name) + end + 1);
 						if (!full)
@@ -5274,6 +5274,46 @@ static cell AMX_NATIVE_CALL Natives::YSF_GetAFKAccuracy(AMX* amx, cell* params)
 	return static_cast<cell>(pServer->GetAFKAccuracy());
 }
 
+// native YSF_ToggleNPCTracking(bool:enable);
+static cell AMX_NATIVE_CALL Natives::YSF_ToggleNPCTracking(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 0;
+
+	CHECK_PARAMS(1, "YSF_ToggleNPCTracking");
+
+	pServer->ToggleNPCTracking(!!params[1]);
+	return 1;
+}
+
+// native bool:YSF_IsNPCTrackingEnabled();
+static cell AMX_NATIVE_CALL Natives::YSF_IsNPCTrackingEnabled(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 0;
+
+	return pServer->IsNPCTrackingEnabled();
+}
+
+// native GetNPCCommandLine(npcid, script[], length=sizeof(script));
+static cell AMX_NATIVE_CALL Natives::GetNPCCommandLine(AMX* amx, cell* params)
+{
+	if (!pServer)
+		return 0;
+	
+	CHECK_PARAMS(3, "GetNPCCommandLine");
+
+	if(!pServer->IsNPCTrackingEnabled()) return 0;
+	char *cmdline = CSAMPFunctions::GetNPCCommandLine(params[1]);
+	if(cmdline == NULL) return 0;
+	cell *phys_addr;
+	amx_GetAddr(amx, params[2], &phys_addr);
+	amx_SetString(phys_addr, cmdline, 0, 0, params[3]);
+	delete[] cmdline;
+
+	return 1;
+}
+
 static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(4, "GangZoneCreate");
@@ -6654,10 +6694,10 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "AddPlayerForPlayer",				Natives::AddPlayerForPlayer }, // R17
 	{ "RemovePlayerForPlayer",			Natives::RemovePlayerForPlayer }, // R17
 	{ "SetPlayerChatBubbleForPlayer",   Natives::SetPlayerChatBubbleForPlayer }, // R10
-	{ "ResetPlayerMarkerForPlayer",     Natives::ResetPlayerMarkerForPlayer },
+	{ "ResetPlayerMarkerForPlayer",     Natives::ResetPlayerMarkerForPlayer }, //2.2
 	{ "SetPlayerVersion",				Natives::SetPlayerVersion }, // R9
 	{ "IsPlayerSpawned",				Natives::IsPlayerSpawned }, // R9
-	{"IsPlayerControllable",			Natives::IsPlayerControllable}, // R11
+	{ "IsPlayerControllable",			Natives::IsPlayerControllable}, // R11
 	{ "SpawnForWorld",					Natives::SpawnForWorld }, // R10
 	{ "BroadcastDeath",					Natives::BroadcastDeath }, // R13
 	{ "IsPlayerCameraTargetEnabled",	Natives::IsPlayerCameraTargetEnabled }, // R13
@@ -6892,6 +6932,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	{ "YSF_IsExtendedNetStatsEnabled",	Natives::YSF_IsExtendedNetStatsEnabled }, // R17
 	{ "YSF_SetAFKAccuracy",				Natives::YSF_SetAFKAccuracy }, // R17
 	{ "YSF_GetAFKAccuracy",				Natives::YSF_GetAFKAccuracy }, // R17
+	{ "YSF_ToggleNPCTracking",			Natives::YSF_ToggleNPCTracking }, // 2.2
+	{ "YSF_IsNPCTrackingEnabled",		Natives::YSF_IsNPCTrackingEnabled }, // 2.2
+	{ "GetNPCCommandLine",				Natives::GetNPCCommandLine }, // 2.2
 
 	{ "AttachPlayerObjectToObject",		Natives::AttachPlayerObjectToObject },
 	

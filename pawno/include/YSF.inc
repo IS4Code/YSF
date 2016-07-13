@@ -69,6 +69,8 @@ native YSF_SetExtendedNetStatsEnabled(enable);
 native YSF_IsExtendedNetStatsEnabled();
 native YSF_SetAFKAccuracy(time_ms);
 native YSF_GetAFKAccuracy();
+native YSF_ToggleNPCTracking(bool:enable);
+native YSF_IsNPCTrackingEnabled();
 
 native SetRecordingDirectory(const dir[]);
 native GetRecordingDirectory(dir[], len = sizeof(dir));
@@ -139,6 +141,8 @@ native BroadcastDeath(playerid);
 native IsPlayerCameraTargetEnabled(playerid);
 native SetPlayerDisabledKeysSync(playerid, keys);
 native GetPlayerDisabledKeysSync(playerid);
+
+native GetNPCCommandLine(npcid, script[], length=sizeof(script));
 
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX, &Float:fY, &Float:fZ, &Float:fAngle);

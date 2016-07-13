@@ -333,6 +333,9 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_IsExtendedNetStatsEnabled(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_SetAFKAccuracy(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GetAFKAccuracy(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_ToggleNPCTracking(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_IsNPCTrackingEnabled(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL GetNPCCommandLine(AMX *amx, cell *params);
 	
 	static cell AMX_NATIVE_CALL AttachPlayerObjectToObject(AMX *amx, cell *params);
 
