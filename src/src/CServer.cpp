@@ -6,6 +6,7 @@ CServer::CServer(eSAMPVersion version)
 	m_iTickRate = 5;
 	m_bNightVisionFix = true;
 	m_dwAFKAccuracy = 1500;
+	NPCTrackingEnabled = false;
 
 	memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();
@@ -325,4 +326,14 @@ WORD CServer::GetNPCCount()
 		if (pPlayerPool->bIsPlayerConnectedEx[i] && pPlayerPool->bIsNPC[i])
 			count++;
 	return count;
+}
+
+void CServer::ToggleNPCTracking(bool enable)
+{
+	NPCTrackingEnabled = enable;
+}
+
+bool CServer::IsNPCTrackingEnabled()
+{
+	return NPCTrackingEnabled;
 }

@@ -57,6 +57,9 @@ public:
 	WORD GetPlayerCount();
 	WORD GetNPCCount();
 
+	void ToggleNPCTracking(bool enable);
+	bool IsNPCTrackingEnabled();
+
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;
 
@@ -70,6 +73,7 @@ private:
 	int m_iTickRate;
 	bool m_bNightVisionFix : 1;
 	bool m_bExtendedNetStats : 1;
+	bool NPCTrackingEnabled : 1;
 	DWORD m_dwAFKAccuracy;
 
 	std::vector <char> m_vecValidNameCharacters;
