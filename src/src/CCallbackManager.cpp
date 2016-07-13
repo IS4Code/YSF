@@ -227,9 +227,9 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 
 			amx_PushString(*iter, &amx_addr, &phys_addr, command, 0, 0);
 			amx_Push(*iter, static_cast<cell>(success));
-			amx_PushString(*iter, &amx_addr, &phys_addr, password, 0, 0);
+			amx_PushString(*iter, nullptr, &phys_addr, password, 0, 0);
 			amx_Push(*iter, static_cast<cell>(port));
-			amx_PushString(*iter, &amx_addr, &phys_addr, addr, 0, 0);
+			amx_PushString(*iter, nullptr, &phys_addr, addr, 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
 
@@ -280,7 +280,7 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 	{
 		if (!amx_FindPublic(*iter, "OnPlayerClientGameInit", &idx))
 		{
-			cell addr = NULL, amx_addr, amx_addr_last = NULL, *phys_ptr, *temp_ptr;
+			cell amx_addr, amx_addr_last, *phys_ptr, *temp_ptr;
 
 			dwTemp = *vehiclefriendlyfire;
 			amx_PushArray(*iter, &amx_addr, &phys_ptr, reinterpret_cast<cell*>(&dwTemp), 1);							// 0
@@ -308,10 +308,8 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 		
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
-			for(int i = 0; i != ((amx_addr_last - amx_addr) / 4); i++)
-			{
-				amx_Release(*iter, amx_addr + (i * 4));
-			}
+
+			amx_Release(*iter, amx_addr);
 			
 			*vehiclefriendlyfire = static_cast<int>(phys_ptr[0]) != 0;
 			*lacgompmode = static_cast<int>(phys_ptr[1]);
@@ -367,34 +365,32 @@ bool CCallbackManager::OnServerQueryInfo(unsigned int binaryAddress, char (&host
 	{
 		if(!amx_FindPublic(*iter, "OnServerQueryInfo", &idx))
 		{
-			cell amx_addr, *phys_addr;
+			cell amx_addr, amx_addr_last, *phys_addr;
 			
-			cell *cellArray;
-
 			cell *outputHostname, *outputGameMode, *outputLanguage;
 
-			cellArray = reinterpret_cast<cell*>(alloca(sizeof(cell)*sizeof(language)));
+			cell languageCells[sizeof(language)];
 			for(int i = 0; i < sizeof(language); i++)
 			{
-				cellArray[i] = language[i];
+				languageCells[i] = language[i];
 			}
-			amx_PushArray(*iter, &amx_addr, &outputLanguage, cellArray, sizeof(language));
+			amx_PushArray(*iter, &amx_addr, &outputLanguage, languageCells, sizeof(language));
 
-			cellArray = reinterpret_cast<cell*>(alloca(sizeof(cell)*sizeof(gameMode)));
+			cell gameModeCells[sizeof(gameMode)];
 			for(int i = 0; i < sizeof(gameMode); i++)
 			{
-				cellArray[i] = gameMode[i];
+				gameModeCells[i] = gameMode[i];
 			}
-			amx_PushArray(*iter, &amx_addr, &outputGameMode, cellArray, sizeof(gameMode));
+			amx_PushArray(*iter, &amx_addr_last, &outputGameMode, gameModeCells, sizeof(gameMode));
 
-			cellArray = reinterpret_cast<cell*>(alloca(sizeof(cell)*sizeof(hostname)));
+			cell hostnameCells[sizeof(hostname)];
 			for(int i = 0; i < sizeof(hostname); i++)
 			{
-				cellArray[i] = hostname[i];
+				hostnameCells[i] = hostname[i];
 			}
-			amx_PushArray(*iter, &amx_addr, &outputHostname, cellArray, sizeof(hostname));
+			amx_PushArray(*iter, &amx_addr_last, &outputHostname, hostnameCells, sizeof(hostname));
 
-			amx_PushString(*iter, &amx_addr, &phys_addr, addr, 0, 0);
+			amx_PushString(*iter, &amx_addr_last, &phys_addr, addr, 0, 0);
 
 			amx_Exec(*iter, &ret, idx);
 			
