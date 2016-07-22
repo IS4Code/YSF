@@ -21,6 +21,8 @@ public:
 	static bool OnServerMessage(char* message);
 	static bool OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command);
 	static void OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bool* limitglobalchat, float* globalchatradius, float* nametagdistance, bool* disableenterexits, bool* nametaglos, bool* manualvehengineandlights, int* spawnsavailable, bool* shownametags, bool* showplayermarkers, int* onfoot_rate, int* incar_rate, int* weapon_rate, int* lacgompmode, bool* vehiclefriendlyfire);
+	static bool OnOutcomeScmEvent(WORD playerid, WORD issuerid, int eventid, int vehicleid, int arg1, int arg2);
+	static bool OnServerQueryInfo(unsigned int binaryAddress, char (&hostname)[51], char (&gameMode)[31], char (&language)[31]);
 
 	// Default SAMP Callbakcs
 	static void	OnPlayerDeath(WORD playerid, WORD killerid, BYTE reason);

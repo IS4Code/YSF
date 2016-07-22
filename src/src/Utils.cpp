@@ -9,6 +9,8 @@
   =========================================*/
 
 #include "main.h"
+#pragma comment( lib, "psapi.lib" )
+
 
 // Linux GetTickCount
 #ifndef _WIN32
@@ -347,7 +349,7 @@ DWORD FindPattern(char *pattern, char *mask)
 	size = (DWORD)info.SizeOfImage;
 #else
 	address = 0x804b480; // around the elf base
-	size = 0x8128B80 - address;
+	size = 0x8128B80 - address; // size of the elf base is too small, build more moonwells
 #endif
 	for(i = 0; i < size; ++i)
 	{
@@ -364,7 +366,7 @@ void InstallJump(unsigned long addr, void *func)
 	VirtualProtect((LPVOID)addr, 5, PAGE_EXECUTE_READWRITE, &dwOld);
 #else
 	int pagesize = sysconf(_SC_PAGE_SIZE);
-	void *unpraddr = (void *)(((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize;
+	void *unpraddr = (void *)((((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize);
 	mprotect(unpraddr, pagesize, PROT_WRITE);
 #endif
 	*(unsigned char *)addr = 0xE9;

@@ -52,6 +52,7 @@ extern int RPC_WorldPlayerRemove;
 extern int RPC_ChatBubble;
 extern int RPC_SetPlayerSkin;
 extern int RPC_SetPlayerName;
+extern int RPC_SetPlayerColor;
 extern int RPC_SetFightingStyle;
 extern int RPC_ScrApplyAnimation;
 extern int RPC_ClientMessage;
@@ -69,9 +70,10 @@ extern int RPC_ServerQuit;
 
 void InitRPCs();
 
-enum PacketEnumeration : unsigned char
+enum PacketEnumeration // : unsigned char
 {	
-	RPC_InitGame = 0x8B, 
+	RPC_InitGame = 0x8B,
+	RPC_ScmEvent = 96,
 
 	ID_TIMESTAMP = 40,
 	ID_VEHICLE_SYNC = 200,

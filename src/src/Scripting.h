@@ -56,6 +56,8 @@ namespace Natives
 	static cell AMX_NATIVE_CALL GetModeRestartTime(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetMaxPlayers(AMX *amx, cell *params); // R8
 	static cell AMX_NATIVE_CALL SetMaxNPCs(AMX *amx, cell *params); // R8
+	static cell AMX_NATIVE_CALL GetSyncBounds(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL SetSyncBounds(AMX *amx, cell *params);
 
 	static cell AMX_NATIVE_CALL SetPlayerAdmin(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL LoadFilterScript(AMX *amx, cell *params);
@@ -114,6 +116,7 @@ namespace Natives
 	static cell AMX_NATIVE_CALL AddPlayerForPlayer(AMX *amx, cell *params); // R17
 	static cell AMX_NATIVE_CALL RemovePlayerForPlayer(AMX *amx, cell *params); // R17
 	static cell AMX_NATIVE_CALL SetPlayerChatBubbleForPlayer(AMX *amx, cell *params); // R10
+	static cell AMX_NATIVE_CALL ResetPlayerMarkerForPlayer(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL SetPlayerVersion(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL IsPlayerSpawned(AMX *amx, cell *params); // R9
 	static cell AMX_NATIVE_CALL IsPlayerControllable(AMX *amx, cell *params); // R11
@@ -197,6 +200,11 @@ namespace Natives
 	static cell AMX_NATIVE_CALL SetVehicleSpawnInfo(AMX *amx, cell *params); // R12
 	static cell AMX_NATIVE_CALL GetVehicleModelCount(AMX *amx, cell *params); // R17
 	static cell AMX_NATIVE_CALL GetVehicleModelsUsed(AMX *amx, cell *params); // R17
+	static cell AMX_NATIVE_CALL SetVehicleParamsSirenState(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL ToggleVehicleSirenEnabled(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL IsVehicleSirenEnabled(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL GetVehicleMatrix(AMX *amx, cell *params); // R17-3
+	static cell AMX_NATIVE_CALL SetVehicleMatrix(AMX *amx, cell *params); // R17-3
 
 	static cell AMX_NATIVE_CALL IsValidGangZone(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL IsPlayerInGangZone(AMX *amx, cell *params);
@@ -325,6 +333,9 @@ namespace Natives
 	static cell AMX_NATIVE_CALL YSF_IsExtendedNetStatsEnabled(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_SetAFKAccuracy(AMX *amx, cell *params);
 	static cell AMX_NATIVE_CALL YSF_GetAFKAccuracy(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_ToggleNPCTracking(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL YSF_IsNPCTrackingEnabled(AMX *amx, cell *params);
+	static cell AMX_NATIVE_CALL GetNPCCommandLine(AMX *amx, cell *params);
 	
 	static cell AMX_NATIVE_CALL AttachPlayerObjectToObject(AMX *amx, cell *params);
 

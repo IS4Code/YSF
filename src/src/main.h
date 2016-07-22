@@ -7,6 +7,7 @@
 #pragma warning(disable: 4995)
 
 //#define NEW_PICKUP_SYSTEM
+//#define CUSTOM_BANLIST
 
 #define PI 3.14159265
 
@@ -25,7 +26,7 @@
 // ------------
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R16"
+#define PROJECT_VERSION		"2.2.0"
 
 // ------------
 // OS SPECIFICS
@@ -112,6 +113,16 @@
 // SAMP GDK
 #include <sampgdk/sampgdk.h>
 using sampgdk::logprintf;
+
+#undef amx_ftoc
+#undef amx_ctof
+#if PAWN_CELL_SIZE==32
+  #define amx_ftoc(f)   ( * reinterpret_cast<const cell*>(&static_cast<const float&>(f)) )   /* float to cell */
+  #define amx_ctof(c)   ( * reinterpret_cast<const float*>(&static_cast<const cell&>(c)) )  /* cell to float */
+#elif PAWN_CELL_SIZE==64
+  #define amx_ftoc(f)   ( * reinterpret_cast<const cell*>(&static_cast<const double&>(f)) )   /* float to cell */
+  #define amx_ctof(c)   ( * reinterpret_cast<const double*>(&static_cast<const cell&>(c)) )  /* cell to float */
+#endif
 	
 // Subhook
 #include <subhook/subhook.h>

@@ -58,6 +58,8 @@ public:
 	CPlayerData(WORD playerid);
 	~CPlayerData(void);
 
+	bool ResetPlayerMarkerForPlayer(WORD resetplayerid);
+
 	bool SetPlayerTeamForPlayer(WORD teamplayerid, int team);
 	int GetPlayerTeamForPlayer(WORD teamplayerid);
 	inline void ResetPlayerTeam(WORD playerid) { m_iTeams[playerid] = -1; }
@@ -94,6 +96,8 @@ public:
 	float fBounds[4];
 
 	BYTE byteTeam;
+
+	int npcPid;
 	
 	// Special shits for store sync data
 	WORD dwDisabledKeys;
@@ -153,5 +157,5 @@ private:
 };
 
 void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
-void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
+bool RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
 #endif

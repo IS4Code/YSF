@@ -24,6 +24,7 @@ DWORD CAddress::VAR_ppRakServer = NULL;
 
 // Variables
 DWORD CAddress::VAR_pRestartWaitTime = NULL;
+DWORD CAddress::VAR_pPosSyncBounds[4];
 
 // Functions
 DWORD CAddress::FUNC_CConsole__AddStringVariable = NULL;
@@ -64,11 +65,24 @@ DWORD CAddress::ADDR_RecordingDirectory = NULL;
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
 	// Thx for Whitetiger
-	DWORD dwRestartTime; 
+	DWORD dwRestartTime, dwPosSyncBounds;
 #ifdef _WIN32
 	dwRestartTime =								FindPattern("\xD9\x15\x00\x00\x00\x00\xD8\x1D\x00\x00\x00\x00\xDF\xE0\xF6\xC4\x41\x75\x07", "xx????xx????xxxxxxx") + 6;
 	VAR_pRestartWaitTime =						 *(DWORD*)(dwRestartTime + 2);
- 
+
+	dwPosSyncBounds =							FindPattern("Shot out of bounds.\0", "xxxxxxxxxxxxxxxxxxxx");
+	if(dwPosSyncBounds)
+	{
+		VAR_pPosSyncBounds[0] = dwPosSyncBounds + 20;
+		VAR_pPosSyncBounds[1] = VAR_pPosSyncBounds[0] + 4;
+	}
+	dwPosSyncBounds =							FindPattern("Offset out of bounds.\0\0\0", "xxxxxxxxxxxxxxxxxxxxxxxx");
+	if(dwPosSyncBounds)
+	{
+		VAR_pPosSyncBounds[2] = dwPosSyncBounds + 24;
+	}					
+	VAR_pPosSyncBounds[3] =						FindPattern("\x00\x50\x43\x48\x00\x00\xC8\xC2\x00\x00\x00\x3F\xB2\x00\x00\x00\xAD\x00\x00\x00\xAE\x00\x00\x00maxnpc", "????xxxxxxxxxxxxxxxxxxxxxxxxxx");
+
 	FUNC_CConsole__AddStringVariable =			FindPattern("\x53\x56\x57\x8B\x7C\x24\x18\x85\xFF", "xxxxxxxxx");
 	FUNC_CConsole__GetStringVariable =			FindPattern("\x8B\x44\x24\x04\x50\xE8\x00\x00\x00\x00\x85\xC0\x74\x0B", "xxxxxx????xxxx");
 	FUNC_CConsole__SetStringVariable =			FindPattern("\x8B\x44\x24\x04\x53\x50\xE8\xD5\xFE\xFF\xFF\x8B\xD8\x85\xDB", "xxxxxxx???xxxx");
@@ -106,6 +120,16 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	// Thx for Mellnik
 	VAR_pRestartWaitTime = 						NULL;
+	/*
+	dwPosSyncBounds =							FindPattern("\x00\x00\x80\xBF\x00\x40\x9C\x46\x00\x40\x9C\xC6\x00\x50\x43\x48\x00\x00\x7A\xC4\x00\x00\xC8\x42\x00\x00\xC8\xC2\x00\x00\x00\x3F\x00\x00\x00\xC0", "xxxx????????????????xxxxxxxxxxxxxxxx");
+	if(dwPosSyncBounds)
+	{
+		VAR_pPosSyncBounds[0] = dwPosSyncBounds+8;
+		VAR_pPosSyncBounds[1] = dwPosSyncBounds+4;
+		VAR_pPosSyncBounds[2] = dwPosSyncBounds+20;
+		VAR_pPosSyncBounds[3] = dwPosSyncBounds+12;
+	}
+	*/
 
 	FUNC_CConsole__AddStringVariable = 			FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\x85\xF6\x74\x00\x89\x34\x24", "xxxxxxx?xx?xxx?xxx");
 	FUNC_CConsole__GetStringVariable =			FUNC_CConsole__AddStringVariable - 0x760;//0x80A0190;
@@ -148,6 +172,10 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		case SAMP_VERSION_037_R2:
 		{
 			VAR_pRestartWaitTime =						0x0815A528; // 12.0
+			VAR_pPosSyncBounds[0] =						0x08150710;
+			VAR_pPosSyncBounds[1] =						0x0815070C;
+			VAR_pPosSyncBounds[2] =						0x08150718;
+			VAR_pPosSyncBounds[3] =						0x08150714;
 			ADDR_RecordingDirectory =					0x080CC7D1;
 			FUNC_CVehicle__Respawn =					0x814B4C0;
 			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
@@ -190,6 +218,13 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
 		Unlock((void*)VAR_pRestartWaitTime, 4);
+	for(BYTE i = 0; i < 4; i++)
+	{
+		if(VAR_pPosSyncBounds[i])
+		{
+			Unlock((void*)VAR_pPosSyncBounds[i], 4);
+		}
+	}
 
 	// Patch GetNetworkStats to get more advanced stats than default
 	if(ADDR_GetNetworkStats_VerbosityLevel)

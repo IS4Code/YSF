@@ -212,6 +212,10 @@ bool CCallbackManager::OnServerMessage(char* message)
 
 bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command)
 {
+	in_addr in;
+	in.s_addr = binaryAddress;
+	char *addr = inet_ntoa(in);
+
 	int idx = -1;
 	cell ret = 1;
 	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
@@ -220,14 +224,12 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 		{
 			cell amx_addr, *phys_addr;
 			
-			in_addr in;
-			in.s_addr = binaryAddress;
 
 			amx_PushString(*iter, &amx_addr, &phys_addr, command, 0, 0);
 			amx_Push(*iter, static_cast<cell>(success));
-			amx_PushString(*iter, &amx_addr, &phys_addr, password, 0, 0);
+			amx_PushString(*iter, NULL, &phys_addr, password, 0, 0);
 			amx_Push(*iter, static_cast<cell>(port));
-			amx_PushString(*iter, &amx_addr, &phys_addr, inet_ntoa(in), 0, 0);
+			amx_PushString(*iter, NULL, &phys_addr, addr, 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
 
@@ -278,7 +280,7 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 	{
 		if (!amx_FindPublic(*iter, "OnPlayerClientGameInit", &idx))
 		{
-			cell addr = NULL, amx_addr, amx_addr_last = NULL, *phys_ptr, *temp_ptr;
+			cell amx_addr, amx_addr_last, *phys_ptr, *temp_ptr;
 
 			dwTemp = *vehiclefriendlyfire;
 			amx_PushArray(*iter, &amx_addr, &phys_ptr, reinterpret_cast<cell*>(&dwTemp), 1);							// 0
@@ -297,8 +299,8 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 9
 			dwTemp = *disableenterexits;
 			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 10
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(nametagdistance)), 1);		// 11
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(globalchatradius)), 1);	// 12
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, &amx_ftoc(*nametagdistance), 1);							// 11
+			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, &amx_ftoc(*globalchatradius), 1);							// 12
 			dwTemp = *limitglobalchat;
 			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 13
 			dwTemp = *usecjwalk;
@@ -306,10 +308,8 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 		
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
-			for(int i = 0; i != ((amx_addr_last - amx_addr) / 4); i++)
-			{
-				amx_Release(*iter, amx_addr + (i * 4));
-			}
+
+			amx_Release(*iter, amx_addr);
 			
 			*vehiclefriendlyfire = static_cast<int>(phys_ptr[0]) != 0;
 			*lacgompmode = static_cast<int>(phys_ptr[1]);
@@ -328,4 +328,90 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 			*usecjwalk = static_cast<int>(phys_ptr[14]) != 0;
 		}
 	}
+}
+
+bool CCallbackManager::OnOutcomeScmEvent(WORD playerid, WORD issuerid, int eventid, int vehicleid, int arg1, int arg2)
+{
+	int idx = -1;
+	cell ret = 1;
+	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if(!amx_FindPublic(*iter, "OnOutcomeScmEvent", &idx))
+		{
+			amx_Push(*iter, static_cast<cell>(arg2));
+			amx_Push(*iter, static_cast<cell>(arg1));
+			amx_Push(*iter, static_cast<cell>(vehicleid));
+			amx_Push(*iter, static_cast<cell>(eventid));
+			amx_Push(*iter, static_cast<cell>(issuerid));
+			amx_Push(*iter, static_cast<cell>(playerid));
+
+			amx_Exec(*iter, &ret, idx);
+
+			if (!ret) return false;
+		}
+	}
+	return static_cast<int>(ret) != 0;
+}
+
+bool CCallbackManager::OnServerQueryInfo(unsigned int binaryAddress, char (&hostname)[51], char (&gameMode)[31], char (&language)[31])
+{
+	in_addr in;
+	in.s_addr = binaryAddress;
+	char *addr = inet_ntoa(in);
+
+	int idx = -1;
+	cell ret = 0;
+	for(std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter)
+	{
+		if(!amx_FindPublic(*iter, "OnServerQueryInfo", &idx))
+		{
+			cell amx_addr, amx_addr_last, *phys_addr;
+			
+			cell *outputHostname, *outputGameMode, *outputLanguage;
+
+			cell languageCells[sizeof(language)];
+			for(int i = 0; i < sizeof(language); i++)
+			{
+				languageCells[i] = language[i];
+			}
+			amx_PushArray(*iter, &amx_addr, &outputLanguage, languageCells, sizeof(language));
+
+			cell gameModeCells[sizeof(gameMode)];
+			for(int i = 0; i < sizeof(gameMode); i++)
+			{
+				gameModeCells[i] = gameMode[i];
+			}
+			amx_PushArray(*iter, &amx_addr_last, &outputGameMode, gameModeCells, sizeof(gameMode));
+
+			cell hostnameCells[sizeof(hostname)];
+			for(int i = 0; i < sizeof(hostname); i++)
+			{
+				hostnameCells[i] = hostname[i];
+			}
+			amx_PushArray(*iter, &amx_addr_last, &outputHostname, hostnameCells, sizeof(hostname));
+
+			amx_PushString(*iter, &amx_addr_last, &phys_addr, addr, 0, 0);
+
+			amx_Exec(*iter, &ret, idx);
+			
+			for(int i = 0; i < sizeof(hostname); i++)
+			{
+				hostname[i] = outputHostname[i];
+			}
+			for(int i = 0; i < sizeof(gameMode); i++)
+			{
+				gameMode[i] = outputGameMode[i];
+			}
+			for(int i = 0; i < sizeof(language); i++)
+			{
+				language[i] = outputLanguage[i];
+			}
+
+			amx_Release(*iter, amx_addr);
+
+			if(ret) return true;
+			if(ret != -1) ret = 1;
+		}
+	}
+	return static_cast<int>(ret) == 1;
 }

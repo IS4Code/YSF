@@ -43,6 +43,12 @@
 	#define RAKNET_RECEIVE_OFFSET		11
 #endif
 
+#ifdef CUSTOM_BANLIST
+	#define RAKNET_ADD_BAN_OFFSET		61
+	#define RAKNET_REMOVE_BAN_OFFSET    62
+	#define RAKNET_CLEAR_BANS_OFFSET    63
+#endif
+
 #include <vector>
 
 enum eSAMPVersion
@@ -74,6 +80,7 @@ public:
 
 	// Variables
 	static DWORD			VAR_pRestartWaitTime;
+	static DWORD			VAR_pPosSyncBounds[4];
 
 	// Functions
 	static DWORD			FUNC_CConsole__AddStringVariable;
