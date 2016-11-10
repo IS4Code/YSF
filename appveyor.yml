@@ -1,0 +1,19 @@
+version: '{build}'
+image: Visual Studio 2015
+
+configuration:
+    - Debug 
+    - Release
+
+platform: x86
+
+clone_depth: 1
+
+environment:
+
+install:
+    - git submodule update --init --recursive
+
+artifacts:
+    - path: discord-connector-*-win32.zip
+      name: YSF Plugin
