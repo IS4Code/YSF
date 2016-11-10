@@ -463,22 +463,22 @@ struct CVehicleModInfo // sizeof = 26
 
 struct CVehicleParams // sizeof = 16
 {
-	BYTE engine;
-	BYTE lights;
-	BYTE alarm;
-	BYTE doors;
-	BYTE bonnet;
-	BYTE boot;
-	BYTE objective; // 6
-	BYTE siren; // 7
-	BYTE door_driver; // 8
-	BYTE door_passenger;
-	BYTE door_backleft;
-	BYTE door_backright; // 11
-	BYTE window_driver; // 12
-	BYTE window_passenger;
-	BYTE window_backleft;
-	BYTE window_backright; // 15 - 16
+	char engine;
+	char lights;
+	char alarm;
+	char doors;
+	char bonnet;
+	char boot;
+	char objective; // 6
+	char siren; // 7
+	char door_driver; // 8
+	char door_passenger;
+	char door_backleft;
+	char door_backright; // 11
+	char window_driver; // 12
+	char window_passenger;
+	char window_backleft;
+	char window_backright; // 15 - 16
 };
 
 struct CVehicle

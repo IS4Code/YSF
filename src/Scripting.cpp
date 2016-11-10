@@ -4724,7 +4724,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 
 	if(pAttachObjectToPlayer(amx, params))
 	{
-		pServer->COBJECT_AttachedObjectPlayer[objectid] = playerid;
+		pServer->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
 		pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 		pObject->vecAttachedRotation = CVector(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
 	}
@@ -4776,7 +4776,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 	else
 	{
 			pPlayerData[playerid]->dwCreateAttachedObj = GetTickCount();
-			pPlayerData[playerid]->dwObjectID = objectid;
+			pPlayerData[playerid]->dwObjectID = static_cast<WORD>(objectid);
 			pPlayerData[playerid]->bAttachedObjectCreated = true;
 		
 	}
@@ -6079,7 +6079,7 @@ static cell AMX_NATIVE_CALL Natives::SetTimeoutTime( AMX* amx, cell* params )
 	pRakServer->SetTimeoutTime((RakNetTime)params[2], playerId);
 	return 1;
 }
-
+/*
 // native SetMTUSize(size);
 static cell AMX_NATIVE_CALL Natives::SetMTUSize( AMX* amx, cell* params )
 {
@@ -6091,7 +6091,7 @@ static cell AMX_NATIVE_CALL Natives::SetMTUSize( AMX* amx, cell* params )
 	
 	return pRakServer->SetMTUSize(static_cast<int>(params[1]));
 }
-
+*/
 // native GetMTUSize();
 static cell AMX_NATIVE_CALL Natives::GetMTUSize( AMX* amx, cell* params )
 {
