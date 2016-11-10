@@ -23,23 +23,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SUBHOOK_PRIVATE_H
-#define SUBHOOK_PRIVATE_H
-
 #include <stddef.h>
+#include <unistd.h>
+#include <sys/mman.h>
 
-struct subhook_struct {
-  int installed;
-  void *src;
-  void *dst;
-  subhook_options_t options;
-  void *code;
-  void *trampoline;
-  size_t jmp_size;
-  size_t trampoline_size;
-  size_t trampoline_len;
-};
+void *subhook_unprotect(void *address, size_t size) {
+  long pagesize;
 
-void *subhook_unprotect(void *address, size_t size);
+  pagesize = sysconf(_SC_PAGESIZE);
+  address = (void *)((long)address & ~(pagesize - 1));
 
-#endif /* SUBHOOK_PRIVATE_H */
+  if (mprotect(address, size, PROT_READ | PROT_WRITE | PROT_EXEC) != 0) {
+    return NULL;
+  }
+
+  return address;
+}
