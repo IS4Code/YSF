@@ -3328,7 +3328,7 @@ static cell AMX_NATIVE_CALL Natives::GetVehiclePaintjob( AMX* amx, cell* params 
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.bytePaintJob;
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->vehModInfo.bytePaintJob - 1;
 }
 
 // native GetVehicleInterior(vehicleid);
