@@ -723,22 +723,22 @@ void InstallPreHooks()
 	if (pServer)
 	{
 	/*
-		SetWeather_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetWeather, (void *)CHookedNetgame::HOOK_CNetGame__SetWeather);
+		SetWeather_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetWeather, (void *)CHookedNetgame::HOOK_CNetGame__SetWeather, (subhook_options_t)NULL);
 		subhook_install(SetWeather_hook);
 		
-		SetGravity_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetGravity, (void *)HOOK_CNetGame__SetGravity);
+		SetGravity_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetGravity, (void *)HOOK_CNetGame__SetGravity, (subhook_options_t)NULL);
 		subhook_install(SetGravity_hook);
 		*/
-		Namecheck_hook = subhook_new((void*)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars);
+		Namecheck_hook = subhook_new((void*)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars, (subhook_options_t)NULL);
 		subhook_install(Namecheck_hook);
 
-		amx_Register_hook = subhook_new((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register);
+		amx_Register_hook = subhook_new((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register, (subhook_options_t)NULL);
 		subhook_install(amx_Register_hook);
 
-		query_hook = subhook_new((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket);
+		query_hook = subhook_new((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket, (subhook_options_t)NULL);
 		subhook_install(query_hook);
 
-		logprintf_hook = subhook_new((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf);
+		logprintf_hook = subhook_new((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf, (subhook_options_t)NULL);
 		subhook_install(logprintf_hook);
 
 		if(CAddress::FUNC_CVehicle__Respawn)
