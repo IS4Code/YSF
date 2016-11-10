@@ -57,14 +57,17 @@ class CGangZonePool;
 #define MAX_ITEMS					12
 #define MAX_COLUMNS					2
 
+#define GAMESTATE_STOPPED			0
+#define GAMESTATE_RUNNING			1
+#define GAMESTATE_RESTARTING		2
 /* -------------------------------------------------------- */
 
 // Server rules special
 enum CON_VARTYPE { CON_VARTYPE_FLOAT, CON_VARTYPE_INT, CON_VARTYPE_BOOL, CON_VARTYPE_STRING };
 
-#define CON_VARFLAG_DEBUG		1
-#define CON_VARFLAG_READONLY	2
-#define CON_VARFLAG_RULE		4	// Gets sent with a RULES query responce
+#define CON_VARFLAG_DEBUG			1
+#define CON_VARFLAG_READONLY		2
+#define CON_VARFLAG_RULE			4	// Gets sent with a RULES query responce
 
 typedef void(*VARCHANGEFUNC)();
 
@@ -433,7 +436,7 @@ struct CPlayerPool // sizeof = 99520
 	char			szName[MAX_PLAYERS][25];				// 158012 - 183012
 	BOOL			bIsAnAdmin[MAX_PLAYERS];				// 183012 - 187012
 	BOOL			bIsNPC[MAX_PLAYERS];					// 187012 - 191012
-	PAD(pad0, 8000);											// 191012 - 199012
+	PAD(pad0, 8000);										// 191012 - 199012
 	DWORD			dwConnectedPlayers;						// 199012 - 199016
 	DWORD			dwPlayerPoolSize;						// 199016 - 199020
 };
@@ -508,7 +511,9 @@ struct CVehicle
     BYTE			bDeathNotification; // 255 - 256
     BYTE			bOccupied;			// 256 - 257
     DWORD			vehOccupiedTick;	// 257 - 261
-    DWORD			vehRespawnTick;		// 261 -265
+    DWORD			vehRespawnTick;		// 261 - 265
+	BYTE			byteSirenEnabled;	// 265 - 266
+	BYTE			byteNewSirenState;	// 266 - 267
 };
 
 struct CVehiclePool

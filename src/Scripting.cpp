@@ -1078,8 +1078,6 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerNameForPlayer(AMX* amx, cell* para
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(nameplayerid)) return 0;
 
 	amx_StrParam(amx, params[3], name);
-	logprintf("playername: %s", name);
-
 	pPlayerData[playerid]->SetPlayerNameForPlayer(static_cast<WORD>(nameplayerid), name);
 	return 1;
 }

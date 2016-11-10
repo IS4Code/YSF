@@ -52,10 +52,6 @@ bool IsPlayerUpdatePacket(BYTE packetId);
 
 #define ABGR_ARGB(color) (((color >> 24) & 0x000000FF) << 24 | (((DWORD)(color) & 0xFF) << 16) | (((DWORD)(color >> 8) & 0xFF) << 8) | (((DWORD)(color >> 16) & 0xFF)))
 
-#define GAMESTATE_STOPPED	 0
-#define GAMESTATE_RUNNING	 1
-#define GAMESTATE_RESTARTING 2
-
 enum
 {
 	BS_BOOL,
