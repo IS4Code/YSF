@@ -1,0 +1,12 @@
+language: cpp
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    packages:
+    - cmake
+    - g++-multilib
+    
+script: 
+    - make YSF
