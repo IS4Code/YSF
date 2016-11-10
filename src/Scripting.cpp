@@ -2040,11 +2040,11 @@ static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params )
 
 	if(forplayerid == -1)
 	{
-		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
+		CSAMPFunctions::Send(pRakServer, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
 	}
 	else
 	{
-		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), false);
+		CSAMPFunctions::Send(pRakServer, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), false);
 	}
 	return 1;
 }
