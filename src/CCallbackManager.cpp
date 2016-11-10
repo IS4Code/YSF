@@ -278,7 +278,7 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 	{
 		if (!amx_FindPublic(*iter, "OnPlayerClientGameInit", &idx))
 		{
-			cell addr = NULL, amx_addr, amx_addr_last = NULL, *phys_ptr, *temp_ptr;
+			cell amx_addr, amx_addr_last = NULL, *phys_ptr, *temp_ptr;
 
 			dwTemp = *vehiclefriendlyfire;
 			amx_PushArray(*iter, &amx_addr, &phys_ptr, reinterpret_cast<cell*>(&dwTemp), 1);							// 0
