@@ -29,6 +29,7 @@ int RPC_ScrApplyAnimation = 0x56;
 int RPC_ClientMessage = 0x5D;
 int RPC_ScrDisplayGameText = 0x49;
 int RPC_Chat = 0x65;
+int RPC_ClientCheck = 103;
 
 int RPC_UpdateScoresPingsIPs = 0x9B;
 int RPC_PickedUpPickup = 0x83;
@@ -212,6 +213,20 @@ void PickedUpPickup(RPCParameters* rpcParams)
 #endif
 }
 
+void ClientCheck(RPCParameters* rpcParams)
+{
+	WORD playerid = static_cast<WORD>(pRakServer->GetIndexFromPlayerID(rpcParams->sender));
+	DWORD arg;
+	BYTE type, response;
+
+	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+	bsData.Read(type);
+	bsData.Read(arg);
+	bsData.Read(response);
+
+	CCallbackManager::OnClientCheckResponse(playerid, type, arg, response);
+}
+
 void InitRPCs()
 {
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
@@ -225,4 +240,7 @@ void InitRPCs()
 
 	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
 	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickedUpPickup);
+
+	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_ClientCheck);
+	pRakServer->RegisterAsRemoteProcedureCall(&RPC_ClientCheck, ClientCheck);
 }
