@@ -24,6 +24,7 @@ int RPC_WorldPlayerRemove = 163;
 int RPC_ChatBubble = 0x3B;
 int RPC_SetPlayerSkin = 0x99;
 int RPC_SetPlayerName = 0x0B;
+int RPC_SetPlayerColor = 72;
 int RPC_SetFightingStyle = 0x59;
 int RPC_ScrApplyAnimation = 0x56;
 int RPC_ClientMessage = 0x5D;

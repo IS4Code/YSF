@@ -52,6 +52,7 @@ extern int RPC_WorldPlayerRemove;
 extern int RPC_ChatBubble;
 extern int RPC_SetPlayerSkin;
 extern int RPC_SetPlayerName;
+extern int RPC_SetPlayerColor;
 extern int RPC_SetFightingStyle;
 extern int RPC_ScrApplyAnimation;
 extern int RPC_ClientMessage;
