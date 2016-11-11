@@ -329,3 +329,20 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 		}
 	}
 }
+
+void CCallbackManager::OnClientCheckResponse(WORD playerid, BYTE type, DWORD arg, BYTE response)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (std::vector<AMX*>::const_iterator iter = m_vecAMX.begin(); iter != m_vecAMX.end(); ++iter) {
+		if (!amx_FindPublic(*iter, "OnClientCheckResponse", &idx)) {
+			amx_Push(*iter, static_cast<cell>(response));
+			amx_Push(*iter, static_cast<cell>(arg));
+			amx_Push(*iter, static_cast<cell>(type));
+			amx_Push(*iter, static_cast<cell>(playerid));
+
+			amx_Exec(*iter, &ret, idx);
+			if (ret) break;
+		}
+	}
+}
