@@ -1,45 +1,77 @@
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
+
 #include "main.h"
 
 //#define testspawn
 
-int RPC_Gravity = 0x92;
-int RPC_Weather = 0x98;
+BYTE RPC_Gravity = 0x92;
+BYTE RPC_Weather = 0x98;
 
-int RPC_CreatePickup = 95;
-int RPC_DestroyPickup = 63;
+BYTE RPC_CreatePickup = 95;
+BYTE RPC_DestroyPickup = 63;
 
-int RPC_SetPlayerTeam = 45;
-int RPC_CreateObject = 0x2C;
+BYTE RPC_SetPlayerTeam = 45;
+BYTE RPC_CreateObject = 0x2C;
 
-int RPC_DestroyObject = 0x2F;
-int RPC_AttachObject = 0x4B;
-int RPC_Widescreen = 111;
-int RPC_ShowGangZone = 0x6C;
-int RPC_HideGangZone = 0x78;
-int RPC_FlashGangZone = 0x79;
-int RPC_StopFlashGangZone = 0x55;
-int RPC_RemovePlayerAttachedObject = 0x71;
-int RPC_WorldPlayerAdd = 32;
-int RPC_WorldPlayerRemove = 163;
-int RPC_ChatBubble = 0x3B;
-int RPC_SetPlayerSkin = 0x99;
-int RPC_SetPlayerName = 0x0B;
-int RPC_SetPlayerColor = 72;
-int RPC_SetFightingStyle = 0x59;
-int RPC_ScrApplyAnimation = 0x56;
-int RPC_ClientMessage = 0x5D;
-int RPC_ScrDisplayGameText = 0x49;
-int RPC_Chat = 0x65;
-int RPC_ClientCheck = 103;
+BYTE RPC_DestroyObject = 0x2F;
+BYTE RPC_AttachObject = 0x4B;
+BYTE RPC_Widescreen = 111;
+BYTE RPC_ShowGangZone = 0x6C;
+BYTE RPC_HideGangZone = 0x78;
+BYTE RPC_FlashGangZone = 0x79;
+BYTE RPC_StopFlashGangZone = 0x55;
+BYTE RPC_RemovePlayerAttachedObject = 0x71;
+BYTE RPC_WorldPlayerAdd = 32;
+BYTE RPC_WorldPlayerRemove = 163;
+BYTE RPC_ChatBubble = 0x3B;
+BYTE RPC_SetPlayerSkin = 0x99;
+BYTE RPC_SetPlayerName = 0x0B;
+BYTE RPC_SetFightingStyle = 0x59;
+BYTE RPC_ScrApplyAnimation = 0x56;
+BYTE RPC_ClientMessage = 0x5D;
+BYTE RPC_ScrDisplayGameText = 0x49;
+BYTE RPC_Chat = 0x65;
+BYTE RPC_ClientCheck = 103;
+BYTE RPC_SetPlayerColor  = 72;
 
-int RPC_UpdateScoresPingsIPs = 0x9B;
-int RPC_PickedUpPickup = 0x83;
-int RPC_Spawn = 0x34;
-int RPC_Death = 0x35;
-int RPC_DeathBroadcast = 0xA6;
+BYTE RPC_UpdateScoresPingsIPs = 0x9B;
+BYTE RPC_PickedUpPickup = 0x83;
+BYTE RPC_Spawn = 0x34;
+BYTE RPC_Death = 0x35;
+BYTE RPC_DeathBroadcast = 0xA6;
 
-int RPC_ServerJoin = 0x89;
-int RPC_ServerQuit = 0x8A;
+BYTE RPC_ServerJoin = 0x89;
+BYTE RPC_ServerQuit = 0x8A;
 
 void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 {
@@ -57,7 +89,7 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 				if(pPlayerData[i]->bFakePingToggle)
 					bsUpdate.Write(pPlayerData[i]->dwFakePingValue);
 				else
-					bsUpdate.Write(pRakServer->GetLastPing(pRakServer->GetPlayerIDFromIndex(i)));
+					bsUpdate.Write(CSAMPFunctions::GetLastPing(CSAMPFunctions::GetPlayerIDFromIndex(i)));
 			}
 			else
 			{
@@ -67,7 +99,7 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 		}
 	}
 
-	pRakServer->RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, LOW_PRIORITY, UNRELIABLE, 0, rpcParams->sender, false, false);
+	CSAMPFunctions::RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, LOW_PRIORITY, UNRELIABLE, 0, rpcParams->sender, false, false);
 }
 
 #ifdef testspawn
@@ -103,7 +135,7 @@ void Death(RPCParameters* rpcParams)
 {
 	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
 
-	WORD playerid = static_cast<WORD>(pRakServer->GetIndexFromPlayerID(rpcParams->sender)),
+	WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender)),
 		killerid;
 	BYTE reasonid;
 
@@ -131,7 +163,7 @@ void Death(RPCParameters* rpcParams)
 		}
 
 		if (CSAMPFunctions::GetIntVariable("chatlogging"))
-			logprintf("[kill] %s killed %s %s", GetPlayerName_(killerid), GetPlayerName_(playerid), CUtils::GetWeaponName_(reasonid));
+			logprintf("[kill] %s killed %s %s", GetPlayerName_(killerid), GetPlayerName_(playerid), Utility::GetWeaponName_(reasonid));
 	}
 	else
 	{
@@ -141,7 +173,7 @@ void Death(RPCParameters* rpcParams)
 	
 	bsData.Reset();
 	bsData.Write((WORD)playerid);
-	pRakServer->RPC(&RPC_DeathBroadcast, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), true, false);
+	CSAMPFunctions::RPC(&RPC_DeathBroadcast, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), true, false);
 	
 	pPlayer->byteState = PLAYER_STATE_WASTED;
 
@@ -152,7 +184,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 {
 	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
 
-	WORD playerid = static_cast<WORD>(pRakServer->GetIndexFromPlayerID(rpcParams->sender));
+	WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
 	int pickupid;
 
 	// Just for security..
@@ -179,7 +211,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 		if (p->second->type == GLOBAL)
 		{
 			// Find global pickup ID by player pickup pointer
-			WORD pickupid = pServer->pPickupPool->FindPickup(p->second);
+			WORD pickupid = CServer::Get()->pPickupPool->FindPickup(p->second);
 			if (pickupid != 0xFFFF)
 			{
 				CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);
@@ -216,7 +248,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 
 void ClientCheck(RPCParameters* rpcParams)
 {
-	WORD playerid = static_cast<WORD>(pRakServer->GetIndexFromPlayerID(rpcParams->sender));
+	WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
 	DWORD arg;
 	BYTE type, response;
 
@@ -227,21 +259,25 @@ void ClientCheck(RPCParameters* rpcParams)
 
 	CCallbackManager::OnClientCheckResponse(playerid, type, arg, response);
 }
-
+ 
 void InitRPCs()
 {
-	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs);
-	pRakServer->RegisterAsRemoteProcedureCall(&RPC_UpdateScoresPingsIPs, UpdateScoresPingsIPs);
+	int rpcid = static_cast<int>(RPC_UpdateScoresPingsIPs);
+	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
+	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, UpdateScoresPingsIPs);
 #ifdef testspawn
-	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Spawn);
-	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Spawn, Spawn);
+	CSAMPFunctions::UnregisterAsRemoteProcedureCall(reinterpret_cast<int*>(&RPC_Spawn));
+	CSAMPFunctions::RegisterAsRemoteProcedureCall(reinterpret_cast<int*>(&RPC_Spawn), Spawn);
 #endif
-	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_Death);
-	pRakServer->RegisterAsRemoteProcedureCall(&RPC_Death, Death);
+	rpcid = static_cast<int>(RPC_Death);
+	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
+	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, Death);
 
-	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_PickedUpPickup);
-	pRakServer->RegisterAsRemoteProcedureCall(&RPC_PickedUpPickup, PickedUpPickup);
+	rpcid = static_cast<int>(RPC_PickedUpPickup);
+	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
+	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, PickedUpPickup);
 
-	pRakServer->UnregisterAsRemoteProcedureCall(&RPC_ClientCheck);
-	pRakServer->RegisterAsRemoteProcedureCall(&RPC_ClientCheck, ClientCheck);
+	rpcid = static_cast<int>(RPC_ClientCheck);
+	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
+	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, ClientCheck);
 }

@@ -1,35 +1,34 @@
-
-/*  
- *  Version: MPL 1.1
- *  
- *  The contents of this file are subject to the Mozilla Public License Version 
- *  1.1 (the "License"); you may not use this file except in compliance with 
- *  the License. You may obtain a copy of the License at 
- *  http://www.mozilla.org/MPL/
- *  
- *  Software distributed under the License is distributed on an "AS IS" basis,
- *  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- *  for the specific language governing rights and limitations under the
- *  License.
- *  
- *  The Original Code is the YSI 2.0 SA:MP plugin.
- *  
- *  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
- *  Portions created by the Initial Developer are Copyright (C) 2008
- *  the Initial Developer. All Rights Reserved.
- *  
- *  Contributor(s):
- *  
- *  Peter Beverloo
- *  Marcus Bauer
- *  MaVe;
- *  Sammy91
- *  Incognito
- *  
- *  Special Thanks to:
- *  
- *  SA:MP Team past, present and future
- */
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
 
 #include "main.h"
 
@@ -96,7 +95,7 @@ void HOOK_CNetGame__SetGravity(void *pNetGame_, float fGravity)
 // Custom name check
 bool HOOK_ContainsInvalidChars(char * szString)
 {
-	return !pServer->IsValidNick(szString);
+	return !CServer::Get()->IsValidNick(szString);
 }
 
 //----------------------------------------------------
@@ -107,7 +106,7 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 	// amx_Register hook for redirect natives
 	static bool g_bNativesHooked = false;
 
-	if (!g_bNativesHooked && pServer)
+	if (!g_bNativesHooked && CServer::Get()->IsInitialized())
 	{
 		int i = 0;
 		while (nativelist[i].name)
@@ -174,26 +173,46 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 {
-	/*
+/*	
 	BYTE id;
 	WORD playerid;
 	parameters->Read(id);
 	parameters->Read(playerid);
 
-	logprintf("id: %d - playerid: %d, sendto. %d", id, playerid, pRakServer->GetIndexFromPlayerID(playerId));
-	*/
-	RebuildSyncData(parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
+	logprintf("id: %d - playerid: %d, sendto: %d", id, playerid, CSAMPFunctions::GetIndexFromPlayerID(playerId));
+*/	
+	//RebuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
 
-	return CSAMPFunctions::Send(ppRakServer, parameters, priority, reliability, orderingChannel, playerId, broadcast);
+	return CSAMPFunctions::Send(parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
 
 //----------------------------------------------------
 
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
-	RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(pRakServer->GetIndexFromPlayerID(playerId)));
+	//RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
 
-	return CSAMPFunctions::RPC(ppRakServer, uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
+	return CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
+}
+
+//----------------------------------------------------
+
+void THISCALL CHookRakServer::AddToBanList(void* ppRakServer, const char *IP, unsigned int milliseconds)
+{
+	CServer::Get()->BanIP(IP);
+	return CSAMPFunctions::AddToBanList(IP, milliseconds);
+}
+
+void THISCALL CHookRakServer::RemoveFromBanList(void* ppRakServer, const char *IP)
+{
+	CServer::Get()->UnbanIP(IP);
+	return CSAMPFunctions::RemoveFromBanList(IP);
+}
+
+void THISCALL CHookRakServer::ClearBanList(void* ppRakServer)
+{
+	CServer::Get()->ClearBans();
+	return CSAMPFunctions::ClearBanList();
 }
 
 //----------------------------------------------------
@@ -223,7 +242,7 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 			{
 				CSyncData *pSyncData = reinterpret_cast<CSyncData*>(&p->data[1]);
 
-				if(pServer->IsNightVisionFixEnabled())
+				if(CServer::Get()->IsNightVisionFixEnabled())
 				{
 					// Fix nightvision and infrared sync
 					if (pSyncData->byteWeapon == WEAPON_NIGHTVISION || pSyncData->byteWeapon == WEAPON_INFRARED)
@@ -437,10 +456,10 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					size_t dwMapNameLen = strlen(szMapName);
 					if (dwMapNameLen > 30) dwMapNameLen = 30;
 
-					WORD wPlayerCount = pServer->GetPlayerCount();
+					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
 //					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 
-					WORD wMaxPlayers = pServer->GetMaxPlayers_();
+					WORD wMaxPlayers = CServer::Get()->GetMaxPlayers_();
 
 					BYTE byteIsPassworded = CSAMPFunctions::GetStringVariable("password")[0] != 0;
 
@@ -500,7 +519,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
-					WORD wPlayerCount = pServer->GetPlayerCount();
+					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
 					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 					char* newdata = (char*)malloc(13 + (wPlayerCount * (MAX_PLAYER_NAME + 5))); // 5 = 1b String len, and 4b Score
 					char* keep_ptr = newdata;
@@ -546,7 +565,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
-					WORD wPlayerCount = pServer->GetPlayerCount();
+					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
 					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 					char* newdata = (char*)malloc(13 + (wPlayerCount * (MAX_PLAYER_NAME + 10))); // 9 = 1b String len, 4b Score, 4b Ping, 1b Playerid
 					char* keep_ptr = newdata;
@@ -579,7 +598,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 								dwScore = pPlayerPool->dwScore[r];
 								memcpy(newdata, &dwScore, sizeof(DWORD));
 								newdata += sizeof(DWORD);
-								dwPing = pRakServer->GetLastPing(pRakServer->GetPlayerIDFromIndex(r));
+								dwPing = CSAMPFunctions::GetLastPing(CSAMPFunctions::GetPlayerIDFromIndex(r));
 								memcpy(newdata, &dwPing, sizeof(DWORD));
 								newdata += sizeof(DWORD);
 							}
@@ -601,7 +620,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				}
 				case 'x':	// rcon
 				{
-					if (pRakServer/* && pRakServer->IsBanned(inet_ntoa(in))*/) return 1;
+					if (pRakServer && CServer::Get()->IsBanned(inet_ntoa(in))) return 1;
 					
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query") || !CSAMPFunctions::GetBoolVariable("rcon")) return 1;
@@ -720,43 +739,40 @@ void _declspec(naked) HOOK_CVehicle__Respawn()
 // Things that needs to be hooked before netgame initialied
 void InstallPreHooks()
 {
-	if (pServer)
-	{
-	/*
-		SetWeather_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetWeather, (void *)CHookedNetgame::HOOK_CNetGame__SetWeather, (subhook_options_t)NULL);
-		subhook_install(SetWeather_hook);
+/*
+	SetWeather_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetWeather, (void *)CHookedNetgame::HOOK_CNetGame__SetWeather, (subhook_options_t)NULL);
+	subhook_install(SetWeather_hook);
 		
-		SetGravity_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetGravity, (void *)HOOK_CNetGame__SetGravity, (subhook_options_t)NULL);
-		subhook_install(SetGravity_hook);
-		*/
-		Namecheck_hook = subhook_new((void*)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars, (subhook_options_t)NULL);
-		subhook_install(Namecheck_hook);
+	SetGravity_hook = subhook_new((void *)CAddress::FUNC_CNetGame__SetGravity, (void *)HOOK_CNetGame__SetGravity, (subhook_options_t)NULL);
+	subhook_install(SetGravity_hook);
+	*/
+	Namecheck_hook = subhook_new((void*)CAddress::FUNC_ContainsInvalidChars, (void *)HOOK_ContainsInvalidChars, (subhook_options_t)NULL);
+	subhook_install(Namecheck_hook);
 
-		amx_Register_hook = subhook_new((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register, (subhook_options_t)NULL);
-		subhook_install(amx_Register_hook);
+	amx_Register_hook = subhook_new((void*)*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4)), (void*)HOOK_amx_Register, (subhook_options_t)NULL);
+	subhook_install(amx_Register_hook);
 
-		query_hook = subhook_new((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket, (subhook_options_t)NULL);
-		subhook_install(query_hook);
+	query_hook = subhook_new((void*)CAddress::FUNC_ProcessQueryPacket, (void*)HOOK_ProcessQueryPacket, (subhook_options_t)NULL);
+	subhook_install(query_hook);
 
-		logprintf_hook = subhook_new((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf, (subhook_options_t)NULL);
-		subhook_install(logprintf_hook);
+	logprintf_hook = subhook_new((void*)ppPluginData[PLUGIN_DATA_LOGPRINTF], (void*)HOOK_logprintf, (subhook_options_t)NULL);
+	subhook_install(logprintf_hook);
 
-		if(CAddress::FUNC_CVehicle__Respawn)
-		{
+	if(CAddress::FUNC_CVehicle__Respawn)
+	{
 #ifdef WIN32
-			InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)HOOK_CVehicle__Respawn);
+		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)HOOK_CVehicle__Respawn);
 #else
-			InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
+		InstallJump(CAddress::FUNC_CVehicle__Respawn, (void*)CSAMPFunctions::RespawnVehicle);
 #endif
-		}
+	}
 
-		if(CAddress::ADDR_RecordingDirectory)
-		{
-			strcpy(gRecordingDataPath, "scriptfiles/%s.rec");
-			Unlock((void*)CAddress::ADDR_RecordingDirectory, 5);
-			*(DWORD*)(CAddress::ADDR_RecordingDirectory + 1) = (DWORD)&gRecordingDataPath;
-		}
-	}	
+	if(CAddress::ADDR_RecordingDirectory)
+	{
+		strcpy(gRecordingDataPath, "scriptfiles/%s.rec");
+		Unlock((void*)CAddress::ADDR_RecordingDirectory, 5);
+		*(DWORD*)(CAddress::ADDR_RecordingDirectory + 1) = (DWORD)&gRecordingDataPath;
+	}
 }
 
 // Things that needs to be hooked after netgame initialied
@@ -771,15 +787,15 @@ void InstallPostHooks()
 	// use this only if you want to have much NPC to trick hosts to allow them insted of paying for more slots for bots.
 	if(CSAMPFunctions::GetBoolVariable("myriad"))
 	{
-		pRakServer->Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
+		CSAMPFunctions::Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
 	}
 
 	// Recreate pools
-	pServer->pGangZonePool = new CGangZonePool();
+	CServer::Get()->pGangZonePool = new CGangZonePool();
 
 #ifdef NEW_PICKUP_SYSTEM
 	// Recreate Pickup pool
-	pServer->pPickupPool = new CYSFPickupPool();
+	CServer::Get()->pPickupPool = new CYSFPickupPool();
 #endif
 	// Re-init some RPCs
 	InitRPCs();

@@ -1,12 +1,34 @@
-/* =========================================
-			
-		FCNPC - Fully Controllable NPC
-			----------------------
-
-	- File: Utils.cpp
-	- Author(s): OrMisicL
-
-  =========================================*/
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
 
 #ifndef YSF_UTILS_H
 #define YSF_UTILS_H
@@ -25,20 +47,28 @@ int GetTickCount();
 void LoadTickCount();
 
 #endif
-namespace CUtils
+
+namespace Utility
 {
 	const char* GetWeaponName_(BYTE weaponid);
 	BYTE GetWeaponSlot(BYTE weaponid);
+	std::string convertNativeStringToString(AMX *amx, cell input);
+	void convertStringToNativeString(AMX *amx, cell output, cell size, char* string);
+	void convertStringToNativeString(AMX *amx, cell output, cell size, std::string string);
+	void storeFloatInNative(AMX *amx, cell output, float value);
+	void storeVectorInNative(AMX *amx, cell output, CVector2D &vec);
+	void storeVectorInNative(AMX *amx, cell output, CVector &vec);
+	void storeIntegerInNative(AMX *amx, cell output, int value);
+	void storeIntegerInNative(AMX *amx, cell output, DWORD value);
+	void storeIntegerInNative(AMX *amx, cell output, WORD value);
+	void storeIntegerInNative(AMX *amx, cell output, BYTE value);
 };
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);
 bool IsPlayerConnectedEx(int playerid);
 char *GetPlayerName_(int playerid);
-std::string GetServerCfgOption(const std::string &option);
 
 bool Unlock(void *address, size_t len);
-//void AssemblySwap(char * addr, char * dat, int len);
-//void AssemblyRedirect(void * from, void * to, char * ret);
 
 bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask);
 DWORD FindPattern(char *pattern, char *mask);

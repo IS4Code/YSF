@@ -33,41 +33,41 @@
 #ifndef YSF_RPCS_H
 #define YSF_RPCS_H
 
-extern int RPC_Gravity;
-extern int RPC_Weather;
-extern int RPC_CreatePickup;
-extern int RPC_DestroyPickup;
-extern int RPC_SetPlayerTeam;
-extern int RPC_CreateObject;
-extern int RPC_DestroyObject;
-extern int RPC_AttachObject;
-extern int RPC_Widescreen;
-extern int RPC_ShowGangZone;
-extern int RPC_HideGangZone;
-extern int RPC_FlashGangZone;
-extern int RPC_StopFlashGangZone;
-extern int RPC_RemovePlayerAttachedObject;
-extern int RPC_WorldPlayerAdd;
-extern int RPC_WorldPlayerRemove;
-extern int RPC_ChatBubble;
-extern int RPC_SetPlayerSkin;
-extern int RPC_SetPlayerName;
-extern int RPC_SetPlayerColor;
-extern int RPC_SetFightingStyle;
-extern int RPC_ScrApplyAnimation;
-extern int RPC_ClientMessage;
-extern int RPC_ScrDisplayGameText;
-extern int RPC_Chat;
-extern int RPC_ClientCheck;
+extern BYTE RPC_Gravity;
+extern BYTE RPC_Weather;
+extern BYTE RPC_CreatePickup;
+extern BYTE RPC_DestroyPickup;
+extern BYTE RPC_SetPlayerTeam;
+extern BYTE RPC_CreateObject;
+extern BYTE RPC_DestroyObject;
+extern BYTE RPC_AttachObject;
+extern BYTE RPC_Widescreen;
+extern BYTE RPC_ShowGangZone;
+extern BYTE RPC_HideGangZone;
+extern BYTE RPC_FlashGangZone;
+extern BYTE RPC_StopFlashGangZone;
+extern BYTE RPC_RemovePlayerAttachedObject;
+extern BYTE RPC_WorldPlayerAdd;
+extern BYTE RPC_WorldPlayerRemove;
+extern BYTE RPC_ChatBubble;
+extern BYTE RPC_SetPlayerSkin;
+extern BYTE RPC_SetPlayerName;
+extern BYTE RPC_SetFightingStyle;
+extern BYTE RPC_ScrApplyAnimation;
+extern BYTE RPC_ClientMessage;
+extern BYTE RPC_ScrDisplayGameText;
+extern BYTE RPC_Chat;
+extern BYTE RPC_ClientCheck;
+extern BYTE RPC_SetPlayerColor;
 
-extern int RPC_UpdateScoresPingsIPs;
-extern int RPC_PickedUpPickup;
-extern int RPC_Spawn;
-extern int RPC_Death;
-extern int RPC_DeathBroadcast;
+extern BYTE RPC_UpdateScoresPingsIPs;
+extern BYTE RPC_PickedUpPickup;
+extern BYTE RPC_Spawn;
+extern BYTE RPC_Death;
+extern BYTE RPC_DeathBroadcast;
 
-extern int RPC_ServerJoin;
-extern int RPC_ServerQuit;
+extern BYTE RPC_ServerJoin;
+extern BYTE RPC_ServerQuit;
 
 void InitRPCs();
 

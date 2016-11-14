@@ -1,40 +1,48 @@
-/*  
- *  Version: MPL 1.1
- *  
- *  The contents of this file are subject to the Mozilla Public License Version 
- *  1.1 (the "License"); you may not use this file except in compliance with 
- *  the License. You may obtain a copy of the License at 
- *  http://www.mozilla.org/MPL/
- *  
- *  Software distributed under the License is distributed on an "AS IS" basis,
- *  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- *  for the specific language governing rights and limitations under the
- *  License.
- *  
- *  The Original Code is the YSI 2.0 SA:MP plugin.
- *  
- *  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
- *  Portions created by the Initial Developer are Copyright (C) 2008
- *  the Initial Developer. All Rights Reserved.
- *  
- *  Contributor(s):
- *  
- *  Peter Beverloo
- *  Marcus Bauer
- *  MaVe;
- *  Sammy91
- *  Incognito
- *  
- *  Special Thanks to:
- *  
- *  SA:MP Team past, present and future
- */
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
 
 #ifndef YSF_SCRIPTING_H
 #define YSF_SCRIPTING_H
 
 #include <sampgdk/sampgdk.h>
 #include "main.h"
+
+typedef cell AMX_NATIVE_CALL(*AMX_Function_t)(AMX *amx, cell *params);
+
+#define AMX_DECLARE_NATIVE(name) \
+	static cell AMX_NATIVE_CALL name(AMX* amx, cell* params)
+
+#define AMX_DEFINE_NATIVE(name) \
+	{#name, Natives::name},
 
 #define CHECK_PARAMS(m, n) \
 	if (params[0] != (m * 4)) \
@@ -45,343 +53,341 @@
 
 namespace Natives
 {
-	static cell AMX_NATIVE_CALL ffind(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL frename(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(ffind);
+	AMX_DECLARE_NATIVE(frename);
 
-	static cell AMX_NATIVE_CALL dfind(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL dcreate(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL drename(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(dfind);
+	AMX_DECLARE_NATIVE(dcreate);
+	AMX_DECLARE_NATIVE(drename);
 
-	static cell AMX_NATIVE_CALL SetModeRestartTime(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetModeRestartTime(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetMaxPlayers(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL SetMaxNPCs(AMX *amx, cell *params); // R8
+	AMX_DECLARE_NATIVE(SetModeRestartTime);
+	AMX_DECLARE_NATIVE(GetModeRestartTime);
+	AMX_DECLARE_NATIVE(SetMaxPlayers); // R8
+	AMX_DECLARE_NATIVE(SetMaxNPCs); // R8
 
-	static cell AMX_NATIVE_CALL SetPlayerAdmin(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL LoadFilterScript(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL UnLoadFilterScript(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetFilterScriptCount(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetFilterScriptName(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL AddServerRule(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetServerRule(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetServerRuleInt(AMX *amx, cell *params); // R12
-	static cell AMX_NATIVE_CALL IsValidServerRule(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL RemoveServerRule(AMX *amx, cell *params); // Doesn't work!
-	static cell AMX_NATIVE_CALL SetServerRuleFlags(AMX *amx, cell *params); 
-	static cell AMX_NATIVE_CALL GetServerRuleFlags(AMX *amx, cell *params); // R12
+	AMX_DECLARE_NATIVE(SetPlayerAdmin);
+	AMX_DECLARE_NATIVE(LoadFilterScript);
+	AMX_DECLARE_NATIVE(UnLoadFilterScript);
+	AMX_DECLARE_NATIVE(GetFilterScriptCount);
+	AMX_DECLARE_NATIVE(GetFilterScriptName);
+	AMX_DECLARE_NATIVE(AddServerRule);
+	AMX_DECLARE_NATIVE(SetServerRule);
+	AMX_DECLARE_NATIVE(SetServerRuleInt); // R12
+	AMX_DECLARE_NATIVE(IsValidServerRule);
+	AMX_DECLARE_NATIVE(RemoveServerRule); // Doesn't work!
+	AMX_DECLARE_NATIVE(SetServerRuleFlags); 
+	AMX_DECLARE_NATIVE(GetServerRuleFlags); // R12
 
-	static cell AMX_NATIVE_CALL GetServerSettings(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(GetServerSettings);
 
-	static cell AMX_NATIVE_CALL IsValidNickName(AMX *amx, cell *params);	// R8
-	static cell AMX_NATIVE_CALL AllowNickNameCharacter(AMX *amx, cell *params); // R7
-	static cell AMX_NATIVE_CALL IsNickNameCharacterAllowed(AMX *amx, cell *params); // R7
+	AMX_DECLARE_NATIVE(IsValidNickName);	// R8
+	AMX_DECLARE_NATIVE(AllowNickNameCharacter); // R7
+	AMX_DECLARE_NATIVE(IsNickNameCharacterAllowed); // R7
 
-	static cell AMX_NATIVE_CALL GetAvailableClasses(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL RemoveLastClass(AMX *amx, cell *params); // R16
-	static cell AMX_NATIVE_CALL GetPlayerClass(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL EditPlayerClass(AMX *amx, cell *params); // R6
+	AMX_DECLARE_NATIVE(GetAvailableClasses); // R6
+	AMX_DECLARE_NATIVE(RemoveLastClass); // R16
+	AMX_DECLARE_NATIVE(GetPlayerClass); // R6
+	AMX_DECLARE_NATIVE(EditPlayerClass); // R6
 
-	static cell AMX_NATIVE_CALL GetRunningTimers(AMX *amx, cell *params); // R8
+	AMX_DECLARE_NATIVE(GetRunningTimers); // R8
 
-	static cell AMX_NATIVE_CALL SetPlayerGravity(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerGravity(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetPlayerTeamForPlayer(AMX *amx, cell *params); // R5 - Exp
-	static cell AMX_NATIVE_CALL GetPlayerTeamForPlayer(AMX *amx, cell *params); // R5
-	static cell AMX_NATIVE_CALL SetPlayerSkinForPlayer(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL GetPlayerSkinForPlayer(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL SetPlayerNameForPlayer(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL GetPlayerNameForPlayer(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL SetPlayerFightStyleForPlayer(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL GetPlayerFightStyleForPlayer(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL SetPlayerPosForPlayer(AMX *amx, cell *params); // R12
-	static cell AMX_NATIVE_CALL SetPlayerRotationQuatForPlayer(AMX *amx, cell *params); // R12
-	static cell AMX_NATIVE_CALL ApplyAnimationForPlayer(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL GetPlayerWeather(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerWorldBounds(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TogglePlayerWidescreen(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsPlayerWidescreenToggled(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetSpawnInfo(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL GetPlayerSkillLevel(AMX *amx, cell *params); // R3
-	static cell AMX_NATIVE_CALL IsPlayerCheckpointActive(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPlayerCheckpoint(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL IsPlayerRaceCheckpointActive(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPlayerRaceCheckpoint(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL GetPlayerWorldBounds(AMX *amx, cell *params); // R5
-	static cell AMX_NATIVE_CALL IsPlayerInModShop(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL SendBulletData(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL ShowPlayerForPlayer(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL HidePlayerForPlayer(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL AddPlayerForPlayer(AMX *amx, cell *params); // R17
-	static cell AMX_NATIVE_CALL RemovePlayerForPlayer(AMX *amx, cell *params); // R17
-	static cell AMX_NATIVE_CALL SetPlayerChatBubbleForPlayer(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL ResetPlayerMarkerForPlayer(AMX *amx, cell *params); // R17
-	static cell AMX_NATIVE_CALL SetPlayerVersion(AMX *amx, cell *params); // R9
-	static cell AMX_NATIVE_CALL IsPlayerSpawned(AMX *amx, cell *params); // R9
-	static cell AMX_NATIVE_CALL IsPlayerControllable(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL SpawnForWorld(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL BroadcastDeath(AMX *amx, cell *params); // R13
-	static cell AMX_NATIVE_CALL IsPlayerCameraTargetEnabled(AMX *amx, cell *params); // R13
-	static cell AMX_NATIVE_CALL SetPlayerDisabledKeysSync(AMX *amx, cell *params); // R16
-	static cell AMX_NATIVE_CALL GetPlayerDisabledKeysSync(AMX *amx, cell *params); // R16
+	AMX_DECLARE_NATIVE(SetPlayerGravity);
+	AMX_DECLARE_NATIVE(GetPlayerGravity);
+	AMX_DECLARE_NATIVE(SetPlayerTeamForPlayer); // R5 - Exp
+	AMX_DECLARE_NATIVE(GetPlayerTeamForPlayer); // R5
+	AMX_DECLARE_NATIVE(SetPlayerSkinForPlayer); // R11
+	AMX_DECLARE_NATIVE(GetPlayerSkinForPlayer); // R11
+	AMX_DECLARE_NATIVE(SetPlayerNameForPlayer); // R11
+	AMX_DECLARE_NATIVE(GetPlayerNameForPlayer); // R11
+	AMX_DECLARE_NATIVE(SetPlayerFightStyleForPlayer); // R11
+	AMX_DECLARE_NATIVE(GetPlayerFightStyleForPlayer); // R11
+	AMX_DECLARE_NATIVE(SetPlayerPosForPlayer); // R12
+	AMX_DECLARE_NATIVE(SetPlayerRotationQuatForPlayer); // R12
+	AMX_DECLARE_NATIVE(ApplyAnimationForPlayer); // R11
+	AMX_DECLARE_NATIVE(GetPlayerWeather);
+	AMX_DECLARE_NATIVE(GetPlayerWorldBounds);
+	AMX_DECLARE_NATIVE(TogglePlayerWidescreen);
+	AMX_DECLARE_NATIVE(IsPlayerWidescreenToggled);
+	AMX_DECLARE_NATIVE(GetSpawnInfo); // R8
+	AMX_DECLARE_NATIVE(GetPlayerSkillLevel); // R3
+	AMX_DECLARE_NATIVE(IsPlayerCheckpointActive); // R10
+	AMX_DECLARE_NATIVE(GetPlayerCheckpoint); // R4
+	AMX_DECLARE_NATIVE(IsPlayerRaceCheckpointActive); // R10
+	AMX_DECLARE_NATIVE(GetPlayerRaceCheckpoint); // R4
+	AMX_DECLARE_NATIVE(GetPlayerWorldBounds); // R5
+	AMX_DECLARE_NATIVE(IsPlayerInModShop); // R4
+	AMX_DECLARE_NATIVE(SendBulletData); // R6
+	AMX_DECLARE_NATIVE(ShowPlayerForPlayer); // R8
+	AMX_DECLARE_NATIVE(HidePlayerForPlayer); // R8
+	AMX_DECLARE_NATIVE(AddPlayerForPlayer); // R17
+	AMX_DECLARE_NATIVE(RemovePlayerForPlayer); // R17
+	AMX_DECLARE_NATIVE(SetPlayerChatBubbleForPlayer); // R10
+	AMX_DECLARE_NATIVE(ResetPlayerMarkerForPlayer); // R18	
+	AMX_DECLARE_NATIVE(SetPlayerVersion); // R9
+	AMX_DECLARE_NATIVE(IsPlayerSpawned); // R9
+	AMX_DECLARE_NATIVE(IsPlayerControllable); // R11
+	AMX_DECLARE_NATIVE(SpawnForWorld); // R10
+	AMX_DECLARE_NATIVE(BroadcastDeath); // R13
+	AMX_DECLARE_NATIVE(IsPlayerCameraTargetEnabled); // R13
+	AMX_DECLARE_NATIVE(SetPlayerDisabledKeysSync); // R16
+	AMX_DECLARE_NATIVE(GetPlayerDisabledKeysSync); // R16
 	
-	static cell AMX_NATIVE_CALL GetPlayerSirenState(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerLandingGearState(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerHydraReactorAngle(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerTrainSpeed(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerZAim(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerSurfingOffsets(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerRotationQuat(AMX *amx, cell *params); // R3
-	static cell AMX_NATIVE_CALL GetPlayerDialogID(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL GetPlayerSpectateID(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL GetPlayerSpectateType(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL GetPlayerLastSyncedVehicleID(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPlayerLastSyncedTrailerID(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPlayerFPS(AMX *amx, cell *params); // R10
+	AMX_DECLARE_NATIVE(GetPlayerSirenState);
+	AMX_DECLARE_NATIVE(GetPlayerLandingGearState);
+	AMX_DECLARE_NATIVE(GetPlayerHydraReactorAngle);
+	AMX_DECLARE_NATIVE(GetPlayerTrainSpeed);
+	AMX_DECLARE_NATIVE(GetPlayerZAim);
+	AMX_DECLARE_NATIVE(GetPlayerSurfingOffsets);
+	AMX_DECLARE_NATIVE(GetPlayerRotationQuat); // R3
+	AMX_DECLARE_NATIVE(GetPlayerDialogID); // R8
+	AMX_DECLARE_NATIVE(GetPlayerSpectateID); // R8
+	AMX_DECLARE_NATIVE(GetPlayerSpectateType); // R8
+	AMX_DECLARE_NATIVE(GetPlayerLastSyncedVehicleID); // R10
+	AMX_DECLARE_NATIVE(GetPlayerLastSyncedTrailerID); // R10
+	AMX_DECLARE_NATIVE(GetPlayerFPS); // R10
 
-	static cell AMX_NATIVE_CALL GetActorSpawnInfo(AMX *amx, cell *params); // R13
-	static cell AMX_NATIVE_CALL GetActorSkin(AMX *amx, cell *params); // R13
-	static cell AMX_NATIVE_CALL GetActorAnimation(AMX *amx, cell *params); // R17
+	AMX_DECLARE_NATIVE(GetActorSpawnInfo); // R13
+	AMX_DECLARE_NATIVE(GetActorSkin); // R13
+	AMX_DECLARE_NATIVE(GetActorAnimation); // R17
 
-	static cell AMX_NATIVE_CALL TogglePlayerScoresPingsUpdate(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL TogglePlayerFakePing(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL SetPlayerFakePing(AMX *amx, cell *params); // R8
-	static cell AMX_NATIVE_CALL TogglePlayerInServerQuery(AMX *amx, cell *params); // R11
-	static cell AMX_NATIVE_CALL IsPlayerToggledInServerQuery(AMX *amx, cell *params); // R11
+	AMX_DECLARE_NATIVE(TogglePlayerScoresPingsUpdate); // R8
+	AMX_DECLARE_NATIVE(TogglePlayerFakePing); // R8
+	AMX_DECLARE_NATIVE(SetPlayerFakePing); // R8
+	AMX_DECLARE_NATIVE(TogglePlayerInServerQuery); // R11
+	AMX_DECLARE_NATIVE(IsPlayerToggledInServerQuery); // R11
 
-	static cell AMX_NATIVE_CALL IsPlayerPaused(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerPausedTime(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(IsPlayerPaused);
+	AMX_DECLARE_NATIVE(GetPlayerPausedTime);
 
-	static cell AMX_NATIVE_CALL GetObjectDrawDistance(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetObjectMoveSpeed(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetObjectMoveSpeed(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetObjectTarget(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetObjectAttachedData(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetObjectAttachedOffset(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsObjectMaterialSlotUsed(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetObjectMaterial(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetObjectMaterialText(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL IsObjectNoCameraCol(AMX *amx, cell *params); // R13
+	AMX_DECLARE_NATIVE(GetObjectDrawDistance);
+	AMX_DECLARE_NATIVE(SetObjectMoveSpeed); // R6
+	AMX_DECLARE_NATIVE(GetObjectMoveSpeed); // R6
+	AMX_DECLARE_NATIVE(GetObjectTarget); // R6
+	AMX_DECLARE_NATIVE(GetObjectAttachedData);
+	AMX_DECLARE_NATIVE(GetObjectAttachedOffset);
+	AMX_DECLARE_NATIVE(IsObjectMaterialSlotUsed); // R6
+	AMX_DECLARE_NATIVE(GetObjectMaterial); // R6
+	AMX_DECLARE_NATIVE(GetObjectMaterialText); // R6
+	AMX_DECLARE_NATIVE(IsObjectNoCameraCol); // R13
 
-	static cell AMX_NATIVE_CALL GetPlayerObjectDrawDistance(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetPlayerObjectMoveSpeed(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetPlayerObjectMoveSpeed(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetPlayerObjectTarget(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetPlayerObjectAttachedData(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayerObjectAttachedOffset(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsPlayerObjectMaterialSlotUsed(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetPlayerObjectMaterial(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetPlayerObjectMaterialText(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL IsPlayerObjectNoCameraCol(AMX *amx, cell *params); // R13
-	static cell AMX_NATIVE_CALL GetPlayerSurfingPlayerObjectID(AMX *amx, cell *params); // R12
-	static cell AMX_NATIVE_CALL GetPlayerCameraTargetPlayerObj(AMX *amx, cell *params); // R13
-	static cell AMX_NATIVE_CALL GetObjectType(AMX *amx, cell *params); // R12
+	AMX_DECLARE_NATIVE(GetPlayerObjectDrawDistance);
+	AMX_DECLARE_NATIVE(SetPlayerObjectMoveSpeed); // R6
+	AMX_DECLARE_NATIVE(GetPlayerObjectMoveSpeed); // R6
+	AMX_DECLARE_NATIVE(GetPlayerObjectTarget); // R6
+	AMX_DECLARE_NATIVE(GetPlayerObjectAttachedData);
+	AMX_DECLARE_NATIVE(GetPlayerObjectAttachedOffset);
+	AMX_DECLARE_NATIVE(IsPlayerObjectMaterialSlotUsed); // R6
+	AMX_DECLARE_NATIVE(GetPlayerObjectMaterial); // R6
+	AMX_DECLARE_NATIVE(GetPlayerObjectMaterialText); // R6
+	AMX_DECLARE_NATIVE(IsPlayerObjectNoCameraCol); // R13
+	AMX_DECLARE_NATIVE(GetPlayerSurfingPlayerObjectID); // R12
+	AMX_DECLARE_NATIVE(GetPlayerCameraTargetPlayerObj); // R13
+	AMX_DECLARE_NATIVE(GetObjectType); // R12
 
-	static cell AMX_NATIVE_CALL GetPlayerAttachedObject(AMX *amx, cell *params); // R3
+	AMX_DECLARE_NATIVE(GetPlayerAttachedObject); // R3
 
-	static cell AMX_NATIVE_CALL GetVehicleSpawnInfo(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetVehicleColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetVehiclePaintjob(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetVehicleInterior(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetVehicleNumberPlate(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetVehicleRespawnDelay(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetVehicleRespawnDelay(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetVehicleOccupiedTick(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GetVehicleOccupiedTick(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetVehicleRespawnTick(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetVehicleRespawnTick(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetVehicleLastDriver(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetVehicleCab(AMX *amx, cell *params); // R9
-	static cell AMX_NATIVE_CALL HasVehicleBeenOccupied(AMX *amx, cell *params); // R9
-	static cell AMX_NATIVE_CALL SetVehicleBeenOccupied(AMX *amx, cell *params); // R9
-	static cell AMX_NATIVE_CALL IsVehicleOccupied(AMX *amx, cell *params); // R9
-	static cell AMX_NATIVE_CALL IsVehicleDead(AMX *amx, cell *params); // R9
-	static cell AMX_NATIVE_CALL SetVehicleSpawnInfo(AMX *amx, cell *params); // R12
-	static cell AMX_NATIVE_CALL GetVehicleModelCount(AMX *amx, cell *params); // R17
-	static cell AMX_NATIVE_CALL GetVehicleModelsUsed(AMX *amx, cell *params); // R17
+	AMX_DECLARE_NATIVE(GetVehicleSpawnInfo);
+	AMX_DECLARE_NATIVE(GetVehicleColor);
+	AMX_DECLARE_NATIVE(GetVehiclePaintjob);
+	AMX_DECLARE_NATIVE(GetVehicleInterior);
+	AMX_DECLARE_NATIVE(GetVehicleNumberPlate);
+	AMX_DECLARE_NATIVE(SetVehicleRespawnDelay);
+	AMX_DECLARE_NATIVE(GetVehicleRespawnDelay);
+	AMX_DECLARE_NATIVE(SetVehicleOccupiedTick); // R6
+	AMX_DECLARE_NATIVE(GetVehicleOccupiedTick);
+	AMX_DECLARE_NATIVE(SetVehicleRespawnTick);
+	AMX_DECLARE_NATIVE(GetVehicleRespawnTick);
+	AMX_DECLARE_NATIVE(GetVehicleLastDriver);
+	AMX_DECLARE_NATIVE(GetVehicleCab); // R9
+	AMX_DECLARE_NATIVE(HasVehicleBeenOccupied); // R9
+	AMX_DECLARE_NATIVE(SetVehicleBeenOccupied); // R9
+	AMX_DECLARE_NATIVE(IsVehicleOccupied); // R9
+	AMX_DECLARE_NATIVE(IsVehicleDead); // R9
+	AMX_DECLARE_NATIVE(SetVehicleSpawnInfo); // R12
+	AMX_DECLARE_NATIVE(GetVehicleModelCount); // R17
+	AMX_DECLARE_NATIVE(GetVehicleModelsUsed); // R17
 
-	static cell AMX_NATIVE_CALL IsValidGangZone(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsPlayerInGangZone(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsGangZoneVisibleForPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GangZoneGetColorForPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GangZoneGetFlashColorForPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsGangZoneFlashingForPlayer(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL GangZoneGetPos(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(IsValidGangZone);
+	AMX_DECLARE_NATIVE(IsPlayerInGangZone);
+	AMX_DECLARE_NATIVE(IsGangZoneVisibleForPlayer);
+	AMX_DECLARE_NATIVE(GangZoneGetColorForPlayer);
+	AMX_DECLARE_NATIVE(GangZoneGetFlashColorForPlayer);
+	AMX_DECLARE_NATIVE(IsGangZoneFlashingForPlayer); // R6
+	AMX_DECLARE_NATIVE(GangZoneGetPos);
 
-	static cell AMX_NATIVE_CALL CreatePlayerGangZone(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerGangZoneDestroy(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerGangZoneShow(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerGangZoneHide(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerGangZoneFlash(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerGangZoneStopFlash(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsValidPlayerGangZone(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsPlayerInPlayerGangZone(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsPlayerGangZoneVisible(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerGangZoneGetColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerGangZoneGetFlashColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsPlayerGangZoneFlashing(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL PlayerGangZoneGetPos(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(CreatePlayerGangZone);
+	AMX_DECLARE_NATIVE(PlayerGangZoneDestroy);
+	AMX_DECLARE_NATIVE(PlayerGangZoneShow);
+	AMX_DECLARE_NATIVE(PlayerGangZoneHide);
+	AMX_DECLARE_NATIVE(PlayerGangZoneFlash);
+	AMX_DECLARE_NATIVE(PlayerGangZoneStopFlash);
+	AMX_DECLARE_NATIVE(IsValidPlayerGangZone);
+	AMX_DECLARE_NATIVE(IsPlayerInPlayerGangZone);
+	AMX_DECLARE_NATIVE(IsPlayerGangZoneVisible);
+	AMX_DECLARE_NATIVE(PlayerGangZoneGetColor);
+	AMX_DECLARE_NATIVE(PlayerGangZoneGetFlashColor);
+	AMX_DECLARE_NATIVE(IsPlayerGangZoneFlashing); // R6
+	AMX_DECLARE_NATIVE(PlayerGangZoneGetPos);
 
-	static cell AMX_NATIVE_CALL IsValidTextDraw(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsTextDrawVisibleForPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetString(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawSetPos(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetLetterSize(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetTextSize(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetPos(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetBoxColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetBackgroundColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetShadow(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetOutline(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetFont(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawIsBox(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawIsProportional(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawIsSelectable(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL TextDrawGetAlignment(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetPreviewModel(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetPreviewRot(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL TextDrawGetPreviewVehCol(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(IsValidTextDraw);
+	AMX_DECLARE_NATIVE(IsTextDrawVisibleForPlayer);
+	AMX_DECLARE_NATIVE(TextDrawGetString);
+	AMX_DECLARE_NATIVE(TextDrawSetPos);
+	AMX_DECLARE_NATIVE(TextDrawGetLetterSize);
+	AMX_DECLARE_NATIVE(TextDrawGetTextSize);
+	AMX_DECLARE_NATIVE(TextDrawGetPos);
+	AMX_DECLARE_NATIVE(TextDrawGetColor);
+	AMX_DECLARE_NATIVE(TextDrawGetBoxColor);
+	AMX_DECLARE_NATIVE(TextDrawGetBackgroundColor);
+	AMX_DECLARE_NATIVE(TextDrawGetShadow);
+	AMX_DECLARE_NATIVE(TextDrawGetOutline);
+	AMX_DECLARE_NATIVE(TextDrawGetFont);
+	AMX_DECLARE_NATIVE(TextDrawIsBox);
+	AMX_DECLARE_NATIVE(TextDrawIsProportional);
+	AMX_DECLARE_NATIVE(TextDrawIsSelectable); // R6
+	AMX_DECLARE_NATIVE(TextDrawGetAlignment);
+	AMX_DECLARE_NATIVE(TextDrawGetPreviewModel);
+	AMX_DECLARE_NATIVE(TextDrawGetPreviewRot);
+	AMX_DECLARE_NATIVE(TextDrawGetPreviewVehCol);
 
-	static cell AMX_NATIVE_CALL IsValidPlayerTextDraw(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsPlayerTextDrawVisible(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetString(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawSetPos(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetLetterSize(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetTextSize(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetPos(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetBoxColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetBackgroundCol(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetShadow(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetOutline(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetFont(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawIsBox(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawIsProportional(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawIsSelectable(AMX *amx, cell *params); // R6
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetAlignment(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetPreviewModel(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetPreviewRot(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL PlayerTextDrawGetPreviewVehCol(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(IsValidPlayerTextDraw);
+	AMX_DECLARE_NATIVE(IsPlayerTextDrawVisible);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetString);
+	AMX_DECLARE_NATIVE(PlayerTextDrawSetPos);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetLetterSize);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetTextSize);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetPos);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetColor);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetBoxColor);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetBackgroundCol);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetShadow);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetOutline);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetFont);
+	AMX_DECLARE_NATIVE(PlayerTextDrawIsBox);
+	AMX_DECLARE_NATIVE(PlayerTextDrawIsProportional);
+	AMX_DECLARE_NATIVE(PlayerTextDrawIsSelectable); // R6
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetAlignment);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetPreviewModel);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetPreviewRot);
+	AMX_DECLARE_NATIVE(PlayerTextDrawGetPreviewVehCol);
 
-	static cell AMX_NATIVE_CALL IsValid3DTextLabel(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL Is3DTextLabelStreamedIn(AMX *amx, cell *params); // R9
-	static cell AMX_NATIVE_CALL Get3DTextLabelText(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL Get3DTextLabelColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL Get3DTextLabelPos(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL Get3DTextLabelDrawDistance(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL Get3DTextLabelLOS(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL Get3DTextLabelVirtualWorld(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL Get3DTextLabelAttachedData(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(IsValid3DTextLabel); // R4
+	AMX_DECLARE_NATIVE(Is3DTextLabelStreamedIn); // R9
+	AMX_DECLARE_NATIVE(Get3DTextLabelText);
+	AMX_DECLARE_NATIVE(Get3DTextLabelColor);
+	AMX_DECLARE_NATIVE(Get3DTextLabelPos);
+	AMX_DECLARE_NATIVE(Get3DTextLabelDrawDistance);
+	AMX_DECLARE_NATIVE(Get3DTextLabelLOS);
+	AMX_DECLARE_NATIVE(Get3DTextLabelVirtualWorld);
+	AMX_DECLARE_NATIVE(Get3DTextLabelAttachedData);
 
-	static cell AMX_NATIVE_CALL IsValidPlayer3DTextLabel(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL GetPlayer3DTextLabelText(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL GetPlayer3DTextLabelColor(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL GetPlayer3DTextLabelPos(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL GetPlayer3DTextLabelDrawDist(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetPlayer3DTextLabelLOS(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL GetPlayer3DTextLabelVirtualW(AMX *amx, cell *params); // R4
-	static cell AMX_NATIVE_CALL GetPlayer3DTextLabelAttached(AMX *amx, cell *params); // R9
+	AMX_DECLARE_NATIVE(IsValidPlayer3DTextLabel); // R4
+	AMX_DECLARE_NATIVE(GetPlayer3DTextLabelText); // R4
+	AMX_DECLARE_NATIVE(GetPlayer3DTextLabelColor); // R4
+	AMX_DECLARE_NATIVE(GetPlayer3DTextLabelPos); // R4
+	AMX_DECLARE_NATIVE(GetPlayer3DTextLabelDrawDist);
+	AMX_DECLARE_NATIVE(GetPlayer3DTextLabelLOS); // R4
+	AMX_DECLARE_NATIVE(GetPlayer3DTextLabelVirtualW); // R4
+	AMX_DECLARE_NATIVE(GetPlayer3DTextLabelAttached); // R9
 
-	static cell AMX_NATIVE_CALL IsMenuDisabled(AMX *amx, cell *params); // R5 
-	static cell AMX_NATIVE_CALL IsMenuRowDisabled(AMX *amx, cell *params); // R5
-	static cell AMX_NATIVE_CALL GetMenuColumns(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetMenuItems(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetMenuPos(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetMenuColumnWidth(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetMenuColumnHeader(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetMenuItem(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(IsMenuDisabled); // R5 
+	AMX_DECLARE_NATIVE(IsMenuRowDisabled); // R5
+	AMX_DECLARE_NATIVE(GetMenuColumns);
+	AMX_DECLARE_NATIVE(GetMenuItems);
+	AMX_DECLARE_NATIVE(GetMenuPos);
+	AMX_DECLARE_NATIVE(GetMenuColumnWidth);
+	AMX_DECLARE_NATIVE(GetMenuColumnHeader);
+	AMX_DECLARE_NATIVE(GetMenuItem);
 
-	static cell AMX_NATIVE_CALL IsValidPickup(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL IsPickupStreamedIn(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPickupPos(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPickupModel(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPickupType(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPickupVirtualWorld(AMX *amx, cell *params); // R10
+	AMX_DECLARE_NATIVE(IsValidPickup); // R10
+	AMX_DECLARE_NATIVE(IsPickupStreamedIn); // R10
+	AMX_DECLARE_NATIVE(GetPickupPos); // R10
+	AMX_DECLARE_NATIVE(GetPickupModel); // R10
+	AMX_DECLARE_NATIVE(GetPickupType); // R10
+	AMX_DECLARE_NATIVE(GetPickupVirtualWorld); // R10
 
-	static cell AMX_NATIVE_CALL CreatePlayerPickup(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL DestroyPlayerPickup(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL IsValidPlayerPickup(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL IsPlayerPickupStreamedIn(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPlayerPickupPos(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPlayerPickupModel(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPlayerPickupType(AMX *amx, cell *params); // R10
-	static cell AMX_NATIVE_CALL GetPlayerPickupVirtualWorld(AMX *amx, cell *params); // R10
+	AMX_DECLARE_NATIVE(CreatePlayerPickup); // R10
+	AMX_DECLARE_NATIVE(DestroyPlayerPickup); // R10
+	AMX_DECLARE_NATIVE(IsValidPlayerPickup); // R10
+	AMX_DECLARE_NATIVE(IsPlayerPickupStreamedIn); // R10
+	AMX_DECLARE_NATIVE(GetPlayerPickupPos); // R10
+	AMX_DECLARE_NATIVE(GetPlayerPickupModel); // R10
+	AMX_DECLARE_NATIVE(GetPlayerPickupType); // R10
+	AMX_DECLARE_NATIVE(GetPlayerPickupVirtualWorld); // R10
 
-	static cell AMX_NATIVE_CALL ClearBanList(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL IsBanned(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(ClearBanList);
+	AMX_DECLARE_NATIVE(IsBanned);
 
-	static cell AMX_NATIVE_CALL SetTimeoutTime(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetMTUSize(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetMTUSize(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetLocalIP(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(SetTimeoutTime);
+	AMX_DECLARE_NATIVE(GetLocalIP);
 
-	static cell AMX_NATIVE_CALL SendRPC(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SendData(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(SendRPC);
+	AMX_DECLARE_NATIVE(SendData);
 
-	static cell AMX_NATIVE_CALL YSF_SetTickRate(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GetTickRate(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_EnableNightVisionFix(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_IsNightVisionFixEnabled(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetExtendedNetStatsEnabled(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_IsExtendedNetStatsEnabled(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetAFKAccuracy(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GetAFKAccuracy(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(YSF_SetTickRate);
+	AMX_DECLARE_NATIVE(YSF_GetTickRate);
+	AMX_DECLARE_NATIVE(YSF_EnableNightVisionFix);
+	AMX_DECLARE_NATIVE(YSF_IsNightVisionFixEnabled);
+	AMX_DECLARE_NATIVE(YSF_SetExtendedNetStatsEnabled);
+	AMX_DECLARE_NATIVE(YSF_IsExtendedNetStatsEnabled);
+	AMX_DECLARE_NATIVE(YSF_SetAFKAccuracy);
+	AMX_DECLARE_NATIVE(YSF_GetAFKAccuracy);
 	
-	static cell AMX_NATIVE_CALL AttachPlayerObjectToObject(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(AttachPlayerObjectToObject);
 
-	static cell AMX_NATIVE_CALL SetRecordingDirectory(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetRecordingDirectory(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(SetRecordingDirectory);
+	AMX_DECLARE_NATIVE(GetRecordingDirectory);
 
-	static cell AMX_NATIVE_CALL SendClientMessagef(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SendClientMessageToAllf(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GameTextForPlayerf(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GameTextForAllf(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SendPlayerMessageToPlayerf(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SendPlayerMessageToAllf(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SendRconCommandf(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(SendClientMessagef);
+	AMX_DECLARE_NATIVE(SendClientMessageToAllf);
+	AMX_DECLARE_NATIVE(GameTextForPlayerf);
+	AMX_DECLARE_NATIVE(GameTextForAllf);
+	AMX_DECLARE_NATIVE(SendPlayerMessageToPlayerf);
+	AMX_DECLARE_NATIVE(SendPlayerMessageToAllf);
+	AMX_DECLARE_NATIVE(SendRconCommandf);
 	
-	static cell AMX_NATIVE_CALL GetColCount(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetColSphereRadius(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL GetColSphereOffset(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(GetColCount);
+	AMX_DECLARE_NATIVE(GetColSphereRadius);
+	AMX_DECLARE_NATIVE(GetColSphereOffset);
 
-	static cell AMX_NATIVE_CALL GetWeaponSlot(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(GetWeaponSlot);
 
-	static cell AMX_NATIVE_CALL YSF_AttachObjectToPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_AttachPlayerObjectToPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetGravity(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GetGravity(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetWeather(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetPlayerWeather(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetPlayerWorldBounds(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_DestroyObject(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_DestroyPlayerObject(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_TogglePlayerControllable(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_ChangeVehicleColor(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_DestroyVehicle(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(YSF_AttachObjectToPlayer);
+	AMX_DECLARE_NATIVE(YSF_AttachPlayerObjectToPlayer);
+	AMX_DECLARE_NATIVE(YSF_SetGravity);
+	AMX_DECLARE_NATIVE(YSF_GetGravity);
+	AMX_DECLARE_NATIVE(YSF_SetWeather);
+	AMX_DECLARE_NATIVE(YSF_SetPlayerWeather);
+	AMX_DECLARE_NATIVE(YSF_SetPlayerWorldBounds);
+	AMX_DECLARE_NATIVE(YSF_DestroyObject);
+	AMX_DECLARE_NATIVE(YSF_DestroyPlayerObject);
+	AMX_DECLARE_NATIVE(YSF_TogglePlayerControllable);
+	AMX_DECLARE_NATIVE(YSF_ChangeVehicleColor);
+	AMX_DECLARE_NATIVE(YSF_DestroyVehicle);
 	
-	static cell AMX_NATIVE_CALL YSF_SetPlayerTeam(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetPlayerSkin(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetPlayerFightingStyle(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_SetPlayerName(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(YSF_SetPlayerTeam);
+	AMX_DECLARE_NATIVE(YSF_SetPlayerSkin);
+	AMX_DECLARE_NATIVE(YSF_SetPlayerFightingStyle);
+	AMX_DECLARE_NATIVE(YSF_SetPlayerName);
 	
-	static cell AMX_NATIVE_CALL YSF_GangZoneCreate(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GangZoneDestroy(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GangZoneShowForPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GangZoneHideForPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GangZoneShowForAll(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GangZoneHideForAll(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(YSF_GangZoneCreate);
+	AMX_DECLARE_NATIVE(YSF_GangZoneDestroy);
+	AMX_DECLARE_NATIVE(YSF_GangZoneShowForPlayer);
+	AMX_DECLARE_NATIVE(YSF_GangZoneHideForPlayer);
+	AMX_DECLARE_NATIVE(YSF_GangZoneShowForAll);
+	AMX_DECLARE_NATIVE(YSF_GangZoneHideForAll);
 
-	static cell AMX_NATIVE_CALL YSF_GangZoneFlashForPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GangZoneFlashForAll(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GangZoneStopFlashForPlayer(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL YSF_GangZoneStopFlashForAll(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(YSF_GangZoneFlashForPlayer);
+	AMX_DECLARE_NATIVE(YSF_GangZoneFlashForAll);
+	AMX_DECLARE_NATIVE(YSF_GangZoneStopFlashForPlayer);
+	AMX_DECLARE_NATIVE(YSF_GangZoneStopFlashForAll);
 #ifdef NEW_PICKUP_SYSTEM
-	static cell AMX_NATIVE_CALL CreatePickup(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL DestroyPickup(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL SetPickupStreamingEnabled(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(CreatePickup);
+	AMX_DECLARE_NATIVE(DestroyPickup);
+	AMX_DECLARE_NATIVE(SetPickupStreamingEnabled);
 #endif
-	static cell AMX_NATIVE_CALL FIXED_GetWeaponName(AMX *amx, cell *params);
-	static cell AMX_NATIVE_CALL FIXED_IsPlayerConnectedEx(AMX *amx, cell *params);
+	AMX_DECLARE_NATIVE(FIXED_GetWeaponName);
+	AMX_DECLARE_NATIVE(FIXED_IsPlayerConnectedEx);
 };
 
 int InitScripting(AMX *amx);

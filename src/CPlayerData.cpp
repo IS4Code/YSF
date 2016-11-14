@@ -1,3 +1,35 @@
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
+
 #include "main.h"
 
 CPlayerData::CPlayerData( WORD playerid )
@@ -29,9 +61,10 @@ CPlayerData::CPlayerData( WORD playerid )
 
 	wPlayerID = playerid;
 	bObjectsRemoved = false;
-	fGravity = pServer->GetGravity_();
-	byteWeather = pServer->GetWeather_();
+	fGravity = CServer::Get()->GetGravity_();
+	byteWeather = CServer::Get()->GetWeather_();
 	bWidescreen = false;
+	wDisabledKeys = 0;
 
 	// Fix for GetPlayerColor
 	if(pNetGame->pPlayerPool->pPlayer[playerid])
@@ -97,18 +130,7 @@ bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
 	RakNet::BitStream bs;
 	bs.Write((WORD)teamplayerid);
 	bs.Write((BYTE)team);	
-	pRakServer->RPC(&RPC_SetPlayerTeam, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
-	return true;
-}
-
-bool CPlayerData::ResetPlayerMarkerForPlayer(WORD resetplayerid)
-{
-	CPlayer *p = pNetGame->pPlayerPool->pPlayer[resetplayerid];
-	
-	RakNet::BitStream bs;
-	bs.Write(resetplayerid);
-	bs.Write(p->dwNickNameColor);
-	pRakServer->RPC(&RPC_SetPlayerColor, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	CSAMPFunctions::RPC(&RPC_SetPlayerTeam, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 	return true;
 }
 
@@ -130,7 +152,7 @@ bool CPlayerData::SetPlayerSkinForPlayer(WORD skinplayerid, int skin)
 	RakNet::BitStream bs;
 	bs.Write((int)skinplayerid);
 	bs.Write((int)skin);
-	pRakServer->RPC(&RPC_SetPlayerSkin, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	CSAMPFunctions::RPC(&RPC_SetPlayerSkin, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 	return true;
 }
 
@@ -155,7 +177,7 @@ bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, char *name)
 	bs.Write(name, len);
 	bs.Write((BYTE)1);
 
-	pRakServer->RPC(&RPC_SetPlayerName, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	CSAMPFunctions::RPC(&RPC_SetPlayerName, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 	return true;
 }
 
@@ -175,7 +197,7 @@ bool CPlayerData::SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style)
 	RakNet::BitStream bs;
 	bs.Write((WORD)styleplayerid);
 	bs.Write((BYTE)style);
-	pRakServer->RPC(&RPC_SetFightingStyle, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	CSAMPFunctions::RPC(&RPC_SetFightingStyle, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 	return true;
 }
 
@@ -187,6 +209,16 @@ int CPlayerData::GetPlayerFightingStyleForPlayer(WORD styleplayerid)
 		return p->byteFightingStyle;
 	}
 	return m_iFightingStyles[styleplayerid];
+}
+
+void CPlayerData::ResetPlayerMarkerForPlayer(WORD resetplayerid)
+{
+	CPlayer *p = pNetGame->pPlayerPool->pPlayer[resetplayerid];
+	
+	RakNet::BitStream bs;
+	bs.Write(resetplayerid);
+	bs.Write(p->dwNickNameColor);
+	CSAMPFunctions::RPC(&RPC_SetPlayerColor, &bs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 }
 
 WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
@@ -215,7 +247,7 @@ bool CPlayerData::DestroyObject_(WORD objectid)
 {
 	RakNet::BitStream bs;
 	bs.Write(objectid);
-	pRakServer->RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 	return 1;
 }
 
@@ -227,14 +259,14 @@ void CPlayerData::Process(void)
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	if (bEverUpdated && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_NONE && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_WASTED)
 	{
-		if(bAFKState == false && dwTickCount - dwLastUpdateTick > pServer->GetAFKAccuracy())
+		if(bAFKState == false && dwTickCount - dwLastUpdateTick > CServer::Get()->GetAFKAccuracy())
 		{
 			bAFKState = true;
 
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 
-		else if(bAFKState == true && dwTickCount - dwLastUpdateTick < pServer->GetAFKAccuracy())
+		else if(bAFKState == true && dwTickCount - dwLastUpdateTick < CServer::Get()->GetAFKAccuracy())
 		{
 			bAFKState = false;
 
@@ -259,7 +291,7 @@ void CPlayerData::Process(void)
 		bs.Write(stObj[dwObjectID].vecRot.fY);
 		bs.Write(stObj[dwObjectID].vecRot.fZ);
 
-		pRakServer->RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(wPlayerID), 0, 0);
+		CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 		dwCreateAttachedObj = 0;
 		dwObjectID = INVALID_OBJECT_ID;
 		bAttachedObjectCreated = true;
@@ -280,7 +312,7 @@ void CPlayerData::Process(void)
 				return;
 			}
 					
-			pGangZone = pServer->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
+			pGangZone = CServer::Get()->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
 		}
 		else
 		{
@@ -381,7 +413,8 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			}
 
 			// Keys
-			WORD keys = p->syncData.wKeys &= ~pPlayerData[playerid]->dwDisabledKeys;
+			WORD keys = p->syncData.wKeys; 
+			keys &= ~pPlayerData[playerid]->wDisabledKeys;
 			bsSync->Write(keys);
 	
 			// Position
@@ -462,7 +495,8 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write(p->vehicleSyncData.wUDAnalog);
 			bsSync->Write(p->vehicleSyncData.wLRAnalog);
 			
-			WORD keys = p->vehicleSyncData.wKeys &= ~pPlayerData[playerid]->dwDisabledKeys;
+			WORD keys = p->vehicleSyncData.wKeys;
+			keys &= ~pPlayerData[playerid]->wDisabledKeys;
 			bsSync->Write(keys);
 			
 			bsSync->WriteNormQuat(p->vehicleSyncData.fQuaternion[0], p->vehicleSyncData.fQuaternion[1], p->vehicleSyncData.fQuaternion[2], p->vehicleSyncData.fQuaternion[3]);

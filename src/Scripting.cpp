@@ -1,44 +1,41 @@
-/*  
- *  Version: MPL 1.1
- *  
- *  The contents of this file are subject to the Mozilla Public License Version 
- *  1.1 (the "License"); you may not use this file except in compliance with 
- *  the License. You may obtain a copy of the License at 
- *  http://www.mozilla.org/MPL/
- *  
- *  Software distributed under the License is distributed on an "AS IS" basis,
- *  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- *  for the specific language governing rights and limitations under the
- *  License.
- *  
- *  The Original Code is the YSI 2.0 SA:MP plugin.
- *  
- *  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
- *  Portions created by the Initial Developer are Copyright (C) 2008
- *  the Initial Developer. All Rights Reserved.
- *  
- *  Contributor(s):
- *  
- *  Peter Beverloo
- *  Marcus Bauer
- *  MaVe;
- *  Sammy91
- *  Incognito
- *  
- *  Special Thanks to:
- *  
- *  SA:MP Team past, present and future
- */
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
 
 #include "main.h"
-
-// extern
-typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 
 //----------------------------------------------------
 #ifdef _WIN32
 	// native ffind(const pattern[], filename[], len, &idx);
-	static cell AMX_NATIVE_CALL Natives::ffind(AMX *amx, cell *params)
+	AMX_DECLARE_NATIVE(Natives::ffind)
 	{
 		// Find a file, idx determines which one of a number of matches to use
 		CHECK_PARAMS(4, "ffind");
@@ -90,7 +87,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 	}
 	
 	// native dfind(const pattern[], filename[], len, &idx);
-	static cell AMX_NATIVE_CALL Natives::dfind(AMX *amx, cell *params)
+	AMX_DECLARE_NATIVE(Natives::dfind)
 	{
 		// Find a directory, idx determines which one of a number of matches to use
 		// Identical to ffind in all but 1 line
@@ -143,7 +140,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 	}
 #else
 	// native ffind(const pattern[], filename[], len, &idx);
-	static cell AMX_NATIVE_CALL Natives::ffind(AMX *amx, cell *params)
+	AMX_DECLARE_NATIVE(Natives::ffind)
 	{
 		// Find a file, idx determines which one of a number of matches to use
 		CHECK_PARAMS(4, "dfind");
@@ -245,7 +242,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 	}
 	
 	// native dfind(const pattern[], filename[], len, &idx);
-	static cell AMX_NATIVE_CALL Natives::dfind(AMX *amx, cell *params)
+	AMX_DECLARE_NATIVE(Natives::dfind)
 	{
 		// Find a file, idx determines which one of a number of matches to use
 		CHECK_PARAMS(4, "ffind");
@@ -348,7 +345,7 @@ typedef cell AMX_NATIVE_CALL (* AMX_Function_t)(AMX *amx, cell *params);
 #endif
 
 // native dcreate(const name[]);
-static cell AMX_NATIVE_CALL Natives::dcreate(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::dcreate)
 {
 	// Creates a directory
 	CHECK_PARAMS(1, "dcreate");
@@ -375,7 +372,7 @@ static cell AMX_NATIVE_CALL Natives::dcreate(AMX *amx, cell *params)
 }
 
 // native frename(const oldname[], const newname[]);
-static cell AMX_NATIVE_CALL Natives::frename(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::frename)
 {
 	// Creates a directory
 	CHECK_PARAMS(2, "frename");
@@ -400,7 +397,7 @@ static cell AMX_NATIVE_CALL Natives::frename(AMX *amx, cell *params)
 }
 
 // native drename(const oldname[], const newname[]);
-static cell AMX_NATIVE_CALL Natives::drename(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::drename)
 {
 	// Creates a directory
 	CHECK_PARAMS(2, "drename");
@@ -439,14 +436,10 @@ static cell AMX_NATIVE_CALL Natives::drename(AMX *amx, cell *params)
 }
 
 // native SetModeRestartTime(Float:time);
-static cell AMX_NATIVE_CALL Natives::SetModeRestartTime(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::SetModeRestartTime)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	if (!CAddress::VAR_pRestartWaitTime) return 0;
-
 	CHECK_PARAMS(1, "SetModeRestartTime");
 
 	*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
@@ -454,12 +447,9 @@ static cell AMX_NATIVE_CALL Natives::SetModeRestartTime(AMX *amx, cell *params)
 }
 
 // native Float:GetModeRestartTime();
-static cell AMX_NATIVE_CALL Natives::GetModeRestartTime(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetModeRestartTime)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	if (!CAddress::VAR_pRestartWaitTime) return 0;
 
 	float fRestartTime = *(float*)CAddress::VAR_pRestartWaitTime;
@@ -467,11 +457,10 @@ static cell AMX_NATIVE_CALL Natives::GetModeRestartTime(AMX *amx, cell *params)
 }
 
 // native SetMaxPlayers(maxplayers);
-static cell AMX_NATIVE_CALL Natives::SetMaxPlayers(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::SetMaxPlayers)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	CHECK_PARAMS(1, "SetMaxPlayers");
 
 	int maxplayers = static_cast<int>(params[1]);
 	if(maxplayers < 1 || maxplayers > MAX_PLAYERS) return 0;
@@ -481,11 +470,10 @@ static cell AMX_NATIVE_CALL Natives::SetMaxPlayers(AMX *amx, cell *params)
 }
 
 // native SetMaxNPCs(maxnpcs);
-static cell AMX_NATIVE_CALL Natives::SetMaxNPCs(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::SetMaxNPCs)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	CHECK_PARAMS(1, "SetMaxNPCs");
 
 	int maxnpcs = static_cast<int>(params[1]);
 	if(maxnpcs < 1 || maxnpcs > MAX_PLAYERS) return 0;
@@ -495,12 +483,9 @@ static cell AMX_NATIVE_CALL Natives::SetMaxNPCs(AMX *amx, cell *params)
 }
 
 // native SetPlayerAdmin(playerid, bool:admin);
-static cell AMX_NATIVE_CALL Natives::SetPlayerAdmin(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerAdmin");
 
 	int playerid = static_cast<int>(params[1]);
@@ -511,12 +496,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerAdmin(AMX *amx, cell *params)
 }
 
 // native LoadFilterScript(scriptname[]);
-static cell AMX_NATIVE_CALL Natives::LoadFilterScript(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "LoadFilterScript");
 	
 	char
@@ -530,12 +512,9 @@ static cell AMX_NATIVE_CALL Natives::LoadFilterScript(AMX *amx, cell *params)
 }
 
 // UnLoadFilterScript(scriptname[]);
-static cell AMX_NATIVE_CALL Natives::UnLoadFilterScript(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::UnLoadFilterScript)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "UnLoadFilterScript");
 	
 	char
@@ -549,14 +528,17 @@ static cell AMX_NATIVE_CALL Natives::UnLoadFilterScript(AMX *amx, cell *params)
 }
 
 // native GetFilterScriptCount();
-static cell AMX_NATIVE_CALL Natives::GetFilterScriptCount(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetFilterScriptCount)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+
 	return pNetGame->pFilterScriptPool->iFilterScriptCount;
 }
 
 // native GetFilterScriptName(id, name[], len = sizeof(name));
-static cell AMX_NATIVE_CALL Natives::GetFilterScriptName(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetFilterScriptName)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "GetFilterScriptName");
 
 	int id = static_cast<int>(params[1]);
@@ -566,12 +548,9 @@ static cell AMX_NATIVE_CALL Natives::GetFilterScriptName(AMX *amx, cell *params)
 }
 
 // native AddServerRule(name[], value[], flags = CON_VARFLAG_RULE);
-static cell AMX_NATIVE_CALL Natives::AddServerRule(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::AddServerRule)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "AddServerRule");
 	
 	char *name, *value;
@@ -590,12 +569,9 @@ static cell AMX_NATIVE_CALL Natives::AddServerRule(AMX *amx, cell *params)
 }
 
 // native SetServerRule(name[], value[]);
-static cell AMX_NATIVE_CALL Natives::SetServerRule(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::SetServerRule)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetServerRule");
 
 	char *name, *value;
@@ -614,12 +590,9 @@ static cell AMX_NATIVE_CALL Natives::SetServerRule(AMX *amx, cell *params)
 }
 
 // native SetServerRuleInt(name[], value);
-static cell AMX_NATIVE_CALL Natives::SetServerRuleInt(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::SetServerRuleInt)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetServerRuleInt");
 
 	char *name;
@@ -638,12 +611,9 @@ static cell AMX_NATIVE_CALL Natives::SetServerRuleInt(AMX *amx, cell *params)
 }
 
 // native IsValidServerRule(name[]);
-static cell AMX_NATIVE_CALL Natives::IsValidServerRule(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::IsValidServerRule)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsValidServerRule");
 
 	char *name;
@@ -657,12 +627,9 @@ static cell AMX_NATIVE_CALL Natives::IsValidServerRule(AMX *amx, cell *params)
 }
 
 // native RemoveServerRule(name[]);
-static cell AMX_NATIVE_CALL Natives::RemoveServerRule(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::RemoveServerRule)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "RemoveServerRule");
 
 	char *name;
@@ -676,12 +643,9 @@ static cell AMX_NATIVE_CALL Natives::RemoveServerRule(AMX *amx, cell *params)
 }
 
 // native SetServerRuleFlags(name[], flags);
-static cell AMX_NATIVE_CALL Natives::SetServerRuleFlags(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::SetServerRuleFlags)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetServerRuleFlags");
 	
 	char *name;
@@ -695,12 +659,9 @@ static cell AMX_NATIVE_CALL Natives::SetServerRuleFlags(AMX *amx, cell *params)
 }
 
 // native GetServerRuleFlags(name[]);
-static cell AMX_NATIVE_CALL Natives::GetServerRuleFlags(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetServerRuleFlags)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetServerRuleFlags");
 	
 	char *name;
@@ -719,57 +680,47 @@ static cell AMX_NATIVE_CALL Natives::GetServerRuleFlags(AMX *amx, cell *params)
 
 // native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, 
 //		&limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
-static cell AMX_NATIVE_CALL Natives::GetServerSettings(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(14, "GetServerSettings");
 
-	cell *cptr;
-	amx_GetAddr(amx, params[1], &cptr); *cptr = (cell)pNetGame->bShowPlayerMarkers;
-	amx_GetAddr(amx, params[2], &cptr); *cptr = (cell)pNetGame->byteShowNameTags;
-	amx_GetAddr(amx, params[3], &cptr); *cptr = (cell)pNetGame->byteStuntBonus;
-	amx_GetAddr(amx, params[4], &cptr); *cptr = (cell)pNetGame->bUseCJWalk;
-	amx_GetAddr(amx, params[5], &cptr); *cptr = (cell)pNetGame->bLimitGlobalChatRadius;
-	amx_GetAddr(amx, params[6], &cptr); *cptr = (cell)pNetGame->byteDisableEnterExits;
-	amx_GetAddr(amx, params[7], &cptr); *cptr = (cell)pNetGame->byteNameTagLOS;
-	amx_GetAddr(amx, params[8], &cptr); *cptr = (cell)pNetGame->bManulVehicleEngineAndLights;
-	amx_GetAddr(amx, params[9], &cptr); *cptr = (cell)pNetGame->bLimitPlayerMarkers;
-	amx_GetAddr(amx, params[10], &cptr); *cptr = (cell)pNetGame->bVehicleFriendlyFire;
-	amx_GetAddr(amx, params[11], &cptr); *cptr = (cell)pNetGame->byteDefaultCameraCollision;
-	amx_GetAddr(amx, params[12], &cptr); *cptr = amx_ftoc(pNetGame->fGlobalChatRadius);
-	amx_GetAddr(amx, params[13], &cptr); *cptr = amx_ftoc(pNetGame->fNameTagDrawDistance);
-	amx_GetAddr(amx, params[14], &cptr); *cptr = amx_ftoc(pNetGame->fPlayerMarkesLimit);
+	Utility::storeIntegerInNative(amx, params[1], pNetGame->bShowPlayerMarkers); 
+	Utility::storeIntegerInNative(amx, params[2], pNetGame->byteShowNameTags);     
+	Utility::storeIntegerInNative(amx, params[3], pNetGame->byteStuntBonus);   
+	Utility::storeIntegerInNative(amx, params[4], pNetGame->bUseCJWalk);     
+	Utility::storeIntegerInNative(amx, params[5], pNetGame->bLimitGlobalChatRadius);     
+	Utility::storeIntegerInNative(amx, params[6], pNetGame->byteDisableEnterExits);  
+	Utility::storeIntegerInNative(amx, params[7], pNetGame->byteNameTagLOS);   
+	Utility::storeIntegerInNative(amx, params[8], pNetGame->bManulVehicleEngineAndLights);
+	Utility::storeIntegerInNative(amx, params[9], pNetGame->bLimitPlayerMarkers);
+	Utility::storeIntegerInNative(amx, params[10], pNetGame->bVehicleFriendlyFire);
+	Utility::storeIntegerInNative(amx, params[11], pNetGame->byteDefaultCameraCollision);
+	Utility::storeFloatInNative(amx, params[12], pNetGame->fGlobalChatRadius);
+	Utility::storeFloatInNative(amx, params[13], pNetGame->fNameTagDrawDistance);
+	Utility::storeFloatInNative(amx, params[14], pNetGame->fPlayerMarkesLimit);
 	return 1;
 }
 
 // native IsValidNickName(name[]);
-static cell AMX_NATIVE_CALL Natives::IsValidNickName(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsValidNickName");
 
 	char *name;
 	amx_StrParam(amx, params[1], name);
 	if (name)
 	{
-		return pServer->IsValidNick(name);
+		return CServer::Get()->IsValidNick(name);
 	}
 	return 0;
 }
 
 // native AllowNickNameCharacter(character, bool:allow);
-static cell AMX_NATIVE_CALL Natives::AllowNickNameCharacter(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::AllowNickNameCharacter)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "AllowNickNameCharacter");
 	
 	char character = (char)params[1];
@@ -777,40 +728,33 @@ static cell AMX_NATIVE_CALL Natives::AllowNickNameCharacter(AMX *amx, cell *para
 	// Enable %s is disallowed
 	if(character == '%') return 0;
 
-	pServer->AllowNickNameCharacter(character, !!params[2]);
-	return 0;
+	CServer::Get()->AllowNickNameCharacter(character, !!params[2]);
+	return 1;
 }
 
 // native IsNickNameCharacterAllowed(character);
-static cell AMX_NATIVE_CALL Natives::IsNickNameCharacterAllowed(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::IsNickNameCharacterAllowed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsNickNameCharacterAllowed");
 
-	return pServer->IsNickNameCharacterAllowed((char)params[1]);
+	return CServer::Get()->IsNickNameCharacterAllowed((char)params[1]);
 }
 
 /////////////// Timers
 
 // native GetAvailableClasses();
-static cell AMX_NATIVE_CALL Natives::GetAvailableClasses(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetAvailableClasses)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
 	return pNetGame->iSpawnsAvailable;
 }
 
 // native RemoveLastClass();
-static cell AMX_NATIVE_CALL Natives::RemoveLastClass(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::RemoveLastClass)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
 	if(pNetGame->iSpawnsAvailable <= 0)
 		return 0;
@@ -820,42 +764,32 @@ static cell AMX_NATIVE_CALL Natives::RemoveLastClass(AMX *amx, cell *params)
 }
 
 // native GetPlayerClass(classid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
-static cell AMX_NATIVE_CALL Natives::GetPlayerClass(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetPlayerClass)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(13, "GetPlayerClass");
 
 	int classid = static_cast<int>(params[1]);
 	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->AvailableSpawns[classid];
-	
-	cell *cptr;
-	amx_GetAddr(amx, params[2], &cptr); *cptr = (cell)pSpawn->byteTeam;
-	amx_GetAddr(amx, params[3], &cptr); *cptr = (cell)pSpawn->iSkin;
-	amx_GetAddr(amx, params[4], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fX);
-	amx_GetAddr(amx, params[5], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fY);
-	amx_GetAddr(amx, params[6], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fZ);
-	amx_GetAddr(amx, params[7], &cptr); *cptr = amx_ftoc(pSpawn->fRotation);
-	amx_GetAddr(amx, params[8], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[0];
-	amx_GetAddr(amx, params[9], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[0];
-	amx_GetAddr(amx, params[10], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[1];
-	amx_GetAddr(amx, params[11], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[1];
-	amx_GetAddr(amx, params[12], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[2];
-	amx_GetAddr(amx, params[13], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[2];
+	Utility::storeIntegerInNative(amx, params[2], pSpawn->byteTeam);
+	Utility::storeIntegerInNative(amx, params[3], pSpawn->iSkin);
+	Utility::storeVectorInNative(amx, params[4], pSpawn->vecPos);
+	Utility::storeFloatInNative(amx, params[7], pSpawn->fRotation);
+	Utility::storeIntegerInNative(amx, params[8], pSpawn->iSpawnWeapons[0]);
+	Utility::storeIntegerInNative(amx, params[9], pSpawn->iSpawnWeaponsAmmo[0]);
+	Utility::storeIntegerInNative(amx, params[10], pSpawn->iSpawnWeapons[1]);
+	Utility::storeIntegerInNative(amx, params[11], pSpawn->iSpawnWeaponsAmmo[1]);
+	Utility::storeIntegerInNative(amx, params[12], pSpawn->iSpawnWeapons[2]);
+	Utility::storeIntegerInNative(amx, params[13], pSpawn->iSpawnWeaponsAmmo[2]);
 	return 1;
 }
 
 // native EditPlayerClass(classid, teamid, modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
-static cell AMX_NATIVE_CALL Natives::EditPlayerClass(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::EditPlayerClass)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(13, "EditPlayerClass");
 
 	int classid = static_cast<int>(params[1]);
@@ -877,46 +811,35 @@ static cell AMX_NATIVE_CALL Natives::EditPlayerClass(AMX *amx, cell *params)
 }
 
 // native GetActiveTimers();
-static cell AMX_NATIVE_CALL Natives::GetRunningTimers(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetRunningTimers)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
 	return pNetGame->pScriptTimers->dwTimerCount;
 }
 
 // native SetGravity(Float:gravity);
-static cell AMX_NATIVE_CALL Natives::YSF_SetGravity( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_SetGravity)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	CHECK_PARAMS(1, "SetGravity");
 
-	pServer->SetGravity_(amx_ctof(params[1]));
+	CServer::Get()->SetGravity_(amx_ctof(params[1]));
 	return 1;
 }
 
 // native Float:GetGravity();
-static cell AMX_NATIVE_CALL Natives::YSF_GetGravity( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_GetGravity)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
-	float fGravity = pServer->GetGravity_();
+	float fGravity = CServer::Get()->GetGravity_();
 	return amx_ftoc(fGravity);
 }
 
 // native SetPlayerGravity(playerid, Float:gravity);
-static cell AMX_NATIVE_CALL Natives::SetPlayerGravity( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetPlayerGravity)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerGravity");
 
 	int playerid = static_cast<int>(params[1]);
@@ -927,17 +850,14 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerGravity( AMX* amx, cell* params )
 
 	RakNet::BitStream bs;
 	bs.Write(pPlayerData[playerid]->fGravity);
-	pRakServer->RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	CSAMPFunctions::RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
 // native Float:GetPlayerGravity(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerGravity( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerGravity)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerGravity");
 
 	int playerid = static_cast<int>(params[1]);
@@ -947,12 +867,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerGravity( AMX* amx, cell* params )
 }
 
 // native SetPlayerTeamForPlayer(playerid, teamplayerid, teamid);
-static cell AMX_NATIVE_CALL Natives::SetPlayerTeamForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetPlayerTeamForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerTeamForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -967,12 +884,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerTeamForPlayer( AMX* amx, cell* par
 }
 
 // native GetPlayerTeamForPlayer(playerid, teamplayerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerTeamForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerTeamForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerTeamForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -983,12 +897,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerTeamForPlayer( AMX* amx, cell* par
 	return pPlayerData[playerid]->GetPlayerTeamForPlayer(static_cast<WORD>(teamplayerid));
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerTeam(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerTeam)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerTeam");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1005,12 +916,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerTeam(AMX* amx, cell* params)
 }
 
 // native SetPlayerSkinForPlayer(playerid, skinplayerid, skin);
-static cell AMX_NATIVE_CALL Natives::SetPlayerSkinForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::SetPlayerSkinForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerSkinForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1025,12 +933,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerSkinForPlayer(AMX* amx, cell* para
 }
 
 // native GetPlayerSkinForPlayer(playerid, skinplayerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerSkinForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPlayerSkinForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerSkinForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1041,12 +946,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSkinForPlayer(AMX* amx, cell* para
 	return pPlayerData[playerid]->GetPlayerSkinForPlayer(static_cast<WORD>(skinplayerid));
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerSkin(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerSkin");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1063,12 +965,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerSkin(AMX* amx, cell* params)
 }
 
 // native SetPlayerNameForPlayer(playerid, nameplayerid, playername[]);
-static cell AMX_NATIVE_CALL Natives::SetPlayerNameForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::SetPlayerNameForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerNameForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1083,12 +982,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerNameForPlayer(AMX* amx, cell* para
 }
 
 // native GetPlayerNameForPlayer(playerid, nameplayerid, playername[], size = sizeof(playername));
-static cell AMX_NATIVE_CALL Natives::GetPlayerNameForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPlayerNameForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetPlayerNameForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1099,12 +995,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerNameForPlayer(AMX* amx, cell* para
 	return set_amxstring(amx, params[3], pPlayerData[playerid]->GetPlayerNameForPlayer(static_cast<WORD>(nameplayerid)), params[4]);
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerName(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerName");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1122,12 +1015,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerName(AMX* amx, cell* params)
 }
 
 // native SetPlayerFightStyleForPlayer(playerid, styleplayerid, style);
-static cell AMX_NATIVE_CALL Natives::SetPlayerFightStyleForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::SetPlayerFightStyleForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerFightStyleForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1141,12 +1031,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerFightStyleForPlayer(AMX* amx, cell
 }
 
 // native GetPlayerFightStyleForPlayer(playerid, skinplayerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerFightStyleForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPlayerFightStyleForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerFightStyleForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1157,12 +1044,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerFightStyleForPlayer(AMX* amx, cell
 	return pPlayerData[playerid]->GetPlayerFightingStyleForPlayer(static_cast<WORD>(styleplayerid));
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerFightingStyle(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerFightingStyle");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1179,12 +1063,9 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerFightingStyle(AMX* amx, cell* 
 }
 
 // native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Float:fZ, bool:forcesync = true);
-static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::SetPlayerPosForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 5;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(6, "SetPlayerPosForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1211,18 +1092,15 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerPosForPlayer(AMX* amx, cell* param
 	bs.Write(ID_PLAYER_SYNC);
 	bs.Write((WORD)posplayerid);
 	RebuildSyncData(&bs, playerid);
-	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false);
+	CSAMPFunctions::Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false);
 	*/
 	return 1;
 }
 
 // native SetPlayerRotationQuatForPlayer(playerid, quatplayerid, Float:w, Float:x, Float:y, Float:z, bool:forcesync = true);
-static cell AMX_NATIVE_CALL Natives::SetPlayerRotationQuatForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 5;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(7, "SetPlayerRotationQuatForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1262,16 +1140,17 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerRotationQuatForPlayer(AMX* amx, ce
 	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][2]);
 	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
 
-	pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false);
+	CSAMPFunctions::Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false);
 	return 1;
 }
 
 // native ApplyAnimationForPlayer(playerid, animplayerid, animlib[], animname[], Float:fDelta, loop, lockx, locky, freeze, time);
-static cell AMX_NATIVE_CALL Natives::ApplyAnimationForPlayer(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::ApplyAnimationForPlayer)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(10, "ApplyAnimationForPlayer");
+	
 	RakNet::BitStream bsSend;
-
 	char *szAnimLib;
 	char *szAnimName;
 	BYTE byteAnimLibLen;
@@ -1311,30 +1190,22 @@ static cell AMX_NATIVE_CALL Natives::ApplyAnimationForPlayer(AMX *amx, cell *par
 	bsSend.Write(opt4);
 	bsSend.Write(time);
 
-	pRakServer->RPC(&RPC_ScrApplyAnimation, &bsSend, MEDIUM_PRIORITY, UNRELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_ScrApplyAnimation, &bsSend, MEDIUM_PRIORITY, UNRELIABLE, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
 // native SetWeather(weatherid);
-static cell AMX_NATIVE_CALL Natives::YSF_SetWeather( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_SetWeather)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	CHECK_PARAMS(1, "SetWeather");
 
-	pServer->SetWeather_(static_cast<BYTE>(params[1]));
+	CServer::Get()->SetWeather_(static_cast<BYTE>(params[1]));
 	return 1;
 }
 
 // native SetPlayerWeather(playerid, weatherid);
-static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWeather(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWeather)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
 	CHECK_PARAMS(2, "SetPlayerWeather");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1345,17 +1216,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWeather(AMX* amx, cell* params
 
 	RakNet::BitStream bs;
 	bs.Write(pPlayerData[playerid]->byteWeather);
-	pRakServer->RPC(&RPC_Weather, &bs, MEDIUM_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	CSAMPFunctions::RPC(&RPC_Weather, &bs, MEDIUM_PRIORITY, RELIABLE, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
 // native GetPlayerWeather(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerWeather( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerWeather)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerWeather");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1365,35 +1233,22 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerWeather( AMX* amx, cell* params )
 }
 
 // native SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
-static cell AMX_NATIVE_CALL Natives::YSF_SetPlayerWorldBounds(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWorldBounds)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
-	CHECK_PARAMS(5, "SetPlayerWorldBounds");
-
 	int playerid = static_cast<int>(params[1]);
-
-	if(pSetPlayerWorldBounds(amx, params) && IsPlayerConnectedEx(playerid))
+	if(pSetPlayerWorldBounds(amx, params))
 	{
-		pPlayerData[playerid]->fBounds[0] = amx_ctof(params[2]);
-		pPlayerData[playerid]->fBounds[1] = amx_ctof(params[3]);
-		pPlayerData[playerid]->fBounds[2] = amx_ctof(params[4]);
-		pPlayerData[playerid]->fBounds[3] = amx_ctof(params[5]);
+		for (BYTE i = 0; i != 4; i++)
+		{
+			pPlayerData[playerid]->fBounds[i] = amx_ctof(params[i + 2]);
+		}
 	}
 	return 1;
 }
 
 // native DestroyObject(objectid)
-static cell AMX_NATIVE_CALL Natives::YSF_DestroyObject(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_DestroyObject)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "DestroyObject");
-
 	int objectid = static_cast<int>(params[1]);
 
 	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
@@ -1401,21 +1256,15 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyObject(AMX* amx, cell* params)
 
 	if(pDestroyObject(amx, params))
 	{
-		pServer->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
+		CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
 		return 1;
 	}
 	return 0;
 }
 
 // native DestroyPlayerObject(playerid, objectid)
-static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
-	CHECK_PARAMS(2, "DestroyPlayerObject");
-
 	int playerid = static_cast<int>(params[1]);
 	int objectid = static_cast<int>(params[2]);
 
@@ -1441,14 +1290,8 @@ static cell AMX_NATIVE_CALL Natives::YSF_DestroyPlayerObject(AMX* amx, cell* par
 }
 
 // native TogglePlayerControllable(playerid, bool:toggle)
-static cell AMX_NATIVE_CALL Natives::YSF_TogglePlayerControllable(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_TogglePlayerControllable)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
-	CHECK_PARAMS(2, "TogglePlayerControllable");
-
 	int playerid = static_cast<int>(params[1]);
 	bool toggle = static_cast<int>(params[2]) != 0;
 
@@ -1461,43 +1304,32 @@ static cell AMX_NATIVE_CALL Natives::YSF_TogglePlayerControllable(AMX* amx, cell
 }
 
 // native ChangeVehicleColor(vehicleid, color1, color2)
-static cell AMX_NATIVE_CALL Natives::YSF_ChangeVehicleColor(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_ChangeVehicleColor)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	int vehicleid = static_cast<int>(params[1]);
 	if(pChangeVehicleColor(amx, params))
 	{
-		pServer->bChangedVehicleColor[vehicleid] = true;
+		CServer::Get()->bChangedVehicleColor[vehicleid] = true;
 		return 1;
 	}
 	return 0;
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_DestroyVehicle(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	int vehicleid = static_cast<int>(params[1]);
 	if(pDestroyVehicle(amx, params))
 	{
-		pServer->bChangedVehicleColor[vehicleid] = false;
+		CServer::Get()->bChangedVehicleColor[vehicleid] = false;
 		return 1;
 	}
 	return 0;
 }
 
 // native TogglePlayerWidescreen(playerid, bool:set);
-static cell AMX_NATIVE_CALL Natives::TogglePlayerWidescreen( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TogglePlayerWidescreen)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "TogglePlayerWidescreen");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1508,17 +1340,14 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerWidescreen( AMX* amx, cell* par
 
 	RakNet::BitStream bs;
 	bs.Write(set);
-	pRakServer->RPC(&RPC_Widescreen, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+	CSAMPFunctions::RPC(&RPC_Widescreen, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
 // native IsPlayerWidescreenToggled(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerWidescreenToggled( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerWidescreenToggled)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerWideScreen");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1528,12 +1357,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerWidescreenToggled( AMX* amx, cell* 
 }
 
 // native GetSpawnInfo(playerid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
-static cell AMX_NATIVE_CALL Natives::GetSpawnInfo( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetSpawnInfo)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(13, "GetSpawnInfo");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1541,29 +1367,23 @@ static cell AMX_NATIVE_CALL Natives::GetSpawnInfo( AMX* amx, cell* params )
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->pPlayerPool->pPlayer[playerid]->spawn;
 
-	cell *cptr;
-	amx_GetAddr(amx, params[2], &cptr); *cptr = (cell)pSpawn->byteTeam;
-	amx_GetAddr(amx, params[3], &cptr); *cptr = (cell)pSpawn->iSkin;
-	amx_GetAddr(amx, params[4], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fX);
-	amx_GetAddr(amx, params[5], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fY);
-	amx_GetAddr(amx, params[6], &cptr); *cptr = amx_ftoc(pSpawn->vecPos.fZ);
-	amx_GetAddr(amx, params[7], &cptr); *cptr = amx_ftoc(pSpawn->fRotation);
-	amx_GetAddr(amx, params[8], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[0];
-	amx_GetAddr(amx, params[9], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[0];
-	amx_GetAddr(amx, params[10], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[1];
-	amx_GetAddr(amx, params[11], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[1];
-	amx_GetAddr(amx, params[12], &cptr); *cptr = (cell)pSpawn->iSpawnWeapons[2];
-	amx_GetAddr(amx, params[13], &cptr); *cptr = (cell)pSpawn->iSpawnWeaponsAmmo[2];
+	Utility::storeIntegerInNative(amx, params[2], pSpawn->byteTeam);
+	Utility::storeIntegerInNative(amx, params[3], pSpawn->iSkin);
+	Utility::storeVectorInNative(amx, params[4], pSpawn->vecPos);
+	Utility::storeFloatInNative(amx, params[7], pSpawn->fRotation);
+	Utility::storeIntegerInNative(amx, params[8], pSpawn->iSpawnWeapons[0]);
+	Utility::storeIntegerInNative(amx, params[9], pSpawn->iSpawnWeaponsAmmo[0]);
+	Utility::storeIntegerInNative(amx, params[10], pSpawn->iSpawnWeapons[1]);
+	Utility::storeIntegerInNative(amx, params[11], pSpawn->iSpawnWeaponsAmmo[1]);
+	Utility::storeIntegerInNative(amx, params[12], pSpawn->iSpawnWeapons[2]);
+	Utility::storeIntegerInNative(amx, params[13], pSpawn->iSpawnWeaponsAmmo[2]);
 	return 1;
 }
 
 // native GetPlayerSkillLevel(playerid, skill);
-static cell AMX_NATIVE_CALL Natives::GetPlayerSkillLevel( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerSkillLevel)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerSkillLevel");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1576,12 +1396,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSkillLevel( AMX* amx, cell* params
 }
 
 // native IsPlayerCheckpointActive(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerCheckpointActive(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::IsPlayerCheckpointActive)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerCheckpointActive");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1591,37 +1408,24 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerCheckpointActive(AMX* amx, cell* pa
 }
 
 // native GetPlayerCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fSize);
-static cell AMX_NATIVE_CALL Natives::GetPlayerCheckpoint( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerCheckpoint)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerCheckpoint");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	cell* cptr;
 	CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[playerid]->vecCPPos;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(vecPos->fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(vecPos->fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(vecPos->fZ);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pNetGame->pPlayerPool->pPlayer[playerid]->fCPSize);
+	Utility::storeVectorInNative(amx, params[2], *vecPos);
+	Utility::storeFloatInNative(amx, params[5], pNetGame->pPlayerPool->pPlayer[playerid]->fCPSize);
 	return 1;
 }
 
 // native IsPlayerRaceCheckpointActive(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerRaceCheckpointActive(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::IsPlayerRaceCheckpointActive)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerRaceCheckpointActive");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1631,69 +1435,43 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerRaceCheckpointActive(AMX* amx, cell
 }
 
 // native GetPlayerRaceCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fNextX, &Float:fNextY, &fNextZ, &Float:fSize);
-static cell AMX_NATIVE_CALL Natives::GetPlayerRaceCheckpoint( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerRaceCheckpoint)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(8, "GetPlayerRaceCheckpoint");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	cell* cptr;
 	CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[playerid]->vecRaceCPPos;
 	CVector *vecNextPos = &pNetGame->pPlayerPool->pPlayer[playerid]->vecRaceCPNextPos;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(vecPos->fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(vecPos->fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(vecPos->fZ);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(vecNextPos->fX);
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(vecNextPos->fY);
-	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = amx_ftoc(vecNextPos->fZ);
-	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = amx_ftoc(pNetGame->pPlayerPool->pPlayer[playerid]->fRaceCPSize);
+
+	Utility::storeVectorInNative(amx, params[2], *vecPos);
+	Utility::storeVectorInNative(amx, params[5], *vecNextPos);
+	Utility::storeFloatInNative(amx, params[8], pNetGame->pPlayerPool->pPlayer[playerid]->fRaceCPSize);
 	return 1;
 }
 
 // native GetPlayerWorldBounds(playerid, &Float:x_max, &Float:x_min, &Float:y_max, &Float:y_min);
-static cell AMX_NATIVE_CALL Natives::GetPlayerWorldBounds( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerWorldBounds)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerWorldBounds");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	cell* cptr;
-	float *fBounds = pPlayerData[playerid]->fBounds;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(fBounds[0]);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(fBounds[1]);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(fBounds[2]);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(fBounds[3]);
+	for (BYTE i = 0; i != 4; i++)
+	{
+		Utility::storeFloatInNative(amx, params[2 + i], pPlayerData[playerid]->fBounds[i]);
+	}
 	return 1;
 }
 
 // native IsPlayerInModShop(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerInModShop( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerInModShop)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerInModShop");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1703,12 +1481,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerInModShop( AMX* amx, cell* params )
 }
 
 // native GetPlayerSirenState(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerSirenState( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerSirenState)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerSirenState");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1720,12 +1495,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSirenState( AMX* amx, cell* params
 }
 
 // native GetPlayerLandingGearState(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerLandingGearState( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerLandingGearState)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerLandingGearState");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1737,12 +1509,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerLandingGearState( AMX* amx, cell* 
 }
 
 // native GetPlayerHydraReactorAngle(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerHydraReactorAngle( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerHydraReactorAngle)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerHydraReactorAngle");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1754,12 +1523,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerHydraReactorAngle( AMX* amx, cell*
 }
 
 // native Float:GetPlayerTrainSpeed(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerTrainSpeed( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerTrainSpeed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerTrainSpeed");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1771,12 +1537,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerTrainSpeed( AMX* amx, cell* params
 }
 
 // native Float:GetPlayerZAim(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerZAim( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerZAim)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerZAim");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1786,36 +1549,23 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerZAim( AMX* amx, cell* params )
 }
 
 // native GetPlayerSurfingOffsets(playerid, &Float:fOffsetX, &Float:fOffsetY, &Float:fOffsetZ);
-static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingOffsets( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingOffsets)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetPlayerSurfingOffsets");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	CVector vecPos = pNetGame->pPlayerPool->pPlayer[playerid]->syncData.vecSurfing;
-
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(vecPos.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(vecPos.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(vecPos.fZ);
+	Utility::storeVectorInNative(amx, params[2], vecPos);
 	return 1;
 }
 
 // native GetPlayerRotationQuat(playerid, &Float:w, &Float:x, &Float:y, &Float:z);
-static cell AMX_NATIVE_CALL Natives::GetPlayerRotationQuat( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerRotationQuat)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerRotationQuat");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1823,25 +1573,17 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerRotationQuat( AMX* amx, cell* para
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pPlayer->fQuaternion[0]);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pPlayer->fQuaternion[1]);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pPlayer->fQuaternion[2]);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pPlayer->fQuaternion[3]);
+	Utility::storeFloatInNative(amx, params[2], pPlayer->fQuaternion[0]);
+	Utility::storeFloatInNative(amx, params[3], pPlayer->fQuaternion[1]);
+	Utility::storeFloatInNative(amx, params[4], pPlayer->fQuaternion[2]);
+	Utility::storeFloatInNative(amx, params[5], pPlayer->fQuaternion[3]);
 	return 1;
 }
 
 // native GetPlayerDialogID(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerDialogID( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerDialogID)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerDialogID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1851,12 +1593,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerDialogID( AMX* amx, cell* params )
 }
 
 // native GetPlayerSpectateID(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateID( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateID)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerSpectateID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1866,12 +1605,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateID( AMX* amx, cell* params
 }
 
 // native GetPlayerSpectateType(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateType( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateType)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerSpectateType");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1881,12 +1617,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSpectateType( AMX* amx, cell* para
 }
 
 // native GetPlayerLastSyncedVehicleID(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedVehicleID(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedVehicleID)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerLastSyncedVehicleID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1896,12 +1629,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedVehicleID(AMX* amx, cell
 }
 
 // native GetPlayerLastSyncedTrailerID(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedTrailerID(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedTrailerID)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerLastSyncedTrailerID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1911,12 +1641,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerLastSyncedTrailerID(AMX* amx, cell
 }
 
 // native GetPlayerFPS(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerFPS(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPlayerFPS)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerFPS");
 
 	// TODO
@@ -1924,12 +1651,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerFPS(AMX* amx, cell* params)
 }
 
 // native GetActorSpawnInfo(actorid, &skinid, &Float:fX, &Float:fY, &Float:fZ, &Float:fAngle);
-static cell AMX_NATIVE_CALL Natives::GetActorSpawnInfo(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetActorSpawnInfo)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(6, "GetActorSpawnInfo");
 
 	int actorid = static_cast<int>(params[1]);
@@ -1938,27 +1662,16 @@ static cell AMX_NATIVE_CALL Natives::GetActorSpawnInfo(AMX* amx, cell* params)
 	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
 	if(!pActor) return 0;
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = (cell)pActor->iSkinID;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pActor->vecSpawnPos.fX);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pActor->vecSpawnPos.fY);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pActor->vecSpawnPos.fZ);
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(pActor->fSpawnAngle);
+	Utility::storeIntegerInNative(amx, params[2], pActor->iSkinID);
+	Utility::storeVectorInNative(amx, params[3], pActor->vecSpawnPos);
+	Utility::storeFloatInNative(amx, params[6], pActor->fSpawnAngle);
 	return 1;
 }
 
 // native GetActorSkin(actorid);
-static cell AMX_NATIVE_CALL Natives::GetActorSkin(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetActorSkin)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetActorSkin");
 
 	int actorid = static_cast<int>(params[1]);
@@ -1972,12 +1685,9 @@ static cell AMX_NATIVE_CALL Natives::GetActorSkin(AMX* amx, cell* params)
 
 
 // native GetActorAnimation(actorid, animlib[], animlibsize = sizeof(animlib), animname[], animnamesize = sizeof(animname), &Float:fDelta, &loop, &lockx, &locky, &freeze, &time)
-static cell AMX_NATIVE_CALL Natives::GetActorAnimation(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetActorAnimation)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(11, "GetActorAnimation");
 
 	int actorid = static_cast<int>(params[1]);
@@ -1988,30 +1698,19 @@ static cell AMX_NATIVE_CALL Natives::GetActorAnimation(AMX* amx, cell* params)
 
 	set_amxstring(amx, params[2], pActor->anim.szAnimLib, params[3]);
 	set_amxstring(amx, params[4], pActor->anim.szAnimName, params[5]);
-
-	cell* cptr;
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(pActor->anim.fDelta);
-	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = *(cell*)pActor->anim.byteLoop;
-	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = *(cell*)pActor->anim.byteLockX;
-	amx_GetAddr(amx, params[9], &cptr);
-	*cptr = *(cell*)pActor->anim.byteLockY;
-	amx_GetAddr(amx, params[10], &cptr);
-	*cptr = *(cell*)pActor->anim.byteFreeze;
-	amx_GetAddr(amx, params[11], &cptr);
-	*cptr = *(cell*)pActor->anim.iTime;
+	Utility::storeFloatInNative(amx, params[6], pActor->anim.fDelta);
+	Utility::storeIntegerInNative(amx, params[7], pActor->anim.byteLoop);
+	Utility::storeIntegerInNative(amx, params[8], pActor->anim.byteLockX);
+	Utility::storeIntegerInNative(amx, params[9], pActor->anim.byteLockY);
+	Utility::storeIntegerInNative(amx, params[10], pActor->anim.byteFreeze);
+	Utility::storeIntegerInNative(amx, params[11], pActor->anim.iTime);
 	return 1;
 }
 
 // native SendBulletData(sender, hitid, hittype, weaponid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
-static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params ) 
+AMX_DECLARE_NATIVE(Natives::SendBulletData) 
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(14, "SendBulletData");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2038,22 +1737,19 @@ static cell AMX_NATIVE_CALL Natives::SendBulletData( AMX* amx, cell* params )
 
 	if(forplayerid == -1)
 	{
-		CSAMPFunctions::Send(pRakServer, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
+		CSAMPFunctions::Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
 	}
 	else
 	{
-		CSAMPFunctions::Send(pRakServer, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), false);
+		CSAMPFunctions::Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), false);
 	}
 	return 1;
 }
 
 // native ShowPlayerForPlayer(forplayerid, playerid);
-static cell AMX_NATIVE_CALL Natives::ShowPlayerForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::ShowPlayerForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "ShowPlayerForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -2066,17 +1762,14 @@ static cell AMX_NATIVE_CALL Natives::ShowPlayerForPlayer( AMX* amx, cell* params
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)playerid);
-	pRakServer->RPC(&RPC_WorldPlayerAdd, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	CSAMPFunctions::RPC(&RPC_WorldPlayerAdd, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
 // native HidePlayerForPlayer(forplayerid, playerid);
-static cell AMX_NATIVE_CALL Natives::HidePlayerForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::HidePlayerForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "HidePlayerForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -2089,17 +1782,14 @@ static cell AMX_NATIVE_CALL Natives::HidePlayerForPlayer( AMX* amx, cell* params
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)playerid);
-	pRakServer->RPC(&RPC_WorldPlayerRemove, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	CSAMPFunctions::RPC(&RPC_WorldPlayerRemove, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
 // native AddPlayerForPlayer(forplayerid, playerid, isnpc = 0);
-static cell AMX_NATIVE_CALL Natives::AddPlayerForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::AddPlayerForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "AddPlayerForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -2120,17 +1810,14 @@ static cell AMX_NATIVE_CALL Natives::AddPlayerForPlayer( AMX* amx, cell* params 
 	bs.Write((BYTE)npc); //  // isNPC
 	bs.Write(len);
 	bs.Write(szName, len);
-	pRakServer->RPC(&RPC_ServerJoin, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	CSAMPFunctions::RPC(&RPC_ServerJoin, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
 // native RemovePlayerForPlayer(forplayerid, playerid);
-static cell AMX_NATIVE_CALL Natives::RemovePlayerForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::RemovePlayerForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "RemovePlayerForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -2144,17 +1831,14 @@ static cell AMX_NATIVE_CALL Natives::RemovePlayerForPlayer( AMX* amx, cell* para
 	RakNet::BitStream bs;
 	bs.Write((WORD)playerid);
 	bs.Write((BYTE)0); 
-	pRakServer->RPC(&RPC_ServerQuit, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+	CSAMPFunctions::RPC(&RPC_ServerQuit, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0);
 	return 1;
 }
 
 // native SetPlayerChatBubbleForPlayer(forplayerid, playerid, text[], color, Float:drawdistance, expiretime);
-static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetPlayerChatBubbleForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(6, "SetPlayerChatBubbleForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -2179,35 +1863,31 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerChatBubbleForPlayer( AMX* amx, cel
 		bs.Write(expiretime);
 		bs.Write(len);
 		bs.Write(str, len);
-		pRakServer->RPC(&RPC_ChatBubble, &bs, LOW_PRIORITY, RELIABLE, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0);
+		CSAMPFunctions::RPC(&RPC_ChatBubble, &bs, LOW_PRIORITY, RELIABLE, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0);
 		return 1;
 	}
 	return 0;
 }
 
 // native ResetPlayerMarkerForPlayer(playerid, resetplayerid)
-static cell AMX_NATIVE_CALL Natives::ResetPlayerMarkerForPlayer(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::ResetPlayerMarkerForPlayer)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "ResetPlayerMarkerForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
 	int resetplayerid = static_cast<int>(params[2]);
 
 	if (!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(resetplayerid)) return 0;
-	return pPlayerData[playerid]->ResetPlayerMarkerForPlayer(static_cast<WORD>(resetplayerid));
+	
+	pPlayerData[playerid]->ResetPlayerMarkerForPlayer(static_cast<WORD>(resetplayerid));
+	return 1;
 }
-
+ 
 // native SetPlayerVersion(playerid, version[];
-static cell AMX_NATIVE_CALL Natives::SetPlayerVersion( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerVersion");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2226,12 +1906,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerVersion( AMX* amx, cell* params )
 }
 
 // native IsPlayerSpawned(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerSpawned( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerSpawned)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerSpawned");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2242,12 +1919,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerSpawned( AMX* amx, cell* params )
 }
 
 // native IsPlayerControllable(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerControllable( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerControllable)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerSpawned");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2257,12 +1931,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerControllable( AMX* amx, cell* param
 }
 
 // native SpawnForWorld(playerid);
-static cell AMX_NATIVE_CALL Natives::SpawnForWorld(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::SpawnForWorld)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "SpawnForWorld");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2273,12 +1944,9 @@ static cell AMX_NATIVE_CALL Natives::SpawnForWorld(AMX* amx, cell* params)
 }
 
 // native BroadcastDeath(playerid);
-static cell AMX_NATIVE_CALL Natives::BroadcastDeath(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::BroadcastDeath)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "BroadcastDeath");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2286,17 +1954,14 @@ static cell AMX_NATIVE_CALL Natives::BroadcastDeath(AMX* amx, cell* params)
 
 	RakNet::BitStream bsData;
 	bsData.Write((WORD)playerid);
-	pRakServer->RPC(&RPC_DeathBroadcast, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), true, false);
+	CSAMPFunctions::RPC(&RPC_DeathBroadcast, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), true, false);
 	return 1;
 }
 
 // native IsPlayerCameraTargetEnabled(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerCameraTargetEnabled( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerCameraTargetEnabled)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerCameraTargetEnabled");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2306,42 +1971,35 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerCameraTargetEnabled( AMX* amx, cell
 }
 
 // native SetPlayerDisabledKeysSync(playerid, keys);
-static cell AMX_NATIVE_CALL Natives::SetPlayerDisabledKeysSync( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetPlayerDisabledKeysSync)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerDisabledKeySync");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	pPlayerData[playerid]->dwDisabledKeys = static_cast<WORD>(params[2]);
+	pPlayerData[playerid]->wDisabledKeys = static_cast<WORD>(params[2]);
 	return 1;
 }
 
 // native GetPlayerDisabledKeysSync(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerDisabledKeysSync( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "SetPlayerDisabledKeySync");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	return pPlayerData[playerid]->dwDisabledKeys;
+	return pPlayerData[playerid]->wDisabledKeys;
 }
 
 // Scoreboard manipulation
 // native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
-static cell AMX_NATIVE_CALL Natives::TogglePlayerScoresPingsUpdate(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::TogglePlayerScoresPingsUpdate)
 {
-	if(!pServer) return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "TogglePlayerScoresPingsUpdate");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2354,10 +2012,9 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerScoresPingsUpdate(AMX *amx, cel
 }
 
 // native TogglePlayerFakePing(playerid, bool:toggle);
-static cell AMX_NATIVE_CALL Natives::TogglePlayerFakePing(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::TogglePlayerFakePing)
 {
-	if(!pServer) return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "TogglePlayerFakePing");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2370,10 +2027,9 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerFakePing(AMX *amx, cell *params
 }
 
 // native SetPlayerFakePing(playerid, ping);
-static cell AMX_NATIVE_CALL Natives::SetPlayerFakePing(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::SetPlayerFakePing)
 {
-	if(!pServer) return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerFakePing");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2386,10 +2042,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerFakePing(AMX *amx, cell *params)
 }
 
 // native TogglePlayerInServerQuery(playerid, bool:toggle);
-static cell AMX_NATIVE_CALL Natives::TogglePlayerInServerQuery(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::TogglePlayerInServerQuery)
 {
-	if (!pServer) return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "TogglePlayerInServerQuery");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2400,10 +2055,9 @@ static cell AMX_NATIVE_CALL Natives::TogglePlayerInServerQuery(AMX *amx, cell *p
 }
 
 // native IsPlayerToggledInServerQuery(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerToggledInServerQuery(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::IsPlayerToggledInServerQuery)
 {
-	if (!pServer) return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerToggledInServerQuery");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2413,7 +2067,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerToggledInServerQuery(AMX *amx, cell
 }
 
 // native IsPlayerPaused(playerid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerPaused(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::IsPlayerPaused)
 {
 	CHECK_PARAMS(1, "IsPlayerPaused");
 
@@ -2424,8 +2078,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerPaused(AMX *amx, cell *params)
 }
 
 // native GetPlayerPausedTime(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerPausedTime(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::GetPlayerPausedTime)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerPausedTime");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2438,12 +2093,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPausedTime(AMX *amx, cell *params)
 
 // Objects - global
 // native Float:GetObjectDrawDistance(objectid);
-static cell AMX_NATIVE_CALL Natives::GetObjectDrawDistance( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetObjectDrawDistance)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetObjectDrawDistance");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2454,12 +2106,9 @@ static cell AMX_NATIVE_CALL Natives::GetObjectDrawDistance( AMX* amx, cell* para
 }
 
 // native Float:SetObjectMoveSpeed(objectid, Float:fSpeed);
-static cell AMX_NATIVE_CALL Natives::SetObjectMoveSpeed( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetObjectMoveSpeed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetObjectMoveSpeed");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2471,12 +2120,9 @@ static cell AMX_NATIVE_CALL Natives::SetObjectMoveSpeed( AMX* amx, cell* params 
 }
 
 // native Float:GetObjectMoveSpeed(objectid);
-static cell AMX_NATIVE_CALL Natives::GetObjectMoveSpeed( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetObjectMoveSpeed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetObjectMoveSpeed");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2487,36 +2133,24 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMoveSpeed( AMX* amx, cell* params 
 }
 
 // native GetObjectTarget(objectid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL Natives::GetObjectTarget( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetObjectTarget)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetObjectTarget");
 
 	int objectid = static_cast<int>(params[1]);
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pObject->matTarget.pos.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pObject->matTarget.pos.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pObject->matTarget.pos.fZ);
+	Utility::storeVectorInNative(amx, params[2], pObject->matTarget.pos);
 	return 1;
 }
 
 // native GetObjectAttachedData(objectid, &vehicleid, &objectid, &attachedplayerid);
-static cell AMX_NATIVE_CALL Natives::GetObjectAttachedData( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetObjectAttachedData)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetObjectAttachedData");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2524,24 +2158,18 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedData( AMX* amx, cell* para
 	
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = (cell)pObject->wAttachedVehicleID;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)pObject->wAttachedObjectID;
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = (cell)pServer->COBJECT_AttachedObjectPlayer[objectid];
+	
+	Utility::storeIntegerInNative(amx, params[2], pObject->wAttachedVehicleID);
+	Utility::storeIntegerInNative(amx, params[3], pObject->wAttachedObjectID);
+	Utility::storeIntegerInNative(amx, params[4], CServer::Get()->COBJECT_AttachedObjectPlayer[objectid]);
 	return 1;
 }
 
 // native GetObjectAttachedOffset(objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
-static cell AMX_NATIVE_CALL Natives::GetObjectAttachedOffset( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetObjectAttachedOffset)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(7, "GetObjectAttachedOffset");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2549,30 +2177,16 @@ static cell AMX_NATIVE_CALL Natives::GetObjectAttachedOffset( AMX* amx, cell* pa
 
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedOffset.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedOffset.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedOffset.fZ);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedRotation.fX);
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedRotation.fY);
-	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = amx_ftoc(pObject->vecAttachedRotation.fZ);
+	Utility::storeVectorInNative(amx, params[2], pObject->vecAttachedOffset);
+	Utility::storeVectorInNative(amx, params[5], pObject->vecAttachedRotation);
 	return 1;
 }
 
 // native IsObjectMaterialSlotUsed(objectid, materialindex); // Return values: 1 = material, 2 = material text
-static cell AMX_NATIVE_CALL Natives::IsObjectMaterialSlotUsed( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsObjectMaterialSlotUsed");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2598,12 +2212,9 @@ static cell AMX_NATIVE_CALL Natives::IsObjectMaterialSlotUsed( AMX* amx, cell* p
 }
 
 // native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
-static cell AMX_NATIVE_CALL Natives::GetObjectMaterial( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(8, "GetObjectMaterial");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2625,25 +2236,17 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterial( AMX* amx, cell* params )
 	}
 	if(i == 16) return 0;
 
-	cell *cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)pObject->Material[i].wModelID; //  modelid
-
+	Utility::storeIntegerInNative(amx, params[3], pObject->Material[i].wModelID);
 	set_amxstring(amx, params[4], pObject->Material[i].szMaterialTXD, params[5]); // txdname[], txdnamelen = sizeof(txdname)
 	set_amxstring(amx, params[6], pObject->Material[i].szMaterialTexture, params[7]); // texturenamelen = sizeof(txdnamelen),
-
-	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = ABGR_ARGB(pObject->Material[i].dwMaterialColor); // materialcolor
+	Utility::storeIntegerInNative(amx, params[8], ABGR_ARGB(pObject->Material[i].dwMaterialColor));
 	return 1;
 }
 
 // native GetObjectMaterialText(objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
-static cell AMX_NATIVE_CALL Natives::GetObjectMaterialText( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(12, "GetObjectMaterialText");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2665,35 +2268,21 @@ static cell AMX_NATIVE_CALL Natives::GetObjectMaterialText( AMX* amx, cell* para
 	}
 	if(i == 16) return 0;
 
-	cell *cptr;
-
 	set_amxstring(amx, params[3], pObject->szMaterialText[i], params[4]); 
-
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = (cell)pObject->Material[i].byteMaterialSize; // materialsize
-
+	Utility::storeIntegerInNative(amx, params[5], pObject->Material[i].byteMaterialSize);
 	set_amxstring(amx, params[6], pObject->Material[i].szFont, params[7]); 
-
-	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = (cell)pObject->Material[i].byteFontSize; // fontsize
-	amx_GetAddr(amx, params[9], &cptr);
-	*cptr = (cell)pObject->Material[i].byteBold; // bold
-	amx_GetAddr(amx, params[10], &cptr);
-	*cptr = (cell)pObject->Material[i].dwFontColor; // fontcolor
-	amx_GetAddr(amx, params[11], &cptr);
-	*cptr = (cell)pObject->Material[i].dwBackgroundColor; // backcolor
-	amx_GetAddr(amx, params[12], &cptr);
-	*cptr = (cell)pObject->Material[i].byteAlignment; // textalignment
+	Utility::storeIntegerInNative(amx, params[8], pObject->Material[i].byteFontSize);
+	Utility::storeIntegerInNative(amx, params[9], pObject->Material[i].byteBold);
+	Utility::storeIntegerInNative(amx, params[10], pObject->Material[i].dwFontColor);
+	Utility::storeIntegerInNative(amx, params[11], pObject->Material[i].dwBackgroundColor);
+	Utility::storeIntegerInNative(amx, params[12], pObject->Material[i].byteAlignment);
 	return 1;
 }
 
 // native IsObjectNoCameraCol(objectid);
-static cell AMX_NATIVE_CALL Natives::IsObjectNoCameraCol( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsObjectNoCameraCol)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsObjectNoCameraCol");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2705,12 +2294,9 @@ static cell AMX_NATIVE_CALL Natives::IsObjectNoCameraCol( AMX* amx, cell* params
 }
 
 // native Float:GetPlayerObjectDrawDistance(playerid, objectid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerObjectDrawDistance( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerObjectDrawDistance)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerObjectDrawDistance");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2724,12 +2310,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectDrawDistance( AMX* amx, cell
 }
 
 // native Float:SetPlayerObjectMoveSpeed(playerid, objectid, Float:fSpeed);
-static cell AMX_NATIVE_CALL Natives::SetPlayerObjectMoveSpeed( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetPlayerObjectMoveSpeed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerObjectMoveSpeed");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2744,12 +2327,9 @@ static cell AMX_NATIVE_CALL Natives::SetPlayerObjectMoveSpeed( AMX* amx, cell* p
 }
 
 // native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMoveSpeed( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMoveSpeed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerObjectMoveSpeed");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2763,12 +2343,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMoveSpeed( AMX* amx, cell* p
 }
 
 // native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL Natives::GetPlayerObjectTarget( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerObjectTarget)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerObjectTarget");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2778,24 +2355,15 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectTarget( AMX* amx, cell* para
 
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pObject->matTarget.pos.fX);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pObject->matTarget.pos.fY);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pObject->matTarget.pos.fZ);
+	Utility::storeVectorInNative(amx, params[3], pObject->matTarget.pos);
 	return 1;
 }
 
 // native GetPlayerObjectAttachedData(playerid, objectid, &vehicleid, &objectid, &attachedplayerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerObjectAttachedData");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2805,24 +2373,17 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedData( AMX* amx, cell
 	
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)pObject->wAttachedVehicleID;
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = (cell)pPlayerData[playerid]->stObj[objectid].wObjectID;
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = (cell)pPlayerData[playerid]->stObj[objectid].wAttachPlayerID;
+	Utility::storeIntegerInNative(amx, params[3], pObject->wAttachedVehicleID);
+	Utility::storeIntegerInNative(amx, params[4], pPlayerData[playerid]->stObj[objectid].wObjectID);
+	Utility::storeIntegerInNative(amx, params[5], pPlayerData[playerid]->stObj[objectid].wAttachPlayerID);
 	return 1;
 }
 
 // native GetPlayerObjectAttachedOffset(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
-static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(8, "GetPlayerObjectAttachedOffset");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2832,9 +2393,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, ce
 
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	cell* cptr;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	
 	CVector* vecOffset = NULL;
 	CVector* vecRot = NULL;
 	
@@ -2849,28 +2408,15 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectAttachedOffset( AMX* amx, ce
 		vecRot = &pPlayerData[playerid]->stObj[objectid].vecRot;
 	}
 	
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(vecOffset->fX);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(vecOffset->fY);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(vecOffset->fZ);
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(vecRot->fX);
-	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = amx_ftoc(vecRot->fY);
-	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = amx_ftoc(vecRot->fZ);
+	Utility::storeVectorInNative(amx, params[3], *vecOffset);
+	Utility::storeVectorInNative(amx, params[6], *vecRot);
 	return 1;
 }
 
 // native IsPlayerObjectMaterialSlotUsed(playerid, objectid, materialindex); // Return values: 1 = material, 2 = material text
-static cell AMX_NATIVE_CALL Natives::IsPlayerObjectMaterialSlotUsed( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "IsPlayerObjectMaterialSlotUsed");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2898,12 +2444,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerObjectMaterialSlotUsed( AMX* amx, c
 
 
 // native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
-static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterial( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(9, "GetPlayerObjectMaterial");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2915,7 +2458,6 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterial( AMX* amx, cell* pa
 
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	cell* cptr;
 	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
@@ -2927,24 +2469,17 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterial( AMX* amx, cell* pa
 	}
 	if(i == 16) return 0;
 
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = (cell)pObject->Material[i].wModelID; //  modelid
-
+	Utility::storeIntegerInNative(amx, params[4], pObject->Material[i].wModelID); //  modelid
 	set_amxstring(amx, params[5], pObject->Material[i].szMaterialTXD, params[6]); // txdname[], txdnamelen = sizeof(txdname)
 	set_amxstring(amx, params[7], pObject->Material[i].szMaterialTexture, params[8]); // texturenamelen = sizeof(txdnamelen),
-
-	amx_GetAddr(amx, params[9], &cptr);
-	*cptr = ABGR_ARGB(pObject->Material[i].dwMaterialColor); // materialcolor
+	Utility::storeIntegerInNative(amx, params[9], ABGR_ARGB(pObject->Material[i].dwMaterialColor)); // materialcolor
 	return 1;
 }
 
 // native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
-static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(13, "GetPlayerObjectMaterialText");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2956,7 +2491,6 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	cell* cptr;
 	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
@@ -2969,32 +2503,20 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerObjectMaterialText( AMX* amx, cell
 	if(i == 16) return 0;
 
 	set_amxstring(amx, params[4], pObject->szMaterialText[i], params[5]); 
-
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = (cell)pObject->Material[i].byteMaterialSize; // materialsize
-
+	Utility::storeIntegerInNative(amx, params[6], pObject->Material[i].byteMaterialSize); // materialsize
 	set_amxstring(amx, params[7], pObject->Material[i].szFont, params[8]); 
-
-	amx_GetAddr(amx, params[9], &cptr);
-	*cptr = (cell)pObject->Material[i].byteFontSize; // fontsize
-	amx_GetAddr(amx, params[10], &cptr);
-	*cptr = (cell)pObject->Material[i].byteBold; // bold
-	amx_GetAddr(amx, params[11], &cptr);
-	*cptr = (cell)pObject->Material[i].dwFontColor; // fontcolor
-	amx_GetAddr(amx, params[12], &cptr);
-	*cptr = (cell)pObject->Material[i].dwBackgroundColor; // backcolor
-	amx_GetAddr(amx, params[13], &cptr);
-	*cptr = (cell)pObject->Material[i].byteAlignment; // textalignment
+	Utility::storeIntegerInNative(amx, params[9], pObject->Material[i].byteFontSize);
+	Utility::storeIntegerInNative(amx, params[10], pObject->Material[i].byteBold);
+	Utility::storeIntegerInNative(amx, params[11], pObject->Material[i].dwFontColor);
+	Utility::storeIntegerInNative(amx, params[12], pObject->Material[i].dwBackgroundColor);
+	Utility::storeIntegerInNative(amx, params[13], pObject->Material[i].byteAlignment);
 	return 1;
 }
 
 // native IsPlayerObjectNoCameraCol(playerid, objectid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerObjectNoCameraCol( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerObjectNoCameraCol)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerObjectNoCameraCol");
 
 	int playerid = static_cast<int>(params[1]);
@@ -3008,12 +2530,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerObjectNoCameraCol( AMX* amx, cell* 
 }
 
 // native GetPlayerSurfingPlayerObjectID(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingPlayerObjectID( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingPlayerObjectID)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerSurfingPlayerObjectID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -3029,12 +2548,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerSurfingPlayerObjectID( AMX* amx, c
 }
 
 // native GetPlayerCameraTargetPlayerObj(playerid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerCameraTargetPlayerObj( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerCameraTargetPlayerObj)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerCameraTargetPlayerObj");
 
 	int playerid = static_cast<int>(params[1]);
@@ -3053,12 +2569,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerCameraTargetPlayerObj( AMX* amx, c
 }
 
 // native GetObjectType(playerid, objectid);
-static cell AMX_NATIVE_CALL Natives::GetObjectType( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetObjectType)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetObjectType");
 
 	int playerid = static_cast<int>(params[1]);
@@ -3077,12 +2590,9 @@ static cell AMX_NATIVE_CALL Natives::GetObjectType( AMX* amx, cell* params )
 }
 
 // native GetPlayerAttachedObject(playerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
-static cell AMX_NATIVE_CALL Natives::GetPlayerAttachedObject( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(15, "GetPlayerAttachedObject");
 
 	int playerid = static_cast<int>(params[1]);
@@ -3091,50 +2601,22 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerAttachedObject( AMX* amx, cell* pa
 	if(slot < 0 || slot >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->attachedObjectSlot[slot]) return 0;
 
-	cell* cptr;
 	CAttachedObject *pObject = &pNetGame->pPlayerPool->pPlayer[playerid]->attachedObject[slot];
-	
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = *(cell*)&pObject->iModelID;	
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = *(cell*)&pObject->iBoneiD;	
-	
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pObject->vecPos.fX);
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(pObject->vecPos.fY);
-	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = amx_ftoc(pObject->vecPos.fZ);
-
-	amx_GetAddr(amx, params[8], &cptr);
-	*cptr = amx_ftoc(pObject->vecRot.fX);
-	amx_GetAddr(amx, params[9], &cptr);
-	*cptr = amx_ftoc(pObject->vecRot.fY);
-	amx_GetAddr(amx, params[10], &cptr);
-	*cptr = amx_ftoc(pObject->vecRot.fZ);
-
-	amx_GetAddr(amx, params[11], &cptr);
-	*cptr = amx_ftoc(pObject->vecScale.fX);
-	amx_GetAddr(amx, params[12], &cptr);
-	*cptr = amx_ftoc(pObject->vecScale.fY);
-	amx_GetAddr(amx, params[13], &cptr);
-	*cptr = amx_ftoc(pObject->vecScale.fZ);
-
-	amx_GetAddr(amx, params[14], &cptr);
-	*cptr = RGBA_ABGR(pObject->dwMaterialColor1);
-	amx_GetAddr(amx, params[15], &cptr);
-	*cptr = RGBA_ABGR(pObject->dwMaterialColor2);
+	Utility::storeIntegerInNative(amx, params[3], pObject->iBoneiD);
+	Utility::storeIntegerInNative(amx, params[4], pObject->iBoneiD);
+	Utility::storeVectorInNative(amx, params[5], pObject->vecPos);
+	Utility::storeVectorInNative(amx, params[8], pObject->vecRot);
+	Utility::storeVectorInNative(amx, params[11], pObject->vecScale);
+	Utility::storeIntegerInNative(amx, params[14], RGBA_ABGR(pObject->dwMaterialColor1));
+	Utility::storeIntegerInNative(amx, params[15], RGBA_ABGR(pObject->dwMaterialColor2));
 	return 1;
 }
 
 // Vehicle functions
 // native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
-static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(7, "GetVehicleSpawnInfo");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3145,8 +2627,8 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params
 		return 0;
 
 	CVehicleSpawn spawn; 
-	std::map<int, CVehicleSpawn>::iterator v = pServer->vehicleSpawnData.find(vehicleid);
-	if(v == pServer->vehicleSpawnData.end())
+	std::unordered_map<int, CVehicleSpawn>::iterator v = CServer::Get()->vehicleSpawnData.find(vehicleid);
+	if(v == CServer::Get()->vehicleSpawnData.end())
 	{
 		spawn.vecPos = pVehicle->customSpawn.vecPos;
 		spawn.fRot = pVehicle->customSpawn.fRot;
@@ -3161,30 +2643,17 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleSpawnInfo( AMX* amx, cell* params
 		spawn.iColor1 = v->second.iColor1;
 		spawn.iColor2 = v->second.iColor2;	
 	}
-
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(spawn.vecPos.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(spawn.vecPos.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(spawn.vecPos.fZ);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(spawn.fRot);
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = (cell)spawn.iColor1;
-	amx_GetAddr(amx, params[7], &cptr);
-	*cptr = (cell)spawn.iColor2;
+	Utility::storeVectorInNative(amx, params[2], spawn.vecPos);
+	Utility::storeFloatInNative(amx, params[5], spawn.fRot);
+	Utility::storeIntegerInNative(amx, params[6], spawn.iColor1);
+	Utility::storeIntegerInNative(amx, params[7], spawn.iColor2);
 	return 1;
 }
 
 // native SetVehicleSpawnInfo(vehicleid, modelid, Float:fX, Float:fY, Float:fZ, Float:fAngle, color1, color2, respawntime = -2, interior = -2);
-static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 {
-	// If unknown server version
-	if(!pServer || !CAddress::FUNC_CVehicle__Respawn)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized() || !CAddress::FUNC_CVehicle__Respawn) return -2147483647; // If unknown server version
 	CHECK_PARAMS(10, "SetVehicleSpawnInfo");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3235,13 +2704,13 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 		spawn.iInterior = interior;
 	}
 	
-	std::map<int, CVehicleSpawn>::iterator v = pServer->vehicleSpawnData.find(pVehicle->wVehicleID);
-	if(v != pServer->vehicleSpawnData.end())
+	std::unordered_map<int, CVehicleSpawn>::iterator v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
+	if(v != CServer::Get()->vehicleSpawnData.end())
 	{
-		pServer->vehicleSpawnData.erase(v);
+		CServer::Get()->vehicleSpawnData.erase(v);
 		// logprintf("add custom");
 	}
-	pServer->vehicleSpawnData.insert(std::make_pair(vehicleid, spawn));
+	CServer::Get()->vehicleSpawnData.insert(std::make_pair(vehicleid, spawn));
 
 	// logprintf("streamedin: %d, iRespawnTime: %d, interior: %d", bStreamedIn, respawntime, interior);
 
@@ -3258,12 +2727,9 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleSpawnInfo( AMX* amx, cell* params
 }
 
 // native GetVehicleModelCount(modelid);
-static cell AMX_NATIVE_CALL Natives::GetVehicleModelCount( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleModelCount)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleModelCount");
 
 	int modelid = static_cast<int>(params[1]);
@@ -3273,12 +2739,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleModelCount( AMX* amx, cell* param
 }
 
 // native GetVehicleModelsUsed();
-static cell AMX_NATIVE_CALL Natives::GetVehicleModelsUsed( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleModelsUsed)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	BYTE byteModelsUsed = 0;
 	for(BYTE i = 0; i != 212; i++)
 	{
@@ -3290,12 +2753,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleModelsUsed( AMX* amx, cell* param
 }
 
 // native GetVehicleColor(vehicleid, &color1, &color2);
-static cell AMX_NATIVE_CALL Natives::GetVehicleColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleColor)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "GetVehicleColor");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3303,39 +2763,20 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleColor( AMX* amx, cell* params )
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
-
-	cell* cptr;
+	
 	CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
+	int color1 = CServer::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor1 : pVehicle->customSpawn.iColor1;
+	int color2 = CServer::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor2 : pVehicle->customSpawn.iColor2;
 
-	amx_GetAddr(amx, params[2], &cptr);
-	if(pServer->bChangedVehicleColor[vehicleid])
-	{
-		*cptr = *(cell*)&pVehicle->vehModInfo.iColor1;
-	}
-	else
-	{
-		*cptr = *(cell*)&pVehicle->customSpawn.iColor1;
-	}
-
-	amx_GetAddr(amx, params[3], &cptr);
-	if(pServer->bChangedVehicleColor[vehicleid])
-	{
-		*cptr = *(cell*)&pVehicle->vehModInfo.iColor2;
-	}
-	else
-	{
-		*cptr = *(cell*)&pVehicle->customSpawn.iColor2;
-	}
+	Utility::storeIntegerInNative(amx, params[2], color1);
+	Utility::storeIntegerInNative(amx, params[3], color2);
 	return 1;
 }
 
 // native GetVehiclePaintjob(vehicleid);
-static cell AMX_NATIVE_CALL Natives::GetVehiclePaintjob( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehiclePaintjob)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetVehiclePaintjob");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3348,12 +2789,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehiclePaintjob( AMX* amx, cell* params 
 }
 
 // native GetVehicleInterior(vehicleid);
-static cell AMX_NATIVE_CALL Natives::GetVehicleInterior( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleInterior)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleInterior");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3366,12 +2804,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleInterior( AMX* amx, cell* params 
 }
 
 // native GetVehicleNumberPlate(vehicleid, plate[], len = sizeof(plate));
-static cell AMX_NATIVE_CALL Natives::GetVehicleNumberPlate( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleNumberPlate)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "GetVehicleNumberPlate");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3384,12 +2819,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleNumberPlate( AMX* amx, cell* para
 }
 
 // native SetVehicleRespawnDelay(vehicleid, delay);
-static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnDelay( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnDelay)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetVehicleRespawnDelay");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3403,12 +2835,9 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnDelay( AMX* amx, cell* par
 }
 
 // native GetVehicleRespawnDelay(vehicleid);
-static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnDelay( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnDelay)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleRespawnDelay");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3421,12 +2850,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnDelay( AMX* amx, cell* par
 }
 
 // native SetVehicleOccupiedTick(vehicleid, ticks);
-static cell AMX_NATIVE_CALL Natives::SetVehicleOccupiedTick( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetVehicleOccupiedTick)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetVehicleOccupiedTick");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3440,12 +2866,9 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleOccupiedTick( AMX* amx, cell* par
 }
 
 // native GetVehicleOccupiedTick(vehicleid);
-static cell AMX_NATIVE_CALL Natives::GetVehicleOccupiedTick( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleOccupiedTick)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleOccupiedTick");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3458,12 +2881,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleOccupiedTick( AMX* amx, cell* par
 }
 
 // native SetVehicleRespawnTick(vehicleid, ticks);
-static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnTick( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnTick)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetVehicleRespawnTick");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3477,12 +2897,9 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleRespawnTick( AMX* amx, cell* para
 }
 
 // native GetVehicleRespawnTick(vehicleid);
-static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnTick( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnTick)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleRespawnTick");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3495,12 +2912,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleRespawnTick( AMX* amx, cell* para
 }
 
 // native GetVehicleLastDriver(vehicleid);
-static cell AMX_NATIVE_CALL Natives::GetVehicleLastDriver( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleLastDriver)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleLastDriver");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3513,12 +2927,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleLastDriver( AMX* amx, cell* param
 }
 
 // native GetVehicleCab(vehicleid);
-static cell AMX_NATIVE_CALL Natives::GetVehicleCab( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetVehicleCab)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleCab");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3540,12 +2951,9 @@ static cell AMX_NATIVE_CALL Natives::GetVehicleCab( AMX* amx, cell* params )
 }
 
 // native HasVehicleBeenOccupied(vehicleid);
-static cell AMX_NATIVE_CALL Natives::HasVehicleBeenOccupied( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::HasVehicleBeenOccupied)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "HasVehicleBeenOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3558,12 +2966,9 @@ static cell AMX_NATIVE_CALL Natives::HasVehicleBeenOccupied( AMX* amx, cell* par
 }
 
 // native SetVehicleBeenOccupied(vehicleid, occupied);
-static cell AMX_NATIVE_CALL Natives::SetVehicleBeenOccupied( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetVehicleBeenOccupied)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetVehicleBeenOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3572,17 +2977,14 @@ static cell AMX_NATIVE_CALL Natives::SetVehicleBeenOccupied( AMX* amx, cell* par
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	pNetGame->pVehiclePool->pVehicle[vehicleid]->bOccupied = !!params[2];;
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->bOccupied = static_cast<BYTE>(params[2]) != 0;
 	return 1;
 }
 
 // native IsVehicleOccupied(vehicleid);
-static cell AMX_NATIVE_CALL Natives::IsVehicleOccupied( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsVehicleOccupied)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsVehicleOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3601,12 +3003,9 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleOccupied( AMX* amx, cell* params )
 }
 
 // native IsVehicleDead(vehicleid);
-static cell AMX_NATIVE_CALL Natives::IsVehicleDead( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsVehicleDead)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsVehicleDead");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3620,19 +3019,21 @@ static cell AMX_NATIVE_CALL Natives::IsVehicleDead( AMX* amx, cell* params )
 
 // Gangzone functions
 // native IsValidGangZone(zoneid);
-static cell AMX_NATIVE_CALL Natives::IsValidGangZone( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsValidGangZone)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsValidGangZone");
 	
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	return pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid));
+	return CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid));
 }
 
 // native IsGangZoneVisibleForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::IsGangZoneVisibleForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsGangZoneVisibleForPlayer)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsGangZoneVisibleForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3640,14 +3041,15 @@ static cell AMX_NATIVE_CALL Natives::IsGangZoneVisibleForPlayer( AMX* amx, cell*
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid)) != 0xFF);
 }
 
 // native GangZoneGetColorForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::GangZoneGetColorForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GangZoneGetColorForPlayer)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GangZoneGetColorForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3655,7 +3057,7 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetColorForPlayer( AMX* amx, cell* 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
@@ -3666,8 +3068,9 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetColorForPlayer( AMX* amx, cell* 
 }
 
 // native GangZoneGetFlashColorForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::GangZoneGetFlashColorForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GangZoneGetFlashColorForPlayer)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GangZoneGetFlashColorForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3675,7 +3078,7 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetFlashColorForPlayer( AMX* amx, c
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
@@ -3686,8 +3089,9 @@ static cell AMX_NATIVE_CALL Natives::GangZoneGetFlashColorForPlayer( AMX* amx, c
 }
 
 // native IsGangZoneFlashingForPlayer(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::IsGangZoneFlashingForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsGangZoneFlashingForPlayer)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsGangZoneFlashingForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3695,7 +3099,7 @@ static cell AMX_NATIVE_CALL Natives::IsGangZoneFlashingForPlayer( AMX* amx, cell
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
@@ -3706,8 +3110,9 @@ static cell AMX_NATIVE_CALL Natives::IsGangZoneFlashingForPlayer( AMX* amx, cell
 }
 
 // native IsPlayerInGangZone(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerInGangZone( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerInGangZone)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerInGangZone");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3715,7 +3120,7 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerInGangZone( AMX* amx, cell* params 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+	if(!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 	if(id != 0xFFFF) 
@@ -3726,35 +3131,29 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerInGangZone( AMX* amx, cell* params 
 }
 
 // native GangZoneGetPos(zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
-static cell AMX_NATIVE_CALL Natives::GangZoneGetPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GangZoneGetPos");
 
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
-	if(!pServer->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
+	if(!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
 	
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pServer->pGangZonePool->pGangZone[zoneid]->fGangZone[0]);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pServer->pGangZonePool->pGangZone[zoneid]->fGangZone[1]);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pServer->pGangZonePool->pGangZone[zoneid]->fGangZone[2]);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pServer->pGangZonePool->pGangZone[zoneid]->fGangZone[3]);
+	CGangZone *pGangZone = CServer::Get()->pGangZonePool->pGangZone[zoneid];
+	Utility::storeFloatInNative(amx, params[2], pGangZone->fGangZone[0]);
+	Utility::storeFloatInNative(amx, params[3], pGangZone->fGangZone[1]);
+	Utility::storeFloatInNative(amx, params[4], pGangZone->fGangZone[2]);
+	Utility::storeFloatInNative(amx, params[5], pGangZone->fGangZone[3]);
 	return 1;
 }
 
 // Textdraw functions
 // native IsValidTextDraw(textdrawid);
-static cell AMX_NATIVE_CALL Natives::IsValidTextDraw( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsValidTextDraw");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3764,8 +3163,9 @@ static cell AMX_NATIVE_CALL Natives::IsValidTextDraw( AMX* amx, cell* params )
 }
 
 // native IsTextDrawVisibleForPlayer(playerid, textdrawid);
-static cell AMX_NATIVE_CALL Natives::IsTextDrawVisibleForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsTextDrawVisibleForPlayer)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
 	CHECK_PARAMS(2, "IsTextDrawVisibleForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3780,12 +3180,9 @@ static cell AMX_NATIVE_CALL Natives::IsTextDrawVisibleForPlayer( AMX* amx, cell*
 }
 
 // native TextDrawGetString(textdrawid, text[], len = sizeof(text));
-static cell AMX_NATIVE_CALL Natives::TextDrawGetString( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetString");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3796,8 +3193,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetString( AMX* amx, cell* params )
 }
 
 // native TextDrawSetPos(textdrawid, Float:fX, Float:fY);
-static cell AMX_NATIVE_CALL Natives::TextDrawSetPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "TextDrawPos");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3806,14 +3204,15 @@ static cell AMX_NATIVE_CALL Natives::TextDrawSetPos( AMX* amx, cell* params )
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
-	pTD->fX = amx_ctof(params[2]);
-	pTD->fY = amx_ctof(params[3]);
+	pTD->vecPos.fX = amx_ctof(params[2]);
+	pTD->vecPos.fY = amx_ctof(params[3]);
 	return 1;
 }
 
 // native TextDrawGetLetterSize(textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetLetterSize( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetLetterSize)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetLetterSize");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3822,17 +3221,14 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetLetterSize( AMX* amx, cell* para
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pTD->fLetterWidth);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->fLetterHeight);
+	Utility::storeVectorInNative(amx, params[2], pTD->vecLetter);
 	return 1;
 }
 
 // native TextDrawGetTextSize(textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetTextSize( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetTextSize)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetTextSize");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3841,17 +3237,14 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetTextSize( AMX* amx, cell* params
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pTD->fLineWidth);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->fLineHeight);
+	Utility::storeVectorInNative(amx, params[2], pTD->vecLine);
 	return 1;
 }
 
 // native TextDrawGetPos(textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetPos)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetPos");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3860,17 +3253,14 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetPos( AMX* amx, cell* params )
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pTD->fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->fY);
+	Utility::storeVectorInNative(amx, params[2], pTD->vecPos);
 	return 1;
 }
 
 // native TextDrawGetColor(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetColor");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3883,8 +3273,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetColor( AMX* amx, cell* params )
 }
 
 // native TextDrawGetBoxColor(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetBoxColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetBoxColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetBoxColor");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3897,8 +3288,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetBoxColor( AMX* amx, cell* params
 }
 
 // native TextDrawGetBackgroundColor(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetBackgroundColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetBackgroundColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetBackgroundColor");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3911,7 +3303,7 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetBackgroundColor( AMX* amx, cell*
 }
 
 // native TextDrawGetShadow(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetShadow( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetShadow)
 {
 	CHECK_PARAMS(1, "TextDrawGetShadow");
 	
@@ -3925,8 +3317,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetShadow( AMX* amx, cell* params )
 }
 
 // native TextDrawGetOutline(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetOutline( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetOutline)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetOutline");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3939,8 +3332,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetOutline( AMX* amx, cell* params 
 }
 
 // native TextDrawGetFont(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetFont( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetFont)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetOutline");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3953,8 +3347,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetFont( AMX* amx, cell* params )
 }
 
 // native TextDrawIsBox(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawIsBox( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawIsBox)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawIsBox");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3967,8 +3362,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawIsBox( AMX* amx, cell* params )
 }
 
 // native TextDrawIsProportional(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawIsProportional( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawIsProportional)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawIsProportional");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3981,8 +3377,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawIsProportional( AMX* amx, cell* par
 }
 
 // native TextDrawIsSelectable(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawIsSelectable( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawIsSelectable)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawIsSelectable");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3995,8 +3392,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawIsSelectable( AMX* amx, cell* param
 }
 
 // native TextDrawGetAlignment(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetAlignment( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetAlignment)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetAlignment");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -4014,8 +3412,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetAlignment( AMX* amx, cell* param
 }
 
 // native TextDrawGetPreviewModel(textdrawid);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewModel( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewModel)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server
 	CHECK_PARAMS(1, "TextDrawGetPreviewModel");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -4028,8 +3427,9 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewModel( AMX* amx, cell* pa
 }
 
 // native TextDrawGetPreviewRot(textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewRot( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewRot)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
 	CHECK_PARAMS(5, "TextDrawGetPreviewRot");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -4038,21 +3438,15 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewRot( AMX* amx, cell* para
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fZ);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pTD->fZoom);
+	Utility::storeVectorInNative(amx, params[2], pTD->vecRot);
+	Utility::storeFloatInNative(amx, params[5], pTD->fZoom);
 	return 1;
 }
 
 // native TextDrawGetPreviewVehCol(textdrawid, &color1, &color2);
-static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewVehCol( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewVehCol)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetPreviewVehCol");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -4061,18 +3455,16 @@ static cell AMX_NATIVE_CALL Natives::TextDrawGetPreviewVehCol( AMX* amx, cell* p
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = (cell)pTD->color1;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)pTD->color2;
+	Utility::storeIntegerInNative(amx, params[2], pTD->color1);
+	Utility::storeIntegerInNative(amx, params[3], pTD->color2);
 	return 1;
 }
 
 // Per-Player textdraws
 // native IsValidPlayerTextDraw(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::IsValidPlayerTextDraw( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsValidPlayerTextDraw)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
 	CHECK_PARAMS(2, "IsValidPlayerTextDraw");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4086,8 +3478,9 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayerTextDraw( AMX* amx, cell* para
 }
 
 // native IsPlayerTextDrawVisible(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerTextDrawVisible( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerTextDrawVisible)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerTextDrawVisible");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4101,8 +3494,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerTextDrawVisible( AMX* amx, cell* pa
 }
 
 // native PlayerTextDrawGetString(playerid, PlayerText:textdrawid, text[], len = sizeof(text));
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetString( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetString)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawGetString");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4119,8 +3513,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetString( AMX* amx, cell* pa
 }
 
 // native PlayerTextDrawSetPos(playerid, PlayerText:textdrawid, Float:fX, Float:fY);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawSetPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawSetPos)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawSetPos");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4132,14 +3527,15 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawSetPos( AMX* amx, cell* param
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	pTD->fX = amx_ctof(params[3]);
-	pTD->fY = amx_ctof(params[4]);
+	pTD->vecPos.fX = amx_ctof(params[3]);
+	pTD->vecPos.fY = amx_ctof(params[4]);
 	return 1;
 }
 
 // native PlayerTextDrawGetLetterSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetLetterSize( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetLetterSize)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
 	CHECK_PARAMS(4, "PlayerTextDrawGetLetterSize");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4151,17 +3547,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetLetterSize( AMX* amx, cell
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->fLetterWidth);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pTD->fLetterHeight);
+	Utility::storeVectorInNative(amx, params[3], pTD->vecLetter);
 	return 1;
 }
 
 // native PlayerTextDrawGetTextSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetTextSize( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetTextSize)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawGetTextSize");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4173,17 +3566,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetTextSize( AMX* amx, cell* 
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->fLineWidth);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pTD->fLineHeight);
+	Utility::storeVectorInNative(amx, params[3], pTD->vecLine);
 	return 1;
 }
 
 // native PlayerTextDrawGetPos(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPos)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawGetPos");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4195,17 +3585,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPos( AMX* amx, cell* param
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->fX);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pTD->fY);
+	Utility::storeVectorInNative(amx, params[3], pTD->vecPos);
 	return 1;
 }
 
 // native PlayerTextDrawGetColor(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4220,8 +3607,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetColor( AMX* amx, cell* par
 }
 
 // native PlayerTextDrawGetBoxColor(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetBoxColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBoxColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
 	CHECK_PARAMS(2, "PlayerTextDrawGetBoxColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4236,8 +3624,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetBoxColor( AMX* amx, cell* 
 }
 
 // native PlayerTextDrawGetBackgroundCol(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetBackgroundCol( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBackgroundCol)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
 	CHECK_PARAMS(2, "PlayerTextDrawGetBackgroundCol");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4252,8 +3641,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetBackgroundCol( AMX* amx, c
 }
 
 // native PlayerTextDrawGetShadow(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetShadow( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetShadow)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetShadow");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4268,8 +3658,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetShadow( AMX* amx, cell* pa
 }
 
 // native PlayerTextDrawGetOutline(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetOutline( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetOutline)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetOutline");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4284,8 +3675,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetOutline( AMX* amx, cell* p
 }
 
 // native PlayerTextDrawGetFont(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetFont( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetFont)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetFont");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4300,8 +3692,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetFont( AMX* amx, cell* para
 }
 
 // native PlayerTextDrawIsBox(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsBox( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsBox)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
 	CHECK_PARAMS(2, "PlayerTextDrawIsBox");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4316,8 +3709,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsBox( AMX* amx, cell* params
 }
 
 // native PlayerTextDrawIsProportional(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsProportional( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsProportional)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawIsProportional");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4332,8 +3726,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsProportional( AMX* amx, cel
 }
 
 // native PlayerTextDrawIsSelectable(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsSelectable( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsSelectable)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawIsSelectable");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4348,8 +3743,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawIsSelectable( AMX* amx, cell*
 }
 
 // native PlayerTextDrawGetAlignment(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetAlignment( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetAlignment)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetAlignment");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4369,8 +3765,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetAlignment( AMX* amx, cell*
 }
 
 // native PlayerTextDrawGetPreviewModel(playerid, PlayerText:textdrawid);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewModel( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewModel)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetPreviewModel");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4385,8 +3782,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewModel( AMX* amx, ce
 }
 
 // native PlayerTextDrawGetPreviewRot(playerid, PlayerText:textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewRot( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewRot)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(6, "PlayerTextDrawGetPreviewRot");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4398,21 +3796,15 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewRot( AMX* amx, cell
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fX);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fY);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pTD->vecRot.fZ);
-	amx_GetAddr(amx, params[6], &cptr);
-	*cptr = amx_ftoc(pTD->fZoom);
+	Utility::storeVectorInNative(amx, params[3], pTD->vecRot);
+	Utility::storeFloatInNative(amx, params[6], pTD->fZoom);
 	return 1;
 }
 
 // native PlayerTextDrawGetPreviewVehCol(playerid, PlayerText:textdrawid, &color1, &color2);
-static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewVehCol( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewVehCol)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawGetPreviewVehCol");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4424,18 +3816,16 @@ static cell AMX_NATIVE_CALL Natives::PlayerTextDrawGetPreviewVehCol( AMX* amx, c
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)pTD->color1;
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = (cell)pTD->color2;
+	Utility::storeIntegerInNative(amx, params[3], pTD->color1);
+	Utility::storeIntegerInNative(amx, params[4], pTD->color2);
 	return 1;
 }
 
 // 3D Text labels
 // native IsValid3DTextLabel(Text3D:id);
-static cell AMX_NATIVE_CALL Natives::IsValid3DTextLabel( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsValid3DTextLabel)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsValid3DTextLabel");
 	
 	int id = static_cast<int>(params[1]);
@@ -4445,8 +3835,9 @@ static cell AMX_NATIVE_CALL Natives::IsValid3DTextLabel( AMX* amx, cell* params 
 }
 
 // native Is3DTextLabelStreamedIn(playerid, Text3D:id);
-static cell AMX_NATIVE_CALL Natives::Is3DTextLabelStreamedIn( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::Is3DTextLabelStreamedIn)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "Is3DTextLabelStreamedIn");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4459,12 +3850,9 @@ static cell AMX_NATIVE_CALL Natives::Is3DTextLabelStreamedIn( AMX* amx, cell* pa
 }
 
 // native Get3DTextLabelText(id, text[], len = sizeof(text));
-static cell AMX_NATIVE_CALL Natives::Get3DTextLabelText( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::Get3DTextLabelText)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "Get3DTextLabelText");
 	
 	int id = static_cast<int>(params[1]);
@@ -4477,8 +3865,9 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelText( AMX* amx, cell* params 
 }
 
 // native Get3DTextLabelColor(id);
-static cell AMX_NATIVE_CALL Natives::Get3DTextLabelColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::Get3DTextLabelColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "Get3DTextLabelColor");
 	
 	int id = static_cast<int>(params[1]);
@@ -4491,8 +3880,9 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelColor( AMX* amx, cell* params
 }
 
 // native Get3DTextLabelPos(id, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL Natives::Get3DTextLabelPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::Get3DTextLabelPos)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "Get3DTextLabelPos");
 	
 	int id = static_cast<int>(params[1]);
@@ -4501,19 +3891,14 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelPos( AMX* amx, cell* params )
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(p3DText.vecPos.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(p3DText.vecPos.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(p3DText.vecPos.fZ);
+	Utility::storeVectorInNative(amx, params[2], p3DText.vecPos);
 	return 1;
 }
 
 // native Float:Get3DTextLabelDrawDistance(id);
-static cell AMX_NATIVE_CALL Natives::Get3DTextLabelDrawDistance( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::Get3DTextLabelDrawDistance)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "Get3DTextLabelDrawDistance");
 	
 	int id = static_cast<int>(params[1]);
@@ -4526,8 +3911,9 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelDrawDistance( AMX* amx, cell*
 }
 
 // native Get3DTextLabelLOS(id);
-static cell AMX_NATIVE_CALL Natives::Get3DTextLabelLOS( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::Get3DTextLabelLOS)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "Get3DTextLabelLOS");
 	
 	int id = static_cast<int>(params[1]);
@@ -4540,8 +3926,9 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelLOS( AMX* amx, cell* params )
 }
 
 // native Get3DTextLabelVirtualWorld(id);
-static cell AMX_NATIVE_CALL Natives::Get3DTextLabelVirtualWorld( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::Get3DTextLabelVirtualWorld)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "Get3DTextLabelVirtualWorld");
 	
 	int id = static_cast<int>(params[1]);
@@ -4554,8 +3941,9 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelVirtualWorld( AMX* amx, cell*
 }
 
 // native Get3DTextLabelAttachedData(id, &attached_playerid, &attached_vehicleid);
-static cell AMX_NATIVE_CALL Natives::Get3DTextLabelAttachedData( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::Get3DTextLabelAttachedData)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "Get3DTextLabelAttachedData");
 	
 	int id = static_cast<int>(params[1]);
@@ -4564,17 +3952,15 @@ static cell AMX_NATIVE_CALL Natives::Get3DTextLabelAttachedData( AMX* amx, cell*
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = (cell)p3DText.attachedToPlayerID;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)p3DText.attachedToVehicleID;
+	Utility::storeIntegerInNative(amx, params[2], p3DText.wAttachedToPlayerID);
+	Utility::storeIntegerInNative(amx, params[3], p3DText.wAttachedToVehicleID);
 	return 1;
 }
 
 // native IsValidPlayer3DTextLabel(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL Natives::IsValidPlayer3DTextLabel( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsValidPlayer3DTextLabel)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsValidPlayer3DTextLabel");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4587,12 +3973,9 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayer3DTextLabel( AMX* amx, cell* p
 }
 
 // native GetPlayer3DTextLabelText(playerid, PlayerText3D:id, text[], len = sizeof(text));
-static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelText( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelText)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelText");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4608,8 +3991,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelText( AMX* amx, cell* p
 }
 
 // native GetPlayer3DTextLabelColor(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4625,8 +4009,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelColor( AMX* amx, cell* 
 }
 
 // native GetPlayer3DTextLabelPos(playerid, PlayerText3D:id, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelPos)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GetPlayer3DTextLabelPos");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4638,19 +4023,14 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelPos( AMX* amx, cell* pa
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(p3DText.vecPos.fX);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(p3DText.vecPos.fY);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(p3DText.vecPos.fZ);
+	Utility::storeVectorInNative(amx, params[3], p3DText.vecPos);
 	return 1;
 }
 
 // native Float:GetPlayer3DTextLabelDrawDist(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelDrawDist( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelDrawDist)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelDrawDist");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4666,8 +4046,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelDrawDist( AMX* amx, cel
 }
 
 // native GetPlayer3DTextLabelLOS(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelLOS( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelLOS)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelLOS");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4683,8 +4064,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelLOS( AMX* amx, cell* pa
 }
 
 // native GetPlayer3DTextLabelVirtualW(playerid, PlayerText3D:id);
-static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelVirtualW( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelVirtualW)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelVirtualW");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4700,8 +4082,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelVirtualW( AMX* amx, cel
 }
 
 // native GetPlayer3DTextLabelAttached(playerid, PlayerText3D:id, &attached_playerid, &attached_vehicleid);
-static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelAttached( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelAttached)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelAttached");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4713,20 +4096,17 @@ static cell AMX_NATIVE_CALL Natives::GetPlayer3DTextLabelAttached( AMX* amx, cel
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
-	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = (cell)p3DText.attachedToPlayerID;
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = (cell)p3DText.attachedToVehicleID;
+	Utility::storeIntegerInNative(amx, params[3], p3DText.wAttachedToPlayerID);
+	Utility::storeIntegerInNative(amx, params[4], p3DText.wAttachedToVehicleID);
 	return 1;
 }
 
 // native AttachObjectToPlayer(objectid, playerid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ)
-static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(8, "AttachObjectToPlayer");
 
-	// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
 	int playerid = static_cast<int>(params[2]);
 	int objectid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
@@ -4736,23 +4116,20 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachObjectToPlayer( AMX* amx, cell* p
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	if(!pObject) return 0;
 
-	if(pAttachObjectToPlayer(amx, params))
-	{
-		pServer->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
-		pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
-		pObject->vecAttachedRotation = CVector(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
-	}
+	// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
+	pAttachObjectToPlayer(amx, params);
+
+	CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
+	pObject->vecAttachedOffset = CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+	pObject->vecAttachedRotation = CVector(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
 	return 1;
 }
 
 // native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ, onlyaddtoinstance = 0)
-static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-//	CHECK_PARAMS(9, "AttachPlayerObjectToPlayer");
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	//	CHECK_PARAMS(9, "AttachPlayerObjectToPlayer");
 
 	int playerid = static_cast<int>(params[1]);
 	int objectid = static_cast<int>(params[2]);
@@ -4782,7 +4159,7 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 			bs.Write(amx_ctof(params[7]));
 			bs.Write(amx_ctof(params[8]));
 			bs.Write(amx_ctof(params[9]));
-			pRakServer->RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), 0, 0);
+			CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
 
 			pPlayerData[playerid]->bAttachedObjectCreated = true;
 		}
@@ -4792,18 +4169,14 @@ static cell AMX_NATIVE_CALL Natives::YSF_AttachPlayerObjectToPlayer( AMX* amx, c
 			pPlayerData[playerid]->dwCreateAttachedObj = GetTickCount();
 			pPlayerData[playerid]->dwObjectID = static_cast<WORD>(objectid);
 			pPlayerData[playerid]->bAttachedObjectCreated = true;
-		
 	}
 	return 1;
 }
 
 // native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
-static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(10, "AttachPlayerObjectToObject");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -4848,13 +4221,14 @@ static cell AMX_NATIVE_CALL Natives::AttachPlayerObjectToObject( AMX* amx, cell*
 	bs.Write(vecOffsetRot);	
 	bs.Write(byteSyncRot);
 	
-	pRakServer->RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
+	CSAMPFunctions::RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
 	return 1;
 }
 
 // native SetRecordingDirectory(const dir[]);
-static cell AMX_NATIVE_CALL Natives::SetRecordingDirectory( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "SetRecordingDirectory");
 
 	char *dir;
@@ -4867,8 +4241,9 @@ static cell AMX_NATIVE_CALL Natives::SetRecordingDirectory( AMX* amx, cell* para
 }
 
 // native GetRecordingDirectory(dir[], len = sizeof(dir));
-static cell AMX_NATIVE_CALL Natives::GetRecordingDirectory( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetRecordingDirectory)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetRecordingDirectory");
 	
 	if(!CAddress::ADDR_RecordingDirectory) return 0;
@@ -4882,8 +4257,10 @@ static cell AMX_NATIVE_CALL Natives::GetRecordingDirectory( AMX* amx, cell* para
 }
 
 // native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
-static cell AMX_NATIVE_CALL Natives::SendClientMessagef( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SendClientMessagef)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
@@ -4895,13 +4272,15 @@ static cell AMX_NATIVE_CALL Natives::SendClientMessagef( AMX* amx, cell* params 
 	bsParams.Write((DWORD)params[2]);
 	bsParams.Write((DWORD)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
 // native SendClientMessageToAllf(color, const message[], {Float,_}:...);
-static cell AMX_NATIVE_CALL Natives::SendClientMessageToAllf( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SendClientMessageToAllf)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+
 	int len;
 	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 2, len);
 	if(!szMessage) return 0;
@@ -4910,13 +4289,15 @@ static cell AMX_NATIVE_CALL Natives::SendClientMessageToAllf( AMX* amx, cell* pa
 	bsParams.Write((DWORD)params[1]);
 	bsParams.Write((DWORD)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
+	CSAMPFunctions::RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
 // native GameTextForPlayerf(playerid, displaytime, style, const message[], {Float,_}:...);
-static cell AMX_NATIVE_CALL Natives::GameTextForPlayerf( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GameTextForPlayerf)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
@@ -4929,13 +4310,15 @@ static cell AMX_NATIVE_CALL Natives::GameTextForPlayerf( AMX* amx, cell* params 
 	bsParams.Write((int)params[2]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
 // native GameTextForAllf(displaytime, style, const message[], {Float,_}:...);
-static cell AMX_NATIVE_CALL Natives::GameTextForAllf( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GameTextForAllf)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+
 	int len;
 	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 3, len);
 	if(!szMessage) return 0;
@@ -4945,13 +4328,15 @@ static cell AMX_NATIVE_CALL Natives::GameTextForAllf( AMX* amx, cell* params )
 	bsParams.Write((int)params[1]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
+	CSAMPFunctions::RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
 // native SendPlayerMessageToPlayerf(playerid, senderid, const message[], {Float,_}:...);
-static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToPlayerf( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SendPlayerMessageToPlayerf)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
@@ -4966,13 +4351,15 @@ static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToPlayerf( AMX* amx, cell*
 	bsParams.Write((WORD)senderid);
 	bsParams.Write((BYTE)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
 // native SendPlayerMessageToAllf(senderid, const message[], {Float,_}:...);
-static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToAllf( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SendPlayerMessageToAllf)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+
 	int senderid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(senderid)) return 0;
 
@@ -4984,13 +4371,15 @@ static cell AMX_NATIVE_CALL Natives::SendPlayerMessageToAllf( AMX* amx, cell* pa
 	bsParams.Write((WORD)senderid);
 	bsParams.Write((BYTE)len);
 	bsParams.Write(szMessage, len);
-	pRakServer->RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
+	CSAMPFunctions::RPC(&RPC_Chat, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
 // native SendRconCommandf(command[], {Float,_}:...);
-static cell AMX_NATIVE_CALL Natives::SendRconCommandf( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SendRconCommandf)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+
 	int len;
 	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 1, len);
 	if(!szMessage) return 0;
@@ -5000,93 +4389,81 @@ static cell AMX_NATIVE_CALL Natives::SendRconCommandf( AMX* amx, cell* params )
 }
 
 // native YSF_SetTickRate(ticks);
-static cell AMX_NATIVE_CALL Natives::YSF_SetTickRate( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_SetTickRate)
 {
-	if(!pServer)
-		return 1;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "YSF_SetTickRate");
 
 	int rate = static_cast<int>(params[1]);
 	if(rate < -1 || rate == 0) return 0; // -1 = no update
 
-	pServer->SetTickRate(rate);
+	CServer::Get()->SetTickRate(rate);
 	return 1;
 }
 
 // native YSF_GetTickRate();
-static cell AMX_NATIVE_CALL Natives::YSF_GetTickRate( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_GetTickRate)
 {
-	if(!pServer)
-		return 1;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
-	return static_cast<cell>(pServer->GetTickRate());
+	return static_cast<cell>(CServer::Get()->GetTickRate());
 }
 
 // native YSF_EnableNightVisionFix(enable);
-static cell AMX_NATIVE_CALL Natives::YSF_EnableNightVisionFix(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_EnableNightVisionFix)
 {
-	if (!pServer)
-		return 1;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "YSF_EnableNightVisionFix");
 
-	pServer->EnableNightVisionFix(static_cast<int>(params[1]) != 0);
+	CServer::Get()->EnableNightVisionFix(static_cast<int>(params[1]) != 0);
 	return 1;
 }
 
 // native YSF_IsNightVisionFixEnabled();
-static cell AMX_NATIVE_CALL Natives::YSF_IsNightVisionFixEnabled(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_IsNightVisionFixEnabled)
 {
-	if (!pServer)
-		return 1;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
-	return static_cast<cell>(pServer->IsNightVisionFixEnabled());
+	return static_cast<cell>(CServer::Get()->IsNightVisionFixEnabled());
 }
 
 // native YSF_SetExtendedNetStatsEnabled(enable);
-static cell AMX_NATIVE_CALL Natives::YSF_SetExtendedNetStatsEnabled(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_SetExtendedNetStatsEnabled)
 {
-	if (!pServer)
-		return 1;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "YSF_SetExtendedNetStatsEnabled");
 
-	pServer->SetExtendedNetStatsEnabled(static_cast<int>(params[1]) != 0);
+	CServer::Get()->SetExtendedNetStatsEnabled(static_cast<int>(params[1]) != 0);
 	return 1;
 }
 
 // native YSF_IsExtendedNetStatsEnabled();
-static cell AMX_NATIVE_CALL Natives::YSF_IsExtendedNetStatsEnabled(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_IsExtendedNetStatsEnabled)
 {
-	if (!pServer)
-		return 1;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
-	return static_cast<cell>(pServer->IsExtendedNetStatsEnabled());
+	return static_cast<cell>(CServer::Get()->IsExtendedNetStatsEnabled());
 }
 
 // native YSF_SetAFKAccuracy(time_ms);
-static cell AMX_NATIVE_CALL Natives::YSF_SetAFKAccuracy(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_SetAFKAccuracy)
 {
-	if (!pServer)
-		return 1;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "YSF_SetAFKAccuracy");
 
-	pServer->SetAFKAccuracy(static_cast<DWORD>(params[1]));
+	CServer::Get()->SetAFKAccuracy(static_cast<DWORD>(params[1]));
 	return 1;
 }
 
 // native YSF_GetAFKAccuracy();
-static cell AMX_NATIVE_CALL Natives::YSF_GetAFKAccuracy(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::YSF_GetAFKAccuracy)
 {
-	if (!pServer)
-		return 1;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
-	return static_cast<cell>(pServer->GetAFKAccuracy());
+	return static_cast<cell>(CServer::Get()->GetAFKAccuracy());
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneCreate)
 {
 	CHECK_PARAMS(4, "GangZoneCreate");
 
@@ -5103,16 +4480,16 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneCreate(AMX *amx, cell *params)
 		return -1;
 	}
 
-	WORD ret = pServer->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
+	WORD ret = CServer::Get()->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
 
 	return (ret == 0xFFFF) ? -1 : ret;
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneDestroy(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneDestroy)
 {
 	CHECK_PARAMS(1, "GangZoneDestroy");
 
-	CGangZonePool *pGangZonePool = pServer->pGangZonePool;
+	CGangZonePool *pGangZonePool = CServer::Get()->pGangZonePool;
 	int zoneid = static_cast<int>(params[1]);
 	if(!pGangZonePool || !pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
@@ -5121,12 +4498,8 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneDestroy(AMX *amx, cell *params)
 }
 
 // native YSF_GangZoneShowForPlayer(playerid, zone, color);
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	CHECK_PARAMS(3, "GangZoneShowForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5137,16 +4510,12 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForPlayer( AMX* amx, cell* 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	return pServer->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color));
+	return CServer::Get()->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color));
 }
 
 // native YSF_GangZoneHideForPlayer(playerid, zone);
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForPlayer( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForPlayer)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	CHECK_PARAMS(2, "GangZoneHideForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5156,43 +4525,35 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForPlayer( AMX* amx, cell* 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pServer->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
+	CServer::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
 	return 1;
 }
 
 // native YSF_GangZoneShowForAll(zone, color);
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneShowForAll( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForAll)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	CHECK_PARAMS(2, "GangZoneShowForAll");
 
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pServer->pGangZonePool->ShowForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
+	CServer::Get()->pGangZonePool->ShowForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
 	return 1;
 }
 
 // native YSF_GangZoneHideForAll(zone);
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneHideForAll( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForAll)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	CHECK_PARAMS(1, "GangZoneHideForAll");
 
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pServer->pGangZonePool->HideForAll(static_cast<WORD>(zoneid));
+	CServer::Get()->pGangZonePool->HideForAll(static_cast<WORD>(zoneid));
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForPlayer(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForPlayer)
 {
 	CHECK_PARAMS(3, "GangZoneFlashForPlayer");
 
@@ -5203,22 +4564,22 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForPlayer(AMX *amx, cell *
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pServer->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(params[3]));
+	CServer::Get()->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(params[3]));
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneFlashForAll(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForAll)
 {
 	CHECK_PARAMS(2, "GangZoneFlashForAll");
 
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pServer->pGangZonePool->FlashForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
+	CServer::Get()->pGangZonePool->FlashForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForPlayer(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForPlayer)
 {
 	CHECK_PARAMS(2, "GangZoneStopFlashForPlayer");
 
@@ -5229,25 +4590,26 @@ static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForPlayer(AMX *amx, ce
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pServer->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
+	CServer::Get()->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
 	return 1;
 }
 
-static cell AMX_NATIVE_CALL Natives::YSF_GangZoneStopFlashForAll(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForAll)
 {
 	CHECK_PARAMS(1, "GangZoneStopFlashForAll");
 
 	int zoneid = static_cast<int>(params[1]);
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pServer->pGangZonePool->StopFlashForAll(static_cast<WORD>(zoneid));
+	CServer::Get()->pGangZonePool->StopFlashForAll(static_cast<WORD>(zoneid));
 	return 1;
 }
 
 // Menu functions
 // native IsMenuDisabled(Menu:menuid);
-static cell AMX_NATIVE_CALL Natives::IsMenuDisabled( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsMenuDisabled)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsMenuDisabled");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -5260,8 +4622,9 @@ static cell AMX_NATIVE_CALL Natives::IsMenuDisabled( AMX* amx, cell* params )
 }
 
 // native IsMenuRowDisabled(Menu:menuid, row);
-static cell AMX_NATIVE_CALL Natives::IsMenuRowDisabled( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsMenuRowDisabled)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsMenuRowDisabled");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -5277,8 +4640,9 @@ static cell AMX_NATIVE_CALL Natives::IsMenuRowDisabled( AMX* amx, cell* params )
 }
 
 // native GetMenuColumns(menuid);
-static cell AMX_NATIVE_CALL Natives::GetMenuColumns( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetMenuColumns)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetMenuColumns");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -5291,8 +4655,9 @@ static cell AMX_NATIVE_CALL Natives::GetMenuColumns( AMX* amx, cell* params )
 }
 
 // native GetMenuItems(menuid, column);
-static cell AMX_NATIVE_CALL Natives::GetMenuItems( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetMenuItems)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetMenuItems");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -5308,8 +4673,9 @@ static cell AMX_NATIVE_CALL Natives::GetMenuItems( AMX* amx, cell* params )
 }
 
 // native GetMenuPos(menuid, &Float:fX, &Float:fY);
-static cell AMX_NATIVE_CALL Natives::GetMenuPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetMenuPos)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "GetMenuColumns");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -5318,17 +4684,14 @@ static cell AMX_NATIVE_CALL Natives::GetMenuPos( AMX* amx, cell* params )
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
 	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pMenu->fPosX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pMenu->fPosY);
+	Utility::storeVectorInNative(amx, params[2], pMenu->vecPos);
 	return 1;
 }
 
 // native GetMenuColumnWidth(menuid, &Float:fColumn1, &Float:fColumn2);
-static cell AMX_NATIVE_CALL Natives::GetMenuColumnWidth( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetMenuColumnWidth)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetMenuColumnWidth");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -5337,17 +4700,15 @@ static cell AMX_NATIVE_CALL Natives::GetMenuColumnWidth( AMX* amx, cell* params 
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
 	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pMenu->fColumn1Width);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pMenu->fColumn2Width);
+	Utility::storeFloatInNative(amx, params[2], pMenu->fColumn1Width);
+	Utility::storeFloatInNative(amx, params[3], pMenu->fColumn2Width);
 	return 1;
 }
 
 // native GetMenuColumnHeader(menuid, column, header[], len = sizeof(header));
-static cell AMX_NATIVE_CALL Natives::GetMenuColumnHeader( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetMenuColumnHeader)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetMenuColumnHeader");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -5363,8 +4724,9 @@ static cell AMX_NATIVE_CALL Natives::GetMenuColumnHeader( AMX* amx, cell* params
 }
 
 // native GetMenuItem(menuid, column, itemid, item[], len = sizeof(item));
-static cell AMX_NATIVE_CALL Natives::GetMenuItem( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetMenuItem)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GetMenuItem");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -5383,12 +4745,9 @@ static cell AMX_NATIVE_CALL Natives::GetMenuItem( AMX* amx, cell* params )
 }
 
 // native CreatePlayerGangZone(playerid, Float:minx, Float:miny, Float:maxx, Float:maxy);
-static cell AMX_NATIVE_CALL Natives::CreatePlayerGangZone( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "CreatePlayerGangZone");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5403,23 +4762,20 @@ static cell AMX_NATIVE_CALL Natives::CreatePlayerGangZone( AMX* amx, cell* param
 	if(fMaxX <= fMinX || fMaxY <= fMinY) 
 	{
 		logprintf("CreatePlayerGangZone: MaxX, MaxY must be bigger than MinX, MinY. Not inversely!");
-		logprintf("CreatePlayerGangZone: %f, %f, %f, %f",fMinX, fMinY, fMaxX, fMaxY);
+		logprintf("CreatePlayerGangZone: %f, %f, %f, %f", fMinX, fMinY, fMaxX, fMaxY);
 		return -1;
 	}
 
-	WORD ret = pServer->pGangZonePool->New(static_cast<WORD>(playerid), fMinX, fMinY, fMaxX, fMaxY);
+	WORD ret = CServer::Get()->pGangZonePool->New(static_cast<WORD>(playerid), fMinX, fMinY, fMaxX, fMaxY);
 	if (ret == 0xFFFF) return -1;
 
 	return ret;
 }
 
 // native PlayerGangZoneShow(playerid, zoneid, color);
-static cell AMX_NATIVE_CALL Natives::PlayerGangZoneShow( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerGangZoneShow)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "PlayerGangZoneShow");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5432,17 +4788,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneShow( AMX* amx, cell* params 
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pServer->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
+	CServer::Get()->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
 	return 1;
 }
 
 // native PlayerGangZoneHide(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::PlayerGangZoneHide( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerGangZoneHide)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneHide");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5453,17 +4806,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneHide( AMX* amx, cell* params 
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pServer->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+	CServer::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
 // native PlayerGangZoneFlash(playerid, zoneid, color);
-static cell AMX_NATIVE_CALL Natives::PlayerGangZoneFlash( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerGangZoneFlash)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "PlayerGangZoneFlash");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5476,17 +4826,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneFlash( AMX* amx, cell* params
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pServer->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
+	CServer::Get()->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), dwColor, true);
 	return 1;
 }
 
 // native PlayerGangZoneStopFlash(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::PlayerGangZoneStopFlash( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerGangZoneStopFlash)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneStopFlash");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5497,17 +4844,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneStopFlash( AMX* amx, cell* pa
 
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-	pServer->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+	CServer::Get()->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
 // native PlayerGangZoneDestroy(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::PlayerGangZoneDestroy( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerGangZoneDestroy)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if(!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneDestroy");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5515,13 +4859,14 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneDestroy( AMX* amx, cell* para
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	pServer->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+	CServer::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 	return 1;
 }
 
 // native IsValidPlayerGangZone(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::IsValidPlayerGangZone( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsValidPlayerGangZone)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsValidPlayerGangZone");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -5533,8 +4878,9 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayerGangZone( AMX* amx, cell* para
 }
 
 // native IsPlayerInPlayerGangZone(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerInPlayerGangZone( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerInPlayerGangZone)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -5553,12 +4899,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerInPlayerGangZone( AMX* amx, cell* p
 }
 
 // native PlayerGangZoneGetPos(playerid, zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
-static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(6, "PlayerGangZoneGetPos");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5572,22 +4915,20 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetPos( AMX* amx, cell* param
 	WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 	if(id != 0xFFFF) 
 	{
-		cell* cptr;
-		amx_GetAddr(amx, params[3], &cptr);
-		*cptr = amx_ftoc(pPlayerData[playerid]->pPlayerZone[zoneid]->fGangZone[0]);
-		amx_GetAddr(amx, params[4], &cptr);
-		*cptr = amx_ftoc(pPlayerData[playerid]->pPlayerZone[zoneid]->fGangZone[1]);
-		amx_GetAddr(amx, params[5], &cptr);
-		*cptr = amx_ftoc(pPlayerData[playerid]->pPlayerZone[zoneid]->fGangZone[2]);
-		amx_GetAddr(amx, params[6], &cptr);
-		*cptr = amx_ftoc(pPlayerData[playerid]->pPlayerZone[zoneid]->fGangZone[3]);
+		CGangZone *pGangZone = pPlayerData[playerid]->pPlayerZone[zoneid];
+		Utility::storeFloatInNative(amx, params[3], pGangZone->fGangZone[0]);
+		Utility::storeFloatInNative(amx, params[4], pGangZone->fGangZone[1]);
+		Utility::storeFloatInNative(amx, params[5], pGangZone->fGangZone[2]);
+		Utility::storeFloatInNative(amx, params[6], pGangZone->fGangZone[3]);
+		return 1;
 	}
-	return 1;
+	return 0;
 }
 
 // native IsPlayerGangZoneVisible(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneVisible( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneVisible)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -5601,8 +4942,9 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneVisible( AMX* amx, cell* pa
 }
 
 // native PlayerGangZoneGetColor(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneGetColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -5621,8 +4963,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetColor( AMX* amx, cell* par
 }
 
 // native PlayerGangZoneGetFlashColor(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetFlashColor( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetFlashColor)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneGetFlashColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -5641,8 +4984,9 @@ static cell AMX_NATIVE_CALL Natives::PlayerGangZoneGetFlashColor( AMX* amx, cell
 }
 
 // native IsPlayerGangZoneFlashing(playerid, zoneid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneFlashing( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 {
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerGangZoneFlashing");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -5663,27 +5007,21 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerGangZoneFlashing( AMX* amx, cell* p
 #ifdef NEW_PICKUP_SYSTEM
 
 // native IsValidPickup(pickupid);
-static cell AMX_NATIVE_CALL Natives::IsValidPickup( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsValidPickup");
 
 	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
-	return pServer->pPickupPool->FindPickup(id) != 0;
+	return CServer::Get()->pPickupPool->FindPickup(id) != 0;
 }
 
 // native IsPickupStreamedIn(playerid, pickupid);
-static cell AMX_NATIVE_CALL Natives::IsPickupStreamedIn( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPickupStreamedIn");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5691,113 +5029,89 @@ static cell AMX_NATIVE_CALL Natives::IsPickupStreamedIn( AMX* amx, cell* params 
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
 	if(!pPickup) return 0;
 
-	return pServer->pPickupPool->IsStreamed(playerid, pPickup);
+	return CServer::Get()->pPickupPool->IsStreamed(playerid, pPickup);
 }
 
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL Natives::GetPickupPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetPickupPos");
 
 	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
 	if(!pPickup) return 0;
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pPickup->vecPos.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pPickup->vecPos.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pPickup->vecPos.fZ);
+	Utility::storeVectorInNative(amx, params[2], pPickup->vecPos);
 	return 1;
 }
 
 // native GetPickupModel(pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPickupModel( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPickupModel");
 
 	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
 	if(!pPickup) return 0;
 
 	return pPickup->iModel;
 }
 
 // native GetPickupType(pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPickupType( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPickupType");
 
 	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
 	if(!pPickup) return 0;
 
 	return pPickup->iType;
 }
 
 // native GetPickupVirtualWorld(pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPickupVirtualWorld( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPickupVirtualWorld");
 
 	int id = static_cast<int>(params[1]);
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
 	if(!pPickup) return 0;
 
 	return pPickup->iWorld;
 }
 
 // CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
-static cell AMX_NATIVE_CALL Natives::CreatePlayerPickup( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::CreatePlayerPickup)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(7, "CreatePlayerPickup");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	return pServer->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])), (int)params[7]);
+	return CServer::Get()->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])), (int)params[7]);
 }
 
 // native DestroyPlayerPickup(playerid, pickupid);
-static cell AMX_NATIVE_CALL Natives::DestroyPlayerPickup( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::DestroyPlayerPickup)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "DestroyPlayerPickup");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5805,20 +5119,17 @@ static cell AMX_NATIVE_CALL Natives::DestroyPlayerPickup( AMX* amx, cell* params
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(playerid, id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
 	if(!pPickup) return 0;
 
-	pServer->pPickupPool->Destroy((WORD)playerid, id);
+	CServer::Get()->pPickupPool->Destroy((WORD)playerid, id);
 	return 1;
 }
 
 // native IsValidPlayerPickup(playerid, pickupid);
-static cell AMX_NATIVE_CALL Natives::IsValidPlayerPickup( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsValidPlayerPickup)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsValidPlayerPickup");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5826,16 +5137,13 @@ static cell AMX_NATIVE_CALL Natives::IsValidPlayerPickup( AMX* amx, cell* params
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
-	return pServer->pPickupPool->FindPickup(playerid, id) != 0;
+	return CServer::Get()->pPickupPool->FindPickup(playerid, id) != 0;
 }
 
 // native IsPlayerPickupStreamedIn(playerid, pickupid);
-static cell AMX_NATIVE_CALL Natives::IsPlayerPickupStreamedIn( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::IsPlayerPickupStreamedIn)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerPickupStreamedIn");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5843,19 +5151,16 @@ static cell AMX_NATIVE_CALL Natives::IsPlayerPickupStreamedIn( AMX* amx, cell* p
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(playerid, id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
 	if(!pPickup) return 0;
 
-	return pServer->pPickupPool->IsStreamed(playerid, pPickup);
+	return CServer::Get()->pPickupPool->IsStreamed(playerid, pPickup);
 }
 
 // native GetPlayerPickupPos(playerid, pickupid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL Natives::GetPlayerPickupPos( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerPickupPos)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerPickupPos");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5863,26 +5168,17 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupPos( AMX* amx, cell* params 
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(playerid, id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
 	if(!pPickup) return 0;
 
-	cell* cptr;
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pPickup->vecPos.fX);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pPickup->vecPos.fY);
-	amx_GetAddr(amx, params[5], &cptr);
-	*cptr = amx_ftoc(pPickup->vecPos.fZ);
+	Utility::storeVectorInNative(amx, params[3], pPickup->vecPos);
 	return 1;
 }
 
 // native GetPlayerPickupModel(playerid, pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerPickupModel( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerPickupModel)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupModel");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5890,19 +5186,16 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupModel( AMX* amx, cell* param
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(playerid, id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
 	if(!pPickup) return 0;
 
 	return pPickup->iModel;
 }
 
 // native GetPlayerPickupType(playerid, pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerPickupType( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerPickupType)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupType");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5910,19 +5203,16 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupType( AMX* amx, cell* params
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(playerid, id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
 	if(!pPickup) return 0;
 
 	return pPickup->iType;
 }
 
 // native GetPlayerPickupVirtualWorld(playerid, pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPlayerPickupVirtualWorld( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetPlayerPickupVirtualWorld)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupVirtualWorld");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5930,7 +5220,7 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupVirtualWorld( AMX* amx, cell
 	if(!IsPlayerConnectedEx(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
-	CPickup *pPickup = pServer->pPickupPool->FindPickup(playerid, id);
+	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
 	if(!pPickup) return 0;
 
 	return pPickup->iWorld;
@@ -5939,12 +5229,9 @@ static cell AMX_NATIVE_CALL Natives::GetPlayerPickupVirtualWorld( AMX* amx, cell
 #else
 
 // native IsValidPickup(pickupid);
-static cell AMX_NATIVE_CALL Natives::IsValidPickup(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsValidPickup");
 
 	int id = static_cast<int>(params[1]);
@@ -5955,12 +5242,9 @@ static cell AMX_NATIVE_CALL Natives::IsValidPickup(AMX* amx, cell* params)
 }
 
 // native IsPickupStreamedIn(playerid, pickupid);
-static cell AMX_NATIVE_CALL Natives::IsPickupStreamedIn(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "IsPickupStreamedIn");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5972,12 +5256,9 @@ static cell AMX_NATIVE_CALL Natives::IsPickupStreamedIn(AMX* amx, cell* params)
 }
 
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL Natives::GetPickupPos(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(4, "GetPickupPos");
 
 	int id = static_cast<int>(params[1]);
@@ -5986,23 +5267,14 @@ static cell AMX_NATIVE_CALL Natives::GetPickupPos(AMX* amx, cell* params)
 
 	if (!pNetGame->pPickupPool->bActive[id]) return 0;
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(pNetGame->pPickupPool->Pickup[id].vecPos.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(pNetGame->pPickupPool->Pickup[id].vecPos.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(pNetGame->pPickupPool->Pickup[id].vecPos.fZ);
+	Utility::storeVectorInNative(amx, params[2], pNetGame->pPickupPool->Pickup[id].vecPos);
 	return 1;
 }
 
 // native GetPickupModel(pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPickupModel(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPickupModel");
 
 	int id = static_cast<int>(params[1]);
@@ -6015,12 +5287,9 @@ static cell AMX_NATIVE_CALL Natives::GetPickupModel(AMX* amx, cell* params)
 }
 
 // native GetPickupType(pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPickupType(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPickupType");
 
 	int id = static_cast<int>(params[1]);
@@ -6033,12 +5302,9 @@ static cell AMX_NATIVE_CALL Natives::GetPickupType(AMX* amx, cell* params)
 }
 
 // native GetPickupVirtualWorld(pickupid);
-static cell AMX_NATIVE_CALL Natives::GetPickupVirtualWorld(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "GetPickupVirtualWorld");
 
 	int id = static_cast<int>(params[1]);
@@ -6053,92 +5319,58 @@ static cell AMX_NATIVE_CALL Natives::GetPickupVirtualWorld(AMX* amx, cell* param
 #endif
 // RakServer functions //
 // native ClearBanList();
-static cell AMX_NATIVE_CALL Natives::ClearBanList( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::ClearBanList)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
-	pRakServer->ClearBanList();
+	CSAMPFunctions::ClearBanList();
+	CServer::Get()->ClearBans();
 	return 1;
 }
 
-// native IsBanned(_ip[]);
-static cell AMX_NATIVE_CALL Natives::IsBanned( AMX* amx, cell* params )
+// native IsBanned(ipaddress[]);
+AMX_DECLARE_NATIVE(Natives::IsBanned)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(1, "IsBanned");
 
 	char *ip;
 	amx_StrParam(amx, params[1], ip);
-	return (ip) ? pRakServer->IsBanned(ip) : 0;
+	return (ip) ? CServer::Get()->IsBanned(ip) : 0;
 }
 
 // native SetTimeoutTime(playerid, time);
-static cell AMX_NATIVE_CALL Natives::SetTimeoutTime( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SetTimeoutTime)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(2, "SetTimeoutTime");
 	
-	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(static_cast<int>(params[1]));
+	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
 	if(playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || !IsPlayerConnectedEx(static_cast<int>(params[1])))
 		return 0;
 
-	pRakServer->SetTimeoutTime((RakNetTime)params[2], playerId);
+	CSAMPFunctions::SetTimeoutTime(static_cast<RakNetTime>(params[2]), playerId);
 	return 1;
-}
-/*
-// native SetMTUSize(size);
-static cell AMX_NATIVE_CALL Natives::SetMTUSize( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
-	CHECK_PARAMS(1, "SetMTUSize");
-	
-	return pRakServer->SetMTUSize(static_cast<int>(params[1]));
-}
-*/
-// native GetMTUSize();
-static cell AMX_NATIVE_CALL Natives::GetMTUSize( AMX* amx, cell* params )
-{
-	// If unknown server version
-	if(!pServer)
-		return 0;
-	
-	return pRakServer->GetMTUSize();
 }
 
 // native GetLocalIP(index, localip[], len = sizeof(localip));
-static cell AMX_NATIVE_CALL Natives::GetLocalIP( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetLocalIP)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 	CHECK_PARAMS(3, "GetLocalIP");
 
-	return set_amxstring(amx, params[2], pRakServer->GetLocalIP((unsigned int)params[1]), params[3]);
+	return set_amxstring(amx, params[2], CSAMPFunctions::GetLocalIP(static_cast<unsigned int>(params[1])), params[3]);
 }
 
 // native SendRPC(playerid, RPC, {Float,_}:...)
-static cell AMX_NATIVE_CALL Natives::SendRPC( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SendRPC)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
 	bool bBroadcast = static_cast<int>(params[1]) == -1;
-	int rpcid = static_cast<int>(params[2]);
+	BYTE rpcid = static_cast<BYTE>(params[2]);
 	
-	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : pRakServer->GetPlayerIDFromIndex(static_cast<int>(params[1]));
+	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
 	
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress && !bBroadcast)
 		return 0;
@@ -6198,24 +5430,22 @@ static cell AMX_NATIVE_CALL Natives::SendRPC( AMX* amx, cell* params )
 
 	if(bBroadcast)
 	{
-		pRakServer->RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
+		CSAMPFunctions::RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
 	}
 	else
 	{
-		pRakServer->RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, playerId, 0, 0);
+		CSAMPFunctions::RPC(&rpcid, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, playerId, 0, 0);
 	}
 	return 1;
 }
 
 // native SendData(playerid, {Float,_}:...)
-static cell AMX_NATIVE_CALL Natives::SendData( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::SendData)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
+	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
 
 	bool bBroadcast = static_cast<int>(params[1]) == -1;
-	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : pRakServer->GetPlayerIDFromIndex(static_cast<int>(params[1]));
+	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
 
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress && !bBroadcast)
 		return 0;
@@ -6275,23 +5505,23 @@ static cell AMX_NATIVE_CALL Natives::SendData( AMX* amx, cell* params )
 
 	if(bBroadcast)
 	{
-		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
+		CSAMPFunctions::Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true);
 	}
 	else
 	{
-		pRakServer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, playerId, 0);
+		CSAMPFunctions::Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, playerId, 0);
 	}
 	return 1;
 }
 
 // native GetColCount();
-static cell AMX_NATIVE_CALL Natives::GetColCount( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetColCount)
 {
 	return CModelSizes::GetColCount();
 }
 
 // native Float:GetColSphereRadius(modelid);
-static cell AMX_NATIVE_CALL Natives::GetColSphereRadius( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetColSphereRadius)
 {
 	CHECK_PARAMS(1, "GetColSphereRadius");
 	
@@ -6300,49 +5530,35 @@ static cell AMX_NATIVE_CALL Natives::GetColSphereRadius( AMX* amx, cell* params 
 }
 
 // native GetColSphereOffset(modelid, &Float:fX, &Float:fY, &Float:fZ);
-static cell AMX_NATIVE_CALL Natives::GetColSphereOffset( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetColSphereOffset)
 {
 	CHECK_PARAMS(4, "GetColSphereOffset");
 
 	CVector vecOffset = CModelSizes::GetColSphereOffset(static_cast<int>(params[1]));
 
-	cell* cptr;
-	amx_GetAddr(amx, params[2], &cptr);
-	*cptr = amx_ftoc(vecOffset.fX);
-	amx_GetAddr(amx, params[3], &cptr);
-	*cptr = amx_ftoc(vecOffset.fY);
-	amx_GetAddr(amx, params[4], &cptr);
-	*cptr = amx_ftoc(vecOffset.fZ);
+	Utility::storeVectorInNative(amx, params[2], vecOffset);
 	return 1;
 }
 
 // native GetWeaponSlot(weaponid);
-static cell AMX_NATIVE_CALL Natives::GetWeaponSlot( AMX* amx, cell* params )
+AMX_DECLARE_NATIVE(Natives::GetWeaponSlot)
 {
 	CHECK_PARAMS(1, "GetWeaponSlot");
 	
-	return CUtils::GetWeaponSlot(static_cast<BYTE>(params[1]));
+	return Utility::GetWeaponSlot(static_cast<BYTE>(params[1]));
 }
 
 // native GetWeaponName(weaponid, weaponname[], len = sizeof(weaponname));
-static cell AMX_NATIVE_CALL Natives::FIXED_GetWeaponName(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::FIXED_GetWeaponName)
 {
-	// If unknown server version
-	if(!pServer)
-		return 0;
-
 	CHECK_PARAMS(3, "GetWeaponName");
 
-	return set_amxstring(amx, params[2], CUtils::GetWeaponName_(static_cast<BYTE>(params[1])), params[3]);
+	return set_amxstring(amx, params[2], Utility::GetWeaponName_(static_cast<BYTE>(params[1])), params[3]);
 }
 
 // native IsPlayerConnectedEx(playerid);
-static cell AMX_NATIVE_CALL Natives::FIXED_IsPlayerConnectedEx(AMX* amx, cell* params)
+AMX_DECLARE_NATIVE(Natives::FIXED_IsPlayerConnectedEx)
 {
-	// If unknown server version
-	if (!pServer)
-		return 0;
-
 	CHECK_PARAMS(1, "IsPlayerConnectedEx");
 
 	int playerid = static_cast<int>(params[1]);
@@ -6353,374 +5569,368 @@ static cell AMX_NATIVE_CALL Natives::FIXED_IsPlayerConnectedEx(AMX* amx, cell* p
 
 #ifdef NEW_PICKUP_SYSTEM
 // native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
-static cell AMX_NATIVE_CALL Natives::CreatePickup(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::CreatePickup)
 {
 	CHECK_PARAMS(6, "CreatePickup");
 
-	return pServer->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
+	return CServer::Get()->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
 }
 
 // native DestroyPickup(pickupid);
-static cell AMX_NATIVE_CALL Natives::DestroyPickup(AMX *amx, cell *params)
+AMX_DECLARE_NATIVE(Natives::DestroyPickup)
 {
 	CHECK_PARAMS(1, "DestroyPickup");
 
-	pServer->pPickupPool->Destroy((int)params[1]);
+	CServer::Get()->pPickupPool->Destroy((int)params[1]);
 	return 1;
 }
 
 // native SetPickupStreamingEnabled(enabled);
-static cell AMX_NATIVE_CALL Natives::SetPickupStreamingEnabled(AMX *amx, cell *params)
+AMX_DECLARE_NATIVENatives::SetPickupStreamingEnabled)
 {
 	CHECK_PARAMS(1, "SetPickupStreamingEnabled");
 
-	pServer->pPickupPool->SetStreamingEnabled(!!params[1]);
+	CServer::Get()->pPickupPool->SetStreamingEnabled(!!params[1]);
 	return 1;
 }
 #endif
-
 
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO YSINatives [] =
 {
 	// File
-	{"ffind",							Natives::ffind},
-	{"frename",							Natives::frename},
+	AMX_DEFINE_NATIVE(ffind)
+	AMX_DEFINE_NATIVE(frename)
 	
 	// Directory
-	{"dfind",							Natives::dfind},
-	{"dcreate",							Natives::dcreate},
-	{"drename",							Natives::drename},
+	AMX_DEFINE_NATIVE(dfind)
+	AMX_DEFINE_NATIVE(dcreate)
+	AMX_DEFINE_NATIVE(drename)
 
 	// Generic
-	{"SetModeRestartTime",				Natives::SetModeRestartTime},
-	{"GetModeRestartTime",				Natives::GetModeRestartTime},
-	{"SetMaxPlayers",					Natives::SetMaxPlayers}, // R8
-	{"SetMaxNPCs",						Natives::SetMaxNPCs}, // R8
+	AMX_DEFINE_NATIVE(SetModeRestartTime)
+	AMX_DEFINE_NATIVE(GetModeRestartTime)
+	AMX_DEFINE_NATIVE(SetMaxPlayers) // R8
+	AMX_DEFINE_NATIVE(SetMaxNPCs) // R8
 
-	{"SetPlayerAdmin",					Natives::SetPlayerAdmin},
-	{"LoadFilterScript",				Natives::LoadFilterScript},
-	{"UnLoadFilterScript",				Natives::UnLoadFilterScript},
-	{"GetFilterScriptCount",			Natives::GetFilterScriptCount},
-	{"GetFilterScriptName",				Natives::GetFilterScriptName},
+	AMX_DEFINE_NATIVE(SetPlayerAdmin)
+	AMX_DEFINE_NATIVE(LoadFilterScript)
+	AMX_DEFINE_NATIVE(UnLoadFilterScript)
+	AMX_DEFINE_NATIVE(GetFilterScriptCount)
+	AMX_DEFINE_NATIVE(GetFilterScriptName)
 
-	{"AddServerRule",					Natives::AddServerRule},
-	{"SetServerRule",					Natives::SetServerRule},
-	{"SetServerRuleInt",				Natives::SetServerRuleInt},
-	{"IsValidServerRule",				Natives::IsValidServerRule},
-	{"RemoveServerRule",				Natives::RemoveServerRule}, // Doesn't work!
-	{"ModifyFlag",						Natives::SetServerRuleFlags},
-	{"SetServerRuleFlags",				Natives::SetServerRuleFlags},
-	{"GetServerRuleFlags",				Natives::GetServerRuleFlags},
+	AMX_DEFINE_NATIVE(AddServerRule)
+	AMX_DEFINE_NATIVE(SetServerRule)
+	AMX_DEFINE_NATIVE(SetServerRuleInt)
+	AMX_DEFINE_NATIVE(IsValidServerRule)
+	AMX_DEFINE_NATIVE(RemoveServerRule) // Doesn't work!
+	AMX_DEFINE_NATIVE(SetServerRuleFlags)
+	AMX_DEFINE_NATIVE(GetServerRuleFlags)
 
 	// Server settings
-	{"GetServerSettings",				Natives::GetServerSettings},
+	AMX_DEFINE_NATIVE(GetServerSettings)
 
 	// Nick name
-	{"IsValidNickName",					Natives::IsValidNickName},	// R8
-	{"AllowNickNameCharacter",			Natives::AllowNickNameCharacter}, // R7
-	{"IsNickNameCharacterAllowed",		Natives::IsNickNameCharacterAllowed}, // R7
+	AMX_DEFINE_NATIVE(IsValidNickName)	// R8
+	AMX_DEFINE_NATIVE(AllowNickNameCharacter) // R7
+	AMX_DEFINE_NATIVE(IsNickNameCharacterAllowed) // R7
 
 	// Player classes
-	{ "GetAvailableClasses",			Natives::GetAvailableClasses}, // R6
-	{ "RemoveLastClass",				Natives::RemoveLastClass}, // R16
-	{ "GetPlayerClass",					Natives::GetPlayerClass}, // R6
-	{ "EditPlayerClass",				Natives::EditPlayerClass}, // R6
+	AMX_DEFINE_NATIVE(GetAvailableClasses) // R6
+	AMX_DEFINE_NATIVE(RemoveLastClass) // R16
+	AMX_DEFINE_NATIVE(GetPlayerClass) // R6
+	AMX_DEFINE_NATIVE(EditPlayerClass) // R6
 	
 	// Timers
-	{ "GetRunningTimers",				Natives::GetRunningTimers}, // R8
+	AMX_DEFINE_NATIVE(GetRunningTimers) // R8
 
 	// Special
-	{ "SetPlayerGravity",				Natives::SetPlayerGravity },
-	{ "GetPlayerGravity",				Natives::GetPlayerGravity },
+	AMX_DEFINE_NATIVE(SetPlayerGravity)
+	AMX_DEFINE_NATIVE(GetPlayerGravity)
 	
-	{ "SetPlayerTeamForPlayer",			Natives::SetPlayerTeamForPlayer }, // R5
-	{ "GetPlayerTeamForPlayer",			Natives::GetPlayerTeamForPlayer }, // R5
-	{ "SetPlayerSkinForPlayer",			Natives::SetPlayerSkinForPlayer }, // R11
-	{ "GetPlayerSkinForPlayer",			Natives::GetPlayerSkinForPlayer }, // R11
-	{ "SetPlayerNameForPlayer",			Natives::SetPlayerNameForPlayer }, // R11
-	{ "GetPlayerNameForPlayer",			Natives::GetPlayerNameForPlayer }, // R11
-	{ "SetPlayerFightStyleForPlayer",	Natives::SetPlayerFightStyleForPlayer }, // R11
-	{ "GetPlayerFightStyleForPlayer",	Natives::GetPlayerFightStyleForPlayer }, // R11
-	{ "SetPlayerPosForPlayer",			Natives::SetPlayerPosForPlayer}, // R12
-	{ "SetPlayerRotationQuatForPlayer",	Natives::SetPlayerRotationQuatForPlayer}, // R12
-	{ "ApplyAnimationForPlayer",		Natives::ApplyAnimationForPlayer}, // R11
-	{ "GetPlayerWeather",				Natives::GetPlayerWeather },
-	{ "GetPlayerWorldBounds",			Natives::GetPlayerWorldBounds },
-	{ "TogglePlayerWidescreen",			Natives::TogglePlayerWidescreen },
-	{ "IsPlayerWidescreenToggled",		Natives::IsPlayerWidescreenToggled },
-	{ "GetSpawnInfo",					Natives::GetSpawnInfo }, // R8
-	{ "GetPlayerSkillLevel",			Natives::GetPlayerSkillLevel }, // R3
-	{ "IsPlayerCheckpointActive",		Natives::IsPlayerCheckpointActive }, // R10
-	{ "GetPlayerCheckpoint",			Natives::GetPlayerCheckpoint }, // R4
-	{ "IsPlayerRaceCheckpointActive",	Natives::IsPlayerRaceCheckpointActive }, // R10
-	{ "GetPlayerRaceCheckpoint",		Natives::GetPlayerRaceCheckpoint }, // R4
-	{ "GetPlayerWorldBounds",			Natives::GetPlayerWorldBounds }, // R5
-	{ "IsPlayerInModShop",				Natives::IsPlayerInModShop }, // R4
-	{ "SendBulletData",					Natives::SendBulletData }, // R6
-	{ "ShowPlayerForPlayer",			Natives::ShowPlayerForPlayer }, // R8
-	{ "HidePlayerForPlayer",			Natives::HidePlayerForPlayer }, // R8
-	{ "AddPlayerForPlayer",				Natives::AddPlayerForPlayer }, // R17
-	{ "RemovePlayerForPlayer",			Natives::RemovePlayerForPlayer }, // R17
-	{ "SetPlayerChatBubbleForPlayer",	Natives::SetPlayerChatBubbleForPlayer}, // R10
-	{ "SetPlayerVersion",				Natives::SetPlayerVersion }, // R9
-	{ "IsPlayerSpawned",				Natives::IsPlayerSpawned }, // R9
-	{"IsPlayerControllable",			Natives::IsPlayerControllable}, // R11
-	{ "SpawnForWorld",					Natives::SpawnForWorld }, // R10
-	{ "BroadcastDeath",					Natives::BroadcastDeath }, // R13
-	{ "IsPlayerCameraTargetEnabled",	Natives::IsPlayerCameraTargetEnabled }, // R13
-	{ "SetPlayerDisabledKeysSync",		Natives::SetPlayerDisabledKeysSync }, // R16
-	{ "GetPlayerDisabledKeysSync",		Natives::GetPlayerDisabledKeysSync }, // R16
+	AMX_DEFINE_NATIVE(SetPlayerTeamForPlayer) // R5
+	AMX_DEFINE_NATIVE(GetPlayerTeamForPlayer) // R5
+	AMX_DEFINE_NATIVE(SetPlayerSkinForPlayer) // R11
+	AMX_DEFINE_NATIVE(GetPlayerSkinForPlayer) // R11
+	AMX_DEFINE_NATIVE(SetPlayerNameForPlayer) // R11
+	AMX_DEFINE_NATIVE(GetPlayerNameForPlayer) // R11
+	AMX_DEFINE_NATIVE(SetPlayerFightStyleForPlayer) // R11
+	AMX_DEFINE_NATIVE(GetPlayerFightStyleForPlayer) // R11
+	AMX_DEFINE_NATIVE(SetPlayerPosForPlayer) // R12
+	AMX_DEFINE_NATIVE(SetPlayerRotationQuatForPlayer) // R12
+	AMX_DEFINE_NATIVE(ApplyAnimationForPlayer) // R11
+	AMX_DEFINE_NATIVE(GetPlayerWeather)
+	AMX_DEFINE_NATIVE(GetPlayerWorldBounds)
+	AMX_DEFINE_NATIVE(TogglePlayerWidescreen)
+	AMX_DEFINE_NATIVE(IsPlayerWidescreenToggled)
+	AMX_DEFINE_NATIVE(GetSpawnInfo) // R8
+	AMX_DEFINE_NATIVE(GetPlayerSkillLevel) // R3
+	AMX_DEFINE_NATIVE(IsPlayerCheckpointActive) // R10
+	AMX_DEFINE_NATIVE(GetPlayerCheckpoint) // R4
+	AMX_DEFINE_NATIVE(IsPlayerRaceCheckpointActive) // R10
+	AMX_DEFINE_NATIVE(GetPlayerRaceCheckpoint) // R4
+	AMX_DEFINE_NATIVE(GetPlayerWorldBounds) // R5
+	AMX_DEFINE_NATIVE(IsPlayerInModShop) // R4
+	AMX_DEFINE_NATIVE(SendBulletData) // R6
+	AMX_DEFINE_NATIVE(ShowPlayerForPlayer) // R8
+	AMX_DEFINE_NATIVE(HidePlayerForPlayer) // R8
+	AMX_DEFINE_NATIVE(AddPlayerForPlayer) // R17
+	AMX_DEFINE_NATIVE(RemovePlayerForPlayer) // R17
+	AMX_DEFINE_NATIVE(SetPlayerChatBubbleForPlayer) // R10
+	AMX_DEFINE_NATIVE(SetPlayerVersion) // R9
+	AMX_DEFINE_NATIVE(IsPlayerSpawned) // R9
+	AMX_DEFINE_NATIVE(IsPlayerControllable) // R11
+	AMX_DEFINE_NATIVE(SpawnForWorld) // R10
+	AMX_DEFINE_NATIVE(BroadcastDeath) // R13
+	AMX_DEFINE_NATIVE(IsPlayerCameraTargetEnabled) // R13
+	AMX_DEFINE_NATIVE(SetPlayerDisabledKeysSync) // R16
+	AMX_DEFINE_NATIVE(GetPlayerDisabledKeysSync) // R16
 
 	// Special things from syncdata
-	{ "GetPlayerSirenState",			Natives::GetPlayerSirenState },
-	{ "GetPlayerLandingGearState",		Natives::GetPlayerLandingGearState },
-	{ "GetPlayerHydraReactorAngle",		Natives::GetPlayerHydraReactorAngle },
-	{ "GetPlayerTrainSpeed",			Natives::GetPlayerTrainSpeed },
-	{ "GetPlayerZAim",					Natives::GetPlayerZAim },
-	{ "GetPlayerSurfingOffsets",		Natives::GetPlayerSurfingOffsets },
-	{ "GetPlayerRotationQuat",			Natives::GetPlayerRotationQuat }, // R3
-	{ "GetPlayerDialogID",				Natives::GetPlayerDialogID }, // R8
-	{ "GetPlayerSpectateID",			Natives::GetPlayerSpectateID }, // R8
-	{ "GetPlayerSpectateType",			Natives::GetPlayerSpectateType }, // R8
-	{ "GetPlayerLastSyncedVehicleID",	Natives::GetPlayerLastSyncedVehicleID }, // R10
-	{ "GetPlayerLastSyncedTrailerID",	Natives::GetPlayerLastSyncedTrailerID }, // R10
-	{ "GetPlayerFPS", 					Natives::GetPlayerFPS},
+	AMX_DEFINE_NATIVE(GetPlayerSirenState)
+	AMX_DEFINE_NATIVE(GetPlayerLandingGearState)
+	AMX_DEFINE_NATIVE(GetPlayerHydraReactorAngle)
+	AMX_DEFINE_NATIVE(GetPlayerTrainSpeed)
+	AMX_DEFINE_NATIVE(GetPlayerZAim)
+	AMX_DEFINE_NATIVE(GetPlayerSurfingOffsets)
+	AMX_DEFINE_NATIVE(GetPlayerRotationQuat) // R3
+	AMX_DEFINE_NATIVE(GetPlayerDialogID) // R8
+	AMX_DEFINE_NATIVE(GetPlayerSpectateID) // R8
+	AMX_DEFINE_NATIVE(GetPlayerSpectateType) // R8
+	AMX_DEFINE_NATIVE(GetPlayerLastSyncedVehicleID) // R10
+	AMX_DEFINE_NATIVE(GetPlayerLastSyncedTrailerID) // R10
+	AMX_DEFINE_NATIVE(GetPlayerFPS)
 
 	// Actor
-	{ "GetActorSpawnInfo", 				Natives::GetActorSpawnInfo}, // R13
-	{ "GetActorSkin", 					Natives::GetActorSkin}, // R13
-	{ "GetActorAnimation", 				Natives::GetActorAnimation}, // R17
+	AMX_DEFINE_NATIVE(GetActorSpawnInfo) // R13
+	AMX_DEFINE_NATIVE(GetActorSkin) // R13
+	AMX_DEFINE_NATIVE(GetActorAnimation) // R17
 
 	// Scoreboard manipulation
-	{ "TogglePlayerScoresPingsUpdate",	Natives::TogglePlayerScoresPingsUpdate }, // R8
-	{ "TogglePlayerFakePing",			Natives::TogglePlayerFakePing }, // R8
-	{ "SetPlayerFakePing",				Natives::SetPlayerFakePing }, // R8
-	{ "TogglePlayerOnPlayerList",		Natives::TogglePlayerInServerQuery }, // R11
-	{ "IsPlayerToggledOnPlayerList",	Natives::IsPlayerToggledInServerQuery }, // R11
-	{ "TogglePlayerInServerQuery",		Natives::TogglePlayerInServerQuery }, // R11
-	{ "IsPlayerToggledInServerQuery",	Natives::IsPlayerToggledInServerQuery }, // R11
+	AMX_DEFINE_NATIVE(TogglePlayerScoresPingsUpdate) // R8
+	AMX_DEFINE_NATIVE(TogglePlayerFakePing) // R8
+	AMX_DEFINE_NATIVE(SetPlayerFakePing) // R8
+	AMX_DEFINE_NATIVE(TogglePlayerInServerQuery) // R11
+	AMX_DEFINE_NATIVE(IsPlayerToggledInServerQuery) // R11
+	AMX_DEFINE_NATIVE(TogglePlayerInServerQuery) // R11
+	AMX_DEFINE_NATIVE(IsPlayerToggledInServerQuery) // R11
 
 	// AFK
-	{ "IsPlayerPaused",					Natives::IsPlayerPaused },
-	{ "GetPlayerPausedTime",			Natives::GetPlayerPausedTime },
+	AMX_DEFINE_NATIVE(IsPlayerPaused)
+	AMX_DEFINE_NATIVE(GetPlayerPausedTime)
 	
 	// Objects get - global
-	{"GetObjectDrawDistance",			Natives::GetObjectDrawDistance},
-	{"SetObjectMoveSpeed",				Natives::SetObjectMoveSpeed}, // R6
-	{"GetObjectMoveSpeed",				Natives::GetObjectMoveSpeed}, // R6
-	{"GetObjectTarget",					Natives::GetObjectTarget}, // R6
-	{"GetObjectAttachedData",			Natives::GetObjectAttachedData},
-	{"GetObjectAttachedOffset",			Natives::GetObjectAttachedOffset},
-	{"IsObjectMaterialSlotUsed",		Natives::IsObjectMaterialSlotUsed}, // R6
-	{"GetObjectMaterial",				Natives::GetObjectMaterial}, // R6
-	{"GetObjectMaterialText",			Natives::GetObjectMaterialText}, // R6
-	{"IsObjectNoCameraCol",				Natives::IsObjectNoCameraCol}, // R13
+	AMX_DEFINE_NATIVE(GetObjectDrawDistance)
+	AMX_DEFINE_NATIVE(SetObjectMoveSpeed) // R6
+	AMX_DEFINE_NATIVE(GetObjectMoveSpeed) // R6
+	AMX_DEFINE_NATIVE(GetObjectTarget) // R6
+	AMX_DEFINE_NATIVE(GetObjectAttachedData)
+	AMX_DEFINE_NATIVE(GetObjectAttachedOffset)
+	AMX_DEFINE_NATIVE(IsObjectMaterialSlotUsed) // R6
+	AMX_DEFINE_NATIVE(GetObjectMaterial) // R6
+	AMX_DEFINE_NATIVE(GetObjectMaterialText) // R6
+	AMX_DEFINE_NATIVE(IsObjectNoCameraCol) // R13
 
 	// Objects get - player
-	{"GetPlayerObjectDrawDistance",		Natives::GetPlayerObjectDrawDistance},
-	{"SetPlayerObjectMoveSpeed",		Natives::SetPlayerObjectMoveSpeed}, // R6
-	{"GetPlayerObjectMoveSpeed",		Natives::GetPlayerObjectMoveSpeed}, // R6
-	{"GetPlayerObjectTarget",			Natives::GetPlayerObjectTarget}, // R6
-	{"GetPlayerObjectAttachedData",		Natives::GetPlayerObjectAttachedData},
-	{"GetPlayerObjectAttachedOffset",	Natives::GetPlayerObjectAttachedOffset},
-	{"IsPlayerObjectMaterialSlotUsed",	Natives::IsPlayerObjectMaterialSlotUsed}, // R6
-	{"GetPlayerObjectMaterial",			Natives::GetPlayerObjectMaterial}, // R6
-	{"GetPlayerObjectMaterialText",		Natives::GetPlayerObjectMaterialText}, // R6
-	{"IsPlayerObjectNoCameraCol",		Natives::IsPlayerObjectNoCameraCol}, // R13
-	{"GetPlayerSurfingPlayerObjectID",	Natives::GetPlayerSurfingPlayerObjectID}, // R12
-	{"GetPlayerCameraTargetPlayerObj",	Natives::GetPlayerCameraTargetPlayerObj}, // R13
-	{"GetObjectType",					Natives::GetObjectType}, // R12
+	AMX_DEFINE_NATIVE(GetPlayerObjectDrawDistance)
+	AMX_DEFINE_NATIVE(SetPlayerObjectMoveSpeed) // R6
+	AMX_DEFINE_NATIVE(GetPlayerObjectMoveSpeed) // R6
+	AMX_DEFINE_NATIVE(GetPlayerObjectTarget) // R6
+	AMX_DEFINE_NATIVE(GetPlayerObjectAttachedData)
+	AMX_DEFINE_NATIVE(GetPlayerObjectAttachedOffset)
+	AMX_DEFINE_NATIVE(IsPlayerObjectMaterialSlotUsed) // R6
+	AMX_DEFINE_NATIVE(GetPlayerObjectMaterial) // R6
+	AMX_DEFINE_NATIVE(GetPlayerObjectMaterialText) // R6
+	AMX_DEFINE_NATIVE(IsPlayerObjectNoCameraCol) // R13
+	AMX_DEFINE_NATIVE(GetPlayerSurfingPlayerObjectID) // R12
+	AMX_DEFINE_NATIVE(GetPlayerCameraTargetPlayerObj) // R13
+	AMX_DEFINE_NATIVE(GetObjectType)// R12
 
 	// special - for attached objects
-	{"GetPlayerAttachedObject",			Natives::GetPlayerAttachedObject}, // R3
+	AMX_DEFINE_NATIVE(GetPlayerAttachedObject) // R3
 	
 	// Vehicle functions
-	{"GetVehicleSpawnInfo",				Natives::GetVehicleSpawnInfo},
-	{"SetVehicleSpawnInfo",				Natives::SetVehicleSpawnInfo}, // R16
-	{"GetVehicleColor",					Natives::GetVehicleColor},
-	{"GetVehiclePaintjob",				Natives::GetVehiclePaintjob},
-	{"GetVehicleInterior",				Natives::GetVehicleInterior},
-	{"GetVehicleNumberPlate",			Natives::GetVehicleNumberPlate},
-	{"SetVehicleRespawnDelay",			Natives::SetVehicleRespawnDelay},
-	{"GetVehicleRespawnDelay",			Natives::GetVehicleRespawnDelay},
-	{"SetVehicleOccupiedTick",			Natives::SetVehicleOccupiedTick}, // R6
-	{"GetVehicleOccupiedTick",			Natives::GetVehicleOccupiedTick},
-	{"SetVehicleRespawnTick",			Natives::SetVehicleRespawnTick},
-	{"GetVehicleRespawnTick",			Natives::GetVehicleRespawnTick},
-	{"GetVehicleLastDriver",			Natives::GetVehicleLastDriver},
-	{"GetVehicleCab",					Natives::GetVehicleCab}, // R9
-	{"HasVehicleBeenOccupied",			Natives::HasVehicleBeenOccupied}, // R9
-	{"SetVehicleBeenOccupied",			Natives::SetVehicleBeenOccupied}, // R9
-	{"IsVehicleOccupied",				Natives::IsVehicleOccupied}, // R9
-	{"IsVehicleDead",					Natives::IsVehicleDead}, // R9
-	{"GetVehicleModelCount",			Natives::GetVehicleModelCount}, // R17
-	{"GetVehicleModelsUsed",			Natives::GetVehicleModelsUsed}, // R17
+	AMX_DEFINE_NATIVE(GetVehicleSpawnInfo)
+	AMX_DEFINE_NATIVE(SetVehicleSpawnInfo) // R16
+	AMX_DEFINE_NATIVE(GetVehicleColor)
+	AMX_DEFINE_NATIVE(GetVehiclePaintjob)
+	AMX_DEFINE_NATIVE(GetVehicleInterior)
+	AMX_DEFINE_NATIVE(GetVehicleNumberPlate)
+	AMX_DEFINE_NATIVE(SetVehicleRespawnDelay)
+	AMX_DEFINE_NATIVE(GetVehicleRespawnDelay)
+	AMX_DEFINE_NATIVE(SetVehicleOccupiedTick) // R6
+	AMX_DEFINE_NATIVE(GetVehicleOccupiedTick)
+	AMX_DEFINE_NATIVE(SetVehicleRespawnTick)
+	AMX_DEFINE_NATIVE(GetVehicleRespawnTick)
+	AMX_DEFINE_NATIVE(GetVehicleLastDriver)
+	AMX_DEFINE_NATIVE(GetVehicleCab) // R9
+	AMX_DEFINE_NATIVE(HasVehicleBeenOccupied) // R9
+	AMX_DEFINE_NATIVE(SetVehicleBeenOccupied) // R9
+	AMX_DEFINE_NATIVE(IsVehicleOccupied) // R9
+	AMX_DEFINE_NATIVE(IsVehicleDead) // R9
+	AMX_DEFINE_NATIVE(GetVehicleModelCount) // R17
+	AMX_DEFINE_NATIVE(GetVehicleModelsUsed) // R17
 
 	// Gangzone - Global
-	{"IsValidGangZone",					Natives::IsValidGangZone},
-	{"IsPlayerInGangZone",				Natives::IsPlayerInGangZone},
-	{"IsGangZoneVisibleForPlayer",		Natives::IsGangZoneVisibleForPlayer},
-	{"GangZoneGetColorForPlayer",		Natives::GangZoneGetColorForPlayer},
-	{"GangZoneGetFlashColorForPlayer",	Natives::GangZoneGetFlashColorForPlayer},
-	{"IsGangZoneFlashingForPlayer",		Natives::IsGangZoneFlashingForPlayer}, // R6
-	{"GangZoneGetPos",					Natives::GangZoneGetPos},
+	AMX_DEFINE_NATIVE(IsValidGangZone)
+	AMX_DEFINE_NATIVE(IsPlayerInGangZone)
+	AMX_DEFINE_NATIVE(IsGangZoneVisibleForPlayer)
+	AMX_DEFINE_NATIVE(GangZoneGetColorForPlayer)
+	AMX_DEFINE_NATIVE(GangZoneGetFlashColorForPlayer)
+	AMX_DEFINE_NATIVE(IsGangZoneFlashingForPlayer) // R6
+	AMX_DEFINE_NATIVE(GangZoneGetPos)
 
 	// Gangzone - Player
-	{ "CreatePlayerGangZone",			Natives::CreatePlayerGangZone },
-	{ "PlayerGangZoneDestroy",			Natives::PlayerGangZoneDestroy },
-	{ "PlayerGangZoneShow",				Natives::PlayerGangZoneShow },
-	{ "PlayerGangZoneHide",				Natives::PlayerGangZoneHide },
-	{ "PlayerGangZoneFlash",			Natives::PlayerGangZoneFlash},
-	{ "PlayerGangZoneStopFlash",		Natives::PlayerGangZoneStopFlash },
-	{ "IsValidPlayerGangZone",			Natives::IsValidPlayerGangZone },
-	{ "IsPlayerInPlayerGangZone",		Natives::IsPlayerInPlayerGangZone },
-	{ "IsPlayerGangZoneVisible",		Natives::IsPlayerGangZoneVisible },
-	{ "PlayerGangZoneGetColor",			Natives::PlayerGangZoneGetColor },
-	{ "PlayerGangZoneGetFlashColor",	Natives::PlayerGangZoneGetFlashColor },
-	{ "IsPlayerGangZoneFlashing",		Natives::IsPlayerGangZoneFlashing }, // R6
-	{ "PlayerGangZoneGetPos",			Natives::PlayerGangZoneGetPos },
+	AMX_DEFINE_NATIVE(CreatePlayerGangZone)
+	AMX_DEFINE_NATIVE(PlayerGangZoneDestroy)
+	AMX_DEFINE_NATIVE(PlayerGangZoneShow)
+	AMX_DEFINE_NATIVE(PlayerGangZoneHide)
+	AMX_DEFINE_NATIVE(PlayerGangZoneFlash)
+	AMX_DEFINE_NATIVE(PlayerGangZoneStopFlash)
+	AMX_DEFINE_NATIVE(IsValidPlayerGangZone)
+	AMX_DEFINE_NATIVE(IsPlayerInPlayerGangZone)
+	AMX_DEFINE_NATIVE(IsPlayerGangZoneVisible)
+	AMX_DEFINE_NATIVE(PlayerGangZoneGetColor)
+	AMX_DEFINE_NATIVE(PlayerGangZoneGetFlashColor)
+	AMX_DEFINE_NATIVE(IsPlayerGangZoneFlashing) // R6
+	AMX_DEFINE_NATIVE(PlayerGangZoneGetPos)
 
 	// Textdraw functions
-	{"IsValidTextDraw",					Natives::IsValidTextDraw},
-	{"IsTextDrawVisibleForPlayer",		Natives::IsTextDrawVisibleForPlayer},
-	{"TextDrawGetString",				Natives::TextDrawGetString},
-	{"TextDrawSetPos",					Natives::TextDrawSetPos},
-	{"TextDrawGetLetterSize",			Natives::TextDrawGetLetterSize},
-	{"TextDrawGetFontSize",				Natives::TextDrawGetTextSize},
-	{"TextDrawGetTextSize",				Natives::TextDrawGetTextSize},
-	{"TextDrawGetPos",					Natives::TextDrawGetPos},
-	{"TextDrawGetColor",				Natives::TextDrawGetColor},
-	{"TextDrawGetBoxColor",				Natives::TextDrawGetBoxColor},
-	{"TextDrawGetBackgroundColor",		Natives::TextDrawGetBackgroundColor},
-	{"TextDrawGetShadow",				Natives::TextDrawGetShadow},
-	{"TextDrawGetOutline",				Natives::TextDrawGetOutline},
-	{"TextDrawGetFont",					Natives::TextDrawGetFont},
-	{"TextDrawIsBox",					Natives::TextDrawIsBox},
-	{"TextDrawIsProportional",			Natives::TextDrawIsProportional},
-	{"TextDrawIsSelectable",			Natives::TextDrawIsSelectable}, // R6
-	{"TextDrawGetAlignment",			Natives::TextDrawGetAlignment},
-	{"TextDrawGetPreviewModel",			Natives::TextDrawGetPreviewModel},
-	{"TextDrawGetPreviewRot",			Natives::TextDrawGetPreviewRot},
-	{"TextDrawGetPreviewVehCol",		Natives::TextDrawGetPreviewVehCol},
+	AMX_DEFINE_NATIVE(IsValidTextDraw)
+	AMX_DEFINE_NATIVE(IsTextDrawVisibleForPlayer)
+	AMX_DEFINE_NATIVE(TextDrawGetString)
+	AMX_DEFINE_NATIVE(TextDrawSetPos)
+	AMX_DEFINE_NATIVE(TextDrawGetLetterSize)
+	AMX_DEFINE_NATIVE(TextDrawGetTextSize)
+	AMX_DEFINE_NATIVE(TextDrawGetPos)
+	AMX_DEFINE_NATIVE(TextDrawGetColor)
+	AMX_DEFINE_NATIVE(TextDrawGetBoxColor)
+	AMX_DEFINE_NATIVE(TextDrawGetBackgroundColor)
+	AMX_DEFINE_NATIVE(TextDrawGetShadow)
+	AMX_DEFINE_NATIVE(TextDrawGetOutline)
+	AMX_DEFINE_NATIVE(TextDrawGetFont)
+	AMX_DEFINE_NATIVE(TextDrawIsBox)
+	AMX_DEFINE_NATIVE(TextDrawIsProportional)
+	AMX_DEFINE_NATIVE(TextDrawIsSelectable) // R6
+	AMX_DEFINE_NATIVE(TextDrawGetAlignment)
+	AMX_DEFINE_NATIVE(TextDrawGetPreviewModel)
+	AMX_DEFINE_NATIVE(TextDrawGetPreviewRot)
+	AMX_DEFINE_NATIVE(TextDrawGetPreviewVehCol)
 
 	// Per-Player Textdraw functions - R4
-	{"IsValidPlayerTextDraw",			Natives::IsValidPlayerTextDraw},
-	{"IsPlayerTextDrawVisible",			Natives::IsPlayerTextDrawVisible},
-	{"PlayerTextDrawGetString",			Natives::PlayerTextDrawGetString},
-	{"PlayerTextDrawSetPos",			Natives::PlayerTextDrawSetPos},
-	{"PlayerTextDrawGetLetterSize",		Natives::PlayerTextDrawGetLetterSize},
-	{"PlayerTextDrawGetFontSize",		Natives::PlayerTextDrawGetTextSize},
-	{"PlayerTextDrawGetTextSize",		Natives::PlayerTextDrawGetTextSize},
-	{"PlayerTextDrawGetPos",			Natives::PlayerTextDrawGetPos},
-	{"PlayerTextDrawGetColor",			Natives::PlayerTextDrawGetColor},
-	{"PlayerTextDrawGetBoxColor",		Natives::PlayerTextDrawGetBoxColor},
-	{"PlayerTextDrawGetBackgroundCol",	Natives::PlayerTextDrawGetBackgroundCol},
-	{"PlayerTextDrawGetShadow",			Natives::PlayerTextDrawGetShadow},
-	{"PlayerTextDrawGetOutline",		Natives::PlayerTextDrawGetOutline},
-	{"PlayerTextDrawGetFont",			Natives::PlayerTextDrawGetFont},
-	{"PlayerTextDrawIsBox",				Natives::PlayerTextDrawIsBox},
-	{"PlayerTextDrawIsProportional",	Natives::PlayerTextDrawIsProportional},
-	{"PlayerTextDrawIsSelectable",		Natives::PlayerTextDrawIsSelectable}, // R6
-	{"PlayerTextDrawGetAlignment",		Natives::PlayerTextDrawGetAlignment},
-	{"PlayerTextDrawGetPreviewModel",	Natives::PlayerTextDrawGetPreviewModel},
-	{"PlayerTextDrawGetPreviewRot",		Natives::PlayerTextDrawGetPreviewRot},
-	{"PlayerTextDrawGetPreviewVehCol",	Natives::PlayerTextDrawGetPreviewVehCol},
+	AMX_DEFINE_NATIVE(IsValidPlayerTextDraw)
+	AMX_DEFINE_NATIVE(IsPlayerTextDrawVisible)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetString)
+	AMX_DEFINE_NATIVE(PlayerTextDrawSetPos)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetLetterSize)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetTextSize)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetPos)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetColor)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetBoxColor)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetBackgroundCol)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetShadow)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetOutline)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetFont)
+	AMX_DEFINE_NATIVE(PlayerTextDrawIsBox)
+	AMX_DEFINE_NATIVE(PlayerTextDrawIsProportional)
+	AMX_DEFINE_NATIVE(PlayerTextDrawIsSelectable) // R6
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetAlignment)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetPreviewModel)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetPreviewRot)
+	AMX_DEFINE_NATIVE(PlayerTextDrawGetPreviewVehCol)
 
 	// 3D Text
-	{"IsValid3DTextLabel",				Natives::IsValid3DTextLabel}, // R4
-	{"Is3DTextLabelStreamedIn",			Natives::Is3DTextLabelStreamedIn}, // R9
-	{"Get3DTextLabelText",				Natives::Get3DTextLabelText},
-	{"Get3DTextLabelColor",				Natives::Get3DTextLabelColor},
-	{"Get3DTextLabelPos",				Natives::Get3DTextLabelPos},
-	{"Get3DTextLabelDrawDistance",		Natives::Get3DTextLabelDrawDistance},
-	{"Get3DTextLabelLOS",				Natives::Get3DTextLabelLOS},
-	{"Get3DTextLabelVirtualWorld",		Natives::Get3DTextLabelVirtualWorld},
-	{"Get3DTextLabelAttachedData",		Natives::Get3DTextLabelAttachedData},
+	AMX_DEFINE_NATIVE(IsValid3DTextLabel) // R4
+	AMX_DEFINE_NATIVE(Is3DTextLabelStreamedIn) // R9
+	AMX_DEFINE_NATIVE(Get3DTextLabelText)
+	AMX_DEFINE_NATIVE(Get3DTextLabelColor)
+	AMX_DEFINE_NATIVE(Get3DTextLabelPos)
+	AMX_DEFINE_NATIVE(Get3DTextLabelDrawDistance)
+	AMX_DEFINE_NATIVE(Get3DTextLabelLOS)
+	AMX_DEFINE_NATIVE(Get3DTextLabelVirtualWorld)
+	AMX_DEFINE_NATIVE(Get3DTextLabelAttachedData)
 
 	// Per-Player 3D Text
-	{"IsValidPlayer3DTextLabel",		Natives::IsValidPlayer3DTextLabel}, // R4
-	{"GetPlayer3DTextLabelText",		Natives::GetPlayer3DTextLabelText}, // R4
-	{"GetPlayer3DTextLabelColor",		Natives::GetPlayer3DTextLabelColor}, // R4
-	{"GetPlayer3DTextLabelPos",			Natives::GetPlayer3DTextLabelPos}, // R4
-	{"GetPlayer3DTextLabelDrawDist",	Natives::GetPlayer3DTextLabelDrawDist},
-	{"GetPlayer3DTextLabelLOS",			Natives::GetPlayer3DTextLabelLOS}, // R4
-	{"GetPlayer3DTextLabelVirtualW",	Natives::GetPlayer3DTextLabelVirtualW}, // R4
-	{"GetPlayer3DTextLabelAttached",	Natives::GetPlayer3DTextLabelAttached}, // R9
+	AMX_DEFINE_NATIVE(IsValidPlayer3DTextLabel) // R4
+	AMX_DEFINE_NATIVE(GetPlayer3DTextLabelText) // R4
+	AMX_DEFINE_NATIVE(GetPlayer3DTextLabelColor) // R4
+	AMX_DEFINE_NATIVE(GetPlayer3DTextLabelPos) // R4
+	AMX_DEFINE_NATIVE(GetPlayer3DTextLabelDrawDist)
+	AMX_DEFINE_NATIVE(GetPlayer3DTextLabelLOS) // R4
+	AMX_DEFINE_NATIVE(GetPlayer3DTextLabelVirtualW) // R4
+	AMX_DEFINE_NATIVE(GetPlayer3DTextLabelAttached) // R9
 
 	// Menus
-	{"IsMenuDisabled",					Natives::IsMenuDisabled}, // R5 
-	{"IsMenuRowDisabled",				Natives::IsMenuRowDisabled}, // R5
-	{"GetMenuColumns",					Natives::GetMenuColumns},
-	{"GetMenuItems",					Natives::GetMenuItems},
-	{"GetMenuPos",						Natives::GetMenuPos},
-	{"GetMenuColumnWidth",				Natives::GetMenuColumnWidth},
-	{"GetMenuColumnHeader",				Natives::GetMenuColumnHeader},
-	{"GetMenuItem",						Natives::GetMenuItem},
+	AMX_DEFINE_NATIVE(IsMenuDisabled) // R5 
+	AMX_DEFINE_NATIVE(IsMenuRowDisabled) // R5
+	AMX_DEFINE_NATIVE(GetMenuColumns)
+	AMX_DEFINE_NATIVE(GetMenuItems)
+	AMX_DEFINE_NATIVE(GetMenuPos)
+	AMX_DEFINE_NATIVE(GetMenuColumnWidth)
+	AMX_DEFINE_NATIVE(GetMenuColumnHeader)
+	AMX_DEFINE_NATIVE(GetMenuItem)
 	
 	// Pickups - Global
-	{ "IsValidPickup",					Natives::IsValidPickup }, // R10
-	{ "IsPickupStreamedIn",				Natives::IsPickupStreamedIn }, // R10
-	{ "GetPickupPos",					Natives::GetPickupPos }, // R10
-	{ "GetPickupModel",					Natives::GetPickupModel }, // R10
-	{ "GetPickupType",					Natives::GetPickupType }, // R10
-	{ "GetPickupVirtualWorld",			Natives::GetPickupVirtualWorld }, // R10
+	AMX_DEFINE_NATIVE(IsValidPickup) // R10
+	AMX_DEFINE_NATIVE(IsPickupStreamedIn) // R10
+	AMX_DEFINE_NATIVE(GetPickupPos) // R10
+	AMX_DEFINE_NATIVE(GetPickupModel) // R10
+	AMX_DEFINE_NATIVE(GetPickupType) // R10
+	AMX_DEFINE_NATIVE(GetPickupVirtualWorld) // R10
 #ifdef NEW_PICKUP_SYSTEM
 	// Pickups - Per-player
-	{ "CreatePlayerPickup",				Natives::CreatePlayerPickup}, // R10
-	{ "DestroyPlayerPickup",			Natives::DestroyPlayerPickup }, // R10
-	{ "IsValidPlayerPickup",			Natives::IsValidPlayerPickup }, // R10
-	{ "IsPlayerPickupStreamedIn",		Natives::IsPlayerPickupStreamedIn }, // R10
-	{ "GetPlayerPickupPos",				Natives::GetPlayerPickupPos }, // R10
-	{ "GetPlayerPickupModel",			Natives::GetPlayerPickupModel }, // R10
-	{ "GetPlayerPickupType",			Natives::GetPlayerPickupType }, // R10
-	{ "GetPlayerPickupVirtualWorld",	Natives::GetPlayerPickupVirtualWorld }, // R10
+	AMX_DEFINE_NATIVE(CreatePlayerPickup) // R10
+	AMX_DEFINE_NATIVE(DestroyPlayerPickup) // R10
+	AMX_DEFINE_NATIVE(IsValidPlayerPickup) // R10
+	AMX_DEFINE_NATIVE(IsPlayerPickupStreamedIn) // R10
+	AMX_DEFINE_NATIVE(GetPlayerPickupPos) // R10
+	AMX_DEFINE_NATIVE(GetPlayerPickupModel) // R10
+	AMX_DEFINE_NATIVE(GetPlayerPickupType) // R10
+	AMX_DEFINE_NATIVE(GetPlayerPickupVirtualWorld) // R10
 #endif
 	// RakServer functions
-	{ "ClearBanList",					Natives::ClearBanList },
-	{ "IsBanned",						Natives::IsBanned },
+	AMX_DEFINE_NATIVE(ClearBanList)
+	AMX_DEFINE_NATIVE(IsBanned)
 
-	{ "SetTimeoutTime",					Natives::SetTimeoutTime },
-//	{ "SetMTUSize",						Natives::SetMTUSize },
-	{ "GetMTUSize",						Natives::GetMTUSize },
-	{ "GetLocalIP",						Natives::GetLocalIP },
+	AMX_DEFINE_NATIVE(SetTimeoutTime)
+	AMX_DEFINE_NATIVE(GetLocalIP)
 	
-	{ "SendRPC",						Natives::SendRPC },
-	{ "SendData",						Natives::SendData },
-	{ "YSF_SetTickRate",				Natives::YSF_SetTickRate},
-	{ "YSF_GetTickRate",				Natives::YSF_GetTickRate},
-	{ "YSF_EnableNightVisionFix",		Natives::YSF_EnableNightVisionFix },
-	{ "YSF_IsNightVisionFixEnabled",	Natives::YSF_IsNightVisionFixEnabled },
-	{ "YSF_SetExtendedNetStatsEnabled",	Natives::YSF_SetExtendedNetStatsEnabled }, // R17
-	{ "YSF_IsExtendedNetStatsEnabled",	Natives::YSF_IsExtendedNetStatsEnabled }, // R17
-	{ "YSF_SetAFKAccuracy",				Natives::YSF_SetAFKAccuracy }, // R17
-	{ "YSF_GetAFKAccuracy",				Natives::YSF_GetAFKAccuracy }, // R17
+	AMX_DEFINE_NATIVE(SendRPC)
+	AMX_DEFINE_NATIVE(SendData)
+	AMX_DEFINE_NATIVE(YSF_SetTickRate)
+	AMX_DEFINE_NATIVE(YSF_GetTickRate)
+	AMX_DEFINE_NATIVE(YSF_EnableNightVisionFix)
+	AMX_DEFINE_NATIVE(YSF_IsNightVisionFixEnabled)
+	AMX_DEFINE_NATIVE(YSF_SetExtendedNetStatsEnabled) // R17
+	AMX_DEFINE_NATIVE(YSF_IsExtendedNetStatsEnabled) // R17
+	AMX_DEFINE_NATIVE(YSF_SetAFKAccuracy) // R17
+	AMX_DEFINE_NATIVE(YSF_GetAFKAccuracy) // R17
 
-	{ "AttachPlayerObjectToObject",		Natives::AttachPlayerObjectToObject },
+	AMX_DEFINE_NATIVE(AttachPlayerObjectToObject)
 	
 	// Recording functions
-	{ "SetRecordingDirectory",			Natives::SetRecordingDirectory }, // R17
-	{ "GetRecordingDirectory",			Natives::GetRecordingDirectory }, // R17
+	AMX_DEFINE_NATIVE(SetRecordingDirectory) // R17
+	AMX_DEFINE_NATIVE(GetRecordingDirectory) // R17
 
 	// Format functions
-	{ "SendClientMessagef",				Natives::SendClientMessagef },
-	{ "SendClientMessageToAllf",		Natives::SendClientMessageToAllf },
-	{ "GameTextForPlayerf",				Natives::GameTextForPlayerf },
-	{ "GameTextForAllf",				Natives::GameTextForAllf },
-	{ "SendPlayerMessageToPlayerf",		Natives::SendPlayerMessageToPlayerf },
-	{ "SendPlayerMessageToAllf",		Natives::SendPlayerMessageToAllf },
-	{ "SendRconCommandf",				Natives::SendRconCommandf },
+	AMX_DEFINE_NATIVE(SendClientMessagef)
+	AMX_DEFINE_NATIVE(SendClientMessageToAllf)
+	AMX_DEFINE_NATIVE(GameTextForPlayerf)
+	AMX_DEFINE_NATIVE(GameTextForAllf)
+	AMX_DEFINE_NATIVE(SendPlayerMessageToPlayerf)
+	AMX_DEFINE_NATIVE(SendPlayerMessageToAllf)
+	AMX_DEFINE_NATIVE(SendRconCommandf)
 
 	// Other
-	{"GetColCount",						Natives::GetColCount},
-	{"GetColSphereRadius",				Natives::GetColSphereRadius},
-	{"GetColSphereOffset",				Natives::GetColSphereOffset},
+	AMX_DEFINE_NATIVE(GetColCount)
+	AMX_DEFINE_NATIVE(GetColSphereRadius)
+	AMX_DEFINE_NATIVE(GetColSphereOffset)
 
-	{ "GetWeaponSlot",					Natives::GetWeaponSlot},
+	AMX_DEFINE_NATIVE(GetWeaponSlot)
 #ifdef NEW_PICKUP_SYSTEM
-	{ "SetPickupStreamingEnabled",		Natives::SetPickupStreamingEnabled },
+	AMX_DEFINE_NATIVE(SetPickupStreamingEnabled);
 #endif
-	{ 0,								0 }
+	{ NULL,								NULL }
 };
 
 AMX_NATIVE_INFO RedirectedNatives[] =
@@ -6762,7 +5972,7 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	{ "SetPlayerSkin",					Natives::YSF_SetPlayerSkin },
 	{ "SetPlayerName",					Natives::YSF_SetPlayerName },
 	{ "SetPlayerFightingStyle",			Natives::YSF_SetPlayerFightingStyle },
-	{ 0,								0 }
+	{ NULL,								NULL }
 };
 
 int InitScripting(AMX *amx)

@@ -1,12 +1,34 @@
-/* =========================================
-			
-		FCNPC - Fully Controllable NPC
-			----------------------
-
-	- File: Utils.cpp
-	- Author(s): OrMisicL
-
-  =========================================*/
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
 
 #include "main.h"
 
@@ -49,7 +71,7 @@ bool IsPlayerConnectedEx(int playerid)
 	return pPlayerData[playerid] != NULL && pNetGame->pPlayerPool->pPlayer != NULL;
 }
 
-const char* CUtils::GetWeaponName_(BYTE weaponid)
+const char* Utility::GetWeaponName_(BYTE weaponid)
 {
 	switch (weaponid)
 	{
@@ -163,7 +185,7 @@ const char* CUtils::GetWeaponName_(BYTE weaponid)
 	return "";
 }
 
-BYTE CUtils::GetWeaponSlot(BYTE weaponid)
+BYTE Utility::GetWeaponSlot(BYTE weaponid)
 {
 	BYTE result; // eax@2
 
@@ -246,34 +268,88 @@ BYTE CUtils::GetWeaponSlot(BYTE weaponid)
 	return result;
 }
 
+std::string Utility::convertNativeStringToString(AMX *amx, cell input)
+{
+	char *string = NULL;
+	amx_StrParam(amx, input, string);
+	return string ? string : "";
+}
+
+void Utility::convertStringToNativeString(AMX *amx, cell output, cell size, char* string)
+{
+	cell *address = NULL;
+	amx_GetAddr(amx, output, &address);
+	amx_SetString(address, string, 0, 0, static_cast<size_t>(size));
+}
+
+void Utility::convertStringToNativeString(AMX *amx, cell output, cell size, std::string string)
+{
+	cell *address = NULL;
+	amx_GetAddr(amx, output, &address);
+	amx_SetString(address, string.c_str(), 0, 0, static_cast<size_t>(size));
+}
+
+void Utility::storeFloatInNative(AMX *amx, cell output, float value)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = amx_ftoc(value);
+}
+
+void Utility::storeVectorInNative(AMX *amx, cell output, CVector2D &vec)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = amx_ftoc(vec.fX);
+	amx_GetAddr(amx, output - 4, &address);
+	*address = amx_ftoc(vec.fY);
+}
+
+void Utility::storeVectorInNative(AMX *amx, cell output, CVector &vec)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = amx_ftoc(vec.fX);
+	amx_GetAddr(amx, output -4, &address);
+	*address = amx_ftoc(vec.fY);
+	amx_GetAddr(amx, output - 8, &address);
+	*address = amx_ftoc(vec.fZ);
+}
+
+void Utility::storeIntegerInNative(AMX *amx, cell output, int value)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = value;
+}
+
+void Utility::storeIntegerInNative(AMX *amx, cell output, DWORD value)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = static_cast<cell>(value);
+}
+
+void Utility::storeIntegerInNative(AMX *amx, cell output, WORD value)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = static_cast<cell>(value);
+}
+
+void Utility::storeIntegerInNative(AMX *amx, cell output, BYTE value)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = static_cast<cell>(value);
+}
+
 char *GetPlayerName_(int playerid)
 {
 	if (!IsPlayerConnectedEx(playerid)) return NULL;
 
 	// Get the player name pointer from memory.
 	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
-}
-
-// Created by: https://github.com/Zeex/sampgdk/blob/master/plugins/unlimitedfs/unlimitedfs.cpp
-std::string GetServerCfgOption(const std::string &option)
-{
-	std::string name, value;
-	std::string line;
-	std::fstream server_cfg("server.cfg");
-	if (server_cfg)
-	{
-		while (std::getline(server_cfg, line))
-		{
-			std::stringstream ss(line);
-			ss >> name;
-			if (name == option)
-			{
-				ss >> value;
-				break;
-			}
-		}
-	}
-	return "0";
 }
 
 // Y_Less - original YSF
@@ -291,39 +367,7 @@ bool Unlock(void *address, size_t len)
 		return !mprotect(reinterpret_cast <void*>(iAddr), len, PROT_READ | PROT_WRITE | PROT_EXEC);
 	#endif
 }
-/*
-// Y_Less - fixes2
-void AssemblySwap(char * addr, char * dat, int len)
-{
-	char
-		swp;
-	while (len--)
-	{
-		swp = addr[len];
-		addr[len] = dat[len];
-		dat[len] = swp;
-	}
-}
 
-void AssemblyRedirect(void * from, void * to, char * ret)
-{
-	#ifdef LINUX
-		size_t
-			iPageSize = getpagesize(),
-			iAddr = ((reinterpret_cast <uint32_t>(from) / iPageSize) * iPageSize),
-			iCount = (5 / iPageSize) * iPageSize + iPageSize * 2;
-		mprotect(reinterpret_cast <void*>(iAddr), iCount, PROT_READ | PROT_WRITE | PROT_EXEC);
-		//mprotect(from, 5, PROT_READ | PROT_WRITE | PROT_EXEC);
-	#else
-		DWORD
-			old;
-		VirtualProtect(from, 5, PAGE_EXECUTE_READWRITE, &old);
-	#endif
-	*((unsigned char *)ret) = 0xE9;
-	*((char **)(ret + 1)) = (char *)((char *)to - (char *)from) - 5;
-	AssemblySwap((char *)from, ret, 5);
-}
-*/
 bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask)
 {
 	for(; *mask; ++mask, ++data, ++pattern)

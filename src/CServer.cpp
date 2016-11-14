@@ -1,12 +1,46 @@
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
+
 #include "main.h"
 
-CServer::CServer(eSAMPVersion version)
+void CServer::Initialize(eSAMPVersion version)
 {
+	m_bInitialized = true;
 	m_iTicks = 0;
 	m_iTickRate = 5;
 	m_bNightVisionFix = true;
 	m_dwAFKAccuracy = 1500;
 
+	logprintf("init more");
 	memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();
 	memset(&COBJECT_AttachedObjectPlayer, INVALID_PLAYER_ID, sizeof(COBJECT_AttachedObjectPlayer));
@@ -15,29 +49,31 @@ CServer::CServer(eSAMPVersion version)
 	CAddress::Initialize(version);
 	// Initialize SAMP Function
 	CSAMPFunctions::PreInitialize();
+	// Install pre-hooks
+	InstallPreHooks();
 
 	// Initialize default valid name characters
 	for(BYTE i = '0'; i <= '9'; i++)
 	{
-		m_vecValidNameCharacters.push_back(i);
+		m_vecValidNameCharacters.insert(i);
 	}
 	for(BYTE i = 'A'; i <= 'Z'; i++)
 	{
-		m_vecValidNameCharacters.push_back(i);
+		m_vecValidNameCharacters.insert(i);
 	}
 	for(BYTE i = 'a'; i <= 'z'; i++)
 	{
-		m_vecValidNameCharacters.push_back(i);
+		m_vecValidNameCharacters.insert(i);
 	}
-	m_vecValidNameCharacters.push_back(']');
-	m_vecValidNameCharacters.push_back('[');
-	m_vecValidNameCharacters.push_back('_');
-	m_vecValidNameCharacters.push_back('$');
-	m_vecValidNameCharacters.push_back('=');
-	m_vecValidNameCharacters.push_back('(');
-	m_vecValidNameCharacters.push_back(')');
-	m_vecValidNameCharacters.push_back('@');
-	m_vecValidNameCharacters.push_back('.');
+	m_vecValidNameCharacters.insert(']');
+	m_vecValidNameCharacters.insert('[');
+	m_vecValidNameCharacters.insert('_');
+	m_vecValidNameCharacters.insert('$');
+	m_vecValidNameCharacters.insert('=');
+	m_vecValidNameCharacters.insert('(');
+	m_vecValidNameCharacters.insert(')');
+	m_vecValidNameCharacters.insert('@');
+	m_vecValidNameCharacters.insert('.');
 }
 
 CServer::~CServer()
@@ -83,8 +119,8 @@ void CServer::Process()
 			pPlayerData[playerid]->Process();
 		}
 #ifdef NEW_PICKUP_SYSTEM
-		if(pServer->pPickupPool)
-			pServer->pPickupPool->Process();
+		if(CServer::Get()->pPickupPool)
+			CServer::Get()->pPickupPool->Process();
 #endif
 	}
 }
@@ -92,8 +128,8 @@ void CServer::Process()
 bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 {
 	//logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
-	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);
-	PlayerID forplayerId = pRakServer->GetPlayerIDFromIndex(forplayerid);
+	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(playerid);
+	PlayerID forplayerId = CSAMPFunctions::GetPlayerIDFromIndex(forplayerid);
 	
 	// For security..
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
@@ -133,7 +169,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			bs.Write((WORD)-1); // wAttachedObjectID
 			bs.Write((BYTE)0); // dwMaterialCount
 
-			pRakServer->RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
+			CSAMPFunctions::RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
 			
 			pPlayerData[forplayerid]->dwCreateAttachedObj = GetTickCount();
 			pPlayerData[forplayerid]->dwObjectID = i;
@@ -152,8 +188,8 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 {
 	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
-	PlayerID playerId = pRakServer->GetPlayerIDFromIndex(playerid);
-	PlayerID forplayerId = pRakServer->GetPlayerIDFromIndex(forplayerid);
+	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(playerid);
+	PlayerID forplayerId = CSAMPFunctions::GetPlayerIDFromIndex(forplayerid);
 	
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
 		return 0;
@@ -208,7 +244,7 @@ void CServer::SetGravity_(float fGravity)
 	
 	RakNet::BitStream bs;
 	bs.Write(fGravity);
-	pRakServer->RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
+	CSAMPFunctions::RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
 }
 
 float CServer::GetGravity_(void)
@@ -225,11 +261,10 @@ void CServer::SetWeather_(BYTE byteWeather)
 	pNetGame->byteWeather = byteWeather;
 	CSAMPFunctions::SetStringVariable("weather", szWeather);
 
-	// Minden játékos idõjárása átállítása arra, amire a szerver idõjárást beállítottuk
-
+	// Broadcast server weather
 	RakNet::BitStream bs;
 	bs.Write(byteWeather);
-	pRakServer->RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
+	CSAMPFunctions::RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
 }
 
 BYTE CServer::GetWeather_(void)
@@ -241,15 +276,15 @@ void CServer::AllowNickNameCharacter(char character, bool enable)
 {
 	if (enable)
 	{
-		std::vector<char>::iterator it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
+		auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
 		if (it == m_vecValidNameCharacters.end())
 		{
-			m_vecValidNameCharacters.push_back(character);
+			m_vecValidNameCharacters.insert(character);
 		}
 	}
 	else
 	{
-		std::vector<char>::iterator it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
+		auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
 		if (it != m_vecValidNameCharacters.end())
 		{
 			m_vecValidNameCharacters.erase(it);
@@ -259,7 +294,7 @@ void CServer::AllowNickNameCharacter(char character, bool enable)
 
 bool CServer::IsNickNameCharacterAllowed(char character)
 {
-	std::vector<char>::iterator it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
+	auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
 	return (it != m_vecValidNameCharacters.end());
 }
 

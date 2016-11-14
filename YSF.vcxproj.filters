@@ -25,6 +25,9 @@
     <Filter Include="src\Hooks">
       <UniqueIdentifier>{8b47fa9b-b09f-4a2b-b153-fb1c290c91bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Utils">
+      <UniqueIdentifier>{4a52d11b-07f9-4599-aabb-5e197bc0265a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\amxfunctions.cpp">
@@ -95,9 +98,6 @@
     <ClInclude Include="src\CPlayerData.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\CVector.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\CServer.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -140,6 +140,15 @@
     </ClInclude>
     <ClInclude Include="lib\sampgdk\sampgdk.h">
       <Filter>lib\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CVector.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CSingleton.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CVector2D.h">
+      <Filter>src\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

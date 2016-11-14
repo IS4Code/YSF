@@ -1,40 +1,41 @@
-/*  
- *  Version: MPL 1.1
- *  
- *  The contents of this file are subject to the Mozilla Public License Version 
- *  1.1 (the "License"); you may not use this file except in compliance with 
- *  the License. You may obtain a copy of the License at 
- *  http://www.mozilla.org/MPL/
- *  
- *  Software distributed under the License is distributed on an "AS IS" basis,
- *  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- *  for the specific language governing rights and limitations under the
- *  License.
- *  
- *  The Original Code is the YSI 2.0 SA:MP plugin.
- *  
- *  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
- *  Portions created by the Initial Developer are Copyright (C) 2008
- *  the Initial Developer. All Rights Reserved.
- *  
- *  Contributor(s):
- *  
- *  Peter Beverloo
- *  Marcus Bauer
- *  MaVe;
- *  Sammy91
- *  Incognito
- *  
- *  Special Thanks to:
- *  
- *  SA:MP Team past, present and future
- */
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
 
 #ifndef YSF_STRUCTS_H
 #define YSF_STRUCTS_H
 
 #include "CServer.h"
 #include "CVector.h"
+#include "CVector2D.h"
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
 #include <map>
@@ -100,8 +101,8 @@ struct C3DText  // size 0x21
 	float			fDrawDistance;                     // + 0x14
     bool			bLineOfSight;            // + 0x18
     int				iWorld;                  // + 0x19
-    WORD			attachedToPlayerID;    // + 0x1D
-	WORD			attachedToVehicleID;   // + 0x1F
+    WORD			wAttachedToPlayerID;    // + 0x1D
+	WORD			wAttachedToVehicleID;   // + 0x1F
 };
 
 /* -------------------------------------------------------- */
@@ -128,8 +129,8 @@ struct CAimSyncData
 struct CVehicleSyncData
 {
 	WORD			wVehicleId;				// 0x001F - 0x0021
-	WORD			wLRAnalog;				// 0x0021 - 0x0023
-	WORD			wUDAnalog;				// 0x0023 - 0x0025
+	WORD			wLRAnalog;				// 0x0023 - 0x0025
+	WORD			wUDAnalog;				// 0x0021 - 0x0023
 	WORD			wKeys;					// 0x0025 - 0x0027
 	float			fQuaternion[4];			// 0x002B - 0x0037
 	CVector			vecPosition;			// 0x0037 - 0x0043
@@ -158,8 +159,8 @@ struct CPassengerSyncData
 	BYTE			bytePlayerWeapon;		// 0x0061 - 0x0062
 	BYTE			bytePlayerHealth;		// 0x0062 - 0x0063
 	BYTE			bytePlayerArmour;		// 0x0063 - 0x0064
-	WORD			wLRAnalog;				// 0x0064 - 0x0066
-	WORD			wUDAnalog;				// 0x0066 - 0x0068
+	WORD			wLRAnalog;				// 0x0066 - 0x0068
+	WORD			wUDAnalog;				// 0x0064 - 0x0066
 	WORD			wKeys;					// 0x0068 - 0x006A
 	CVector			vecPosition;			// 0x006A - 0x0076
 	// Size = 24
@@ -167,8 +168,8 @@ struct CPassengerSyncData
 
 struct CSyncData
 {
-	WORD			wLRAnalog;				// 0x0076 - 0x0078
-	WORD			wUDAnalog;				// 0x0078 - 0x007A
+	WORD			wLRAnalog;				// 0x0078 - 0x007A
+	WORD			wUDAnalog;				// 0x0076 - 0x0078
 	WORD			wKeys;					// 0x007A - 0x007C
 	CVector			vecPosition;			// 0x007C - 0x0088
 	float			fQuaternion[4];			// 0x0088 - 0x008C
@@ -237,19 +238,16 @@ typedef struct CTextdraw
 			BYTE bytePadding : 3;
 		};
 	};
-	float			fLetterWidth;			// 1
-	float			fLetterHeight;		// 5
+	CVector2D		vecLetter;	// 1 - 9
 	DWORD			dwLetterColor;		// 9
-	float			fLineWidth;			// 13
-	float			fLineHeight;			// 17
+	CVector2D		vecLine;
 	DWORD			dwBoxColor;			// 21
 	BYTE			byteShadow; // 26
 	BYTE			byteOutline; // 27
 	DWORD			dwBackgroundColor; // 31
 	BYTE			byteStyle; // 32
 	BYTE			byteSelectable; // 32
-	float			fX; // 33
-	float			fY; // 37
+	CVector2D		vecPos;
 	WORD			dwModelIndex; // 41 - 43
 	CVector			vecRot;  // 43 - 55
 	float			fZoom; // 55 - 59
@@ -357,8 +355,8 @@ struct CPlayer
 	float					fQuaternion[4];		// 10537 - 10553
 	float					fAngle;				// 10553 - 10557
 	CVector					vecVelocity;		// 10557 - 10569
-	WORD					wLRAnalog;			// 10569
-	WORD					wUDAnalog;			// 10571
+	WORD					wLRAnalog;			// 10571
+	WORD					wUDAnalog;			// 10569
 	DWORD					dwKeys;				// 10573 - 10577
 	DWORD					dwOldKeys;			// 10577 - 10581
 	BOOL					bEditObject;		// 10581 - 10585
@@ -616,8 +614,7 @@ struct CMenu	// size 0xB84
 	char			szHeaders[MAX_COLUMNS][MAX_MENU_TEXT_SIZE];					// + 0x0321
 	BOOL			bIsInitiedForPlayer[MAX_PLAYERS];							// + 0x0361
 	MenuInteraction interaction;												// + 0x0B31
-	float			fPosX;														// + 0x0B71
-	float			fPosY;														// + 0x0B75
+	CVector2D		vecPos;
 	float			fColumn1Width;												// + 0x0B79
 	float			fColumn2Width;												// + 0x0B7D
 	BYTE			byteColumnsNumber;											// + 0x0B81
@@ -761,7 +758,7 @@ struct CNetGame
 	BOOL					bFirstGameModeLoaded;	// 52
 	BOOL					unkasdasd;				// 56
 	CScriptTimers			*pScriptTimers;			// 60
-	RakServer				*pRak;					// 64
+	void					*pRak;					// 64
 	DWORD					dwSomethingTick;
 	DWORD					dwUnk;
 	DWORD					dwUnk1;
@@ -971,163 +968,4 @@ struct Packet
 	/// Indicates whether to delete the data, or to simply delete the packet.
 	bool deleteData;
 };
-
-#ifdef _WIN32
-class RakServer
-{
-public:
-	~RakServer(); // THIS NOT
-	virtual void _0();
-	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0; // 4
-	virtual void DisableSecurity( void ); // 8
-	virtual void SetPassword( const char *_password );	// 12
-	virtual bool HasPassword( void );	// 16
-	virtual void Disconnect( unsigned int blockDuration, unsigned char orderingChannel=0 );	// 20
-	virtual bool Send_ASD(const char *data, const int length, int priority, int reliability, char orderingChannel, PlayerID playerId, bool broadcast); // 24
-	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);	// 28
-	virtual void _20(); // 
-	virtual void _24();
-	virtual Packet* ReceiveEx( void );
-	virtual void Kick( const PlayerID playerId ); // 0x2C
-	virtual void DeallocatePacket(Packet* asd);
-	virtual void SetAllowedPlayers(unsigned short numberAllowed); // 0x34
-	virtual unsigned short GetAllowedPlayers( void ) const;
-	virtual unsigned short GetConnectedPlayers( void );
-	virtual void GetPlayerIPFromID( const PlayerID playerId, char returnValue[ 22 ], unsigned short *port );
-	virtual void PingPlayer( const PlayerID playerId );
-	virtual int GetAveragePing( const PlayerID playerId );
-	virtual int GetLastPing( const PlayerID playerId ); // 4C
-	virtual int GetLowestPing( const PlayerID playerId );
-	virtual void _54();
-	virtual void _58();
-	virtual void _5C();
-	virtual void _60();
-	virtual void _64();
-	virtual void _68();
-	virtual void _6C();
-	virtual void _70();
-	virtual void RegisterAsRemoteProcedureCall( int* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) );	// 74
-	virtual void RegisterClassMemberRPC( int* uniqueID, void *functionPointer );	// 78
-	virtual void UnregisterAsRemoteProcedureCall( int* uniqueID );	// 7C
-	virtual bool RPC(int* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp); // 80
-	virtual void _84();
-	virtual void _88();
-	virtual void _8C();
-	virtual void _90();
-	virtual void _94();
-	virtual void _98();
-	virtual void _9C();
-	virtual void _A0();
-	virtual void _A4();
-	virtual void _A8();
-	virtual void _AC();
-	virtual void _B0();
-	virtual void _B4();
-	virtual void _B8();
-	virtual void _BC();
-	virtual void _C0();
-	virtual void _C4();
-	virtual void _C8();
-	virtual void _CC();
-	virtual const char* GetLocalIP( unsigned int index );
-	virtual PlayerID GetInternalID( void ) const;
-	virtual void PushBackPacket( Packet *packet, bool pushAtHead );
-	virtual void SetRouterInterface( void *routerInterface );
-	virtual void RemoveRouterInterface( void *routerInterface );
-	virtual int GetIndexFromPlayerID( PlayerID playerId ); // E4
-	virtual PlayerID GetPlayerIDFromIndex( int index ); // E8 - 232 - 236
-	virtual void UNKNOWN(void); // 236 - 240
-	virtual void AddToBanList( const char *IP, unsigned int milliseconds=0 ); // 240 - 244
-	virtual void RemoveFromBanList( const char *IP );
-	virtual void ClearBanList( void );
-	virtual bool IsBanned( const char *IP );
-	virtual bool IsActivePlayerID( const PlayerID playerId );
-	virtual void SetTimeoutTime( RakNetTime timeMS, const PlayerID target );
-	virtual bool SetMTUSize( int size );
-	virtual int GetMTUSize( void ) const;
-	virtual void AdvertiseSystem( const char *host, unsigned short remotePort, const char *data, int dataLength );
-	virtual RakNetStatisticsStruct * const GetStatistics( const PlayerID playerId );
-	virtual void ApplyNetworkSimulator( double maxSendBPS, unsigned short minExtraPing, unsigned short extraPingVariance);
-};
-
-#else
-
-class RakServer
-{
-public:
-	~RakServer();
-	virtual bool _0(); 
-	virtual void _4();
-	virtual bool Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress = 0) = 0;
-	virtual void _C();
-	virtual void _10();
-	virtual void _14();
-	virtual void _18();
-	virtual void _1C();
-	virtual bool SendGECI(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
-	virtual bool Send(RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
-	virtual void _28();
-	virtual void _2C();
-	virtual void _30();
-	virtual void _34();
-	virtual void SetAllowedPlayers(unsigned short numberAllowed);
-	virtual void _3C();
-	virtual void _40();
-	virtual void _44();
-	virtual void _48();
-	virtual void _4C();
-	virtual int GetLastPing( const PlayerID playerId ); // 0x50
-	virtual void _54();
-	virtual void _58();
-	virtual void _5C();
-	virtual const char* GetLocalIP( unsigned int index );
-	virtual PlayerID GetInternalID( void ) const;
-	virtual void PushBackPacket( Packet *packet, bool pushAtHead );
-	virtual void SetRouterInterface( void *routerInterface );
-	virtual void RemoveRouterInterface( void *routerInterface );
-	virtual void UnregisterAsRemoteProcedureCall_BAD( int* uniqueID );
-	virtual void RegisterAsRemoteProcedureCall( int* uniqueID, void ( *functionPointer ) ( RPCParameters *rpcParms ) ); // 120
-	virtual void RegisterClassMemberRPC( int* uniqueID, void *functionPointer ); // 124
-	virtual void UnregisterAsRemoteProcedureCall( int* uniqueID ); // 128
-	virtual void UnregisterAsRemoteProcedureCall_4( int* uniqueID );
-	virtual void UnregisterAsRemoteProcedureCall_5( int* uniqueID );
-	virtual bool RPC(int* uniqueID, RakNet::BitStream* parameters, int priority, int reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp);
-	virtual void _90();
-	virtual void _94();
-	virtual void _98();
-	virtual void _9C();
-	virtual void _A0();
-	virtual void _A4();
-	virtual void _A8();
-	virtual void _AC();
-	virtual void _B0();
-	virtual void _B4();
-	virtual void _B8();
-	virtual void _BC();
-	virtual void _C0();
-	virtual void _C4();
-	virtual void _C8();
-	virtual void _CC();
-	virtual void _D0();
-	virtual void _D4();
-	virtual void _D8();
-	virtual void _DC();
-	virtual void _E0();
-	virtual void _E8();
-	virtual int GetIndexFromPlayerID( PlayerID playerId ); // EC
-	virtual PlayerID GetPlayerIDFromIndex( int index ); // F0 - 240 - 244
-	virtual void AddToBanList( const char *IP, unsigned int milliseconds=0 ); // 244 - 248
-	virtual void RemoveFromBanList( const char *IP ); // 248 - 252
-	virtual void ClearBanList( void );
-	virtual bool IsBanned( const char *IP );
-	virtual bool IsActivePlayerID( const PlayerID playerId );
-	virtual void SetTimeoutTime( RakNetTime timeMS, const PlayerID target );
-	virtual bool SetMTUSize( int size );
-	virtual int GetMTUSize( void ) const;
-	virtual void AdvertiseSystem( const char *host, unsigned short remotePort, const char *data, int dataLength );
-	virtual RakNetStatisticsStruct * const GetStatistics( const PlayerID playerId );
-	virtual void ApplyNetworkSimulator( double maxSendBPS, unsigned short minExtraPing, unsigned short extraPingVariance);
-};
-#endif
-
 #endif

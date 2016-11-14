@@ -30,15 +30,38 @@
 *
 */
 
-#ifndef YSF_CMODELSIZES_H
-#define YSF_CMODELSIZES_H
+#pragma once
 
-#include "CVector.h"
+// maddinat0r - thx! https://github.com/maddinat0r/samp-discord-connector/blob/master/src/CSingleton.hpp
 
-namespace CModelSizes
+template<class T>
+class CSingleton
 {
-	WORD GetColCount(void);
-	float GetColSphereRadius(int modelid);
-	CVector GetColSphereOffset(int modelid);
-}
-#endif
+protected:
+	static T *m_Instance;
+
+public:
+	CSingleton()
+	{ }
+	virtual ~CSingleton()
+	{ }
+
+	inline static T *Get()
+	{
+		if (m_Instance == nullptr)
+			m_Instance = new T;
+		return m_Instance;
+	}
+
+	inline static void Destroy()
+	{
+		if (m_Instance != nullptr)
+		{
+			delete m_Instance;
+			m_Instance = nullptr;
+		}
+	}
+};
+
+template <class T>
+T* CSingleton<T>::m_Instance = nullptr;
