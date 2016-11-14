@@ -48,6 +48,7 @@ void LoadTickCount();
 
 #endif
 
+// Just to keep compatibility with streamer... If I got used to something, I don't like to switch to new one.
 namespace Utility
 {
 	const char* GetWeaponName_(BYTE weaponid);

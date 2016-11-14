@@ -266,8 +266,9 @@ void InitRPCs()
 	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
 	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, UpdateScoresPingsIPs);
 #ifdef testspawn
-	CSAMPFunctions::UnregisterAsRemoteProcedureCall(reinterpret_cast<int*>(&RPC_Spawn));
-	CSAMPFunctions::RegisterAsRemoteProcedureCall(reinterpret_cast<int*>(&RPC_Spawn), Spawn);
+	rpcid = static_cast<int>(RPC_Spawn);
+	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
+	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, Spawn);
 #endif
 	rpcid = static_cast<int>(RPC_Death);
 	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
