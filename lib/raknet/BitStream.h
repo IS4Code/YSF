@@ -1214,7 +1214,7 @@ namespace RakNet
 			//		return false;
 
 			//	z=((float)sz / 32767.5f - 1.0f);
-			if (!ReadCompressed((float)cz))
+			if (!ReadCompressed((float&)cz))
 				return false;
 			z=cz;
 		}
