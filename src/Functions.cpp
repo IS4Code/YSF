@@ -31,6 +31,7 @@
 */
 
 #include "main.h"
+#include <unordered_map>
 
 CConsole__AddStringVariable_t				CSAMPFunctions::pfn__CConsole__AddStringVariable = NULL;
 CConsole__GetStringVariable_t				CSAMPFunctions::pfn__CConsole__GetStringVariable = NULL;
