@@ -36,10 +36,10 @@
 #include <sampgdk/sampgdk.h>
 
 #define DEFINE_FUNCTION_POINTER(name) \
-	static name##_t		pfn__##name
+	static name ## _t		pfn__ ## name
 
 #define POINT_TO_MEMBER(name, address) \
-	pfn__##name## = (name##_t)(address) 
+	pfn__ ## name = (name ## _t)(address) 
 
 #ifdef _WIN32
 #include <winsock2.h>

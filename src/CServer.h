@@ -82,22 +82,22 @@ public:
 	bool IsNickNameCharacterAllowed(char character);
 	bool IsValidNick(char *szName);
 
-	inline void CServer::BanIP(const char* ip)
+	inline void BanIP(const char* ip)
 	{
 		bannedIPs.insert(ip);
 	}
 
-	inline void CServer::UnbanIP(const char* ip)
+	inline void UnbanIP(const char* ip)
 	{
 		bannedIPs.erase(ip);
 	}
 
-	inline void CServer::ClearBans()
+	inline void ClearBans()
 	{
 		bannedIPs.clear();
 	}
 
-	inline bool CServer::IsBanned(char* ip)
+	inline bool IsBanned(char* ip)
 	{
 		return bannedIPs.find(ip) != bannedIPs.end();
 	}
