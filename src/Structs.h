@@ -441,8 +441,9 @@ struct CPlayerPool // sizeof = 99520
 // CVehicle
 /* -------------------------------------------------------- */
 
-struct CVehicleSpawn // size 36
+class CVehicleSpawn // size 36
 {
+public:
 	int				iModelID;
     CVector			vecPos;   
     float			fRot;
