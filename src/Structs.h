@@ -33,15 +33,22 @@
 #ifndef YSF_STRUCTS_H
 #define YSF_STRUCTS_H
 
-#include "CServer.h"
 #include "CVector.h"
 #include "CVector2D.h"
-#include "CGangZonePool.h"
-#include "CPickupPool.h"
 #include <map>
 
 #include <raknet/BitStream.h>
 #include <sampgdk/sampgdk.h>
+
+#if !defined PAD
+	#define PAD(a, b) char a[b]
+#endif
+
+typedef unsigned long       DWORD;
+typedef int                 BOOL;
+typedef unsigned char       BYTE;
+typedef unsigned short      WORD;
+typedef float               FLOAT;
 
 /* -------------------------------------------------------- */
 
@@ -441,9 +448,8 @@ struct CPlayerPool // sizeof = 99520
 // CVehicle
 /* -------------------------------------------------------- */
 
-class CVehicleSpawn // size 36
+struct CVehicleSpawn // size 36
 {
-public:
 	int				iModelID;
     CVector			vecPos;   
     float			fRot;

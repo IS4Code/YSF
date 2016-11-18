@@ -157,11 +157,12 @@ using sampgdk::logprintf;
 #include "CPickupPool.h"
 #include "CPlayerData.h"
 #include "CVector.h"
+#include "CServer.h"
 #include "Functions.h"
 #include "Hooks.h"
 #include "RPCs.h"
 #include "Scripting.h"
-//#include "Structs.h"
+#include "Structs.h"
 #include "Utils.h"
 
 // ---------
