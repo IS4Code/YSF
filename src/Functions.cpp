@@ -329,7 +329,7 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	logprintf("respawned vehicle: %d", pVehicle->wVehicleID);
 
 	// Check if vehicle has custom spawn
-	std::unordered_map<int, CVehicleSpawn>::iterator v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
+	auto v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
 	if(v == CServer::Get()->vehicleSpawnData.end())
 	{
 

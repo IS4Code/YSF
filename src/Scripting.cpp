@@ -2627,7 +2627,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 		return 0;
 
 	CVehicleSpawn spawn; 
-	std::unordered_map<int, CVehicleSpawn>::iterator v = CServer::Get()->vehicleSpawnData.find(vehicleid);
+	auto v = CServer::Get()->vehicleSpawnData.find(vehicleid);
 	if(v == CServer::Get()->vehicleSpawnData.end())
 	{
 		spawn.vecPos = pVehicle->customSpawn.vecPos;
@@ -2704,7 +2704,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 		spawn.iInterior = interior;
 	}
 	
-	std::unordered_map<int, CVehicleSpawn>::iterator v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
+	auto v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
 	if(v != CServer::Get()->vehicleSpawnData.end())
 	{
 		CServer::Get()->vehicleSpawnData.erase(v);

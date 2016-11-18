@@ -35,7 +35,6 @@
 
 struct CNetGame;
 struct Packet;
-struct CVehicleSpawn;
 class CGangZonePool;
 class CYSFPickupPool;
 
@@ -121,7 +120,7 @@ public:
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;
 
-	std::unordered_map<int, CVehicleSpawn> vehicleSpawnData;
+	std::unordered_map<int, struct CVehicleSpawn> vehicleSpawnData;
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
 
