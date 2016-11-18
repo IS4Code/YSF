@@ -161,7 +161,7 @@ using sampgdk::logprintf;
 #include "Hooks.h"
 #include "RPCs.h"
 #include "Scripting.h"
-#include "Structs.h"
+//#include "Structs.h"
 #include "Utils.h"
 
 // ---------

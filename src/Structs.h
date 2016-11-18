@@ -43,8 +43,6 @@
 #include <raknet/BitStream.h>
 #include <sampgdk/sampgdk.h>
 
-class CGangZonePool;
-
 /* -------------------------------------------------------- */
 
 // Defines
