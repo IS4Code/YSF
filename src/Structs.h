@@ -33,15 +33,22 @@
 #ifndef YSF_STRUCTS_H
 #define YSF_STRUCTS_H
 
-#include "CServer.h"
 #include "CVector.h"
 #include "CVector2D.h"
-#include "CGangZonePool.h"
-#include "CPickupPool.h"
 #include <map>
 
 #include <raknet/BitStream.h>
 #include <sampgdk/sampgdk.h>
+
+#if !defined PAD
+	#define PAD(a, b) char a[b]
+#endif
+
+typedef unsigned long       DWORD;
+typedef int                 BOOL;
+typedef unsigned char       BYTE;
+typedef unsigned short      WORD;
+typedef float               FLOAT;
 
 /* -------------------------------------------------------- */
 
@@ -127,8 +134,8 @@ struct CAimSyncData
 struct CVehicleSyncData
 {
 	WORD			wVehicleId;				// 0x001F - 0x0021
-	WORD			wLRAnalog;				// 0x0023 - 0x0025
-	WORD			wUDAnalog;				// 0x0021 - 0x0023
+	WORD			wLRAnalog;				// 0x0021 - 0x0023
+	WORD			wUDAnalog;				// 0x0023 - 0x0025
 	WORD			wKeys;					// 0x0025 - 0x0027
 	float			fQuaternion[4];			// 0x002B - 0x0037
 	CVector			vecPosition;			// 0x0037 - 0x0043
@@ -157,8 +164,8 @@ struct CPassengerSyncData
 	BYTE			bytePlayerWeapon;		// 0x0061 - 0x0062
 	BYTE			bytePlayerHealth;		// 0x0062 - 0x0063
 	BYTE			bytePlayerArmour;		// 0x0063 - 0x0064
-	WORD			wLRAnalog;				// 0x0066 - 0x0068
-	WORD			wUDAnalog;				// 0x0064 - 0x0066
+	WORD			wLRAnalog;				// 0x0064 - 0x0066
+	WORD			wUDAnalog;				// 0x0066 - 0x0068
 	WORD			wKeys;					// 0x0068 - 0x006A
 	CVector			vecPosition;			// 0x006A - 0x0076
 	// Size = 24
@@ -166,8 +173,8 @@ struct CPassengerSyncData
 
 struct CSyncData
 {
-	WORD			wLRAnalog;				// 0x0078 - 0x007A
-	WORD			wUDAnalog;				// 0x0076 - 0x0078
+	WORD			wLRAnalog;				// 0x0076 - 0x0078
+	WORD			wUDAnalog;				// 0x0078 - 0x007A
 	WORD			wKeys;					// 0x007A - 0x007C
 	CVector			vecPosition;			// 0x007C - 0x0088
 	float			fQuaternion[4];			// 0x0088 - 0x008C
@@ -353,8 +360,8 @@ struct CPlayer
 	float					fQuaternion[4];		// 10537 - 10553
 	float					fAngle;				// 10553 - 10557
 	CVector					vecVelocity;		// 10557 - 10569
-	WORD					wLRAnalog;			// 10571
-	WORD					wUDAnalog;			// 10569
+	WORD					wLRAnalog;			// 10569
+	WORD					wUDAnalog;			// 10571
 	DWORD					dwKeys;				// 10573 - 10577
 	DWORD					dwOldKeys;			// 10577 - 10581
 	BOOL					bEditObject;		// 10581 - 10585
@@ -441,9 +448,8 @@ struct CPlayerPool // sizeof = 99520
 // CVehicle
 /* -------------------------------------------------------- */
 
-class CVehicleSpawn // size 36
+struct CVehicleSpawn // size 36
 {
-public:
 	int				iModelID;
     CVector			vecPos;   
     float			fRot;
