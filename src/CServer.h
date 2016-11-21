@@ -35,7 +35,6 @@
 
 struct CNetGame;
 struct Packet;
-class CVehicleSpawn;
 class CGangZonePool;
 class CYSFPickupPool;
 
