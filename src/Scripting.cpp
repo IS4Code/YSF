@@ -438,7 +438,7 @@ AMX_DECLARE_NATIVE(Natives::drename)
 // native SetModeRestartTime(Float:time);
 AMX_DECLARE_NATIVE(Natives::SetModeRestartTime)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	if (!CAddress::VAR_pRestartWaitTime) return 0;
 	CHECK_PARAMS(1, "SetModeRestartTime");
 
@@ -449,7 +449,7 @@ AMX_DECLARE_NATIVE(Natives::SetModeRestartTime)
 // native Float:GetModeRestartTime();
 AMX_DECLARE_NATIVE(Natives::GetModeRestartTime)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	if (!CAddress::VAR_pRestartWaitTime) return 0;
 
 	float fRestartTime = *(float*)CAddress::VAR_pRestartWaitTime;
@@ -459,7 +459,7 @@ AMX_DECLARE_NATIVE(Natives::GetModeRestartTime)
 // native SetMaxPlayers(maxplayers);
 AMX_DECLARE_NATIVE(Natives::SetMaxPlayers)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "SetMaxPlayers");
 
 	int maxplayers = static_cast<int>(params[1]);
@@ -472,7 +472,7 @@ AMX_DECLARE_NATIVE(Natives::SetMaxPlayers)
 // native SetMaxNPCs(maxnpcs);
 AMX_DECLARE_NATIVE(Natives::SetMaxNPCs)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "SetMaxNPCs");
 
 	int maxnpcs = static_cast<int>(params[1]);
@@ -485,7 +485,7 @@ AMX_DECLARE_NATIVE(Natives::SetMaxNPCs)
 // native SetPlayerAdmin(playerid, bool:admin);
 AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerAdmin");
 
 	int playerid = static_cast<int>(params[1]);
@@ -498,7 +498,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
 // native LoadFilterScript(scriptname[]);
 AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "LoadFilterScript");
 	
 	char
@@ -514,7 +514,7 @@ AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 // UnLoadFilterScript(scriptname[]);
 AMX_DECLARE_NATIVE(Natives::UnLoadFilterScript)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "UnLoadFilterScript");
 	
 	char
@@ -530,7 +530,7 @@ AMX_DECLARE_NATIVE(Natives::UnLoadFilterScript)
 // native GetFilterScriptCount();
 AMX_DECLARE_NATIVE(Natives::GetFilterScriptCount)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	return pNetGame->pFilterScriptPool->iFilterScriptCount;
 }
@@ -538,7 +538,7 @@ AMX_DECLARE_NATIVE(Natives::GetFilterScriptCount)
 // native GetFilterScriptName(id, name[], len = sizeof(name));
 AMX_DECLARE_NATIVE(Natives::GetFilterScriptName)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "GetFilterScriptName");
 
 	int id = static_cast<int>(params[1]);
@@ -550,7 +550,7 @@ AMX_DECLARE_NATIVE(Natives::GetFilterScriptName)
 // native AddServerRule(name[], value[], flags = CON_VARFLAG_RULE);
 AMX_DECLARE_NATIVE(Natives::AddServerRule)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "AddServerRule");
 	
 	char *name, *value;
@@ -571,7 +571,7 @@ AMX_DECLARE_NATIVE(Natives::AddServerRule)
 // native SetServerRule(name[], value[]);
 AMX_DECLARE_NATIVE(Natives::SetServerRule)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetServerRule");
 
 	char *name, *value;
@@ -592,7 +592,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRule)
 // native SetServerRuleInt(name[], value);
 AMX_DECLARE_NATIVE(Natives::SetServerRuleInt)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetServerRuleInt");
 
 	char *name;
@@ -613,7 +613,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleInt)
 // native IsValidServerRule(name[]);
 AMX_DECLARE_NATIVE(Natives::IsValidServerRule)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsValidServerRule");
 
 	char *name;
@@ -629,7 +629,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidServerRule)
 // native RemoveServerRule(name[]);
 AMX_DECLARE_NATIVE(Natives::RemoveServerRule)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "RemoveServerRule");
 
 	char *name;
@@ -645,7 +645,7 @@ AMX_DECLARE_NATIVE(Natives::RemoveServerRule)
 // native SetServerRuleFlags(name[], flags);
 AMX_DECLARE_NATIVE(Natives::SetServerRuleFlags)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetServerRuleFlags");
 	
 	char *name;
@@ -661,7 +661,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleFlags)
 // native GetServerRuleFlags(name[]);
 AMX_DECLARE_NATIVE(Natives::GetServerRuleFlags)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetServerRuleFlags");
 	
 	char *name;
@@ -682,7 +682,7 @@ AMX_DECLARE_NATIVE(Natives::GetServerRuleFlags)
 //		&limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
 AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(14, "GetServerSettings");
 
 	Utility::storeIntegerInNative(amx, params[1], pNetGame->bShowPlayerMarkers); 
@@ -705,7 +705,7 @@ AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 // native IsValidNickName(name[]);
 AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsValidNickName");
 
 	char *name;
@@ -720,7 +720,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 // native AllowNickNameCharacter(character, bool:allow);
 AMX_DECLARE_NATIVE(Natives::AllowNickNameCharacter)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "AllowNickNameCharacter");
 	
 	char character = (char)params[1];
@@ -735,7 +735,7 @@ AMX_DECLARE_NATIVE(Natives::AllowNickNameCharacter)
 // native IsNickNameCharacterAllowed(character);
 AMX_DECLARE_NATIVE(Natives::IsNickNameCharacterAllowed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsNickNameCharacterAllowed");
 
 	return CServer::Get()->IsNickNameCharacterAllowed((char)params[1]);
@@ -746,7 +746,7 @@ AMX_DECLARE_NATIVE(Natives::IsNickNameCharacterAllowed)
 // native GetAvailableClasses();
 AMX_DECLARE_NATIVE(Natives::GetAvailableClasses)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	return pNetGame->iSpawnsAvailable;
 }
@@ -754,7 +754,7 @@ AMX_DECLARE_NATIVE(Natives::GetAvailableClasses)
 // native RemoveLastClass();
 AMX_DECLARE_NATIVE(Natives::RemoveLastClass)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	if(pNetGame->iSpawnsAvailable <= 0)
 		return 0;
@@ -766,7 +766,7 @@ AMX_DECLARE_NATIVE(Natives::RemoveLastClass)
 // native GetPlayerClass(classid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
 AMX_DECLARE_NATIVE(Natives::GetPlayerClass)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(13, "GetPlayerClass");
 
 	int classid = static_cast<int>(params[1]);
@@ -789,7 +789,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerClass)
 // native EditPlayerClass(classid, teamid, modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
 AMX_DECLARE_NATIVE(Natives::EditPlayerClass)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(13, "EditPlayerClass");
 
 	int classid = static_cast<int>(params[1]);
@@ -813,7 +813,7 @@ AMX_DECLARE_NATIVE(Natives::EditPlayerClass)
 // native GetActiveTimers();
 AMX_DECLARE_NATIVE(Natives::GetRunningTimers)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	return pNetGame->pScriptTimers->dwTimerCount;
 }
@@ -830,7 +830,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetGravity)
 // native Float:GetGravity();
 AMX_DECLARE_NATIVE(Natives::YSF_GetGravity)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	float fGravity = CServer::Get()->GetGravity_();
 	return amx_ftoc(fGravity);
@@ -839,7 +839,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GetGravity)
 // native SetPlayerGravity(playerid, Float:gravity);
 AMX_DECLARE_NATIVE(Natives::SetPlayerGravity)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerGravity");
 
 	int playerid = static_cast<int>(params[1]);
@@ -857,7 +857,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerGravity)
 // native Float:GetPlayerGravity(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerGravity)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerGravity");
 
 	int playerid = static_cast<int>(params[1]);
@@ -869,7 +869,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerGravity)
 // native SetPlayerTeamForPlayer(playerid, teamplayerid, teamid);
 AMX_DECLARE_NATIVE(Natives::SetPlayerTeamForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerTeamForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -886,7 +886,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerTeamForPlayer)
 // native GetPlayerTeamForPlayer(playerid, teamplayerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerTeamForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerTeamForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -899,7 +899,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerTeamForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerTeam)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerTeam");
 
 	int playerid = static_cast<int>(params[1]);
@@ -918,7 +918,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerTeam)
 // native SetPlayerSkinForPlayer(playerid, skinplayerid, skin);
 AMX_DECLARE_NATIVE(Natives::SetPlayerSkinForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerSkinForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -935,7 +935,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerSkinForPlayer)
 // native GetPlayerSkinForPlayer(playerid, skinplayerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSkinForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerSkinForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -948,7 +948,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSkinForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerSkin");
 
 	int playerid = static_cast<int>(params[1]);
@@ -967,7 +967,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 // native SetPlayerNameForPlayer(playerid, nameplayerid, playername[]);
 AMX_DECLARE_NATIVE(Natives::SetPlayerNameForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerNameForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -984,7 +984,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerNameForPlayer)
 // native GetPlayerNameForPlayer(playerid, nameplayerid, playername[], size = sizeof(playername));
 AMX_DECLARE_NATIVE(Natives::GetPlayerNameForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetPlayerNameForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -997,7 +997,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerNameForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerName");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1017,7 +1017,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 // native SetPlayerFightStyleForPlayer(playerid, styleplayerid, style);
 AMX_DECLARE_NATIVE(Natives::SetPlayerFightStyleForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerFightStyleForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1033,7 +1033,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerFightStyleForPlayer)
 // native GetPlayerFightStyleForPlayer(playerid, skinplayerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerFightStyleForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerFightStyleForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1046,7 +1046,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerFightStyleForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerFightingStyle");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1065,7 +1065,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 // native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Float:fZ, bool:forcesync = true);
 AMX_DECLARE_NATIVE(Natives::SetPlayerPosForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(6, "SetPlayerPosForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1100,7 +1100,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerPosForPlayer)
 // native SetPlayerRotationQuatForPlayer(playerid, quatplayerid, Float:w, Float:x, Float:y, Float:z, bool:forcesync = true);
 AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(7, "SetPlayerRotationQuatForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1147,7 +1147,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 // native ApplyAnimationForPlayer(playerid, animplayerid, animlib[], animname[], Float:fDelta, loop, lockx, locky, freeze, time);
 AMX_DECLARE_NATIVE(Natives::ApplyAnimationForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(10, "ApplyAnimationForPlayer");
 	
 	RakNet::BitStream bsSend;
@@ -1223,7 +1223,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWeather)
 // native GetPlayerWeather(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerWeather)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerWeather");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1329,7 +1329,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 // native TogglePlayerWidescreen(playerid, bool:set);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerWidescreen)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "TogglePlayerWidescreen");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1347,7 +1347,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerWidescreen)
 // native IsPlayerWidescreenToggled(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerWidescreenToggled)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerWideScreen");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1359,7 +1359,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerWidescreenToggled)
 // native GetSpawnInfo(playerid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
 AMX_DECLARE_NATIVE(Natives::GetSpawnInfo)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(13, "GetSpawnInfo");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1383,7 +1383,7 @@ AMX_DECLARE_NATIVE(Natives::GetSpawnInfo)
 // native GetPlayerSkillLevel(playerid, skill);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSkillLevel)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerSkillLevel");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1398,7 +1398,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSkillLevel)
 // native IsPlayerCheckpointActive(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerCheckpointActive)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerCheckpointActive");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1410,7 +1410,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerCheckpointActive)
 // native GetPlayerCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fSize);
 AMX_DECLARE_NATIVE(Natives::GetPlayerCheckpoint)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerCheckpoint");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1425,7 +1425,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerCheckpoint)
 // native IsPlayerRaceCheckpointActive(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerRaceCheckpointActive)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerRaceCheckpointActive");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1437,7 +1437,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerRaceCheckpointActive)
 // native GetPlayerRaceCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fNextX, &Float:fNextY, &fNextZ, &Float:fSize);
 AMX_DECLARE_NATIVE(Natives::GetPlayerRaceCheckpoint)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(8, "GetPlayerRaceCheckpoint");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1455,7 +1455,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerRaceCheckpoint)
 // native GetPlayerWorldBounds(playerid, &Float:x_max, &Float:x_min, &Float:y_max, &Float:y_min);
 AMX_DECLARE_NATIVE(Natives::GetPlayerWorldBounds)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerWorldBounds");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1471,7 +1471,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerWorldBounds)
 // native IsPlayerInModShop(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerInModShop)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerInModShop");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1483,7 +1483,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInModShop)
 // native GetPlayerSirenState(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSirenState)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerSirenState");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1497,7 +1497,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSirenState)
 // native GetPlayerLandingGearState(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerLandingGearState)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerLandingGearState");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1511,7 +1511,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLandingGearState)
 // native GetPlayerHydraReactorAngle(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerHydraReactorAngle)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerHydraReactorAngle");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1525,7 +1525,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerHydraReactorAngle)
 // native Float:GetPlayerTrainSpeed(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerTrainSpeed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerTrainSpeed");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1539,7 +1539,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerTrainSpeed)
 // native Float:GetPlayerZAim(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerZAim)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerZAim");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1551,7 +1551,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerZAim)
 // native GetPlayerSurfingOffsets(playerid, &Float:fOffsetX, &Float:fOffsetY, &Float:fOffsetZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingOffsets)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetPlayerSurfingOffsets");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1565,7 +1565,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingOffsets)
 // native GetPlayerRotationQuat(playerid, &Float:w, &Float:x, &Float:y, &Float:z);
 AMX_DECLARE_NATIVE(Natives::GetPlayerRotationQuat)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerRotationQuat");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1583,7 +1583,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerRotationQuat)
 // native GetPlayerDialogID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerDialogID)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerDialogID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1595,7 +1595,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerDialogID)
 // native GetPlayerSpectateID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateID)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerSpectateID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1607,7 +1607,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateID)
 // native GetPlayerSpectateType(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateType)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerSpectateType");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1619,7 +1619,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateType)
 // native GetPlayerLastSyncedVehicleID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedVehicleID)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerLastSyncedVehicleID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1631,7 +1631,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedVehicleID)
 // native GetPlayerLastSyncedTrailerID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedTrailerID)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerLastSyncedTrailerID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1643,7 +1643,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedTrailerID)
 // native GetPlayerFPS(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerFPS)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerFPS");
 
 	// TODO
@@ -1653,7 +1653,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerFPS)
 // native GetActorSpawnInfo(actorid, &skinid, &Float:fX, &Float:fY, &Float:fZ, &Float:fAngle);
 AMX_DECLARE_NATIVE(Natives::GetActorSpawnInfo)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(6, "GetActorSpawnInfo");
 
 	int actorid = static_cast<int>(params[1]);
@@ -1671,7 +1671,7 @@ AMX_DECLARE_NATIVE(Natives::GetActorSpawnInfo)
 // native GetActorSkin(actorid);
 AMX_DECLARE_NATIVE(Natives::GetActorSkin)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetActorSkin");
 
 	int actorid = static_cast<int>(params[1]);
@@ -1687,7 +1687,7 @@ AMX_DECLARE_NATIVE(Natives::GetActorSkin)
 // native GetActorAnimation(actorid, animlib[], animlibsize = sizeof(animlib), animname[], animnamesize = sizeof(animname), &Float:fDelta, &loop, &lockx, &locky, &freeze, &time)
 AMX_DECLARE_NATIVE(Natives::GetActorAnimation)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(11, "GetActorAnimation");
 
 	int actorid = static_cast<int>(params[1]);
@@ -1710,7 +1710,7 @@ AMX_DECLARE_NATIVE(Natives::GetActorAnimation)
 // native SendBulletData(sender, hitid, hittype, weaponid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
 AMX_DECLARE_NATIVE(Natives::SendBulletData) 
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(14, "SendBulletData");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1749,7 +1749,7 @@ AMX_DECLARE_NATIVE(Natives::SendBulletData)
 // native ShowPlayerForPlayer(forplayerid, playerid);
 AMX_DECLARE_NATIVE(Natives::ShowPlayerForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "ShowPlayerForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -1769,7 +1769,7 @@ AMX_DECLARE_NATIVE(Natives::ShowPlayerForPlayer)
 // native HidePlayerForPlayer(forplayerid, playerid);
 AMX_DECLARE_NATIVE(Natives::HidePlayerForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "HidePlayerForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -1789,7 +1789,7 @@ AMX_DECLARE_NATIVE(Natives::HidePlayerForPlayer)
 // native AddPlayerForPlayer(forplayerid, playerid, isnpc = 0);
 AMX_DECLARE_NATIVE(Natives::AddPlayerForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "AddPlayerForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -1817,7 +1817,7 @@ AMX_DECLARE_NATIVE(Natives::AddPlayerForPlayer)
 // native RemovePlayerForPlayer(forplayerid, playerid);
 AMX_DECLARE_NATIVE(Natives::RemovePlayerForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "RemovePlayerForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -1838,7 +1838,7 @@ AMX_DECLARE_NATIVE(Natives::RemovePlayerForPlayer)
 // native SetPlayerChatBubbleForPlayer(forplayerid, playerid, text[], color, Float:drawdistance, expiretime);
 AMX_DECLARE_NATIVE(Natives::SetPlayerChatBubbleForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(6, "SetPlayerChatBubbleForPlayer");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -1872,7 +1872,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerChatBubbleForPlayer)
 // native ResetPlayerMarkerForPlayer(playerid, resetplayerid)
 AMX_DECLARE_NATIVE(Natives::ResetPlayerMarkerForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "ResetPlayerMarkerForPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1887,7 +1887,7 @@ AMX_DECLARE_NATIVE(Natives::ResetPlayerMarkerForPlayer)
 // native SetPlayerVersion(playerid, version[];
 AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerVersion");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1908,7 +1908,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 // native IsPlayerSpawned(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerSpawned)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerSpawned");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1921,7 +1921,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerSpawned)
 // native IsPlayerControllable(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerControllable)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerSpawned");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1933,7 +1933,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerControllable)
 // native SpawnForWorld(playerid);
 AMX_DECLARE_NATIVE(Natives::SpawnForWorld)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "SpawnForWorld");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1946,7 +1946,7 @@ AMX_DECLARE_NATIVE(Natives::SpawnForWorld)
 // native BroadcastDeath(playerid);
 AMX_DECLARE_NATIVE(Natives::BroadcastDeath)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "BroadcastDeath");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1961,7 +1961,7 @@ AMX_DECLARE_NATIVE(Natives::BroadcastDeath)
 // native IsPlayerCameraTargetEnabled(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerCameraTargetEnabled)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerCameraTargetEnabled");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1973,7 +1973,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerCameraTargetEnabled)
 // native SetPlayerDisabledKeysSync(playerid, keys);
 AMX_DECLARE_NATIVE(Natives::SetPlayerDisabledKeysSync)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerDisabledKeySync");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1986,7 +1986,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerDisabledKeysSync)
 // native GetPlayerDisabledKeysSync(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "SetPlayerDisabledKeySync");
 
 	int playerid = static_cast<int>(params[1]);
@@ -1999,7 +1999,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 // native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerScoresPingsUpdate)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "TogglePlayerScoresPingsUpdate");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2014,7 +2014,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerScoresPingsUpdate)
 // native TogglePlayerFakePing(playerid, bool:toggle);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerFakePing)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "TogglePlayerFakePing");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2029,7 +2029,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerFakePing)
 // native SetPlayerFakePing(playerid, ping);
 AMX_DECLARE_NATIVE(Natives::SetPlayerFakePing)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerFakePing");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2044,7 +2044,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerFakePing)
 // native TogglePlayerInServerQuery(playerid, bool:toggle);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerInServerQuery)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "TogglePlayerInServerQuery");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2057,7 +2057,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerInServerQuery)
 // native IsPlayerToggledInServerQuery(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerToggledInServerQuery)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerToggledInServerQuery");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2080,7 +2080,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerPaused)
 // native GetPlayerPausedTime(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPausedTime)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerPausedTime");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2095,7 +2095,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPausedTime)
 // native Float:GetObjectDrawDistance(objectid);
 AMX_DECLARE_NATIVE(Natives::GetObjectDrawDistance)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetObjectDrawDistance");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2108,7 +2108,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectDrawDistance)
 // native Float:SetObjectMoveSpeed(objectid, Float:fSpeed);
 AMX_DECLARE_NATIVE(Natives::SetObjectMoveSpeed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetObjectMoveSpeed");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2122,7 +2122,7 @@ AMX_DECLARE_NATIVE(Natives::SetObjectMoveSpeed)
 // native Float:GetObjectMoveSpeed(objectid);
 AMX_DECLARE_NATIVE(Natives::GetObjectMoveSpeed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetObjectMoveSpeed");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2135,7 +2135,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMoveSpeed)
 // native GetObjectTarget(objectid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetObjectTarget)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetObjectTarget");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2150,7 +2150,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectTarget)
 // native GetObjectAttachedData(objectid, &vehicleid, &objectid, &attachedplayerid);
 AMX_DECLARE_NATIVE(Natives::GetObjectAttachedData)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetObjectAttachedData");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2169,7 +2169,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectAttachedData)
 // native GetObjectAttachedOffset(objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
 AMX_DECLARE_NATIVE(Natives::GetObjectAttachedOffset)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(7, "GetObjectAttachedOffset");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2186,7 +2186,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectAttachedOffset)
 // native IsObjectMaterialSlotUsed(objectid, materialindex); // Return values: 1 = material, 2 = material text
 AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsObjectMaterialSlotUsed");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2214,7 +2214,7 @@ AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 // native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
 AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(8, "GetObjectMaterial");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2246,7 +2246,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 // native GetObjectMaterialText(objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(12, "GetObjectMaterialText");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2282,7 +2282,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 // native IsObjectNoCameraCol(objectid);
 AMX_DECLARE_NATIVE(Natives::IsObjectNoCameraCol)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsObjectNoCameraCol");
 
 	int objectid = static_cast<int>(params[1]);
@@ -2296,7 +2296,7 @@ AMX_DECLARE_NATIVE(Natives::IsObjectNoCameraCol)
 // native Float:GetPlayerObjectDrawDistance(playerid, objectid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectDrawDistance)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerObjectDrawDistance");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2312,7 +2312,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectDrawDistance)
 // native Float:SetPlayerObjectMoveSpeed(playerid, objectid, Float:fSpeed);
 AMX_DECLARE_NATIVE(Natives::SetPlayerObjectMoveSpeed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "SetPlayerObjectMoveSpeed");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2329,7 +2329,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerObjectMoveSpeed)
 // native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMoveSpeed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerObjectMoveSpeed");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2345,7 +2345,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMoveSpeed)
 // native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectTarget)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerObjectTarget");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2363,7 +2363,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectTarget)
 // native GetPlayerObjectAttachedData(playerid, objectid, &vehicleid, &objectid, &attachedplayerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerObjectAttachedData");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2383,7 +2383,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 // native GetPlayerObjectAttachedOffset(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(8, "GetPlayerObjectAttachedOffset");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2416,7 +2416,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 // native IsPlayerObjectMaterialSlotUsed(playerid, objectid, materialindex); // Return values: 1 = material, 2 = material text
 AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "IsPlayerObjectMaterialSlotUsed");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2446,7 +2446,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 // native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(9, "GetPlayerObjectMaterial");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2479,7 +2479,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 // native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(13, "GetPlayerObjectMaterialText");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2516,7 +2516,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 // native IsPlayerObjectNoCameraCol(playerid, objectid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerObjectNoCameraCol)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerObjectNoCameraCol");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2532,7 +2532,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectNoCameraCol)
 // native GetPlayerSurfingPlayerObjectID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingPlayerObjectID)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerSurfingPlayerObjectID");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2550,7 +2550,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingPlayerObjectID)
 // native GetPlayerCameraTargetPlayerObj(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerCameraTargetPlayerObj)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPlayerCameraTargetPlayerObj");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2571,7 +2571,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerCameraTargetPlayerObj)
 // native GetObjectType(playerid, objectid);
 AMX_DECLARE_NATIVE(Natives::GetObjectType)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetObjectType");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2592,7 +2592,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectType)
 // native GetPlayerAttachedObject(playerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
 AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(15, "GetPlayerAttachedObject");
 
 	int playerid = static_cast<int>(params[1]);
@@ -2616,7 +2616,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 // native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(7, "GetVehicleSpawnInfo");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2653,7 +2653,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 // native SetVehicleSpawnInfo(vehicleid, modelid, Float:fX, Float:fY, Float:fZ, Float:fAngle, color1, color2, respawntime = -2, interior = -2);
 AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 {
-	if (!CServer::Get()->IsInitialized() || !CAddress::FUNC_CVehicle__Respawn) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized() || !CAddress::FUNC_CVehicle__Respawn) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(10, "SetVehicleSpawnInfo");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2729,7 +2729,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 // native GetVehicleModelCount(modelid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleModelCount)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleModelCount");
 
 	int modelid = static_cast<int>(params[1]);
@@ -2741,7 +2741,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleModelCount)
 // native GetVehicleModelsUsed();
 AMX_DECLARE_NATIVE(Natives::GetVehicleModelsUsed)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	BYTE byteModelsUsed = 0;
 	for(BYTE i = 0; i != 212; i++)
 	{
@@ -2755,7 +2755,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleModelsUsed)
 // native GetVehicleColor(vehicleid, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::GetVehicleColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "GetVehicleColor");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2776,7 +2776,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleColor)
 // native GetVehiclePaintjob(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehiclePaintjob)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetVehiclePaintjob");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2791,7 +2791,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehiclePaintjob)
 // native GetVehicleInterior(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleInterior)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleInterior");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2806,7 +2806,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleInterior)
 // native GetVehicleNumberPlate(vehicleid, plate[], len = sizeof(plate));
 AMX_DECLARE_NATIVE(Natives::GetVehicleNumberPlate)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "GetVehicleNumberPlate");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2821,7 +2821,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleNumberPlate)
 // native SetVehicleRespawnDelay(vehicleid, delay);
 AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnDelay)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetVehicleRespawnDelay");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2837,7 +2837,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnDelay)
 // native GetVehicleRespawnDelay(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnDelay)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleRespawnDelay");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2852,7 +2852,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnDelay)
 // native SetVehicleOccupiedTick(vehicleid, ticks);
 AMX_DECLARE_NATIVE(Natives::SetVehicleOccupiedTick)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetVehicleOccupiedTick");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2868,7 +2868,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleOccupiedTick)
 // native GetVehicleOccupiedTick(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleOccupiedTick)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleOccupiedTick");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2883,7 +2883,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleOccupiedTick)
 // native SetVehicleRespawnTick(vehicleid, ticks);
 AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnTick)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetVehicleRespawnTick");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2899,7 +2899,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnTick)
 // native GetVehicleRespawnTick(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnTick)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleRespawnTick");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2914,7 +2914,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnTick)
 // native GetVehicleLastDriver(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleLastDriver)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleLastDriver");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2929,7 +2929,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleLastDriver)
 // native GetVehicleCab(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleCab)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetVehicleCab");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2953,7 +2953,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleCab)
 // native HasVehicleBeenOccupied(vehicleid);
 AMX_DECLARE_NATIVE(Natives::HasVehicleBeenOccupied)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "HasVehicleBeenOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2968,7 +2968,7 @@ AMX_DECLARE_NATIVE(Natives::HasVehicleBeenOccupied)
 // native SetVehicleBeenOccupied(vehicleid, occupied);
 AMX_DECLARE_NATIVE(Natives::SetVehicleBeenOccupied)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetVehicleBeenOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -2984,7 +2984,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleBeenOccupied)
 // native IsVehicleOccupied(vehicleid);
 AMX_DECLARE_NATIVE(Natives::IsVehicleOccupied)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsVehicleOccupied");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3005,7 +3005,7 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleOccupied)
 // native IsVehicleDead(vehicleid);
 AMX_DECLARE_NATIVE(Natives::IsVehicleDead)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsVehicleDead");
 
 	int vehicleid = static_cast<int>(params[1]);
@@ -3021,7 +3021,7 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleDead)
 // native IsValidGangZone(zoneid);
 AMX_DECLARE_NATIVE(Natives::IsValidGangZone)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsValidGangZone");
 	
 	int zoneid = static_cast<int>(params[1]);
@@ -3033,7 +3033,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidGangZone)
 // native IsGangZoneVisibleForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsGangZoneVisibleForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsGangZoneVisibleForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3049,7 +3049,7 @@ AMX_DECLARE_NATIVE(Natives::IsGangZoneVisibleForPlayer)
 // native GangZoneGetColorForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::GangZoneGetColorForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GangZoneGetColorForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3070,7 +3070,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetColorForPlayer)
 // native GangZoneGetFlashColorForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::GangZoneGetFlashColorForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GangZoneGetFlashColorForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3091,7 +3091,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetFlashColorForPlayer)
 // native IsGangZoneFlashingForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsGangZoneFlashingForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsGangZoneFlashingForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3112,7 +3112,7 @@ AMX_DECLARE_NATIVE(Natives::IsGangZoneFlashingForPlayer)
 // native IsPlayerInGangZone(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerInGangZone)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerInGangZone");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3133,7 +3133,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInGangZone)
 // native GangZoneGetPos(zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
 AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GangZoneGetPos");
 
 	int zoneid = static_cast<int>(params[1]);
@@ -3153,7 +3153,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 // native IsValidTextDraw(textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsValidTextDraw");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3165,7 +3165,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)
 // native IsTextDrawVisibleForPlayer(playerid, textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsTextDrawVisibleForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server 
 	CHECK_PARAMS(2, "IsTextDrawVisibleForPlayer");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3182,7 +3182,7 @@ AMX_DECLARE_NATIVE(Natives::IsTextDrawVisibleForPlayer)
 // native TextDrawGetString(textdrawid, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetString");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3195,7 +3195,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 // native TextDrawSetPos(textdrawid, Float:fX, Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "TextDrawPos");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3212,7 +3212,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 // native TextDrawGetLetterSize(textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetLetterSize)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetLetterSize");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3228,7 +3228,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetLetterSize)
 // native TextDrawGetTextSize(textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetTextSize)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetTextSize");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3244,7 +3244,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetTextSize)
 // native TextDrawGetPos(textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetPos");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3260,7 +3260,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPos)
 // native TextDrawGetColor(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetColor");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3275,7 +3275,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetColor)
 // native TextDrawGetBoxColor(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetBoxColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetBoxColor");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3290,7 +3290,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetBoxColor)
 // native TextDrawGetBackgroundColor(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetBackgroundColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetBackgroundColor");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3319,7 +3319,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetShadow)
 // native TextDrawGetOutline(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetOutline)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetOutline");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3334,7 +3334,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetOutline)
 // native TextDrawGetFont(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetFont)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetOutline");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3349,7 +3349,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetFont)
 // native TextDrawIsBox(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsBox)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawIsBox");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3364,7 +3364,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsBox)
 // native TextDrawIsProportional(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsProportional)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawIsProportional");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3379,7 +3379,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsProportional)
 // native TextDrawIsSelectable(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsSelectable)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawIsSelectable");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3394,7 +3394,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsSelectable)
 // native TextDrawGetAlignment(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetAlignment)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "TextDrawGetAlignment");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3414,7 +3414,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetAlignment)
 // native TextDrawGetPreviewModel(textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewModel)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server
 	CHECK_PARAMS(1, "TextDrawGetPreviewModel");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3429,7 +3429,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewModel)
 // native TextDrawGetPreviewRot(textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewRot)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server 
 	CHECK_PARAMS(5, "TextDrawGetPreviewRot");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3446,7 +3446,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewRot)
 // native TextDrawGetPreviewVehCol(textdrawid, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewVehCol)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "TextDrawGetPreviewVehCol");
 	
 	int textdrawid = static_cast<int>(params[1]);
@@ -3464,7 +3464,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewVehCol)
 // native IsValidPlayerTextDraw(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayerTextDraw)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server 
 	CHECK_PARAMS(2, "IsValidPlayerTextDraw");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3480,7 +3480,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerTextDraw)
 // native IsPlayerTextDrawVisible(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerTextDrawVisible)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerTextDrawVisible");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3496,7 +3496,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerTextDrawVisible)
 // native PlayerTextDrawGetString(playerid, PlayerText:textdrawid, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetString)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawGetString");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3515,7 +3515,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetString)
 // native PlayerTextDrawSetPos(playerid, PlayerText:textdrawid, Float:fX, Float:fY);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawSetPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawSetPos");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3535,7 +3535,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawSetPos)
 // native PlayerTextDrawGetLetterSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetLetterSize)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server 
 	CHECK_PARAMS(4, "PlayerTextDrawGetLetterSize");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3554,7 +3554,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetLetterSize)
 // native PlayerTextDrawGetTextSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetTextSize)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawGetTextSize");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3573,7 +3573,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetTextSize)
 // native PlayerTextDrawGetPos(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawGetPos");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3592,7 +3592,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPos)
 // native PlayerTextDrawGetColor(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3609,7 +3609,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetColor)
 // native PlayerTextDrawGetBoxColor(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBoxColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server 
 	CHECK_PARAMS(2, "PlayerTextDrawGetBoxColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3626,7 +3626,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBoxColor)
 // native PlayerTextDrawGetBackgroundCol(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBackgroundCol)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server 
 	CHECK_PARAMS(2, "PlayerTextDrawGetBackgroundCol");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3643,7 +3643,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBackgroundCol)
 // native PlayerTextDrawGetShadow(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetShadow)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetShadow");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3660,7 +3660,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetShadow)
 // native PlayerTextDrawGetOutline(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetOutline)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetOutline");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3677,7 +3677,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetOutline)
 // native PlayerTextDrawGetFont(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetFont)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetFont");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3694,7 +3694,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetFont)
 // native PlayerTextDrawIsBox(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsBox)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server 
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server 
 	CHECK_PARAMS(2, "PlayerTextDrawIsBox");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3711,7 +3711,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsBox)
 // native PlayerTextDrawIsProportional(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsProportional)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawIsProportional");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3728,7 +3728,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsProportional)
 // native PlayerTextDrawIsSelectable(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsSelectable)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawIsSelectable");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3745,7 +3745,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsSelectable)
 // native PlayerTextDrawGetAlignment(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetAlignment)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetAlignment");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3767,7 +3767,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetAlignment)
 // native PlayerTextDrawGetPreviewModel(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewModel)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerTextDrawGetPreviewModel");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3784,7 +3784,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewModel)
 // native PlayerTextDrawGetPreviewRot(playerid, PlayerText:textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewRot)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(6, "PlayerTextDrawGetPreviewRot");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3804,7 +3804,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewRot)
 // native PlayerTextDrawGetPreviewVehCol(playerid, PlayerText:textdrawid, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewVehCol)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "PlayerTextDrawGetPreviewVehCol");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3825,7 +3825,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewVehCol)
 // native IsValid3DTextLabel(Text3D:id);
 AMX_DECLARE_NATIVE(Natives::IsValid3DTextLabel)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsValid3DTextLabel");
 	
 	int id = static_cast<int>(params[1]);
@@ -3837,7 +3837,7 @@ AMX_DECLARE_NATIVE(Natives::IsValid3DTextLabel)
 // native Is3DTextLabelStreamedIn(playerid, Text3D:id);
 AMX_DECLARE_NATIVE(Natives::Is3DTextLabelStreamedIn)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "Is3DTextLabelStreamedIn");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3852,7 +3852,7 @@ AMX_DECLARE_NATIVE(Natives::Is3DTextLabelStreamedIn)
 // native Get3DTextLabelText(id, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelText)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "Get3DTextLabelText");
 	
 	int id = static_cast<int>(params[1]);
@@ -3867,7 +3867,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelText)
 // native Get3DTextLabelColor(id);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "Get3DTextLabelColor");
 	
 	int id = static_cast<int>(params[1]);
@@ -3882,7 +3882,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelColor)
 // native Get3DTextLabelPos(id, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "Get3DTextLabelPos");
 	
 	int id = static_cast<int>(params[1]);
@@ -3898,7 +3898,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelPos)
 // native Float:Get3DTextLabelDrawDistance(id);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelDrawDistance)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "Get3DTextLabelDrawDistance");
 	
 	int id = static_cast<int>(params[1]);
@@ -3913,7 +3913,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelDrawDistance)
 // native Get3DTextLabelLOS(id);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelLOS)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "Get3DTextLabelLOS");
 	
 	int id = static_cast<int>(params[1]);
@@ -3928,7 +3928,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelLOS)
 // native Get3DTextLabelVirtualWorld(id);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelVirtualWorld)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "Get3DTextLabelVirtualWorld");
 	
 	int id = static_cast<int>(params[1]);
@@ -3943,7 +3943,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelVirtualWorld)
 // native Get3DTextLabelAttachedData(id, &attached_playerid, &attached_vehicleid);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelAttachedData)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "Get3DTextLabelAttachedData");
 	
 	int id = static_cast<int>(params[1]);
@@ -3960,7 +3960,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelAttachedData)
 // native IsValidPlayer3DTextLabel(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayer3DTextLabel)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsValidPlayer3DTextLabel");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3975,7 +3975,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayer3DTextLabel)
 // native GetPlayer3DTextLabelText(playerid, PlayerText3D:id, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelText)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelText");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -3993,7 +3993,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelText)
 // native GetPlayer3DTextLabelColor(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4011,7 +4011,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelColor)
 // native GetPlayer3DTextLabelPos(playerid, PlayerText3D:id, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetPlayer3DTextLabelPos");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4030,7 +4030,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelPos)
 // native Float:GetPlayer3DTextLabelDrawDist(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelDrawDist)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelDrawDist");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4048,7 +4048,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelDrawDist)
 // native GetPlayer3DTextLabelLOS(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelLOS)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelLOS");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4066,7 +4066,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelLOS)
 // native GetPlayer3DTextLabelVirtualW(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelVirtualW)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelVirtualW");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4084,7 +4084,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelVirtualW)
 // native GetPlayer3DTextLabelAttached(playerid, PlayerText3D:id, &attached_playerid, &attached_vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelAttached)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelAttached");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4104,7 +4104,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelAttached)
 // native AttachObjectToPlayer(objectid, playerid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ)
 AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(8, "AttachObjectToPlayer");
 
 	int playerid = static_cast<int>(params[2]);
@@ -4128,7 +4128,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 // native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ, onlyaddtoinstance = 0)
 AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	//	CHECK_PARAMS(9, "AttachPlayerObjectToPlayer");
 
 	int playerid = static_cast<int>(params[1]);
@@ -4176,7 +4176,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 // native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
 AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(10, "AttachPlayerObjectToObject");
 
 	int forplayerid = static_cast<int>(params[1]);
@@ -4228,7 +4228,7 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 // native SetRecordingDirectory(const dir[]);
 AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "SetRecordingDirectory");
 
 	char *dir;
@@ -4243,7 +4243,7 @@ AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 // native GetRecordingDirectory(dir[], len = sizeof(dir));
 AMX_DECLARE_NATIVE(Natives::GetRecordingDirectory)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetRecordingDirectory");
 	
 	if(!CAddress::ADDR_RecordingDirectory) return 0;
@@ -4259,7 +4259,7 @@ AMX_DECLARE_NATIVE(Natives::GetRecordingDirectory)
 // native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::SendClientMessagef)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
@@ -4279,7 +4279,7 @@ AMX_DECLARE_NATIVE(Natives::SendClientMessagef)
 // native SendClientMessageToAllf(color, const message[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::SendClientMessageToAllf)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	int len;
 	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 2, len);
@@ -4296,7 +4296,7 @@ AMX_DECLARE_NATIVE(Natives::SendClientMessageToAllf)
 // native GameTextForPlayerf(playerid, displaytime, style, const message[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::GameTextForPlayerf)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
@@ -4317,7 +4317,7 @@ AMX_DECLARE_NATIVE(Natives::GameTextForPlayerf)
 // native GameTextForAllf(displaytime, style, const message[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::GameTextForAllf)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	int len;
 	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 3, len);
@@ -4335,7 +4335,7 @@ AMX_DECLARE_NATIVE(Natives::GameTextForAllf)
 // native SendPlayerMessageToPlayerf(playerid, senderid, const message[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::SendPlayerMessageToPlayerf)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
@@ -4358,7 +4358,7 @@ AMX_DECLARE_NATIVE(Natives::SendPlayerMessageToPlayerf)
 // native SendPlayerMessageToAllf(senderid, const message[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::SendPlayerMessageToAllf)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	int senderid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(senderid)) return 0;
@@ -4378,7 +4378,7 @@ AMX_DECLARE_NATIVE(Natives::SendPlayerMessageToAllf)
 // native SendRconCommandf(command[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::SendRconCommandf)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	int len;
 	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 1, len);
@@ -4391,7 +4391,7 @@ AMX_DECLARE_NATIVE(Natives::SendRconCommandf)
 // native YSF_SetTickRate(ticks);
 AMX_DECLARE_NATIVE(Natives::YSF_SetTickRate)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "YSF_SetTickRate");
 
 	int rate = static_cast<int>(params[1]);
@@ -4404,7 +4404,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetTickRate)
 // native YSF_GetTickRate();
 AMX_DECLARE_NATIVE(Natives::YSF_GetTickRate)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	return static_cast<cell>(CServer::Get()->GetTickRate());
 }
@@ -4412,7 +4412,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GetTickRate)
 // native YSF_EnableNightVisionFix(enable);
 AMX_DECLARE_NATIVE(Natives::YSF_EnableNightVisionFix)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "YSF_EnableNightVisionFix");
 
 	CServer::Get()->EnableNightVisionFix(static_cast<int>(params[1]) != 0);
@@ -4422,7 +4422,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_EnableNightVisionFix)
 // native YSF_IsNightVisionFixEnabled();
 AMX_DECLARE_NATIVE(Natives::YSF_IsNightVisionFixEnabled)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	return static_cast<cell>(CServer::Get()->IsNightVisionFixEnabled());
 }
@@ -4430,7 +4430,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_IsNightVisionFixEnabled)
 // native YSF_SetExtendedNetStatsEnabled(enable);
 AMX_DECLARE_NATIVE(Natives::YSF_SetExtendedNetStatsEnabled)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "YSF_SetExtendedNetStatsEnabled");
 
 	CServer::Get()->SetExtendedNetStatsEnabled(static_cast<int>(params[1]) != 0);
@@ -4440,7 +4440,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetExtendedNetStatsEnabled)
 // native YSF_IsExtendedNetStatsEnabled();
 AMX_DECLARE_NATIVE(Natives::YSF_IsExtendedNetStatsEnabled)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	return static_cast<cell>(CServer::Get()->IsExtendedNetStatsEnabled());
 }
@@ -4448,7 +4448,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_IsExtendedNetStatsEnabled)
 // native YSF_SetAFKAccuracy(time_ms);
 AMX_DECLARE_NATIVE(Natives::YSF_SetAFKAccuracy)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "YSF_SetAFKAccuracy");
 
 	CServer::Get()->SetAFKAccuracy(static_cast<DWORD>(params[1]));
@@ -4458,7 +4458,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetAFKAccuracy)
 // native YSF_GetAFKAccuracy();
 AMX_DECLARE_NATIVE(Natives::YSF_GetAFKAccuracy)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	return static_cast<cell>(CServer::Get()->GetAFKAccuracy());
 }
@@ -4609,7 +4609,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForAll)
 // native IsMenuDisabled(Menu:menuid);
 AMX_DECLARE_NATIVE(Natives::IsMenuDisabled)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsMenuDisabled");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -4624,7 +4624,7 @@ AMX_DECLARE_NATIVE(Natives::IsMenuDisabled)
 // native IsMenuRowDisabled(Menu:menuid, row);
 AMX_DECLARE_NATIVE(Natives::IsMenuRowDisabled)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsMenuRowDisabled");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -4642,7 +4642,7 @@ AMX_DECLARE_NATIVE(Natives::IsMenuRowDisabled)
 // native GetMenuColumns(menuid);
 AMX_DECLARE_NATIVE(Natives::GetMenuColumns)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetMenuColumns");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -4657,7 +4657,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumns)
 // native GetMenuItems(menuid, column);
 AMX_DECLARE_NATIVE(Natives::GetMenuItems)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetMenuItems");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -4675,7 +4675,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuItems)
 // native GetMenuPos(menuid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::GetMenuPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "GetMenuColumns");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -4691,7 +4691,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuPos)
 // native GetMenuColumnWidth(menuid, &Float:fColumn1, &Float:fColumn2);
 AMX_DECLARE_NATIVE(Natives::GetMenuColumnWidth)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetMenuColumnWidth");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -4708,7 +4708,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumnWidth)
 // native GetMenuColumnHeader(menuid, column, header[], len = sizeof(header));
 AMX_DECLARE_NATIVE(Natives::GetMenuColumnHeader)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetMenuColumnHeader");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -4726,7 +4726,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumnHeader)
 // native GetMenuItem(menuid, column, itemid, item[], len = sizeof(item));
 AMX_DECLARE_NATIVE(Natives::GetMenuItem)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetMenuItem");
 	
 	int menuid = static_cast<int>(params[1]);
@@ -4747,7 +4747,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuItem)
 // native CreatePlayerGangZone(playerid, Float:minx, Float:miny, Float:maxx, Float:maxy);
 AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "CreatePlayerGangZone");
 
 	int playerid = static_cast<int>(params[1]);
@@ -4775,7 +4775,7 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 // native PlayerGangZoneShow(playerid, zoneid, color);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneShow)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "PlayerGangZoneShow");
 
 	int playerid = static_cast<int>(params[1]);
@@ -4795,7 +4795,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneShow)
 // native PlayerGangZoneHide(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneHide)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneHide");
 
 	int playerid = static_cast<int>(params[1]);
@@ -4813,7 +4813,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneHide)
 // native PlayerGangZoneFlash(playerid, zoneid, color);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneFlash)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "PlayerGangZoneFlash");
 
 	int playerid = static_cast<int>(params[1]);
@@ -4833,7 +4833,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneFlash)
 // native PlayerGangZoneStopFlash(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneStopFlash)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneStopFlash");
 
 	int playerid = static_cast<int>(params[1]);
@@ -4851,7 +4851,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneStopFlash)
 // native PlayerGangZoneDestroy(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneDestroy)
 {
-	if(!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if(!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneDestroy");
 
 	int playerid = static_cast<int>(params[1]);
@@ -4866,7 +4866,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneDestroy)
 // native IsValidPlayerGangZone(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayerGangZone)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsValidPlayerGangZone");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4880,7 +4880,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerGangZone)
 // native IsPlayerInPlayerGangZone(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerInPlayerGangZone)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4901,7 +4901,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInPlayerGangZone)
 // native PlayerGangZoneGetPos(playerid, zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(6, "PlayerGangZoneGetPos");
 
 	int playerid = static_cast<int>(params[1]);
@@ -4928,7 +4928,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 // native IsPlayerGangZoneVisible(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneVisible)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4944,7 +4944,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneVisible)
 // native PlayerGangZoneGetColor(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneGetColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4965,7 +4965,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetColor)
 // native PlayerGangZoneGetFlashColor(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetFlashColor)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "PlayerGangZoneGetFlashColor");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -4986,7 +4986,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetFlashColor)
 // native IsPlayerGangZoneFlashing(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerGangZoneFlashing");
 	
 	int playerid = static_cast<int>(params[1]);
@@ -5009,7 +5009,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 // native IsValidPickup(pickupid);
 AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsValidPickup");
 
 	int id = static_cast<int>(params[1]);
@@ -5021,7 +5021,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 // native IsPickupStreamedIn(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPickupStreamedIn");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5038,7 +5038,7 @@ AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetPickupPos");
 
 	int id = static_cast<int>(params[1]);
@@ -5054,7 +5054,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 // native GetPickupModel(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupModel");
 
 	int id = static_cast<int>(params[1]);
@@ -5069,7 +5069,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 // native GetPickupType(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupType");
 
 	int id = static_cast<int>(params[1]);
@@ -5084,7 +5084,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupType)
 // native GetPickupVirtualWorld(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupVirtualWorld");
 
 	int id = static_cast<int>(params[1]);
@@ -5099,7 +5099,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 // CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 AMX_DECLARE_NATIVE(Natives::CreatePlayerPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(7, "CreatePlayerPickup");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5111,7 +5111,7 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerPickup)
 // native DestroyPlayerPickup(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::DestroyPlayerPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "DestroyPlayerPickup");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5129,7 +5129,7 @@ AMX_DECLARE_NATIVE(Natives::DestroyPlayerPickup)
 // native IsValidPlayerPickup(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayerPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsValidPlayerPickup");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5143,7 +5143,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerPickup)
 // native IsPlayerPickupStreamedIn(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerPickupStreamedIn)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerPickupStreamedIn");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5160,7 +5160,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerPickupStreamedIn)
 // native GetPlayerPickupPos(playerid, pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerPickupPos");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5178,7 +5178,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupPos)
 // native GetPlayerPickupModel(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupModel)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupModel");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5195,7 +5195,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupModel)
 // native GetPlayerPickupType(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupType)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupType");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5212,7 +5212,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupType)
 // native GetPlayerPickupVirtualWorld(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupVirtualWorld)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupVirtualWorld");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5231,7 +5231,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupVirtualWorld)
 // native IsValidPickup(pickupid);
 AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsValidPickup");
 
 	int id = static_cast<int>(params[1]);
@@ -5244,7 +5244,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 // native IsPickupStreamedIn(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPickupStreamedIn");
 
 	int playerid = static_cast<int>(params[1]);
@@ -5258,7 +5258,7 @@ AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetPickupPos");
 
 	int id = static_cast<int>(params[1]);
@@ -5274,7 +5274,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 // native GetPickupModel(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupModel");
 
 	int id = static_cast<int>(params[1]);
@@ -5289,7 +5289,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 // native GetPickupType(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupType");
 
 	int id = static_cast<int>(params[1]);
@@ -5304,7 +5304,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupType)
 // native GetPickupVirtualWorld(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupVirtualWorld");
 
 	int id = static_cast<int>(params[1]);
@@ -5321,7 +5321,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 // native ClearBanList();
 AMX_DECLARE_NATIVE(Natives::ClearBanList)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	CSAMPFunctions::ClearBanList();
 	CServer::Get()->ClearBans();
@@ -5331,7 +5331,7 @@ AMX_DECLARE_NATIVE(Natives::ClearBanList)
 // native IsBanned(ipaddress[]);
 AMX_DECLARE_NATIVE(Natives::IsBanned)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsBanned");
 
 	char *ip;
@@ -5342,7 +5342,7 @@ AMX_DECLARE_NATIVE(Natives::IsBanned)
 // native SetTimeoutTime(playerid, time);
 AMX_DECLARE_NATIVE(Natives::SetTimeoutTime)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetTimeoutTime");
 	
 	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
@@ -5356,7 +5356,7 @@ AMX_DECLARE_NATIVE(Natives::SetTimeoutTime)
 // native GetLocalIP(index, localip[], len = sizeof(localip));
 AMX_DECLARE_NATIVE(Natives::GetLocalIP)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "GetLocalIP");
 
 	return set_amxstring(amx, params[2], CSAMPFunctions::GetLocalIP(static_cast<unsigned int>(params[1])), params[3]);
@@ -5365,7 +5365,7 @@ AMX_DECLARE_NATIVE(Natives::GetLocalIP)
 // native SendRPC(playerid, RPC, {Float,_}:...)
 AMX_DECLARE_NATIVE(Natives::SendRPC)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	bool bBroadcast = static_cast<int>(params[1]) == -1;
 	BYTE rpcid = static_cast<BYTE>(params[2]);
@@ -5442,7 +5442,7 @@ AMX_DECLARE_NATIVE(Natives::SendRPC)
 // native SendData(playerid, {Float,_}:...)
 AMX_DECLARE_NATIVE(Natives::SendData)
 {
-	if (!CServer::Get()->IsInitialized()) return -2147483647; // If unknown server version
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	bool bBroadcast = static_cast<int>(params[1]) == -1;
 	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
