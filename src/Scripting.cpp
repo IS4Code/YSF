@@ -2815,7 +2815,16 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleNumberPlate)
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
 		return 0;
 
-	return set_amxstring(amx, params[2], pNetGame->pVehiclePool->pVehicle[vehicleid]->szNumberplate, params[3]);
+	char* szPlate = NULL;
+	if (pNetGame->pVehiclePool->pVehicle[vehicleid]->szNumberplate[0])
+	{
+		szPlate = &pNetGame->pVehiclePool->pVehicle[vehicleid]->szNumberplate[0];
+	}
+	else
+	{
+		szPlate = "XYZSR998";
+	}
+	return set_amxstring(amx, params[2], szPlate, params[3]);
 }
 
 // native SetVehicleRespawnDelay(vehicleid, delay);
