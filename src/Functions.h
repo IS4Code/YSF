@@ -41,6 +41,9 @@
 #define POINT_TO_MEMBER(name, address) \
 	pfn__ ## name = (name ## _t)(address) 
 
+#define INIT_FPTR(name) \
+	pfn__ ## name = (name ## _t)(CAddress::FUNC_ ## name) 
+
 #ifdef _WIN32
 #include <winsock2.h>
 

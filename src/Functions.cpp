@@ -73,27 +73,27 @@ RakNet__ClearBanList_t						CSAMPFunctions::pfn__RakNet__ClearBanList = NULL;
 
 void CSAMPFunctions::PreInitialize()
 {
-	pfn__CConsole__AddStringVariable = (CConsole__AddStringVariable_t)(CAddress::FUNC_CConsole__AddStringVariable);
-	pfn__CConsole__GetStringVariable = (CConsole__GetStringVariable_t)(CAddress::FUNC_CConsole__GetStringVariable);
-	pfn__CConsole__SetStringVariable = (CConsole__SetStringVariable_t)(CAddress::FUNC_CConsole__SetStringVariable);
-	pfn__CConsole__GetIntVariable = (CConsole__GetIntVariable_t)(CAddress::FUNC_CConsole__GetIntVariable);
-	pfn__CConsole__SetIntVariable = (CConsole__SetIntVariable_t)(CAddress::FUNC_CConsole__SetIntVariable);
-	pfn__CConsole__GetBoolVariable = (CConsole__GetBoolVariable_t)(CAddress::FUNC_CConsole__GetBoolVariable);
-	pfn__CConsole__ModifyVariableFlags = (CConsole__ModifyVariableFlags_t)(CAddress::FUNC_CConsole__ModifyVariableFlags);
-	pfn__CConsole__FindVariable = (CConsole__FindVariable_t)(CAddress::FUNC_CConsole__FindVariable);
-	pfn__CConsole__SendRules = (CConsole__SendRules_t)(CAddress::FUNC_CConsole__SendRules);
-	pfn__CConsole__Execute = (CConsole__Execute_t)(CAddress::FUNC_CConsole__Execute);
+	INIT_FPTR(CConsole__AddStringVariable);
+	INIT_FPTR(CConsole__GetStringVariable);
+	INIT_FPTR(CConsole__SetStringVariable);
+	INIT_FPTR(CConsole__GetIntVariable);
+	INIT_FPTR(CConsole__SetIntVariable);
+	INIT_FPTR(CConsole__GetBoolVariable);
+	INIT_FPTR(CConsole__ModifyVariableFlags);
+	INIT_FPTR(CConsole__FindVariable);
+	INIT_FPTR(CConsole__SendRules);
+	INIT_FPTR(CConsole__Execute);
 
-	pfn__CFilterscripts__LoadFilterscript = (CFilterscripts__LoadFilterscript_t)(CAddress::FUNC_CFilterscripts__LoadFilterscript);
-	pfn__CFilterscripts__UnLoadFilterscript = (CFilterscripts__UnLoadFilterscript_t)(CAddress::FUNC_CFilterscripts__UnLoadFilterscript);
+	INIT_FPTR(CFilterscripts__LoadFilterscript);
+	INIT_FPTR(CFilterscripts__UnLoadFilterscript);
 
-	pfn__CPlayer__SpawnForWorld = (CPlayer__SpawnForWorld_t)(CAddress::FUNC_CPlayer__SpawnForWorld);
-	pfn__CPlayerPool__HandleVehicleRespawn = (CPlayerPool__HandleVehicleRespawn_t)(CAddress::FUNC_CPlayerPool__HandleVehicleRespawn);
+	INIT_FPTR(CPlayer__SpawnForWorld);
+	INIT_FPTR(CPlayerPool__HandleVehicleRespawn);
 
-	pfn__Packet_WeaponsUpdate = (Packet_WeaponsUpdate_t)(CAddress::FUNC_Packet_WeaponsUpdate);
-	pfn__Packet_StatsUpdate = (Packet_WeaponsUpdate_t)(CAddress::FUNC_Packet_StatsUpdate);
+	INIT_FPTR(Packet_WeaponsUpdate);
+	INIT_FPTR(Packet_StatsUpdate);
 
-	pfn__format_amxstring = (format_amxstring_t)(CAddress::FUNC_format_amxstring);
+	INIT_FPTR(format_amxstring);
 }
 
 void CSAMPFunctions::PostInitialize()
