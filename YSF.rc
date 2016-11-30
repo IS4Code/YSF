@@ -49,7 +49,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 1 VERSIONINFO
- FILEVERSION 2,7,3,0
+ FILEVERSION 0,0,0,0
  PRODUCTVERSION 0,0,0,0
  FILEFLAGSMASK 0x0L
 #ifdef _DEBUG
@@ -66,11 +66,11 @@ BEGIN
         BLOCK "04090025"
         BEGIN
             VALUE "FileDescription", "YSF"
-            VALUE "FileVersion", "R10"
-            VALUE "LegalCopyright", "Copyright © 2014 Y_Less, kurta999"
+            VALUE "FileVersion", "R18"
+            VALUE "LegalCopyright", "Copyright © 2016 Y_Less, kurta999"
             VALUE "OriginalFilename", "YSF.dll"
             VALUE "ProductName", "YSF - kurta999's version"
-            VALUE "ProductVersion", "R10"
+            VALUE "ProductVersion", "R18"
         END
     END
     BLOCK "VarFileInfo"
