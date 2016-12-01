@@ -100,6 +100,11 @@
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "C:\Users\Ati\Desktop\SERVER\plugins" copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\SERVER\plugins\YSF.dll"</Command>
+      <Message>
+      </Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -130,6 +135,9 @@
       <MapExports>true</MapExports>
       <AssemblyDebug>true</AssemblyDebug>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "C:\Users\Ati\Desktop\SERVER\plugins" copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\SERVER\plugins\YSF.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lib\raknet\BitStream.cpp" />
