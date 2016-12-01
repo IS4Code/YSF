@@ -156,8 +156,6 @@ public:
 	static void		ClearBanList(void);
 
 	static void		RespawnVehicle(CVehicle *pVehicle);
-	static void		SetWeather(BYTE weatherid);
-	static void		SetGravity(float gravity);
 
 	// Function
 	// Rules
