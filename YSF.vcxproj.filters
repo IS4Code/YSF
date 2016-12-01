@@ -7,9 +7,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lib\sampgdk">
-      <UniqueIdentifier>{895362e9-8379-4bbb-bf26-8bcc1277b64c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lib\sdk">
       <UniqueIdentifier>{cf2fd8c7-4b12-4411-bef1-d247294dc722}</UniqueIdentifier>
     </Filter>
@@ -27,6 +24,9 @@
     </Filter>
     <Filter Include="src\Utils">
       <UniqueIdentifier>{4a52d11b-07f9-4599-aabb-5e197bc0265a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdk\amx">
+      <UniqueIdentifier>{da3c76af-a563-4c2c-a802-c4a6575e3eea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -80,9 +80,6 @@
     </ClCompile>
     <ClCompile Include="src\Functions.cpp">
       <Filter>src\Hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\sampgdk\sampgdk.c">
-      <Filter>lib\sampgdk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +135,6 @@
     <ClInclude Include="src\Functions.h">
       <Filter>src\Hooks</Filter>
     </ClInclude>
-    <ClInclude Include="lib\sampgdk\sampgdk.h">
-      <Filter>lib\sampgdk</Filter>
-    </ClInclude>
     <ClInclude Include="src\CVector.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
@@ -149,6 +143,21 @@
     </ClInclude>
     <ClInclude Include="src\CVector2D.h">
       <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\plugin.h">
+      <Filter>lib\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\plugincommon.h">
+      <Filter>lib\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\amx.h">
+      <Filter>lib\sdk\amx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\getch.h">
+      <Filter>lib\sdk\amx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\sclinux.h">
+      <Filter>lib\sdk\amx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

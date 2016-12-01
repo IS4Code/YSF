@@ -140,10 +140,6 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-
-// SAMP GDK
-#include <sampgdk/sampgdk.h>
-using sampgdk::logprintf;
 	
 // Subhook
 #include <subhook/subhook.h>
@@ -168,7 +164,7 @@ using sampgdk::logprintf;
 // ---------
 // EXTERNALS
 // ---------
-
+extern void *pAMXFunctions;
 extern void **ppPluginData;
 	
 extern CPlayerData *pPlayerData[MAX_PLAYERS];

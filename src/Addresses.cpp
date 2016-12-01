@@ -75,10 +75,8 @@ DWORD CAddress::FUNC_CNetGame__SetGravity = NULL;
 DWORD CAddress::FUNC_CFilterscripts__LoadFilterscript = NULL;
 DWORD CAddress::FUNC_CFilterscripts__UnLoadFilterscript = NULL;
 DWORD CAddress::FUNC_ContainsInvalidChars = NULL;
-DWORD CAddress::FUNC_GetPacketID = NULL;
 
 DWORD CAddress::FUNC_CPlayer__SpawnForWorld = NULL;
-
 DWORD CAddress::FUNC_CVehicle__Respawn = NULL;
 DWORD CAddress::FUNC_CPlayerPool__HandleVehicleRespawn = NULL;
 
@@ -93,13 +91,21 @@ DWORD CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel = NULL;
 
 DWORD CAddress::ADDR_RecordingDirectory = NULL;
 
+// Callback hooks
+DWORD CAddress::FUNC_CGameMode__OnPlayerConnect = NULL;
+DWORD CAddress::FUNC_CGameMode__OnPlayerDisconnect = NULL;
+DWORD CAddress::FUNC_CGameMode__OnPlayerSpawn = NULL;
+DWORD CAddress::FUNC_CGameMode__OnPlayerStreamIn = NULL;
+DWORD CAddress::FUNC_CGameMode__OnPlayerStreamOut = NULL;
+DWORD CAddress::FUNC_CGameMode__OnDialogResponse = NULL;
+
 void CAddress::Initialize(eSAMPVersion sampVersion)
 {
 	// Thx for Whitetiger
 	DWORD dwRestartTime; 
 #ifdef _WIN32
 	dwRestartTime =								FindPattern("\xD9\x15\x00\x00\x00\x00\xD8\x1D\x00\x00\x00\x00\xDF\xE0\xF6\xC4\x41\x75\x07", "xx????xx????xxxxxxx") + 6;
-	VAR_pRestartWaitTime =						 *(DWORD*)(dwRestartTime + 2);
+	VAR_pRestartWaitTime =						*(DWORD*)(dwRestartTime + 2);
  
 	FUNC_CConsole__AddStringVariable =			FindPattern("\x53\x56\x57\x8B\x7C\x24\x18\x85\xFF", "xxxxxxxxx");
 	FUNC_CConsole__GetStringVariable =			FindPattern("\x8B\x44\x24\x04\x50\xE8\x00\x00\x00\x00\x85\xC0\x74\x0B", "xxxxxx????xxxx");
@@ -112,14 +118,13 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	FUNC_CConsole__SendRules =					FindPattern("\x81\xEC\x08\x04\x00\x00\x53\x55\x56\x57\x8B\xF9\x8B\x77\x04", "xx????xxxxxxxxx");
 	FUNC_CConsole__Execute =					FindPattern("\x55\x8B\xEC\x83\xE4\xF8\x81\xEC\x0C\x01\x00\x00", "xxxxxxxxxxxx");
 
-	FUNC_CNetGame__SetWeather =					0x48E190;
-	FUNC_CNetGame__SetGravity =					0x48E260;
+	FUNC_CNetGame__SetWeather =					FindPattern("\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x64\x89\x25\x00\x00\x00\x00\x81\xEC\x98\x01\x00\x00\x56\x8B\xF1", "xxx????xxxxxxxxxxxxxxxxx?xxxxx"); // 00490A40
+	FUNC_CNetGame__SetGravity =					FUNC_CNetGame__SetWeather + 0xD0; // 0x00490B10;
 
 	FUNC_CFilterscripts__LoadFilterscript =		FindPattern("\x8B\x44\x24\x04\x81\xEC\x04\x01\x00\x00", "xxxxxxxxxx");
 	FUNC_CFilterscripts__UnLoadFilterscript =	FindPattern("\xCC\x51\x53\x8B\x5C\x24\x0C\x55\x56\x57\x89", "xxxxxxxxxxx") + 0x1;
 
 	FUNC_ContainsInvalidChars =					FindPattern("\x8B\x4C\x24\x04\x8A\x01\x84\xC0", "xxxxxxxx");
-	FUNC_GetPacketID =							FindPattern("\x8B\x44\x24\x04\x85\xC0\x75\x03\x0C\xFF\xC3", "xxxxxxx???x");
 
 	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x56\x8B\xF1\x8B\x86\x3B\x26\x00\x00\x85\xC0\x0F\x84", "xxxxx????xxxx");
 	FUNC_CVehicle__Respawn =					FindPattern("\x53\x33\xC0\x56\x8B\xF1\x57\xB9\x10\x00\x00\x00\x8D\x7E\x0C", "xxxxxxxxx???xxx");
@@ -134,6 +139,13 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	ADDR_GetPlayerNetworkStats_VerbosityLevel = FindPattern("\x6A\x01\x8D\x44\x04", "xxxxx"); // 0x004730B9;
 
 	ADDR_RecordingDirectory =					FindPattern("\x75\xDF\x8D\x44\x24\x18\x50\x8D\x8C\x24", "xxxxx?xxxx") + 14; // 0x00482265
+
+	FUNC_CGameMode__OnPlayerConnect =			FindPattern("\x83\xEC\x08\x56\x8B\xF1\x8A\x46\x68", "xxxxxxxxx"); // 0x0046D910
+	FUNC_CGameMode__OnPlayerDisconnect =		FUNC_CGameMode__OnPlayerConnect + 0x60; // 0x0046D970;
+	FUNC_CGameMode__OnPlayerSpawn =				FUNC_CGameMode__OnPlayerDisconnect + 0x60; // 0x0046D9D0;
+	FUNC_CGameMode__OnPlayerStreamIn =			FUNC_CGameMode__OnPlayerSpawn + 0xF10; // 0x0046E8E0
+	FUNC_CGameMode__OnPlayerStreamOut =			FUNC_CGameMode__OnPlayerStreamIn + 0x70; // 0x0046E950;
+	FUNC_CGameMode__OnDialogResponse =			FUNC_CGameMode__OnPlayerStreamOut + 0x230;  // 0x0046EB80;
 	#else
 
 	// Thx for Mellnik
@@ -150,11 +162,13 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	FUNC_CConsole__SendRules =					FindPattern("\x55\x31\xD2\x89\xE5\x57\x56\x53\x81\xEC\x4C\x04", "xxxxxxxxxxxx");
 	FUNC_CConsole__Execute =					FindPattern("\x55\x89\xE5\x57\x56\x53\x81\xEC\x3C\x01\x00\x00\x8B\x45\x0C", "xxxxxxxxxxxxxxx");
 
+	FUNC_CNetGame__SetWeather = 0x80AE6D0;
+	FUNC_CNetGame__SetGravity = 0x80AE7D0;
+
 	FUNC_CFilterscripts__LoadFilterscript =		FindPattern("\x89\x7D\x00\x8B\x45\x00\x8B\x7D\x00\x89\x5D\x00\x89\x44\x24\x00", "xx?xx?xx?xx?xxx?") - 0x9;
 	FUNC_CFilterscripts__UnLoadFilterscript =	FindPattern("\x31\xF6\x53\x83\xEC\x00\x8B\x45\x00\x8B\x7D\x00\x89\xC3", "xxxxx?xx?xx?xx") - 0x5;
 
 	FUNC_ContainsInvalidChars =					FindPattern("\x53\x8B\x5D\x00\x0F\xB6\x0B\x84\xC9\x74\x00\x66\x90", "xxx?xxxxxx?xx") - 0x3;
-	FUNC_GetPacketID =							FindPattern("\x55\xB8\x00\x00\x00\x00\x89\xE5\x8B\x55\x00\x85\xD2", "xx????xxxx?xx");
 
 	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\xA1\x00\x00\x00\x00", "xxxxxxx?xx?x????");
 	
@@ -169,6 +183,13 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	ADDR_GetNetworkStats_VerbosityLevel =		FindPattern("\xB8\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx");
 	ADDR_GetPlayerNetworkStats_VerbosityLevel = FindPattern("\xBB\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx"); // 080DD7FA
+	
+	FUNC_CGameMode__OnPlayerConnect = 0x80A5160;
+	FUNC_CGameMode__OnPlayerDisconnect = 0x80A51D0;
+	FUNC_CGameMode__OnPlayerSpawn = 0x80A5250;
+	FUNC_CGameMode__OnPlayerStreamIn = 0x80A6450;
+	FUNC_CGameMode__OnPlayerStreamOut = 0x80A64D0;
+	FUNC_CGameMode__OnDialogResponse = 0x80A6750;
 
 	switch(sampVersion)
 	{
@@ -204,7 +225,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	logprintf("FUNC_CFilterscripts__UnLoadFilterscript: %X", FUNC_CFilterscripts__UnLoadFilterscript);
 
 	logprintf("FUNC_ContainsInvalidChars: %X", FUNC_ContainsInvalidChars);
-	logprintf("FUNC_GetPacketID: %X", FUNC_GetPacketID);
 
 	logprintf("FUNC_CPlayer__SpawnForWorld: %X", FUNC_CPlayer__SpawnForWorld);
 	logprintf("FUNC_CVehicle__Respawn: %X", FUNC_CVehicle__Respawn);

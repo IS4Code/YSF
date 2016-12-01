@@ -126,6 +126,7 @@ void Spawn(RPCParameters *rpcParams)
 	pPlayer->syncData.fQuaternion[4] =  pPlayer->spawn.fRotation;
 	pPlayer->vecPosition = pPlayer->spawn.vecPos;
 	pPlayer->wVehicleId = 0;
+	pPlayerData[playerid]->bControllable = true;
 
 	CSAMPFunctions::SpawnPlayer_(playerid);
 }

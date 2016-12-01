@@ -93,7 +93,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <ImportLibrary>bin\win32\Release\YSF.lib</ImportLibrary>
       <ModuleDefinitionFile>YSF.def</ModuleDefinitionFile>
-      <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
+      <OutputFile>C:\Users\Ati\Desktop\SERVER\plugins\YSF.dll</OutputFile>
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;winmm.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>false</DataExecutionPrevention>
@@ -133,7 +133,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lib\raknet\BitStream.cpp" />
-    <ClCompile Include="lib\sampgdk\sampgdk.c" />
     <ClCompile Include="lib\sdk\amxplugin.cpp" />
     <ClCompile Include="lib\subhook\subhook.c" />
     <ClCompile Include="src\Addresses.cpp" />
@@ -159,7 +158,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\raknet\BitStream.h" />
-    <ClInclude Include="lib\sampgdk\sampgdk.h" />
+    <ClInclude Include="lib\sdk\amx\amx.h" />
+    <ClInclude Include="lib\sdk\amx\getch.h" />
+    <ClInclude Include="lib\sdk\amx\sclinux.h" />
+    <ClInclude Include="lib\sdk\plugin.h" />
+    <ClInclude Include="lib\sdk\plugincommon.h" />
     <ClInclude Include="lib\subhook\subhook.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Addresses.h" />

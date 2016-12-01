@@ -818,21 +818,12 @@ AMX_DECLARE_NATIVE(Natives::GetRunningTimers)
 	return pNetGame->pScriptTimers->dwTimerCount;
 }
 
-// native SetGravity(Float:gravity);
-AMX_DECLARE_NATIVE(Natives::YSF_SetGravity)
-{
-	CHECK_PARAMS(1, "SetGravity");
-
-	CServer::Get()->SetGravity_(amx_ctof(params[1]));
-	return 1;
-}
-
 // native Float:GetGravity();
 AMX_DECLARE_NATIVE(Natives::YSF_GetGravity)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-	float fGravity = CServer::Get()->GetGravity_();
+	float fGravity = pNetGame->fGravity;
 	return amx_ftoc(fGravity);
 }
 
@@ -1194,15 +1185,6 @@ AMX_DECLARE_NATIVE(Natives::ApplyAnimationForPlayer)
 	return 1;
 }
 
-// native SetWeather(weatherid);
-AMX_DECLARE_NATIVE(Natives::YSF_SetWeather)
-{
-	CHECK_PARAMS(1, "SetWeather");
-
-	CServer::Get()->SetWeather_(static_cast<BYTE>(params[1]));
-	return 1;
-}
-
 // native SetPlayerWeather(playerid, weatherid);
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWeather)
 {
@@ -1321,6 +1303,19 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 	if(pDestroyVehicle(amx, params))
 	{
 		CServer::Get()->bChangedVehicleColor[vehicleid] = false;
+		return 1;
+	}
+	return 0;
+}
+
+AMX_DECLARE_NATIVE(Natives::YSF_ShowPlayerDialog)
+{
+	int playerid = static_cast<int>(params[1]);
+	int dialogid = static_cast<int>(params[2]);
+
+	if (pShowPlayerDialog(amx, params))
+	{
+		pPlayerData[playerid]->wLastDialogID = dialogid;
 		return 1;
 	}
 	return 0;
@@ -1993,6 +1988,18 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	return pPlayerData[playerid]->wDisabledKeys;
+}
+
+// native GetPlayerDialog(playerid);
+AMX_DECLARE_NATIVE(Natives::GetPlayerDialog)
+{
+	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+	CHECK_PARAMS(1, "GetPlayerDialog");
+
+	int playerid = static_cast<int>(params[1]);
+	if (!IsPlayerConnectedEx(playerid)) return 0;
+
+	return pPlayerData[playerid]->wLastDialogID;
 }
 
 // Scoreboard manipulation
@@ -5694,7 +5701,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	AMX_DEFINE_NATIVE(IsPlayerCameraTargetEnabled) // R13
 	AMX_DEFINE_NATIVE(SetPlayerDisabledKeysSync) // R16
 	AMX_DEFINE_NATIVE(GetPlayerDisabledKeysSync) // R16
-
+	AMX_DEFINE_NATIVE(GetPlayerDialog) // R18
+	
 	// Special things from syncdata
 	AMX_DEFINE_NATIVE(GetPlayerSirenState)
 	AMX_DEFINE_NATIVE(GetPlayerLandingGearState)
@@ -5947,9 +5955,7 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	// File
 	{ "AttachObjectToPlayer",			Natives::YSF_AttachObjectToPlayer },
 	{ "AttachPlayerObjectToPlayer",		Natives::YSF_AttachPlayerObjectToPlayer },
-	{ "SetGravity",						Natives::YSF_SetGravity },
 	{ "GetGravity",						Natives::YSF_GetGravity },
-	{ "SetWeather",						Natives::YSF_SetWeather },
 	{ "SetPlayerWeather",				Natives::YSF_SetPlayerWeather },
 	{ "SetPlayerWorldBounds",			Natives::YSF_SetPlayerWorldBounds },
 	{ "DestroyObject",					Natives::YSF_DestroyObject },
@@ -5957,6 +5963,7 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
 	{ "ChangeVehicleColor",				Natives::YSF_ChangeVehicleColor},
 	{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
+	{ "ShowPlayerDialog",				Natives::YSF_ShowPlayerDialog },
 
 	{ "GangZoneCreate",					Natives::YSF_GangZoneCreate },
 	{ "GangZoneDestroy",				Natives::YSF_GangZoneDestroy },

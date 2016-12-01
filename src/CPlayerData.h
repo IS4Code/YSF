@@ -36,7 +36,6 @@
 //#include "CServer.h"
 #include "Structs.h"
 #include <bitset>
-#include <sampgdk/sampgdk.h>
 
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
@@ -125,6 +124,7 @@ public:
 	DWORD dwLastDrunkLevel;
 	WORD wSurfingInfo;
 	WORD wDialogID;
+	WORD wLastDialogID;
 
 	bool bObjectsRemoved : 1;
 	bool bWidescreen : 1;

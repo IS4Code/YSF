@@ -61,8 +61,8 @@ CPlayerData::CPlayerData( WORD playerid )
 
 	wPlayerID = playerid;
 	bObjectsRemoved = false;
-	fGravity = CServer::Get()->GetGravity_();
-	byteWeather = CServer::Get()->GetWeather_();
+	fGravity = pNetGame->fGravity;
+	byteWeather = pNetGame->byteWeather;
 	bWidescreen = false;
 	wDisabledKeys = 0;
 
@@ -100,6 +100,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	dwFPS = 0;
 	dwLastDrunkLevel = 0;
 	wSurfingInfo = 0;
+	wLastDialogID = -1;
 
 	bAFKState = false;
 	bEverUpdated = false;
@@ -390,22 +391,22 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write((BYTE)ID_PLAYER_SYNC);
 			bsSync->Write(playerid);
 
+			// LEFT/RIGHT KEYS
+			if (p->syncData.wLRAnalog)
+			{
+				bsSync->Write(true);
+				bsSync->Write(p->syncData.wLRAnalog);
+			}
+			else
+			{
+				bsSync->Write(false);
+			}
+
 			// UP/DOWN KEYS
 			if(p->syncData.wUDAnalog) 
 			{
 				bsSync->Write(true);
 				bsSync->Write(p->syncData.wUDAnalog);
-			} 
-			else 
-			{
-				bsSync->Write(false);
-			}
-
-			// LEFT/RIGHT KEYS
-			if(p->syncData.wLRAnalog) 
-			{
-				bsSync->Write(true);
-				bsSync->Write(p->syncData.wLRAnalog);
 			} 
 			else 
 			{
@@ -492,8 +493,8 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write(playerid);
 
 			bsSync->Write(p->vehicleSyncData.wVehicleId);
-			bsSync->Write(p->vehicleSyncData.wUDAnalog);
 			bsSync->Write(p->vehicleSyncData.wLRAnalog);
+			bsSync->Write(p->vehicleSyncData.wUDAnalog);
 			
 			WORD keys = p->vehicleSyncData.wKeys;
 			keys &= ~pPlayerData[playerid]->wDisabledKeys;

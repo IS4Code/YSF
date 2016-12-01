@@ -117,10 +117,8 @@ public:
 	static DWORD			FUNC_CFilterscripts__LoadFilterscript;
 	static DWORD			FUNC_CFilterscripts__UnLoadFilterscript;
 	static DWORD			FUNC_ContainsInvalidChars;
-	static DWORD			FUNC_GetPacketID;
 
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
-
 	static DWORD			FUNC_CVehicle__Respawn;
 	static DWORD			FUNC_CPlayerPool__HandleVehicleRespawn;
 
@@ -135,6 +133,13 @@ public:
 
 	static DWORD			ADDR_RecordingDirectory;
 
+	// Callback hooks
+	static DWORD			FUNC_CGameMode__OnPlayerConnect;
+	static DWORD			FUNC_CGameMode__OnPlayerDisconnect;
+	static DWORD			FUNC_CGameMode__OnPlayerSpawn;
+	static DWORD			FUNC_CGameMode__OnPlayerStreamIn;
+	static DWORD			FUNC_CGameMode__OnPlayerStreamOut;
+	static DWORD			FUNC_CGameMode__OnDialogResponse;
 };
 
 #endif

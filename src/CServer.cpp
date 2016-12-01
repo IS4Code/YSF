@@ -40,6 +40,10 @@ void CServer::Initialize(eSAMPVersion version)
 	m_bNightVisionFix = true;
 	m_dwAFKAccuracy = 1500;
 
+#ifndef _WIN32
+	LoadTickCount();
+#endif
+
 	logprintf("init more");
 	memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();
@@ -224,52 +228,6 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 		}
 	}
 	return 1;
-}
-
-void CServer::SetGravity_(float fGravity)
-{
-	// Update console
-	char szGravity[16];
-	sprintf(szGravity, "%f", fGravity);
-
-	pNetGame->fGravity = fGravity;
-	CSAMPFunctions::SetStringVariable("gravity", szGravity);
-
-	// Minden játékos gravitációja átállítása arra, amire a szerver gravitációját beállítottuk
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
-	{
-		if(IsPlayerConnectedEx(i))
-			pPlayerData[i]->fGravity = fGravity; 
-	}
-	
-	RakNet::BitStream bs;
-	bs.Write(fGravity);
-	CSAMPFunctions::RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
-}
-
-float CServer::GetGravity_(void)
-{
-	return pNetGame->fGravity;
-}
-
-void CServer::SetWeather_(BYTE byteWeather)
-{
-	// Update console
-	char szWeather[8];
-	sprintf(szWeather, "%d", byteWeather);
-	
-	pNetGame->byteWeather = byteWeather;
-	CSAMPFunctions::SetStringVariable("weather", szWeather);
-
-	// Broadcast server weather
-	RakNet::BitStream bs;
-	bs.Write(byteWeather);
-	CSAMPFunctions::RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
-}
-
-BYTE CServer::GetWeather_(void)
-{
-	return pNetGame->byteWeather;
 }
 
 void CServer::AllowNickNameCharacter(char character, bool enable)

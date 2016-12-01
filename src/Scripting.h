@@ -33,7 +33,7 @@
 #ifndef YSF_SCRIPTING_H
 #define YSF_SCRIPTING_H
 
-#include <sampgdk/sampgdk.h>
+#include <sdk/amx/amx.h>
 #include "main.h"
 
 typedef cell AMX_NATIVE_CALL(*AMX_Function_t)(AMX *amx, cell *params);
@@ -131,7 +131,8 @@ namespace Natives
 	AMX_DECLARE_NATIVE(IsPlayerCameraTargetEnabled); // R13
 	AMX_DECLARE_NATIVE(SetPlayerDisabledKeysSync); // R16
 	AMX_DECLARE_NATIVE(GetPlayerDisabledKeysSync); // R16
-	
+	AMX_DECLARE_NATIVE(GetPlayerDialog); // R18
+
 	AMX_DECLARE_NATIVE(GetPlayerSirenState);
 	AMX_DECLARE_NATIVE(GetPlayerLandingGearState);
 	AMX_DECLARE_NATIVE(GetPlayerHydraReactorAngle);
@@ -354,9 +355,7 @@ namespace Natives
 
 	AMX_DECLARE_NATIVE(YSF_AttachObjectToPlayer);
 	AMX_DECLARE_NATIVE(YSF_AttachPlayerObjectToPlayer);
-	AMX_DECLARE_NATIVE(YSF_SetGravity);
 	AMX_DECLARE_NATIVE(YSF_GetGravity);
-	AMX_DECLARE_NATIVE(YSF_SetWeather);
 	AMX_DECLARE_NATIVE(YSF_SetPlayerWeather);
 	AMX_DECLARE_NATIVE(YSF_SetPlayerWorldBounds);
 	AMX_DECLARE_NATIVE(YSF_DestroyObject);
@@ -364,7 +363,8 @@ namespace Natives
 	AMX_DECLARE_NATIVE(YSF_TogglePlayerControllable);
 	AMX_DECLARE_NATIVE(YSF_ChangeVehicleColor);
 	AMX_DECLARE_NATIVE(YSF_DestroyVehicle);
-	
+	AMX_DECLARE_NATIVE(YSF_ShowPlayerDialog);
+
 	AMX_DECLARE_NATIVE(YSF_SetPlayerTeam);
 	AMX_DECLARE_NATIVE(YSF_SetPlayerSkin);
 	AMX_DECLARE_NATIVE(YSF_SetPlayerFightingStyle);

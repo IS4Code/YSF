@@ -53,6 +53,7 @@ CPlayerPool__HandleVehicleRespawn_t			CSAMPFunctions::pfn__CPlayerPool__HandleVe
 Packet_WeaponsUpdate_t						CSAMPFunctions::pfn__Packet_WeaponsUpdate = NULL;
 Packet_StatsUpdate_t						CSAMPFunctions::pfn__Packet_StatsUpdate = NULL;
 
+logprintf_t									logprintf = NULL;
 format_amxstring_t							CSAMPFunctions::pfn__format_amxstring = NULL;
 
 RakNet__Start_t								CSAMPFunctions::pfn__RakNet__Start = NULL;
@@ -358,4 +359,50 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 		pfn__CPlayerPool__HandleVehicleRespawn(pNetGame->pPlayerPool, pVehicle->wVehicleID);
 
 	CCallbackManager::OnVehicleSpawn(pVehicle->wVehicleID);
+}
+
+void CSAMPFunctions::SetWeather(BYTE weatherid)
+{
+	logprintf("setweather hookgeci %d", weatherid);
+
+	// Update console
+	char szWeather[8];
+	sprintf(szWeather, "%d", weatherid);
+
+	pNetGame->byteWeather = weatherid;
+	CSAMPFunctions::SetStringVariable("weather", szWeather);
+
+	for (int i = 0; i != MAX_PLAYERS; i++)
+	{
+		if (IsPlayerConnectedEx(i))
+			pPlayerData[i]->byteWeather = weatherid;
+	}
+
+	// Broadcast server weather
+	RakNet::BitStream bs;
+	bs.Write(weatherid);
+	CSAMPFunctions::RPC(&RPC_Weather, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
+}
+
+void CSAMPFunctions::SetGravity(float gravity)
+{
+	logprintf("SetGravity hookgeci %f", gravity);
+
+	// Update console
+	char szGravity[16];
+	sprintf(szGravity, "%f", gravity);
+
+	pNetGame->fGravity = gravity;
+	CSAMPFunctions::SetStringVariable("gravity", szGravity);
+
+	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	{
+		if (IsPlayerConnectedEx(i))
+			pPlayerData[i]->fGravity = gravity;
+	}
+
+	// Broadcast server gravity
+	RakNet::BitStream bs;
+	bs.Write(gravity);
+	CSAMPFunctions::RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, 0);
 }

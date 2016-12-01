@@ -33,7 +33,7 @@
 #ifndef YSF_FUNCTIONS_H
 #define YSF_FUNCTIONS_H
 
-#include <sampgdk/sampgdk.h>
+#include <sdk/amx/amx.h>
 
 #define DEFINE_FUNCTION_POINTER(name) \
 	static name ## _t		pfn__ ## name
@@ -49,11 +49,13 @@
 
 #define STDCALL __stdcall
 #define THISCALL __thiscall
+#define FASTCALL __fastcall
 #else
 typedef int SOCKET;
 
 #define STDCALL
 #define THISCALL
+#define FASTCALL __attribute__((fastcall))
 #define CDECL
 #endif
 
@@ -79,6 +81,8 @@ typedef DWORD (THISCALL *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlay
 
 typedef int (THISCALL *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef int (THISCALL *Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
+
+typedef void(*logprintf_t)(char* format, ...);
 typedef char* (CDECL *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
 
 typedef bool (THISCALL *RakNet__Start_t)(void* ppRakServer, unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress);
@@ -152,6 +156,8 @@ public:
 	static void		ClearBanList(void);
 
 	static void		RespawnVehicle(CVehicle *pVehicle);
+	static void		SetWeather(BYTE weatherid);
+	static void		SetGravity(float gravity);
 
 	// Function
 	// Rules
@@ -197,5 +203,6 @@ public:
 	DEFINE_FUNCTION_POINTER(RakNet__ClearBanList);					
 };
 
+extern logprintf_t logprintf;
 
 #endif

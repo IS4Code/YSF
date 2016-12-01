@@ -69,12 +69,6 @@ public:
 	bool OnPlayerStreamIn(WORD playerid, WORD forplayerid);
 	bool OnPlayerStreamOut(WORD playerid, WORD forplayerid);
 
-	void SetGravity_(float fGravity);
-	float GetGravity_(void);
-
-	void SetWeather_(BYTE byteWeather);
-	BYTE GetWeather_(void);
-
 	eSAMPVersion GetVersion() { return m_Version; }
 	
 	void AllowNickNameCharacter(char character, bool enable);
