@@ -5,8 +5,8 @@
 # make YSF
 #
 
-GPP = g++ -m32 -std=c++11 -Ilib -DSAMPGDK_AMALGAMATION -fno-stack-protector
-GCC = gcc -m32 -Ilib -DSAMPGDK_AMALGAMATION -fno-stack-protector
+GPP = g++ -m32 -std=c++11 -Ilib -fno-stack-protector
+GCC = gcc -m32 -Ilib -fno-stack-protector
 YSF_OUTFILE = "./YSF.so"
 
 COMPILE_FLAGS = -c -O3 -fpack-struct=1 -fPIC -w -DLINUX

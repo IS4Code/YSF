@@ -34,6 +34,7 @@
 #define YSF_FUNCTIONS_H
 
 #include <sdk/amx/amx.h>
+#include <raknet/NetworkTypes.h>
 
 #define DEFINE_FUNCTION_POINTER(name) \
 	static name ## _t		pfn__ ## name

@@ -158,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\raknet\BitStream.h" />
+    <ClInclude Include="lib\raknet\NetworkTypes.h" />
     <ClInclude Include="lib\sdk\amx\amx.h" />
     <ClInclude Include="lib\sdk\amx\getch.h" />
     <ClInclude Include="lib\sdk\amx\sclinux.h" />

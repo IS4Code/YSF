@@ -159,6 +159,9 @@
     <ClInclude Include="lib\sdk\amx\sclinux.h">
       <Filter>lib\sdk\amx</Filter>
     </ClInclude>
+    <ClInclude Include="lib\raknet\NetworkTypes.h">
+      <Filter>lib\raknet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="YSF.def" />

@@ -1980,7 +1980,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerDisabledKeysSync)
 	return 1;
 }
 
-// native GetPlayerDisabledKeysSync(playerid, keys, updown, leftright);
+// native GetPlayerDisabledKeysSync(playerid, &keys, &updown, &leftright);
 AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
@@ -2453,7 +2453,6 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 
 	return pObject->Material[i].byteUsed;
 }
-
 
 // native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
