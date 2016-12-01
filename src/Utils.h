@@ -51,7 +51,7 @@ void LoadTickCount();
 // Just to keep compatibility with streamer... If I got used to something, I don't like to switch to new one.
 namespace Utility
 {
-	const char* GetWeaponName_(BYTE weaponid);
+	const char* GetWeaponName(BYTE weaponid);
 	BYTE GetWeaponSlot(BYTE weaponid);
 	std::string convertNativeStringToString(AMX *amx, cell input);
 	void convertStringToNativeString(AMX *amx, cell output, cell size, char* string);
@@ -66,8 +66,8 @@ namespace Utility
 };
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);
-bool IsPlayerConnectedEx(int playerid);
-char *GetPlayerName_(int playerid);
+bool IsPlayerConnected(int playerid);
+char *GetPlayerName(int playerid);
 
 bool Unlock(void *address, size_t len);
 

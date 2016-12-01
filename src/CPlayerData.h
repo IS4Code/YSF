@@ -65,7 +65,7 @@ public:
 	void ResetPlayerMarkerForPlayer(WORD resetplayerid);
 	
 	WORD GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer = false);
-	bool DestroyObject_(WORD objectid);
+	bool DestroyObject(WORD objectid);
 
 	void Process(void);
 
@@ -78,24 +78,26 @@ public:
 	} stObj[MAX_OBJECTS];
 
 	WORD wPlayerID;
-	
-	float fGravity;
-	BYTE byteWeather;
-	float fBounds[4];
+	WORD wSurfingInfo;
+	WORD wDialogID;
 
-	BYTE byteTeam;
-	
-	// Special shits for store sync data
+	// Variables to store disabled keys
 	WORD wDisabledKeys;
 	WORD wDisabledKeysUD;
 	WORD wDisabledKeysLR;
 
-		// Per-player pos
+	// Per-player things
+	float fGravity;
+	BYTE byteWeather;
+	float fBounds[4];
+
+	// Per-player pos
 	bool bCustomPos[MAX_PLAYERS];
 	bool bCustomQuat[MAX_PLAYERS];
 	CVector *vecCustomPos[MAX_PLAYERS];
 	float fCustomQuat[MAX_PLAYERS][4];
 
+	// Gangzones
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];
 
 	// [clientsideid] = serversideid
@@ -121,13 +123,7 @@ public:
 	DWORD dwLastUpdateTick;
 	DWORD dwCreateAttachedObj;
 	WORD dwObjectID;
-
-	DWORD dwFPS;
-	DWORD dwLastDrunkLevel;
-	WORD wSurfingInfo;
-	WORD wDialogID;
-	WORD wLastDialogID;
-
+	
 	bool bObjectsRemoved : 1;
 	bool bWidescreen : 1;
 	bool bUpdateScoresPingsDisabled : 1;
@@ -145,6 +141,4 @@ private:
 	char m_szNames[MAX_PLAYERS][MAX_PLAYER_NAME];
 };
 
-void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
-void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
 #endif

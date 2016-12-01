@@ -52,10 +52,7 @@ class CServer : public CSingleton<CServer>
 {
 	friend class CSingleton<CServer>;
 public:
-	CServer() : m_bInitialized(false)
-	{
-
-	}
+	CServer() = default;
 	~CServer();
 
 	void Initialize(eSAMPVersion version);
@@ -107,9 +104,12 @@ public:
 	void inline SetAFKAccuracy(DWORD time_ms) { m_dwAFKAccuracy = time_ms; }
 	DWORD inline GetAFKAccuracy(void) { return m_dwAFKAccuracy; }
 
-	WORD GetMaxPlayers_();
+	WORD GetMaxPlayers();
 	WORD GetPlayerCount();
 	WORD GetNPCCount();
+
+	void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
+	void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
 
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;

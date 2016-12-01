@@ -75,7 +75,7 @@ void FASTCALL HOOK_CNetGame__SetWeather(void *thisptr, void *padding, BYTE weath
 {
 	for (int i = 0; i != MAX_PLAYERS; i++)
 	{
-		if (IsPlayerConnectedEx(i))
+		if (IsPlayerConnected(i))
 			pPlayerData[i]->byteWeather = weatherid;
 	}
 
@@ -89,7 +89,7 @@ void FASTCALL HOOK_CNetGame__SetGravity(void *thisptr, void *padding, float grav
 {
 	for (WORD i = 0; i != MAX_PLAYERS; i++)
 	{
-		if (IsPlayerConnectedEx(i))
+		if (IsPlayerConnected(i))
 			pPlayerData[i]->fGravity = gravity;
 	}
 
@@ -190,8 +190,7 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 
 	logprintf("id: %d - playerid: %d, sendto: %d", id, playerid, CSAMPFunctions::GetIndexFromPlayerID(playerId));
 */	
-	RebuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
-
+	CServer::Get()->RebuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
 	return CSAMPFunctions::Send(parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
 
@@ -199,8 +198,7 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
-	RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
-
+	CServer::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
 	return CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }
 
@@ -236,7 +234,7 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 
 	//logprintf("Receive packet playerid: %d, id: %d", playerid, packetId);
 	
-	if (IsPlayerConnectedEx(playerid))
+	if (IsPlayerConnected(playerid))
 	{
 		// AFK
 		if (IsPlayerUpdatePacket(packetId))
@@ -465,7 +463,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
 //					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 
-					WORD wMaxPlayers = CServer::Get()->GetMaxPlayers_();
+					WORD wMaxPlayers = CServer::Get()->GetMaxPlayers();
 
 					BYTE byteIsPassworded = CSAMPFunctions::GetStringVariable("password")[0] != 0;
 
@@ -545,9 +543,9 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						for (WORD r = 0; r < MAX_PLAYERS; r++)
 						{
-							if (IsPlayerConnectedEx(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
+							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
-								szName = GetPlayerName_(r);
+								szName = GetPlayerName(r);
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);
@@ -591,11 +589,11 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						for (WORD r = 0; r < MAX_PLAYERS; r++)
 						{
-							if (IsPlayerConnectedEx(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
+							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
 								memcpy(newdata, &r, sizeof(BYTE));
 								newdata += sizeof(BYTE);
-								szName = GetPlayerName_(r);
+								szName = GetPlayerName(r);
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);
@@ -781,7 +779,7 @@ int FASTCALL HOOK_CGameMode__OnPlayerStreamOut(CGameMode *thisptr, void *padding
 typedef int(THISCALL* FUNC_CGameMode__OnDialogResponse)(CGameMode *thisptr, cell playerid, cell dialogid, cell response, cell listitem, char *szInputtext);
 int FASTCALL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, void *padding, cell playerid, cell dialogid, cell response, cell listitem, char *szInputtext)
 {
-	pPlayerData[playerid]->wLastDialogID = -1;
+	pPlayerData[playerid]->wDialogID = -1;
 	return ((FUNC_CGameMode__OnDialogResponse)subhook_get_trampoline(CGameMode__OnDialogResponse_hook))(thisptr, playerid, dialogid, response, listitem, szInputtext);
 }
 

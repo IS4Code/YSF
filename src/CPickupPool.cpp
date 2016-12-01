@@ -83,7 +83,7 @@ int CYSFPickupPool::New(int modelid, int type, CVector vecPos, int world)
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
 			// Skip unconnected players
-			if(!IsPlayerConnectedEx(i)) continue;
+			if(!IsPlayerConnected(i)) continue;
 
 			int freeslot = -1;
 			// Find free pickup slot
@@ -117,7 +117,7 @@ int CYSFPickupPool::New(int modelid, int type, CVector vecPos, int world)
 int CYSFPickupPool::New(WORD playerid, int modelid, int type, CVector vecPos, int world)
 {
 	// Skip unconnected players
-	if(!IsPlayerConnectedEx(playerid)) return 0xFFFF;
+	if(!IsPlayerConnected(playerid)) return 0xFFFF;
 
 	// Find free slot - serverside
 	WORD slot = 0;
@@ -172,7 +172,7 @@ void CYSFPickupPool::Destroy(int pickupid)
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
 		{
 			// Skip unconnected players
-			if(!IsPlayerConnectedEx(i)) continue;
+			if(!IsPlayerConnected(i)) continue;
 
 			for (PickupMap::iterator p = pPlayerData[i]->ClientPlayerPickups.begin(); p != pPlayerData[i]->ClientPlayerPickups.end(); p++)
 			{
@@ -301,7 +301,7 @@ void CYSFPickupPool::Process(void)
 	{
 		for (WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 		{
-			if (!IsPlayerConnectedEx(playerid)) continue;
+			if (!IsPlayerConnected(playerid)) continue;
 			CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition;
 
 			for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)

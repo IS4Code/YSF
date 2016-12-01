@@ -63,7 +63,7 @@ float GetDistance3D(CVector *vecPosition, CVector *_vecPosition)
 	return ((float)sqrt(fSX + fSY + fSZ));	
 }
 
-bool IsPlayerConnectedEx(int playerid)
+bool IsPlayerConnected(int playerid)
 {
 	if (playerid < 0 || playerid >= MAX_PLAYERS)
 		return false;
@@ -71,7 +71,7 @@ bool IsPlayerConnectedEx(int playerid)
 	return pPlayerData[playerid] != NULL && pNetGame->pPlayerPool->pPlayer != NULL;
 }
 
-const char* Utility::GetWeaponName_(BYTE weaponid)
+const char* Utility::GetWeaponName(BYTE weaponid)
 {
 	switch (weaponid)
 	{
@@ -344,9 +344,9 @@ void Utility::storeIntegerInNative(AMX *amx, cell output, BYTE value)
 	*address = static_cast<cell>(value);
 }
 
-char *GetPlayerName_(int playerid)
+char *GetPlayerName(int playerid)
 {
-	if (!IsPlayerConnectedEx(playerid)) return NULL;
+	if (!IsPlayerConnected(playerid)) return NULL;
 
 	// Get the player name pointer from memory.
 	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;

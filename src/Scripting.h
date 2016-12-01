@@ -131,7 +131,6 @@ namespace Natives
 	AMX_DECLARE_NATIVE(IsPlayerCameraTargetEnabled); // R13
 	AMX_DECLARE_NATIVE(SetPlayerDisabledKeysSync); // R16
 	AMX_DECLARE_NATIVE(GetPlayerDisabledKeysSync); // R16
-	AMX_DECLARE_NATIVE(GetPlayerDialog); // R18
 
 	AMX_DECLARE_NATIVE(GetPlayerSirenState);
 	AMX_DECLARE_NATIVE(GetPlayerLandingGearState);
@@ -145,7 +144,6 @@ namespace Natives
 	AMX_DECLARE_NATIVE(GetPlayerSpectateType); // R8
 	AMX_DECLARE_NATIVE(GetPlayerLastSyncedVehicleID); // R10
 	AMX_DECLARE_NATIVE(GetPlayerLastSyncedTrailerID); // R10
-	AMX_DECLARE_NATIVE(GetPlayerFPS); // R10
 
 	AMX_DECLARE_NATIVE(GetActorSpawnInfo); // R13
 	AMX_DECLARE_NATIVE(GetActorSkin); // R13
@@ -387,7 +385,7 @@ namespace Natives
 	AMX_DECLARE_NATIVE(SetPickupStreamingEnabled);
 #endif
 	AMX_DECLARE_NATIVE(FIXED_GetWeaponName);
-	AMX_DECLARE_NATIVE(FIXED_IsPlayerConnectedEx);
+	AMX_DECLARE_NATIVE(FIXED_IsPlayerConnected);
 };
 
 int InitScripting(AMX *amx);

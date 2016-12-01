@@ -65,13 +65,7 @@ public:
 	ePickupType type;
 };
 
-#ifdef _WIN32 // xD.. C++11 doesn't like BitStream.h/.cpp on linux
-#include <unordered_map>
 typedef std::unordered_map<int, CPickup*> PickupMap;
-#else
-#include <map>
-typedef std::map<int, CPickup*> PickupMap;
-#endif
 
 class CYSFPickupPool
 {

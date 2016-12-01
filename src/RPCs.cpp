@@ -78,7 +78,7 @@ void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 	RakNet::BitStream bsUpdate;
 	for(WORD i = 0; i < MAX_PLAYERS; i++)
 	{
-		if(IsPlayerConnectedEx(i))
+		if(IsPlayerConnected(i))
 		{
 			bsUpdate.Write(i);
 
@@ -110,7 +110,7 @@ void Spawn(RPCParameters *rpcParams)
 	if (pNetGame->iGameState != GAMESTATE_RUNNING) return;
 
 	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
-	if (!IsPlayerConnectedEx(playerid)) return;
+	if (!IsPlayerConnected(playerid)) return;
 	CPlayer	*pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 	
 	// Sanity checks
@@ -143,13 +143,13 @@ void Death(RPCParameters* rpcParams)
 	bsData.Read(reasonid);
 	bsData.Read(killerid);
 
-	if (!IsPlayerConnectedEx(playerid))
+	if (!IsPlayerConnected(playerid))
 		return;
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 
 	// If another player killed
-	if(IsPlayerConnectedEx(killerid))
+	if(IsPlayerConnected(killerid))
 	{
 		CPlayer *pKiller = pNetGame->pPlayerPool->pPlayer[killerid];
 
@@ -164,12 +164,12 @@ void Death(RPCParameters* rpcParams)
 		}
 
 		if (CSAMPFunctions::GetIntVariable("chatlogging"))
-			logprintf("[kill] %s killed %s %s", GetPlayerName_(killerid), GetPlayerName_(playerid), Utility::GetWeaponName_(reasonid));
+			logprintf("[kill] %s killed %s %s", GetPlayerName(killerid), GetPlayerName(playerid), Utility::GetWeaponName(reasonid));
 	}
 	else
 	{
 		if (CSAMPFunctions::GetIntVariable("chatlogging"))
-			logprintf("[death] %s died %d", GetPlayerName_(playerid), reasonid);
+			logprintf("[death] %s died %d", GetPlayerName(playerid), reasonid);
 	}
 	
 	bsData.Reset();
@@ -189,7 +189,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 	int pickupid;
 
 	// Just for security..
-	if (!IsPlayerConnectedEx(playerid)) return;
+	if (!IsPlayerConnected(playerid)) return;
 
 	bsData.Read(pickupid);
 

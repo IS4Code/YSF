@@ -89,7 +89,7 @@ void CGangZonePool::Delete(WORD wZone)
 	for (WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		// Skip not connected players
-		if (!IsPlayerConnectedEx(i)) continue;
+		if (!IsPlayerConnected(i)) continue;
 
 		HideForPlayer(i, wZone);
 	}
@@ -161,7 +161,7 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 	for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
 	{
 		// Skip not connected players
-		if(!IsPlayerConnectedEx(playerid)) continue;
+		if(!IsPlayerConnected(playerid)) continue;
 
 		WORD i = 0;
 
@@ -249,7 +249,7 @@ void CGangZonePool::HideForAll(WORD wZone)
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		// Skip not connected players
-		if(!IsPlayerConnectedEx(i)) continue;
+		if(!IsPlayerConnected(i)) continue;
 
 		HideForPlayer(i, wZone);
 	}
@@ -292,7 +292,7 @@ void CGangZonePool::FlashForAll(WORD wZone, DWORD dwColor)
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		// Skip not connected players
-		if(!IsPlayerConnectedEx(i)) continue;
+		if(!IsPlayerConnected(i)) continue;
 
 		FlashForPlayer(i, wZone, dwColor);
 	}
@@ -334,7 +334,7 @@ void CGangZonePool::StopFlashForAll(WORD wZone)
 	for(WORD i = 0; i != MAX_PLAYERS; i++)
 	{
 		// Skip not connected players
-		if(!IsPlayerConnectedEx(i)) continue;
+		if(!IsPlayerConnected(i)) continue;
 
 		StopFlashForPlayer(i, wZone);
 	}

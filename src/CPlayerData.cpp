@@ -60,56 +60,46 @@ CPlayerData::CPlayerData( WORD playerid )
 	}
 
 	wPlayerID = playerid;
-	bObjectsRemoved = false;
-	fGravity = pNetGame->fGravity;
-	byteWeather = pNetGame->byteWeather;
-	bWidescreen = false;
+	wSurfingInfo = 0;
+	wDialogID = -1;
+	
+	// Variables to store disabled keys
 	wDisabledKeys = 0;
 	wDisabledKeysUD = 0;
 	wDisabledKeysLR = 0;
 
-	// Fix for GetPlayerColor
-	if(pNetGame->pPlayerPool->pPlayer[playerid])
-	{
-		pNetGame->pPlayerPool->pPlayer[playerid]->dwNickNameColor = dwPlayerColors[playerid % 100];
-	}
-
+	// Per-player things
+	fGravity = pNetGame->fGravity;
+	byteWeather = pNetGame->byteWeather;
 	fBounds[0] = 20000.0f;
 	fBounds[1] = -20000.0f;
 	fBounds[2] = 20000.0f;
 	fBounds[3] = -20000.0f;
 
-	memset(pPlayerZone, NULL, sizeof(pPlayerZone));
-	memset(byteClientSideZoneIDUsed, 0xFF, sizeof(byteClientSideZoneIDUsed));
-	memset(wClientSideGlobalZoneID, 0xFFFF, sizeof(wClientSideGlobalZoneID));
-	memset(wClientSidePlayerZoneID, 0xFFFF, sizeof(wClientSidePlayerZoneID));
-
-	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
-	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
-//	memset(bIsGangZoneFlashing, false, sizeof(bIsGangZoneFlashing));
-#ifdef NEW_PICKUP_SYSTEM
-	// Pickpus
-	ClientPlayerPickups.clear();
-#endif
-	bUpdateScoresPingsDisabled = false;
-	bFakePingToggle = false;
-	dwFakePingValue = 0;
-
+	// Per-player pos
 	memset(bCustomPos, false, MAX_PLAYERS);
 	memset(bCustomQuat, false, MAX_PLAYERS);
 	memset(vecCustomPos, NULL, sizeof(CVector));
 
-	dwFPS = 0;
-	dwLastDrunkLevel = 0;
-	wSurfingInfo = 0;
-	wLastDialogID = -1;
+	// Gangzones
+	memset(pPlayerZone, NULL, sizeof(pPlayerZone));
+	memset(byteClientSideZoneIDUsed, 0xFF, sizeof(byteClientSideZoneIDUsed));
+	memset(wClientSideGlobalZoneID, 0xFFFF, sizeof(wClientSideGlobalZoneID));
+	memset(wClientSidePlayerZoneID, 0xFFFF, sizeof(wClientSidePlayerZoneID));
+	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
+	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
 
-	bAFKState = false;
-	bEverUpdated = false;
+	dwFakePingValue = 0;
 	dwLastUpdateTick = 0;
 	dwCreateAttachedObj = 0;
 	dwObjectID = INVALID_OBJECT_ID;
-
+	
+	bObjectsRemoved = false;
+	bWidescreen = false;
+	bUpdateScoresPingsDisabled = false;
+	bFakePingToggle = false;
+	bAFKState = false;
+	bEverUpdated = false;
 	bHidden = false;
 	bControllable = true;
 	bAttachedObjectCreated = false;
@@ -119,6 +109,12 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(m_iSkins, -1, sizeof(m_iSkins));
 	memset(m_iFightingStyles, -1, sizeof(m_iFightingStyles));
 	memset(m_szNames, NULL, sizeof(m_szNames));
+
+	// Fix for GetPlayerColor
+	if (pNetGame->pPlayerPool->pPlayer[playerid])
+	{
+		pNetGame->pPlayerPool->pPlayer[playerid]->dwNickNameColor = dwPlayerColors[playerid % 100];
+	}
 }
 
 CPlayerData::~CPlayerData( void )
@@ -188,7 +184,7 @@ char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
 {
 	if (!m_szNames[nameplayerid][0])
 	{
-		return GetPlayerName_(nameplayerid);
+		return GetPlayerName(nameplayerid);
 	}
 	return &m_szNames[nameplayerid][0];
 }
@@ -246,7 +242,7 @@ WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
 	return 0xFFFF;
 }
 
-bool CPlayerData::DestroyObject_(WORD objectid)
+bool CPlayerData::DestroyObject(WORD objectid)
 {
 	RakNet::BitStream bs;
 	bs.Write(objectid);
@@ -367,289 +363,6 @@ void CPlayerData::Process(void)
 			{
 				CCallbackManager::OnPlayerLeavePlayerGangZone(wPlayerID, wClientSidePlayerZoneID[zoneid]);
 			}
-		}
-	}
-}
-
-void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
-{
-	BYTE id;
-	WORD playerid;
-
-	bsSync->Read(id);
-	bsSync->Read(playerid);
-	
-	//logprintf("RebuildSyncData pre %d - %d", id, playerid);
-	if(!IsPlayerConnectedEx(playerid) || !IsPlayerConnectedEx(toplayerid)) return;
-
-	//logprintf("RebuildSyncData %d - %d", id, playerid);
-	switch(id)
-	{
-		case ID_PLAYER_SYNC:
-		{
-			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
-			WORD keys = 0;
-
-			bsSync->Reset();
-			bsSync->Write((BYTE)ID_PLAYER_SYNC);
-			bsSync->Write(playerid);
-
-			// LEFT/RIGHT KEYS
-			if (p->syncData.wLRAnalog)
-			{
-				bsSync->Write(true);
-				
-				keys = p->syncData.wLRAnalog;
-				keys &= ~pPlayerData[playerid]->wDisabledKeysLR;
-				bsSync->Write(keys);
-			}
-			else
-			{
-				bsSync->Write(false);
-			}
-
-			// UP/DOWN KEYS
-			if(p->syncData.wUDAnalog) 
-			{
-				keys = p->syncData.wUDAnalog;
-				keys &= ~pPlayerData[playerid]->wDisabledKeysUD;
-				bsSync->Write(keys);
-			}
-			else 
-			{
-				bsSync->Write(false);
-			}
-
-			// Keys
-			keys = p->syncData.wKeys; 
-			keys &= ~pPlayerData[playerid]->wDisabledKeys;
-			bsSync->Write(keys);
-	
-			// Position
-			if(pPlayerData[toplayerid]->bCustomPos[playerid])				
-				bsSync->Write(*pPlayerData[toplayerid]->vecCustomPos[playerid]);	
-			else
-				bsSync->Write((char*)&p->syncData.vecPosition, sizeof(CVector));
-			
-			// Rotation (in quaternion)
-			if(pPlayerData[toplayerid]->bCustomQuat[playerid])
-				bsSync->WriteNormQuat(pPlayerData[toplayerid]->fCustomQuat[playerid][0], pPlayerData[toplayerid]->fCustomQuat[playerid][1], pPlayerData[toplayerid]->fCustomQuat[playerid][2], pPlayerData[toplayerid]->fCustomQuat[playerid][3]);	
-			else
-				bsSync->WriteNormQuat(p->syncData.fQuaternion[0], p->syncData.fQuaternion[1], p->syncData.fQuaternion[2], p->syncData.fQuaternion[3]);
-			
-			// Health & armour compression
-			BYTE byteSyncHealthArmour = 0;
-			if( p->syncData.byteHealth > 0 && p->syncData.byteHealth < 100 ) 
-			{
-				byteSyncHealthArmour = ((BYTE)(p->syncData.byteHealth / 7)) << 4;
-			} 
-			else if(p->syncData.byteHealth >= 100) 
-			{
-				byteSyncHealthArmour = 0xF << 4;
-			}
-
-			if( p->syncData.byteArmour > 0 && p->syncData.byteArmour < 100 ) 
-			{
-				byteSyncHealthArmour |=  (BYTE)(p->syncData.byteArmour / 7);
-			}
-			else if(p->syncData.byteArmour >= 100) 
-			{
-				byteSyncHealthArmour |= 0xF;
-			}
-	
-			bsSync->Write(byteSyncHealthArmour);
-
-			// Current weapon
-			bsSync->Write(p->syncData.byteWeapon);
-
-			// Special action
-			bsSync->Write(p->syncData.byteSpecialAction);
-
-			// Velocity
-			bsSync->WriteVector(p->syncData.vecVelocity.fX, p->syncData.vecVelocity.fY, p->syncData.vecVelocity.fZ);
-
-			// Vehicle surfing (POSITION RELATIVE TO CAR SYNC)
-			if(p->syncData.wSurfingInfo) 
-			{
-				bsSync->Write(true);
-				bsSync->Write(p->syncData.wSurfingInfo);
-				bsSync->Write(p->syncData.vecSurfing.fX);
-				bsSync->Write(p->syncData.vecSurfing.fY);
-				bsSync->Write(p->syncData.vecSurfing.fZ);
-			} 
-			else 
-			{
-				bsSync->Write(false);
-			}
-	
-			// Animation
-			if(p->syncData.dwAnimationData)
-			{
-				bsSync->Write(true);
-				bsSync->Write((int)p->syncData.dwAnimationData);
-			}
-			else bsSync->Write(false);
-			break;
-		}
-		case ID_VEHICLE_SYNC:
-		{
-			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
-			WORD keys = 0;
-
-			bsSync->Reset();
-			bsSync->Write((BYTE)ID_VEHICLE_SYNC);
-			bsSync->Write(playerid);
-
-			bsSync->Write(p->vehicleSyncData.wVehicleId);
-			
-			keys = p->vehicleSyncData.wLRAnalog;
-			keys &= ~pPlayerData[playerid]->wDisabledKeysLR;
-			bsSync->Write(keys);
-			
-			keys = p->vehicleSyncData.wUDAnalog;
-			keys &= ~pPlayerData[playerid]->wDisabledKeysUD;
-			bsSync->Write(keys);
-			
-			keys = p->vehicleSyncData.wKeys;
-			keys &= ~pPlayerData[playerid]->wDisabledKeys;
-			bsSync->Write(keys);
-			
-			bsSync->WriteNormQuat(p->vehicleSyncData.fQuaternion[0], p->vehicleSyncData.fQuaternion[1], p->vehicleSyncData.fQuaternion[2], p->vehicleSyncData.fQuaternion[3]);
-			bsSync->Write((char*)&p->vehicleSyncData.vecPosition, sizeof(CVector));
-			bsSync->WriteVector(p->vehicleSyncData.vecVelocity.fX, p->vehicleSyncData.vecVelocity.fY, p->vehicleSyncData.vecVelocity.fZ);
-			bsSync->Write((WORD)p->vehicleSyncData.fHealth);
-
-			// Health & armour compression
-			BYTE byteSyncHealthArmour=0;
-			if( p->vehicleSyncData.bytePlayerHealth > 0 && p->vehicleSyncData.bytePlayerHealth < 100 ) 
-			{
-				byteSyncHealthArmour = ((BYTE)(p->vehicleSyncData.bytePlayerHealth / 7)) << 4;
-			} 
-			else if(p->vehicleSyncData.bytePlayerHealth >= 100) 
-			{
-				byteSyncHealthArmour = 0xF << 4;
-			}
-
-			if( p->vehicleSyncData.bytePlayerArmour > 0 && p->vehicleSyncData.bytePlayerArmour < 100 ) 
-			{
-				byteSyncHealthArmour |=  (BYTE)(p->vehicleSyncData.bytePlayerArmour / 7);
-			}
-			else if(p->vehicleSyncData.bytePlayerArmour >= 100) 
-			{
-				byteSyncHealthArmour |= 0xF;
-			}
-
-			bsSync->Write(byteSyncHealthArmour);
-			bsSync->Write(p->vehicleSyncData.bytePlayerWeapon);
-
-			if(p->vehicleSyncData.byteSirenState)
-			{
-				bsSync->Write(true);
-			}
-			else
-			{
-				bsSync->Write(false);
-			}
-			
-			if(p->vehicleSyncData.byteGearState)
-			{
-				bsSync->Write(true);
-			}
-			else
-			{
-				bsSync->Write(false);
-			}
-
-			if(p->vehicleSyncData.fTrainSpeed)
-			{
-				bsSync->Write(true);
-				bsSync->Write(p->vehicleSyncData.fTrainSpeed);
-			}
-			else
-			{
-				bsSync->Write(false);
-			}
-
-			if(p->vehicleSyncData.wTrailerID)
-			{
-				bsSync->Write(true);
-				bsSync->Write(p->vehicleSyncData.wTrailerID);
-			}
-			else
-			{
-				bsSync->Write(false);
-			}
-			break;
-		}
-	}
-}
-
-void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
-{
-	switch(uniqueID)
-	{
-		case RPC_InitGame:
-		{
-			bool usecjwalk = static_cast<int>(pNetGame->bUseCJWalk) != 0;
-			bool limitglobalchat = static_cast<int>(pNetGame->bLimitGlobalChatRadius) != 0;
-			float globalchatradius = pNetGame->fGlobalChatRadius;
-			float nametagdistance = pNetGame->fNameTagDrawDistance;
-			bool disableenterexits = static_cast<int>(pNetGame->byteDisableEnterExits) != 0;
-			bool nametaglos = static_cast<int>(pNetGame->byteNameTagLOS) != 0;
-			bool manualvehengineandlights = static_cast<int>(pNetGame->bManulVehicleEngineAndLights) != 0;
-			int spawnsavailable = pNetGame->iSpawnsAvailable;
-			bool shownametags = static_cast<int>(pNetGame->byteShowNameTags) != 0;
-			bool showplayermarkers = static_cast<int>(pNetGame->bShowPlayerMarkers) != 0;
-			int onfoot_rate = CSAMPFunctions::GetIntVariable("onfoot_rate");
-			int incar_rate = CSAMPFunctions::GetIntVariable("incar_rate");
-			int weapon_rate = CSAMPFunctions::GetIntVariable("weapon_rate");
-			int lacgompmode = CSAMPFunctions::GetIntVariable("lagcompmode");
-			bool vehiclefriendlyfire = static_cast<int>(pNetGame->bVehicleFriendlyFire) != 0;
-
-			CCallbackManager::OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
-				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
-
-			bsSync->Reset();
-			bsSync->Write((bool)!!pNetGame->unklofasz);
-			bsSync->Write((bool)usecjwalk);
-			bsSync->Write((bool)!!pNetGame->byteAllowWeapons);
-			bsSync->Write(limitglobalchat);
-			bsSync->Write(globalchatradius);
-			bsSync->Write((bool)!!pNetGame->byteStuntBonus);
-			bsSync->Write(nametagdistance);
-			bsSync->Write(disableenterexits);
-			bsSync->Write(nametaglos);
-			bsSync->Write(manualvehengineandlights);
-			bsSync->Write(pNetGame->iSpawnsAvailable);
-			bsSync->Write(playerid);
-			bsSync->Write(shownametags);
-			bsSync->Write((int)showplayermarkers);
-			bsSync->Write(pNetGame->bTirePopping);
-			bsSync->Write(pNetGame->byteWeather);
-			bsSync->Write(pNetGame->fGravity);
-			bsSync->Write((bool)!!pNetGame->bLanMode);
-			bsSync->Write(pNetGame->iDeathDropMoney);
-			bsSync->Write(false);
-			bsSync->Write(onfoot_rate);
-			bsSync->Write(incar_rate);
-			bsSync->Write(weapon_rate);
-			bsSync->Write((int)2);
-			bsSync->Write(lacgompmode);
-
-			char* szHostName = CSAMPFunctions::GetStringVariable("hostname");
-			if(szHostName)
-			{
-				size_t len = strlen(szHostName);
-				bsSync->Write((BYTE)len);
-				bsSync->Write(szHostName, len);
-			}
-			else
-			{
-				bsSync->Write((BYTE)0);
-			}
-			bsSync->Write((char*)&pNetGame->pVehiclePool, 212); // modelsUsed
-			bsSync->Write((DWORD)vehiclefriendlyfire);
-			break;
 		}
 	}
 }
