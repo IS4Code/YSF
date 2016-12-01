@@ -65,6 +65,8 @@ CPlayerData::CPlayerData( WORD playerid )
 	byteWeather = pNetGame->byteWeather;
 	bWidescreen = false;
 	wDisabledKeys = 0;
+	wDisabledKeysUD = 0;
+	wDisabledKeysLR = 0;
 
 	// Fix for GetPlayerColor
 	if(pNetGame->pPlayerPool->pPlayer[playerid])
@@ -386,7 +388,8 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		case ID_PLAYER_SYNC:
 		{
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
-	
+			WORD keys = 0;
+
 			bsSync->Reset();
 			bsSync->Write((BYTE)ID_PLAYER_SYNC);
 			bsSync->Write(playerid);
@@ -395,7 +398,10 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			if (p->syncData.wLRAnalog)
 			{
 				bsSync->Write(true);
-				bsSync->Write(p->syncData.wLRAnalog);
+				
+				keys = p->syncData.wLRAnalog;
+				keys &= ~pPlayerData[playerid]->wDisabledKeysLR;
+				bsSync->Write(keys);
 			}
 			else
 			{
@@ -405,16 +411,17 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			// UP/DOWN KEYS
 			if(p->syncData.wUDAnalog) 
 			{
-				bsSync->Write(true);
-				bsSync->Write(p->syncData.wUDAnalog);
-			} 
+				keys = p->syncData.wUDAnalog;
+				keys &= ~pPlayerData[playerid]->wDisabledKeysUD;
+				bsSync->Write(keys);
+			}
 			else 
 			{
 				bsSync->Write(false);
 			}
 
 			// Keys
-			WORD keys = p->syncData.wKeys; 
+			keys = p->syncData.wKeys; 
 			keys &= ~pPlayerData[playerid]->wDisabledKeys;
 			bsSync->Write(keys);
 	
@@ -487,16 +494,23 @@ void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		case ID_VEHICLE_SYNC:
 		{
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
+			WORD keys = 0;
 
 			bsSync->Reset();
 			bsSync->Write((BYTE)ID_VEHICLE_SYNC);
 			bsSync->Write(playerid);
 
 			bsSync->Write(p->vehicleSyncData.wVehicleId);
-			bsSync->Write(p->vehicleSyncData.wLRAnalog);
-			bsSync->Write(p->vehicleSyncData.wUDAnalog);
 			
-			WORD keys = p->vehicleSyncData.wKeys;
+			keys = p->vehicleSyncData.wLRAnalog;
+			keys &= ~pPlayerData[playerid]->wDisabledKeysLR;
+			bsSync->Write(keys);
+			
+			keys = p->vehicleSyncData.wUDAnalog;
+			keys &= ~pPlayerData[playerid]->wDisabledKeysUD;
+			bsSync->Write(keys);
+			
+			keys = p->vehicleSyncData.wKeys;
 			keys &= ~pPlayerData[playerid]->wDisabledKeys;
 			bsSync->Write(keys);
 			

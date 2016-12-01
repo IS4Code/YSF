@@ -1965,29 +1965,34 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerCameraTargetEnabled)
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bCameraTarget;
 }
 
-// native SetPlayerDisabledKeysSync(playerid, keys);
+// native SetPlayerDisabledKeysSync(playerid, keys, updown = 0, leftright = 0);
 AMX_DECLARE_NATIVE(Natives::SetPlayerDisabledKeysSync)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
-	CHECK_PARAMS(2, "SetPlayerDisabledKeySync");
+	CHECK_PARAMS(4, "SetPlayerDisabledKeySync");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
 	pPlayerData[playerid]->wDisabledKeys = static_cast<WORD>(params[2]);
+	pPlayerData[playerid]->wDisabledKeysUD = static_cast<WORD>(params[3]);
+	pPlayerData[playerid]->wDisabledKeysLR = static_cast<WORD>(params[4]);
 	return 1;
 }
 
-// native GetPlayerDisabledKeysSync(playerid);
+// native GetPlayerDisabledKeysSync(playerid, keys, updown, leftright);
 AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
-	CHECK_PARAMS(1, "SetPlayerDisabledKeySync");
+	CHECK_PARAMS(4, "GetPlayerDisabledKeySync");
 
 	int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnectedEx(playerid)) return 0;
 
-	return pPlayerData[playerid]->wDisabledKeys;
+	Utility::storeIntegerInNative(amx, params[2], pPlayerData[playerid]->wDisabledKeys);
+	Utility::storeIntegerInNative(amx, params[3], static_cast<short>(pPlayerData[playerid]->wDisabledKeysUD));
+	Utility::storeIntegerInNative(amx, params[4], static_cast<short>(pPlayerData[playerid]->wDisabledKeysLR));
+	return 1;
 }
 
 // native GetPlayerDialog(playerid);

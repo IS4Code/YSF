@@ -87,6 +87,8 @@ public:
 	
 	// Special shits for store sync data
 	WORD wDisabledKeys;
+	WORD wDisabledKeysUD;
+	WORD wDisabledKeysLR;
 
 		// Per-player pos
 	bool bCustomPos[MAX_PLAYERS];
