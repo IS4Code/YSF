@@ -208,6 +208,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		}
 	}
 	#endif
+/*	
 	logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
 
 	logprintf("FUNC_CConsole__AddStringVariable: %X", FUNC_CConsole__AddStringVariable);
@@ -246,6 +247,7 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	logprintf("FUNC_CGameMode__OnPlayerStreamIn: %X", FUNC_CGameMode__OnPlayerStreamIn);
 	logprintf("FUNC_CGameMode__OnPlayerStreamOut: %X", FUNC_CGameMode__OnPlayerStreamOut);
 	logprintf("FUNC_CGameMode__OnDialogResponse: %X", FUNC_CGameMode__OnDialogResponse);
+*/
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
 		Unlock((void*)VAR_pRestartWaitTime, 4);
