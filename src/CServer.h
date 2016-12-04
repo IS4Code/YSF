@@ -74,22 +74,22 @@ public:
 
 	inline void BanIP(const char* ip)
 	{
-		bannedIPs.insert(ip);
+		m_BannedIPs.insert(ip);
 	}
 
 	inline void UnbanIP(const char* ip)
 	{
-		bannedIPs.erase(ip);
+		m_BannedIPs.erase(ip);
 	}
 
 	inline void ClearBans()
 	{
-		bannedIPs.clear();
+		m_BannedIPs.clear();
 	}
 
 	inline bool IsBanned(char* ip)
 	{
-		return bannedIPs.find(ip) != bannedIPs.end();
+		return m_BannedIPs.find(ip) != m_BannedIPs.end();
 	}
 
 	void inline SetTickRate(int rate) { m_iTickRate = rate; }
@@ -124,11 +124,10 @@ private:
 	int m_iTickRate;
 	bool m_bInitialized = 0;
 	bool m_bNightVisionFix : 1;
-	bool m_bExtendedNetStats : 1;
 	DWORD m_dwAFKAccuracy;
 
-	std::unordered_set<std::string> bannedIPs;
-	std::unordered_set <char> m_vecValidNameCharacters;
+	std::unordered_set<std::string> m_BannedIPs;
+	std::unordered_set<char> m_vecValidNameCharacters;
 };
 
 #endif

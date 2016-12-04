@@ -56,7 +56,7 @@ typedef int SOCKET;
 
 #define STDCALL
 #define THISCALL
-#define FASTCALL __attribute__((fastcall))
+#define FASTCALL
 #define CDECL
 #endif
 

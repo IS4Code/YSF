@@ -208,7 +208,6 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 		}
 	}
 	#endif
-	/*
 	logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
 
 	logprintf("FUNC_CConsole__AddStringVariable: %X", FUNC_CConsole__AddStringVariable);
@@ -220,6 +219,9 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	logprintf("FUNC_CConsole__FindVariable: %X", FUNC_CConsole__FindVariable);
 	logprintf("FUNC_CConsole__SendRules: %X", FUNC_CConsole__SendRules);
 	logprintf("FUNC_CConsole__Execute: %X", FUNC_CConsole__Execute);
+
+	logprintf("FUNC_CNetGame__SetWeather: %X", FUNC_CNetGame__SetWeather);
+	logprintf("FUNC_CNetGame__SetGravity: %X", FUNC_CNetGame__SetGravity);
 
 	logprintf("FUNC_CFilterscripts__LoadFilterscript: %X", FUNC_CFilterscripts__LoadFilterscript);
 	logprintf("FUNC_CFilterscripts__UnLoadFilterscript: %X", FUNC_CFilterscripts__UnLoadFilterscript);
@@ -233,12 +235,17 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 	logprintf("FUNC_ProcessQueryPacket: %X", FUNC_ProcessQueryPacket);
 	logprintf("FUNC_Packet_WeaponsUpdate: %X", FUNC_Packet_WeaponsUpdate);
 	logprintf("FUNC_Packet_StatsUpdate: %X", FUNC_Packet_StatsUpdate);
+	logprintf("FUNC_format_amxstring: %X", FUNC_format_amxstring);
 
 	logprintf("ADDR_GetNetworkStats_VerbosityLevel: %X", ADDR_GetNetworkStats_VerbosityLevel);
 	logprintf("ADDR_GetPlayerNetworkStats_VerbosityLevel: %X", ADDR_GetPlayerNetworkStats_VerbosityLevel);
 
-	logprintf("FUNC_format_amxstring: %X", FUNC_format_amxstring);
-	*/
+	logprintf("FUNC_CGameMode__OnPlayerConnect: %X", FUNC_CGameMode__OnPlayerConnect);
+	logprintf("FUNC_CGameMode__OnPlayerDisconnect: %X", FUNC_CGameMode__OnPlayerDisconnect);
+	logprintf("FUNC_CGameMode__OnPlayerSpawn: %X", FUNC_CGameMode__OnPlayerSpawn);
+	logprintf("FUNC_CGameMode__OnPlayerStreamIn: %X", FUNC_CGameMode__OnPlayerStreamIn);
+	logprintf("FUNC_CGameMode__OnPlayerStreamOut: %X", FUNC_CGameMode__OnPlayerStreamOut);
+	logprintf("FUNC_CGameMode__OnDialogResponse: %X", FUNC_CGameMode__OnDialogResponse);
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
 		Unlock((void*)VAR_pRestartWaitTime, 4);

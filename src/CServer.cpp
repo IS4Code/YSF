@@ -44,7 +44,6 @@ void CServer::Initialize(eSAMPVersion version)
 	LoadTickCount();
 #endif
 
-	logprintf("init more");
 	memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();
 	memset(&COBJECT_AttachedObjectPlayer, INVALID_PLAYER_ID, sizeof(COBJECT_AttachedObjectPlayer));
@@ -70,16 +69,6 @@ void CServer::Initialize(eSAMPVersion version)
 		m_vecValidNameCharacters.insert(i);
 	}
 	m_vecValidNameCharacters.insert({ ']', '[', '_', '$', '=', '(', ')', '@', '.' });
-/*
-	m_vecValidNameCharacters.insert('[');
-	m_vecValidNameCharacters.insert('_');
-	m_vecValidNameCharacters.insert('$');
-	m_vecValidNameCharacters.insert('=');
-	m_vecValidNameCharacters.insert('(');
-	m_vecValidNameCharacters.insert(')');
-	m_vecValidNameCharacters.insert('@');
-	m_vecValidNameCharacters.insert('.');
-*/
 }
 
 CServer::~CServer()
@@ -362,6 +351,8 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			// UP/DOWN KEYS
 			if (p->syncData.wUDAnalog)
 			{
+				bsSync->Write(true);
+
 				keys = p->syncData.wUDAnalog;
 				keys &= ~pPlayerData[playerid]->wDisabledKeysUD;
 				bsSync->Write(keys);

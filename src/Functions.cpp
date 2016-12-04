@@ -327,7 +327,7 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	pVehicle->vehParamEx.window_passenger = -1;
 	pVehicle->vehParamEx.window_backleft = -1;
 	pVehicle->vehParamEx.window_backright = -1;
-	logprintf("respawned vehicle: %d", pVehicle->wVehicleID);
+	// logprintf("respawned vehicle: %d", pVehicle->wVehicleID);
 
 	// Check if vehicle has custom spawn
 	auto v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
