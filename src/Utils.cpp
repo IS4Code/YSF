@@ -316,34 +316,6 @@ void Utility::storeVectorInNative(AMX *amx, cell output, CVector &vec)
 	*address = amx_ftoc(vec.fZ);
 }
 
-void Utility::storeIntegerInNative(AMX *amx, cell output, int value)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = value;
-}
-
-void Utility::storeIntegerInNative(AMX *amx, cell output, DWORD value)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = static_cast<cell>(value);
-}
-
-void Utility::storeIntegerInNative(AMX *amx, cell output, WORD value)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = static_cast<cell>(value);
-}
-
-void Utility::storeIntegerInNative(AMX *amx, cell output, BYTE value)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = static_cast<cell>(value);
-}
-
 char *GetPlayerName(int playerid)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;

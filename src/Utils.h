@@ -59,10 +59,14 @@ namespace Utility
 	void storeFloatInNative(AMX *amx, cell output, float value);
 	void storeVectorInNative(AMX *amx, cell output, CVector2D &vec);
 	void storeVectorInNative(AMX *amx, cell output, CVector &vec);
-	void storeIntegerInNative(AMX *amx, cell output, int value);
-	void storeIntegerInNative(AMX *amx, cell output, DWORD value);
-	void storeIntegerInNative(AMX *amx, cell output, WORD value);
-	void storeIntegerInNative(AMX *amx, cell output, BYTE value);
+	
+	template <typename T>
+	void storeIntegerInNative(AMX *amx, cell output, T value)
+	{
+		cell *address;
+		amx_GetAddr(amx, output, &address);
+		*address = static_cast<T>(value);
+	}
 };
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);
