@@ -801,7 +801,8 @@ int CDECL HOOK_CGameMode__OnPlayerSpawn(CGameMode *thisptr, cell playerid)
 {
 	subhook_remove(CGameMode__OnPlayerSpawn_hook);
 
-	pPlayerData[playerid]->bControllable = true;
+	if (IsPlayerConnected(playerid))
+		pPlayerData[playerid]->bControllable = true;
 
 	int ret = ((FUNC_CGameMode__OnPlayerSpawn)CAddress::FUNC_CGameMode__OnPlayerSpawn)(thisptr, playerid);
 	subhook_install(CGameMode__OnPlayerSpawn_hook);
@@ -855,9 +856,20 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 {
 	subhook_remove(CGameMode__OnDialogResponse_hook);
 
-	pPlayerData[playerid]->wDialogID = -1;
+	int ret = -1;
+	if (IsPlayerConnected(playerid))
+	{
+		if (pPlayerData[playerid]->wDialogID != dialogid)
+		{
+			logprintf("YSF: Might dialog hack has been detected for player %s(%d) - which should be: %d, dialogid: %d", GetPlayerName(playerid), playerid, pPlayerData[playerid]->wDialogID, dialogid);
+			ret = 1;
+		}
+		pPlayerData[playerid]->wDialogID = -1;
+	}
+
+	if(ret == -1)
+		ret = ((FUNC_CGameMode__OnDialogResponse)CAddress::FUNC_CGameMode__OnDialogResponse)(thisptr, playerid, dialogid, response, listitem, szInputtext);
 	
-	int ret = ((FUNC_CGameMode__OnDialogResponse)CAddress::FUNC_CGameMode__OnDialogResponse)(thisptr, playerid, dialogid, response, listitem, szInputtext);
 	subhook_install(CGameMode__OnDialogResponse_hook);
 	return ret;
 }
