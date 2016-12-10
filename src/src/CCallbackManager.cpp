@@ -222,14 +222,13 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 	{
 		if(!amx_FindPublic(*iter, "OnRemoteRCONPacket", &idx))
 		{
-			cell amx_addr, *phys_addr;
-			
+			cell amx_addr, amx_addr_last, *phys_addr;
 
 			amx_PushString(*iter, &amx_addr, &phys_addr, command, 0, 0);
 			amx_Push(*iter, static_cast<cell>(success));
-			amx_PushString(*iter, NULL, &phys_addr, password, 0, 0);
+			amx_PushString(*iter, &amx_addr_last, &phys_addr, password, 0, 0);
 			amx_Push(*iter, static_cast<cell>(port));
-			amx_PushString(*iter, NULL, &phys_addr, addr, 0, 0);
+			amx_PushString(*iter, &amx_addr_last, &phys_addr, addr, 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
 
