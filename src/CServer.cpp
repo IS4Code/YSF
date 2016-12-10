@@ -578,7 +578,7 @@ void CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			bsSync->Write((int)2);
 			bsSync->Write(lacgompmode);
 
-			char* szHostName = CSAMPFunctions::GetStringVariable("hostname");
+			const char* szHostName = CSAMPFunctions::GetStringVariable("hostname");
 			if (szHostName)
 			{
 				size_t len = strlen(szHostName);

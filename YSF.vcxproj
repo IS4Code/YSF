@@ -145,6 +145,7 @@
     <ClCompile Include="lib\subhook\subhook.c" />
     <ClCompile Include="src\Addresses.cpp" />
     <ClCompile Include="src\amxfunctions.cpp" />
+    <ClCompile Include="src\CScriptParams.cpp" />
     <ClCompile Include="src\CCallbackManager.cpp" />
     <ClCompile Include="src\CGangZonePool.cpp" />
     <ClCompile Include="src\CModelSizes.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Addresses.h" />
     <ClInclude Include="src\amxfunctions.h" />
+    <ClInclude Include="src\CScriptParams.h" />
     <ClInclude Include="src\CCallbackManager.h" />
     <ClInclude Include="src\CGangZonePool.h" />
     <ClInclude Include="src\CModelSizes.h" />

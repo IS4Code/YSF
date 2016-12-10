@@ -81,6 +81,9 @@
     <ClCompile Include="src\Functions.cpp">
       <Filter>src\Hooks</Filter>
     </ClCompile>
+    <ClCompile Include="src\CScriptParams.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\amxfunctions.h">
@@ -161,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="lib\raknet\NetworkTypes.h">
       <Filter>lib\raknet</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CScriptParams.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

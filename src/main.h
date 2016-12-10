@@ -147,6 +147,7 @@
 // YSF
 #include "Addresses.h"
 #include "amxfunctions.h"
+#include "CScriptParams.h"
 #include "CCallbackManager.h"
 #include "CGangZonePool.h"
 #include "CModelSizes.h"
