@@ -926,7 +926,7 @@ struct CNetGame
 	BOOL					bLanMode;				// 
 	BOOL					bShowPlayerMarkers;		// 84
 	BYTE					byteShowNameTags;		// 
-	BYTE					bTirePopping;			// 
+	BYTE					byteWorldTimeHour;		// 
 	BYTE					byteAllowWeapons;		// 
 	BYTE					byteStuntBonus;			// 91 - 92
 	BYTE					byteDefaultCameraCollision; // 92 - 93

@@ -1183,6 +1183,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerWeather)
 // native SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWorldBounds)
 {
+	CHECK_PARAMS(5, "SetPlayerWorldBounds", LOADED);
+
 	int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerWorldBounds(amx, params))
 	{
@@ -1197,6 +1199,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWorldBounds)
 // native DestroyObject(objectid)
 AMX_DECLARE_NATIVE(Natives::YSF_DestroyObject)
 {
+	CHECK_PARAMS(1, "DestroyObject", LOADED);
+
 	int objectid = CScriptParams::Get()->ReadInt();
 
 	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
@@ -1213,6 +1217,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyObject)
 // native DestroyPlayerObject(playerid, objectid)
 AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 {
+	CHECK_PARAMS(2, "DestroyPlayerObject", LOADED);
+
 	int playerid = CScriptParams::Get()->ReadInt();
 	int objectid = CScriptParams::Get()->ReadInt();
 
@@ -1240,6 +1246,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 // native TogglePlayerControllable(playerid, bool:toggle)
 AMX_DECLARE_NATIVE(Natives::YSF_TogglePlayerControllable)
 {
+	CHECK_PARAMS(2, "TogglePlayerControllable", LOADED);
+
 	int playerid = CScriptParams::Get()->ReadInt();
 	bool toggle = CScriptParams::Get()->ReadBool();
 
@@ -1254,6 +1262,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_TogglePlayerControllable)
 // native ChangeVehicleColor(vehicleid, color1, color2)
 AMX_DECLARE_NATIVE(Natives::YSF_ChangeVehicleColor)
 {
+	CHECK_PARAMS(3, "ChangeVehicleColor", LOADED);
+
 	int vehicleid = CScriptParams::Get()->ReadInt();
 	if(pChangeVehicleColor(amx, params))
 	{
@@ -1263,8 +1273,11 @@ AMX_DECLARE_NATIVE(Natives::YSF_ChangeVehicleColor)
 	return 0;
 }
 
+// native DestroyVehicle(vehicleid);
 AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 {
+	CHECK_PARAMS(2, "DestroyVehicle", LOADED);
+
 	int vehicleid = CScriptParams::Get()->ReadInt();
 	if(pDestroyVehicle(amx, params))
 	{
@@ -1274,8 +1287,11 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 	return 0;
 }
 
+// native ShowPlayerDialog(playerid, dialogid, style, caption[], info[], button1[], button2[]);
 AMX_DECLARE_NATIVE(Natives::YSF_ShowPlayerDialog)
 {
+	CHECK_PARAMS(7, "ShowPlayerDialog", LOADED);
+
 	int playerid = CScriptParams::Get()->ReadInt();
 	int dialogid = CScriptParams::Get()->ReadInt();
 
@@ -3014,7 +3030,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 // native TextDrawSetPos(textdrawid, Float:fX, Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 {
-	CHECK_PARAMS(3, "TextDrawPos", LOADED);
+	CHECK_PARAMS(3, "TextDrawSetPos", LOADED);
 	
 	int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;

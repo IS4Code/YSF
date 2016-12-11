@@ -182,11 +182,14 @@ template <class templateType> void CScriptParams::Read(templateType* var)
 // Vectors
 template <> inline void CScriptParams::Read(CVector2D* vec)
 {
-	*vec = CVector2D(amx_ctof(m_params[m_pos++]), amx_ctof(m_params[m_pos++]));
+	vec->fX = amx_ctof(m_params[m_pos++]);
+	vec->fY = amx_ctof(m_params[m_pos++]);
 }
 template <> inline void CScriptParams::Read(CVector* vec)
 {
-	*vec = CVector(amx_ctof(m_params[m_pos++]), amx_ctof(m_params[m_pos++]), amx_ctof(m_params[m_pos++]));
+	vec->fX = amx_ctof(m_params[m_pos++]);
+	vec->fY = amx_ctof(m_params[m_pos++]);
+	vec->fZ = amx_ctof(m_params[m_pos++]);
 }
 // Strings
 template <> inline void CScriptParams::Read(char *result)
