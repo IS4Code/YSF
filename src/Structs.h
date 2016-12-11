@@ -234,18 +234,6 @@ struct ConsoleVariable_s
 	VARCHANGEFUNC	VarChangeFunc;
 };
 
-struct C3DText  // size 0x21
-{
-	char*			szText;                                     // + 0x00
-    DWORD			dwColor;                         // + 0x04
-	CVector			vecPos;
-	float			fDrawDistance;                     // + 0x14
-    bool			bLineOfSight;            // + 0x18
-    int				iWorld;                  // + 0x19
-    WORD			wAttachedToPlayerID;    // + 0x1D
-	WORD			wAttachedToVehicleID;   // + 0x1F
-};
-
 /* -------------------------------------------------------- */
 // CPlayer
 /* -------------------------------------------------------- */
@@ -264,8 +252,8 @@ struct CAimSyncData
 	WORD			wCameraVehicle;			// 33 - 35
 	WORD			wCameraPlayer;			// 35 - 37
 	WORD			wCameraActor;			// 37 - 39
-	// Size = 39
 };
+static_assert(sizeof(CAimSyncData) == 39, "Invalid CAimSyncData size");
 
 struct CVehicleSyncData
 {
@@ -289,8 +277,8 @@ struct CVehicleSyncData
             WORD			wHydraReactorAngle[2];                       
             float           fTrainSpeed;
     };
-	// Size = 63
 };
+static_assert(sizeof(CVehicleSyncData) == 63, "Invalid CVehicleSyncData size");
 
 struct CPassengerSyncData
 {
@@ -304,8 +292,8 @@ struct CPassengerSyncData
 	WORD			wUDAnalog;				// 0x0066 - 0x0068
 	WORD			wKeys;					// 0x0068 - 0x006A
 	CVector			vecPosition;			// 0x006A - 0x0076
-	// Size = 24
 };
+static_assert(sizeof(CPassengerSyncData) == 24, "Invalid CPassengerSyncData size");
 
 struct CSyncData
 {
@@ -331,10 +319,10 @@ struct CSyncData
 			WORD	wAnimFlags;
 		};
 	};
-	// Size = 68
 };
+static_assert(sizeof(CSyncData) == 68, "Invalid CSyncData size");
 
-struct CUnoccupiedSyncData // size 0x43
+struct CUnoccupiedSyncData
 {
 	WORD			wVehicleID;				// + 0x0000
 	BYTE			bytePassengerSlot;			// + 0x0002
@@ -345,16 +333,18 @@ struct CUnoccupiedSyncData // size 0x43
 	CVector			vecTurnVelocity;		// + 0x0033
 	float			fHealth;					// + 0x003F
 };
+static_assert(sizeof(CUnoccupiedSyncData) == 67, "Invalid CUnoccupiedSyncData size");
 
-struct CSpectatingSyncData		// size 0x12
+struct CSpectatingSyncData
 {
 	WORD			wLeftRightKeysOnSpectating;				// + 0x0000
 	WORD			wUpDownKeysOnSpectating;				// + 0x0002
 	WORD			wKeysOnSpectating;						// + 0x0004
 	CVector			vecPosition;							// + 0x0006
 };
+static_assert(sizeof(CSpectatingSyncData) == 18, "Invalid CSpectatingSyncData size");
 
-struct CTrailerSyncData // size 0x36 = 54
+struct CTrailerSyncData
 {
 	WORD			wTrailerID;				// + 0x0000
 	CVector			vecRoll;				// + 0x0002
@@ -363,6 +353,7 @@ struct CTrailerSyncData // size 0x36 = 54
 	CVector			vecVelocity;			// + 0x0026
 	DWORD			pad;
 };
+static_assert(sizeof(CTrailerSyncData) == 54, "Invalid CTrailerSyncData size");
 
 typedef struct CTextdraw
 {
@@ -395,6 +386,7 @@ typedef struct CTextdraw
 	WORD			color1; // 59 - 61
 	WORD			color2; // 61 - 63
 } _CTextdraw;
+static_assert(sizeof(CTextdraw) == 63, "Invalid CTextdraw size");
 
 struct CPlayerTextDraw
 {
@@ -403,16 +395,31 @@ struct CPlayerTextDraw
 	char			*szFontText[MAX_PLAYER_TEXT_DRAWS];
 	bool			bHasText[MAX_PLAYER_TEXT_DRAWS];
 };
+static_assert(sizeof(CPlayerTextDraw) == 2048 + 1024 + 256, "Invalid CPlayerTextDraw size");
 
-struct CPlayerText3DLabels // size 0x9802
+struct C3DText
+{
+	char*			szText;					// + 0x00
+	DWORD			dwColor;				// + 0x04
+	CVector			vecPos;
+	float			fDrawDistance;			// + 0x14
+	bool			bLineOfSight;           // + 0x18
+	int				iWorld;                 // + 0x19
+	WORD			wAttachedToPlayerID;    // + 0x1D
+	WORD			wAttachedToVehicleID;   // + 0x1F
+};
+static_assert(sizeof(C3DText) == 33, "Invalid C3DText size");
+
+struct CPlayerText3DLabels
 {
 	C3DText			TextLabels[ MAX_3DTEXT_PLAYER ];	// + 0x0000
 	BOOL			isCreated[ MAX_3DTEXT_PLAYER ];	// + 0x8400
 	BYTE			unknown9800[MAX_3DTEXT_PLAYER];				// + 0x9400
 	WORD			wOwnerID;
 };
+static_assert(sizeof(CPlayerText3DLabels) == 38914, "Invalid CPlayerText3DLabels size");
 
-struct CAttachedObject // sizeof = 52 - 0x34
+struct CAttachedObject
 {
     int				iModelID;
     int				iBoneiD;
@@ -422,8 +429,9 @@ struct CAttachedObject // sizeof = 52 - 0x34
 	DWORD			dwMaterialColor1;
 	DWORD			dwMaterialColor2;
 };
+static_assert(sizeof(CAttachedObject) == 52, "Invalid CAttachedObject size");
 
-struct CPlayerSpawnInfo // size  46
+struct CPlayerSpawnInfo
 {
 	BYTE			byteTeam;				// 0 - 1
 	int				iSkin;					// 1 - 5
@@ -433,8 +441,9 @@ struct CPlayerSpawnInfo // size  46
 	int				iSpawnWeapons[3];		// 22 - 34
 	int				iSpawnWeaponsAmmo[3];	// 34 - 46
 };
+static_assert(sizeof(CPlayerSpawnInfo) == 46, "Invalid CPlayerSpawnInfo size");
 
-struct CBulletSyncData // sizeof = 40
+struct CBulletSyncData
 {
 	BYTE			byteHitType;
 	WORD			wHitID;
@@ -443,6 +452,7 @@ struct CBulletSyncData // sizeof = 40
 	CVector			vecCenterOfHit;
 	BYTE			byteWeaponID;
 }; 
+static_assert(sizeof(CBulletSyncData) == 40, "Invalid CBulletSyncData size");
 
 struct CPVar
 {
@@ -453,6 +463,7 @@ struct CPVar
     float			fValue;
     char*			szValue;
 };
+static_assert(sizeof(CPVar) == 61, "Invalid CPVar size");
 
 struct CPlayerVar
 {
@@ -460,6 +471,7 @@ struct CPlayerVar
 	BOOL			bIsPVarActive[MAX_PVARS];
     int				iUpperIndex;
 };
+static_assert(sizeof(CPlayerVar) == 48800 + 3200 + 4, "Invalid CPlayerVar size");
 
 struct CPlayer
 {
@@ -555,10 +567,10 @@ struct CPlayer
 	DWORD					dwFirstNPCWritingTime; // 11469 - 11473 
 	PAD(unused, 9);								// 11473 - 11482
 	CPlayerVar*				pPlayerVars;		// 11482 - 11486
-	// Size = 9963
 };
+static_assert(sizeof(CPlayer) == 11486, "Invalid CPlayer size");
 
-struct CPlayerPool // sizeof = 99520
+struct CPlayerPool
 {
 	DWORD			dwVirtualWorld[MAX_PLAYERS];			// 0 - 4000
 	DWORD			dwPlayersCount;							// 4000 - 4004
@@ -579,12 +591,13 @@ struct CPlayerPool // sizeof = 99520
 	DWORD			dwConnectedPlayers;						// 199012 - 199016
 	DWORD			dwPlayerPoolSize;						// 199016 - 199020
 };
+static_assert(sizeof(CPlayerPool) == 199020, "Invalid CPlayerPool size");
 
 /* -------------------------------------------------------- */
 // CVehicle
 /* -------------------------------------------------------- */
 
-struct CVehicleSpawn // size 36
+struct CVehicleSpawn
 {
 	int				iModelID;
     CVector			vecPos;   
@@ -594,16 +607,18 @@ struct CVehicleSpawn // size 36
     int				iRespawnTime;
     int				iInterior;
 };
+static_assert(sizeof(CVehicleSpawn) == 36, "Invalid CVehicleSpawn size");
 
-struct CVehicleModInfo // sizeof = 26
+struct CVehicleModInfo
 {
 	BYTE			byteModSlots[14];                // + 0x0000
     BYTE			bytePaintJob;                    // + 0x000E
     int				iColor1;                             // + 0x000F
     int				iColor2;                             // + 0x0010
 };
+static_assert(sizeof(CVehicleModInfo) == 23, "Invalid CVehicleModInfo size");
 
-struct CVehicleParams // sizeof = 16
+struct CVehicleParams
 {
 	char engine;
 	char lights;
@@ -622,6 +637,7 @@ struct CVehicleParams // sizeof = 16
 	char window_backleft;
 	char window_backright; // 15 - 16
 };
+static_assert(sizeof(CVehicleParams) == 16, "Invalid CVehicleParams size");
 
 struct CVehicle
 {
@@ -654,6 +670,7 @@ struct CVehicle
 	BYTE			byteSirenEnabled;	// 265 - 266
 	BYTE			byteNewSirenState;	// 266 - 267
 };
+static_assert(sizeof(CVehicle) == 267, "Invalid CVehicle size");
 
 struct CVehiclePool
 {
@@ -661,8 +678,9 @@ struct CVehiclePool
 	int				iVirtualWorld[MAX_VEHICLES];		// 212 - 8212
 	BOOL			bVehicleSlotState[MAX_VEHICLES];	// 8212 - 16212
 	CVehicle		*pVehicle[MAX_VEHICLES];			// 16212 - 24212
-	DWORD			dwVehiclePoolSize;					// 24212
+	DWORD			dwVehiclePoolSize;					// 24212 - 24216
 };
+static_assert(sizeof(CVehiclePool) == 24216, "Invalid CVehiclePool size");
 
 /* -------------------------------------------------------- */
 // CPickup
@@ -816,6 +834,7 @@ struct CActorAnim // 140
 	BYTE			byteFreeze;		// 135 - 136
 	int				iTime;				//  136 - 140
 };
+static_assert(sizeof(CActorAnim) == 140, "Invalid CActorAnim size");
 
 struct CActor
 {
@@ -836,6 +855,7 @@ struct CActor
 	BYTE			byteInvulnerable;	// 208 - 209
 	WORD			wActorID;			// 209 - 211
 };
+static_assert(sizeof(CActor) == 211, "Invalid CActor size");
 
 struct CActorPool
 {
@@ -932,5 +952,4 @@ struct CNetGame
 	int						iSpawnsAvailable;		// 130 - 134
 	CPlayerSpawnInfo		AvailableSpawns[300];	// 129 - 13929
 };
-
 #endif
