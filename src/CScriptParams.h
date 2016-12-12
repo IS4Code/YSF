@@ -114,32 +114,34 @@ private:
 template <class templateType> inline void CScriptParams::Add(templateType var)
 {
 	cell *address;
-	amx_GetAddr(m_AMX, m_params[m_pos++], &address);
-	if (typeid(var) == typeid(float) || typeid(var) == typeid(double))
-		*address = amx_ftoc(var);
-	else
-		*address = static_cast<cell>(var);
+	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
+	{
+		if (typeid(var) == typeid(float) || typeid(var) == typeid(double))
+			*address = amx_ftoc(var);
+		else
+			*address = static_cast<cell>(var);
+	}
 }
 
 // Vectors
 template <> inline void CScriptParams::Add(CVector2D vec)
 {
 	cell *address;
-	amx_GetAddr(m_AMX, m_params[m_pos++], &address);
-	*address = amx_ftoc(vec.fX);
-	amx_GetAddr(m_AMX, m_params[m_pos++], &address);
-	*address = amx_ftoc(vec.fY);
+	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fX);
+	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fY);
 }
 
 template <> inline void CScriptParams::Add(CVector vec)
 {
 	cell *address;
-	amx_GetAddr(m_AMX, m_params[m_pos++], &address);
-	*address = amx_ftoc(vec.fX);
-	amx_GetAddr(m_AMX, m_params[m_pos++], &address);
-	*address = amx_ftoc(vec.fY);
-	amx_GetAddr(m_AMX, m_params[m_pos++], &address);
-	*address = amx_ftoc(vec.fZ);
+	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fX);
+	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fY);
+	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fZ);
 }
 
 // Strings

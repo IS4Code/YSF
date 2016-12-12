@@ -327,6 +327,9 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 	{
 		case ID_PLAYER_SYNC:
 		{
+			if (!pPlayerData[playerid]->wDisabledKeysLR && !pPlayerData[playerid]->wDisabledKeysUD && !pPlayerData[playerid]->wDisabledKeys
+				&& !pPlayerData[toplayerid]->bCustomPos[playerid] && !pPlayerData[toplayerid]->bCustomQuat[playerid]) break;
+
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 			WORD keys = 0;
 
@@ -435,6 +438,8 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		}
 		case ID_VEHICLE_SYNC:
 		{
+			if (!pPlayerData[playerid]->wDisabledKeysLR && !pPlayerData[playerid]->wDisabledKeysUD && !pPlayerData[playerid]->wDisabledKeys) break;
+
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 			WORD keys = 0;
 
@@ -446,11 +451,11 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 
 			keys = p->vehicleSyncData.wLRAnalog;
 			keys &= ~pPlayerData[playerid]->wDisabledKeysLR;
-			bsSync->Write(keys);
+			bsSync->Write((short)keys);
 
 			keys = p->vehicleSyncData.wUDAnalog;
 			keys &= ~pPlayerData[playerid]->wDisabledKeysUD;
-			bsSync->Write(keys);
+			bsSync->Write((short)keys);
 
 			keys = p->vehicleSyncData.wKeys;
 			keys &= ~pPlayerData[playerid]->wDisabledKeys;
@@ -459,7 +464,7 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->WriteNormQuat(p->vehicleSyncData.fQuaternion[0], p->vehicleSyncData.fQuaternion[1], p->vehicleSyncData.fQuaternion[2], p->vehicleSyncData.fQuaternion[3]);
 			bsSync->Write((char*)&p->vehicleSyncData.vecPosition, sizeof(CVector));
 			bsSync->WriteVector(p->vehicleSyncData.vecVelocity.fX, p->vehicleSyncData.vecVelocity.fY, p->vehicleSyncData.vecVelocity.fZ);
-			bsSync->Write((WORD)p->vehicleSyncData.fHealth);
+			bsSync->Write((short)p->vehicleSyncData.fHealth);
 
 			// Health & armour compression
 			BYTE byteSyncHealthArmour = 0;
@@ -566,7 +571,7 @@ void CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			bsSync->Write(playerid);
 			bsSync->Write(shownametags);
 			bsSync->Write((int)showplayermarkers);
-			bsSync->Write(pNetGame->bTirePopping);
+			bsSync->Write(pNetGame->byteWorldTimeHour);
 			bsSync->Write(pNetGame->byteWeather);
 			bsSync->Write(pNetGame->fGravity);
 			bsSync->Write((bool)!!pNetGame->bLanMode);
