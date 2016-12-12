@@ -92,8 +92,8 @@ public:
 	float fBounds[4];
 
 	// Per-player pos
-	bool bCustomPos[MAX_PLAYERS];
-	bool bCustomQuat[MAX_PLAYERS];
+	std::bitset<MAX_PLAYERS> bCustomPos;
+	std::bitset<MAX_PLAYERS> bCustomQuat;
 	CVector *vecCustomPos[MAX_PLAYERS];
 	float fCustomQuat[MAX_PLAYERS][4];
 

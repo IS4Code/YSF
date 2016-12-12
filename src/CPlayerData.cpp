@@ -77,8 +77,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	fBounds[3] = -20000.0f;
 
 	// Per-player pos
-	memset(bCustomPos, false, MAX_PLAYERS);
-	memset(bCustomQuat, false, MAX_PLAYERS);
 	memset(vecCustomPos, NULL, sizeof(CVector));
 
 	// Gangzones
