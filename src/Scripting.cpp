@@ -508,7 +508,6 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
 // native LoadFilterScript(scriptname[]);
 AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "LoadFilterScript", LOADED);
 	
 	char name[255];
@@ -523,7 +522,6 @@ AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 // UnLoadFilterScript(scriptname[]);
 AMX_DECLARE_NATIVE(Natives::UnLoadFilterScript)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "UnLoadFilterScript", LOADED);
 	
 	char name[255];
@@ -1276,7 +1274,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_ChangeVehicleColor)
 // native DestroyVehicle(vehicleid);
 AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 {
-	CHECK_PARAMS(2, "DestroyVehicle", LOADED);
+	CHECK_PARAMS(1, "DestroyVehicle", LOADED);
 
 	int vehicleid = CScriptParams::Get()->ReadInt();
 	if(pDestroyVehicle(amx, params))
@@ -1562,7 +1560,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedVehicleID)
 	int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
-	return (cell)pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wVehicleId;
+	return static_cast<cell>(pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wVehicleId);
 }
 
 // native GetPlayerLastSyncedTrailerID(playerid);
@@ -2032,7 +2030,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectTarget)
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-	Utility::storeVectorInNative(amx, params[2], pObject->matTarget.pos);
+	CScriptParams::Get()->AddInline(pObject->matTarget.pos);
 	return 1;
 }
 
@@ -4000,8 +3998,8 @@ AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 {
 	CHECK_PARAMS(1, "SetRecordingDirectory", LOADED);
 
-	char *dir;
-	amx_StrParam(amx, params[1], dir);
+	char dir[MAX_PATH];
+	CScriptParams::Get()->Read(&dir[0]);
 	if (!dir || !CAddress::ADDR_RecordingDirectory) return 0;
 
 	strcpy(gRecordingDataPath, dir);
@@ -4021,7 +4019,8 @@ AMX_DECLARE_NATIVE(Natives::GetRecordingDirectory)
 	strcpy(temp, gRecordingDataPath);
 	temp[len - 7] = 0;
 
-	return set_amxstring(amx, params[1], temp, params[2]);
+	CScriptParams::Get()->Add(&temp[0]);
+	return 1;
 }
 
 // native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
@@ -4742,7 +4741,6 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 // native IsValidPickup(pickupid);
 AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsValidPickup", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -4754,7 +4752,6 @@ AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 // native IsPickupStreamedIn(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPickupStreamedIn", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -4771,7 +4768,6 @@ AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetPickupPos", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -4787,7 +4783,6 @@ AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 // native GetPickupModel(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupModel", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -4802,7 +4797,6 @@ AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 // native GetPickupType(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupType", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -4817,7 +4811,6 @@ AMX_DECLARE_NATIVE(Natives::GetPickupType)
 // native GetPickupVirtualWorld(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupVirtualWorld", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -4832,7 +4825,6 @@ AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 // CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 AMX_DECLARE_NATIVE(Natives::CreatePlayerPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(7, "CreatePlayerPickup", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -4844,7 +4836,6 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerPickup)
 // native DestroyPlayerPickup(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::DestroyPlayerPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "DestroyPlayerPickup", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -4862,7 +4853,6 @@ AMX_DECLARE_NATIVE(Natives::DestroyPlayerPickup)
 // native IsValidPlayerPickup(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayerPickup)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsValidPlayerPickup", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -4876,7 +4866,6 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerPickup)
 // native IsPlayerPickupStreamedIn(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerPickupStreamedIn)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "IsPlayerPickupStreamedIn", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -4893,7 +4882,6 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerPickupStreamedIn)
 // native GetPlayerPickupPos(playerid, pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupPos)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(5, "GetPlayerPickupPos", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -4928,7 +4916,6 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupModel)
 // native GetPlayerPickupType(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupType)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupType", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -4945,7 +4932,6 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupType)
 // native GetPlayerPickupVirtualWorld(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupVirtualWorld)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupVirtualWorld", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -4989,7 +4975,6 @@ AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(4, "GetPickupPos", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -5005,7 +4990,6 @@ AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 // native GetPickupModel(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupModel", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -5020,7 +5004,6 @@ AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 // native GetPickupType(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupType", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -5035,7 +5018,6 @@ AMX_DECLARE_NATIVE(Natives::GetPickupType)
 // native GetPickupVirtualWorld(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "GetPickupVirtualWorld", LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
@@ -5073,24 +5055,22 @@ AMX_DECLARE_NATIVE(Natives::IsBanned)
 // native SetTimeoutTime(playerid, time);
 AMX_DECLARE_NATIVE(Natives::SetTimeoutTime)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetTimeoutTime", LOADED);
 	
-	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
+	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(CScriptParams::Get()->ReadInt());
 	if(playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || !IsPlayerConnected(static_cast<int>(params[1])))
 		return 0;
 
-	CSAMPFunctions::SetTimeoutTime(static_cast<RakNetTime>(params[2]), playerId);
+	CSAMPFunctions::SetTimeoutTime(static_cast<RakNetTime>(CScriptParams::Get()->ReadInt()), playerId);
 	return 1;
 }
 
 // native GetLocalIP(index, localip[], len = sizeof(localip));
 AMX_DECLARE_NATIVE(Natives::GetLocalIP)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(3, "GetLocalIP", LOADED);
 
-	return set_amxstring(amx, params[2], CSAMPFunctions::GetLocalIP(static_cast<unsigned int>(params[1])), params[3]);
+	return set_amxstring(amx, params[2], CSAMPFunctions::GetLocalIP(CScriptParams::Get()->ReadInt()), params[3]);
 }
 
 // native SendRPC(playerid, RPC, {Float,_}:...)
@@ -5704,6 +5684,7 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	{ "SetPlayerSkin",					Natives::YSF_SetPlayerSkin },
 	{ "SetPlayerName",					Natives::YSF_SetPlayerName },
 	{ "SetPlayerFightingStyle",			Natives::YSF_SetPlayerFightingStyle },
+
 	{ NULL,								NULL }
 };
 
