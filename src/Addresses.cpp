@@ -49,11 +49,6 @@ DWORD CAddress::FUNC_Logprintf_037 = 0x080A9000;
 DWORD CAddress::FUNC_Logprintf_037_R2_1 = 0x080A91D0;
 #endif
 
-// Pointers
-DWORD CAddress::VAR_ppNetGame = NULL;
-DWORD CAddress::VAR_ppConsole = NULL;
-DWORD CAddress::VAR_ppRakServer = NULL;
-
 // Variables
 DWORD CAddress::VAR_pRestartWaitTime = NULL;
 

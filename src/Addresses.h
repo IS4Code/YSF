@@ -91,11 +91,6 @@ public:
 	static DWORD			FUNC_Logprintf_037_R2;
 	static DWORD			FUNC_Logprintf_037_R2_1;
 
-	// Pointers
-	static DWORD			VAR_ppNetGame;
-	static DWORD			VAR_ppConsole;
-	static DWORD			VAR_ppRakServer;
-
 	// Variables
 	static DWORD			VAR_pRestartWaitTime;
 
