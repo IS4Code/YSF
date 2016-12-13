@@ -210,6 +210,17 @@ bool CCallbackManager::OnServerMessage(char* message)
 {
 	if (!message) return 0;
 
+	// Fix crash caused by % symbol (by default this crash happens in /rcon varlist)
+	size_t i = 0;
+	while (message[i])
+	{
+		if (message[i] == '%')
+		{
+			message[i] = '#';
+		}
+		i++;
+	}
+
 	int idx = -1;
 	cell ret = 1;
 	for (auto &iter : m_setAMX)

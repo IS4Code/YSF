@@ -346,32 +346,49 @@ typedef void (*FUNC_logprintf)(const char *msg, ...);
 
 void HOOK_logprintf(const char *msg, ...)
 {
-	subhook_remove(logprintf_hook);
-
 	char buffer[1024];
+	//char bufferprint[1024];
 	va_list arguments;
 	va_start(arguments, msg);
 	vsnprintf(buffer, sizeof(buffer), msg, arguments);
 	va_end(arguments);
-	// CCallbackManager::OnServerMessage(buffer)
-	if(true)
-	{
-		// Fix crash caused by % symbol (by default this crash at /rcon varlist)
-		int i = 0;
-		bool bDoNotPrint = false;
-		while(buffer[i] && buffer[i] == '%')
+	//strncpy(bufferprint, buffer, sizeof(bufferprint));
+
+	// CCallbackManager::OnServerMessage(bufferprint)
+	if (true)
+	{		
+#ifdef _WIN32		
+		char OEMbuffer[1024];
+		CharToOemA(buffer, OEMbuffer);
+		puts(OEMbuffer);
+#else
+		if (CSAMPFunctions::GetBoolVariable("output"))
+			puts(buffer);
+#endif
+		static FILE* fLog = NULL;
+		if (!fLog)
 		{
-			buffer[i] = '#';
-			i++;
+			fLog = fopen("server_log.txt", "a");
 		}
-		
-		logprintf(buffer);
-		
+
+		if (CSAMPFunctions::GetBoolVariable("timestamp"))
+		{
+			time_t t;
+			time(&t);
+			char szTimeFormat[256];
+			strftime(szTimeFormat, sizeof(szTimeFormat), CSAMPFunctions::GetStringVariable("logtimeformat"), localtime(&t));
+			fprintf(fLog, "%s %s\n", &szTimeFormat, &buffer);
+			fflush(fLog);
+		}
+		else
+		{
+			fputs(buffer, fLog);
+			fflush(fLog);
+		}
+	
 		if (bRconSocketReply) 
 			RconSocketReply(buffer);
 	}
-
-	subhook_install(logprintf_hook);
 }
 
 //----------------------------------------------------
@@ -890,12 +907,9 @@ void InstallPreHooks()
 
 	amx_Register_hook = subhook_new(reinterpret_cast<void*>(*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4))), reinterpret_cast<void*>(HOOK_amx_Register), static_cast<subhook_options_t>(NULL));
 	subhook_install(amx_Register_hook);
-
+	
 	query_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_ProcessQueryPacket), reinterpret_cast<void*>(HOOK_ProcessQueryPacket), static_cast<subhook_options_t>(NULL));
 	subhook_install(query_hook);
-
-	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), reinterpret_cast<void*>(HOOK_logprintf), static_cast<subhook_options_t>(NULL));
-	subhook_install(logprintf_hook);
 
 	CVehicle__Respawn_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CVehicle__Respawn), reinterpret_cast<void*>(HOOK_CVehicle__Respawn), static_cast<subhook_options_t>(NULL));
 	subhook_install(CVehicle__Respawn_hook);
@@ -952,7 +966,10 @@ void InstallPostHooks()
 	// Re-init some RPCs
 	InitRPCs();
 
-	//logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
+	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), reinterpret_cast<void*>(HOOK_logprintf), static_cast<subhook_options_t>(NULL));
+	subhook_install(logprintf_hook);
+
+	// logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 }
 
 void UninstallHooks()

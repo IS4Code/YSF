@@ -168,10 +168,10 @@
 extern void *pAMXFunctions;
 extern void **ppPluginData;
 	
-extern CPlayerData *pPlayerData[MAX_PLAYERS];
-
 extern CNetGame *pNetGame;
 extern void *pConsole;
 extern void *pRakServer;
+
+extern CPlayerData *pPlayerData[MAX_PLAYERS];
 
 #endif
