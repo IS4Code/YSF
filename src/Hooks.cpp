@@ -328,6 +328,7 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 }
 
 //----------------------------------------------------
+FILE* g_fLog = NULL;
 
 bool	bRconSocketReply = false;
 
@@ -354,7 +355,7 @@ void HOOK_logprintf(const char *msg, ...)
 	va_end(arguments);
 	//strncpy(bufferprint, buffer, sizeof(bufferprint));
 
-	// CCallbackManager::OnServerMessage(bufferprint)
+	// CCallbackManager::OnServerMessage(bufferprint) - isn't stable
 	if (true)
 	{		
 #ifdef _WIN32		
@@ -364,12 +365,9 @@ void HOOK_logprintf(const char *msg, ...)
 #else
 		if (CSAMPFunctions::GetBoolVariable("output"))
 			puts(buffer);
-#endif
-		static FILE* fLog = NULL;
-		if (!fLog)
-		{
-			fLog = fopen("server_log.txt", "a");
-		}
+#endif 
+		if (!g_fLog)
+			g_fLog = fopen("server_log.txt", "a");
 
 		if (CSAMPFunctions::GetBoolVariable("timestamp"))
 		{
@@ -377,17 +375,19 @@ void HOOK_logprintf(const char *msg, ...)
 			time(&t);
 			char szTimeFormat[256];
 			strftime(szTimeFormat, sizeof(szTimeFormat), CSAMPFunctions::GetStringVariable("logtimeformat"), localtime(&t));
-			fprintf(fLog, "%s %s\n", &szTimeFormat, &buffer);
-			fflush(fLog);
+			fprintf(g_fLog, "%s %s\n", &szTimeFormat, &buffer);
+			fflush(g_fLog);
 		}
 		else
 		{
-			fputs(buffer, fLog);
-			fflush(fLog);
+			fputs(buffer, g_fLog);
+			fflush(g_fLog);
 		}
 	
 		if (bRconSocketReply) 
 			RconSocketReply(buffer);
+
+		CServer::Get()->ProcessConsoleMessages(buffer);
 	}
 }
 
@@ -987,4 +987,11 @@ void UninstallHooks()
 	SUBHOOK_REMOVE(CGameMode__OnPlayerStreamIn_hook);
 	SUBHOOK_REMOVE(CGameMode__OnPlayerStreamOut_hook);
 	SUBHOOK_REMOVE(CGameMode__OnDialogResponse_hook);
+
+	// Close log file
+	if (g_fLog)
+	{
+		fclose(g_fLog);
+		g_fLog = NULL;
+	}
 }

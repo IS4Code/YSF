@@ -263,6 +263,52 @@ bool CServer::IsValidNick(char *szName)
 	return true;
 }
 
+void CServer::AddConsolePlayer(WORD playerid, DWORD color)
+{
+	auto it = m_ConsoleMessagePlayers.find(playerid);
+	if (it == m_ConsoleMessagePlayers.end())
+	{
+		m_ConsoleMessagePlayers.insert(std::make_pair(playerid, color));
+	}
+}
+
+void CServer::RemoveConsolePlayer(WORD playerid)
+{
+	auto it = m_ConsoleMessagePlayers.find(playerid);
+	if (it != m_ConsoleMessagePlayers.end())
+	{
+		m_ConsoleMessagePlayers.erase(playerid);
+	}
+}
+
+bool CServer::IsConsolePlayer(WORD playerid, DWORD &color)
+{
+	auto it = m_ConsoleMessagePlayers.find(playerid);
+	if (it != m_ConsoleMessagePlayers.end())
+	{
+		color = it->second;
+		return 1;
+	}
+	return 0;
+}
+
+void CServer::ProcessConsoleMessages(const char* str)
+{
+	if (!m_ConsoleMessagePlayers.empty())
+	{
+		size_t len = strlen(str);
+		RakNet::BitStream bsParams;
+		for (auto x : m_ConsoleMessagePlayers)
+		{
+			bsParams.Reset();
+			bsParams.Write((DWORD)x.second);
+			bsParams.Write((DWORD)len);
+			bsParams.Write(str, len);
+			CSAMPFunctions::RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(x.first), false, false);
+		}
+	}
+}
+
 void CServer::SetExtendedNetStatsEnabled(bool enable)
 {
 	if(CAddress::ADDR_GetNetworkStats_VerbosityLevel)

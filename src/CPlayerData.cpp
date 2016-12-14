@@ -117,7 +117,7 @@ CPlayerData::CPlayerData( WORD playerid )
 
 CPlayerData::~CPlayerData( void )
 {
-
+	CServer::Get()->RemoveConsolePlayer(wPlayerID);
 }
 
 bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)

@@ -703,6 +703,45 @@ AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 	return 1;
 }
 
+// native EnableConsoleMSGsForPlayer(playerid, color);
+AMX_DECLARE_NATIVE(Natives::EnableConsoleMSGsForPlayer)
+{
+	CHECK_PARAMS(2, "ToggleConsoleMessagesForPlayer", LOADED);
+
+	int playerid, color;
+	CScriptParams::Get()->ReadInline(&playerid, &color);
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	CServer::Get()->AddConsolePlayer(static_cast<WORD>(playerid), static_cast<DWORD>(color));
+	return 1;
+}
+
+// native DisableConsoleMSGsForPlayer(playerid);
+AMX_DECLARE_NATIVE(Natives::DisableConsoleMSGsForPlayer)
+{
+	CHECK_PARAMS(1, "DisableConsoleMSGsForPlayer", LOADED);
+
+	int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	CServer::Get()->RemoveConsolePlayer(static_cast<WORD>(playerid));
+	return 1;
+}
+
+// native HasPlayerConsoleMessages(playerid, &color = 0);
+AMX_DECLARE_NATIVE(Natives::HasPlayerConsoleMessages)
+{
+	CHECK_PARAMS(2, "DisableConsoleMSGsForPlayer", LOADED);
+
+	int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	DWORD color;
+	bool ret = CServer::Get()->IsConsolePlayer(static_cast<WORD>(playerid), color);
+	CScriptParams::Get()->Add(color);
+	return ret;
+}
+
 // native IsValidNickName(name[]);
 AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 {
@@ -5606,7 +5645,7 @@ AMX_NATIVE_INFO YSINatives [] =
 
 	AMX_DEFINE_NATIVE(SetTimeoutTime)
 	AMX_DEFINE_NATIVE(GetLocalIP)
-	
+
 	AMX_DEFINE_NATIVE(SendRPC)
 	AMX_DEFINE_NATIVE(SendData)
 	AMX_DEFINE_NATIVE(YSF_SetTickRate)
@@ -5617,6 +5656,9 @@ AMX_NATIVE_INFO YSINatives [] =
 	AMX_DEFINE_NATIVE(YSF_IsExtendedNetStatsEnabled) // R17
 	AMX_DEFINE_NATIVE(YSF_SetAFKAccuracy) // R17
 	AMX_DEFINE_NATIVE(YSF_GetAFKAccuracy) // R17 
+	AMX_DEFINE_NATIVE(EnableConsoleMSGsForPlayer) // R18
+	AMX_DEFINE_NATIVE(DisableConsoleMSGsForPlayer) // R18
+	AMX_DEFINE_NATIVE(HasPlayerConsoleMessages) // R18 
 
 	AMX_DEFINE_NATIVE(AttachPlayerObjectToObject)
 	

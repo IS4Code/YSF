@@ -329,7 +329,10 @@ namespace Natives
 	AMX_DECLARE_NATIVE(YSF_IsExtendedNetStatsEnabled);
 	AMX_DECLARE_NATIVE(YSF_SetAFKAccuracy);
 	AMX_DECLARE_NATIVE(YSF_GetAFKAccuracy);
-	
+	AMX_DECLARE_NATIVE(EnableConsoleMSGsForPlayer);
+	AMX_DECLARE_NATIVE(DisableConsoleMSGsForPlayer);
+	AMX_DECLARE_NATIVE(HasPlayerConsoleMessages);
+
 	AMX_DECLARE_NATIVE(AttachPlayerObjectToObject);
 
 	AMX_DECLARE_NATIVE(SetRecordingDirectory);

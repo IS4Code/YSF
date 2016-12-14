@@ -72,25 +72,17 @@ public:
 	bool IsNickNameCharacterAllowed(char character);
 	bool IsValidNick(char *szName);
 
-	inline void BanIP(const char* ip)
-	{
-		m_BannedIPs.insert(ip);
-	}
-
-	inline void UnbanIP(const char* ip)
-	{
-		m_BannedIPs.erase(ip);
-	}
-
-	inline void ClearBans()
-	{
-		m_BannedIPs.clear();
-	}
-
-	inline bool IsBanned(char* ip)
-	{
-		return m_BannedIPs.find(ip) != m_BannedIPs.end();
-	}
+	// RakServer::IsBanned fix
+	inline void BanIP(const char* ip) { m_BannedIPs.insert(ip); } 
+	inline void UnbanIP(const char* ip) { m_BannedIPs.erase(ip); }
+	inline void ClearBans() { m_BannedIPs.clear(); }
+	inline bool IsBanned(char* ip) { return m_BannedIPs.find(ip) != m_BannedIPs.end(); }
+	
+	// Broadcast console messages to players
+	void AddConsolePlayer(WORD playerid, DWORD color);
+	void RemoveConsolePlayer(WORD playerid); 
+	bool IsConsolePlayer(WORD playerid, DWORD &color);
+	void ProcessConsoleMessages(const char* str);
 
 	void inline SetTickRate(int rate) { m_iTickRate = rate; }
 	int inline GetTickRate(void) { return m_iTickRate; }
@@ -127,6 +119,7 @@ private:
 	DWORD m_dwAFKAccuracy;
 
 	std::unordered_set<std::string> m_BannedIPs;
+	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
 	std::unordered_set<char> m_vecValidNameCharacters;
 };
 
