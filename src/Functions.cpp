@@ -199,7 +199,7 @@ bool CSAMPFunctions::UnLoadFilterscript(char *szName)
 	return pfn__CFilterscripts__UnLoadFilterscript(pNetGame->pFilterScriptPool, szName);
 }
 
-void CSAMPFunctions::SpawnPlayer_(int playerid)
+void CSAMPFunctions::SpawnPlayer(int playerid)
 {
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
 }

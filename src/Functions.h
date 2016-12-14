@@ -133,7 +133,7 @@ public:
 	static bool		LoadFilterscript(char *szName);
 	static bool		UnLoadFilterscript(char *szName);
 	
-	static void		SpawnPlayer_(int iPlayerId);
+	static void		SpawnPlayer(int iPlayerId);
 
 	static void		Packet_WeaponsUpdate(Packet *p);
 	static void		Packet_StatsUpdate(Packet *p);

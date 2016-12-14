@@ -850,7 +850,6 @@ AMX_DECLARE_NATIVE(Natives::YSF_GetGravity)
 // native SetPlayerGravity(playerid, Float:gravity);
 AMX_DECLARE_NATIVE(Natives::SetPlayerGravity)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "SetPlayerGravity", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -1142,7 +1141,6 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 // native ApplyAnimationForPlayer(playerid, animplayerid, animlib[], animname[], Float:fDelta, loop, lockx, locky, freeze, time);
 AMX_DECLARE_NATIVE(Natives::ApplyAnimationForPlayer)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(10, "ApplyAnimationForPlayer", LOADED);
 	
 	RakNet::BitStream bsSend;
@@ -1875,7 +1873,7 @@ AMX_DECLARE_NATIVE(Natives::SpawnForWorld)
 	int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
-	CSAMPFunctions::SpawnPlayer_(playerid);
+	CSAMPFunctions::SpawnPlayer(playerid);
 	return 1;
 }
 
@@ -1988,7 +1986,6 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerInServerQuery)
 // native IsPlayerToggledInServerQuery(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerToggledInServerQuery)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsPlayerToggledInServerQuery", LOADED);
 
 	int playerid = CScriptParams::Get()->ReadInt();
@@ -5083,7 +5080,6 @@ AMX_DECLARE_NATIVE(Natives::ClearBanList)
 // native IsBanned(ipaddress[]);
 AMX_DECLARE_NATIVE(Natives::IsBanned)
 {
-	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(1, "IsBanned", LOADED);
 
 	char *ip;
