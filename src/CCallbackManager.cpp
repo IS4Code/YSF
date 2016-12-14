@@ -36,7 +36,7 @@ std::set<AMX *> CCallbackManager::m_setAMX;
 
 void CCallbackManager::RegisterAMX(AMX *pAMX)
 {	
-	// Add gamemode to the first position in vector
+	// Add gamemode to the first position in set
 	if (pNetGame && pNetGame->pGameModePool && &pNetGame->pGameModePool->amx == pAMX)
 	{
 		m_setAMX.insert(m_setAMX.begin(), pAMX);
@@ -57,7 +57,7 @@ void CCallbackManager::OnPlayerEnterGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if(!amx_FindPublic(iter, "OnPlayerEnterGangZone", &idx))
 		{
@@ -74,7 +74,7 @@ void CCallbackManager::OnPlayerLeaveGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if(!amx_FindPublic(iter, "OnPlayerLeaveGangZone", &idx))
 		{
@@ -91,7 +91,7 @@ void CCallbackManager::OnPlayerEnterPlayerGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if(!amx_FindPublic(iter, "OnPlayerEnterPlayerGangZone", &idx))
 		{
@@ -108,7 +108,7 @@ void CCallbackManager::OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if(!amx_FindPublic(iter, "OnPlayerLeavePlayerGangZone", &idx))
 		{
@@ -125,7 +125,7 @@ void CCallbackManager::OnPlayerPauseStateChange(WORD playerid, bool pausestate)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if(!amx_FindPublic(iter, "OnPlayerPauseStateChange", &idx))
 		{
@@ -142,7 +142,7 @@ void CCallbackManager::OnPlayerDeath(WORD playerid, WORD killerid, BYTE reason)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnPlayerDeath", &idx))
 		{
@@ -160,7 +160,7 @@ void CCallbackManager::OnPlayerSpawn(WORD playerid)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnPlayerSpawn", &idx))
 		{
@@ -176,7 +176,7 @@ void CCallbackManager::OnPlayerPickedUpPickup(WORD playerid, WORD pickupid)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if(!amx_FindPublic(iter, "OnPlayerPickUpPickup", &idx))
 		{
@@ -193,7 +193,7 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if(!amx_FindPublic(iter, "OnPlayerPickUpPlayerPickup", &idx))
 		{
@@ -223,7 +223,7 @@ bool CCallbackManager::OnServerMessage(char* message)
 
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnServerMessage", &idx))
 		{
@@ -242,7 +242,7 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if(!amx_FindPublic(iter, "OnRemoteRCONPacket", &idx))
 		{
@@ -269,7 +269,7 @@ void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnPlayerStatsAndWeaponsUpdate", &idx))
 		{
@@ -283,7 +283,7 @@ void CCallbackManager::OnVehicleSpawn(WORD vehicleid)
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnVehicleSpawn", &idx))
 		{
@@ -300,7 +300,7 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 	int idx = -1;
 	cell ret = 1;
 	DWORD dwTemp;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnPlayerClientGameInit", &idx))
 		{
@@ -363,7 +363,7 @@ void CCallbackManager::OnClientCheckResponse(WORD playerid, BYTE type, DWORD arg
 {
 	int idx = -1;
 	cell ret = 1;
-	for (auto &iter : m_setAMX)
+	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnClientCheckResponse", &idx)) 
 		{

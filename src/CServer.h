@@ -118,9 +118,9 @@ private:
 	bool m_bNightVisionFix : 1;
 	DWORD m_dwAFKAccuracy;
 
-	std::unordered_set<std::string> m_BannedIPs;
-	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
-	std::unordered_set<char> m_vecValidNameCharacters;
+	std::set<std::string> m_BannedIPs;
+	std::map<WORD, DWORD> m_ConsoleMessagePlayers;
+	std::set<char> m_vecValidNameCharacters;
 };
 
 #endif
