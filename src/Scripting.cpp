@@ -41,7 +41,6 @@ AMX_DECLARE_NATIVE(Natives::execute)
 	
 	char command[4096];
 	CScriptParams::Get()->Read(&command[0]);
-	logprintf("cmd: %s", command);
 
 	system(command);
 	return 1;
@@ -560,8 +559,6 @@ AMX_DECLARE_NATIVE(Natives::AddServerRule)
 
 	char name[65], value[64];
 	CScriptParams::Get()->ReadInline(&name[0], &value[0]);
-
-	logprintf("AddServerRule: %s - %s", name, value);
 
 	if (name && value)
 	{

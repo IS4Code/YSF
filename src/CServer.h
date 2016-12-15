@@ -46,7 +46,6 @@ class CYSFPickupPool;
 #include <set>
 #include <bitset>
 #include <unordered_map>
-#include <unordered_set>
 
 class CServer : public CSingleton<CServer>
 {
@@ -119,7 +118,7 @@ private:
 	DWORD m_dwAFKAccuracy;
 
 	std::set<std::string> m_BannedIPs;
-	std::map<WORD, DWORD> m_ConsoleMessagePlayers;
+	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
 	std::set<char> m_vecValidNameCharacters;
 };
 

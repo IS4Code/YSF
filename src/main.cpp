@@ -63,7 +63,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	ppPluginData = ppData;
 	pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
 	logprintf = reinterpret_cast<logprintf_t>(ppData[PLUGIN_DATA_LOGPRINTF]);
-	logprintf("logprintf = 0x%08X\n", ppData[PLUGIN_DATA_LOGPRINTF]);
+	//logprintf("logprintf = 0x%08X\n", ppData[PLUGIN_DATA_LOGPRINTF]);
 	
 	// Check server version
 	eSAMPVersion version = SAMP_VERSION_UNKNOWN;
