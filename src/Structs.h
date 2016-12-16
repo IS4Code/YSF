@@ -189,6 +189,7 @@ typedef float               FLOAT;
 #define BULLET_HIT_TYPE_PLAYER_OBJECT (4)
 
 // Additional Defines
+#define MAX_OBJECT_MATERIAL			16
 #define MAX_PLAYER_ATTACHED_OBJECTS 10
 #define	MAX_FILTER_SCRIPTS			16
 
@@ -705,7 +706,7 @@ struct CPickupPool
 // CObject
 /* -------------------------------------------------------- */
 
-struct CObjectMaterial // sizeof = 212
+struct CObjectMaterial
 {
 	BYTE			byteUsed;				// 197 - 198
 	BYTE			byteSlot;				// 198 - 199
@@ -721,8 +722,9 @@ struct CObjectMaterial // sizeof = 212
 	DWORD			dwBackgroundColor;		// 407 - 411
 	BYTE			byteAlignment;			// 411 - 412
 };
+static_assert(sizeof(CObjectMaterial) == 215, "Invalid CObjectMaterial size");
 
-struct CObject // sizeof = 3700
+struct CObject
 {
 	WORD			wObjectID;			// 0 - 2
 	int				iModel;				// 2 - 6
@@ -741,9 +743,10 @@ struct CObject // sizeof = 3700
 	CVector			vecAttachedRotation;// 180 - 192
 	BYTE			byteSyncRot;		// 192 - 193
 	DWORD			dwMaterialCount;	// 193 - 197
-	CObjectMaterial	Material[16];		// 197 - 3637
-	char			*szMaterialText[16];// 3637 - 3653
+	CObjectMaterial	Material[MAX_OBJECT_MATERIAL];		// 197 - 3637
+	char			*szMaterialText[MAX_OBJECT_MATERIAL];// 3637 - 3653
 };
+static_assert(sizeof(CObject) == 3701, "Invalid CObject size");
 
 struct CObjectPool
 {

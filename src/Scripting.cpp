@@ -2114,12 +2114,12 @@ AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	
 	// Nothing to comment here..
-	while(i != 16)
+	while(i != MAX_OBJECT_MATERIAL)
 	{
 		if(pObject->Material[i].byteSlot == materialindex) break;
 		i++;
 	}
-	if(i == 16) return 0;
+	if(i == MAX_OBJECT_MATERIAL) return 0;
 
 	return pObject->Material[i].byteUsed;
 }
@@ -2141,12 +2141,12 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 
 	// Nothing to comment here..
-	while(i != 16)
+	while(i != MAX_OBJECT_MATERIAL)
 	{
 		if(pObject->Material[i].byteSlot == materialindex) break;
 		i++;
 	}
-	if(i == 16) return 0;
+	if(i == MAX_OBJECT_MATERIAL) return 0;
 	
 	DWORD dwColor = ABGR_ARGB(pObject->Material[i].dwMaterialColor);
 	CScriptParams::Get()->AddInline(pObject->Material[i].wModelID, &pObject->Material[i].szMaterialTXD[0], &pObject->Material[i].szMaterialTexture[0], dwColor);
@@ -2170,12 +2170,12 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 
 	// Nothing to comment here..
-	while(i != 16)
+	while(i != MAX_OBJECT_MATERIAL)
 	{
 		if(pObject->Material[i].byteSlot == materialindex) break;
 		i++;
 	}
-	if(i == 16) return 0;
+	if(i == MAX_OBJECT_MATERIAL) return 0;
 
 	set_amxstring(amx, params[3], pObject->szMaterialText[i], params[4]); 
 	Utility::storeIntegerInNative(amx, params[5], pObject->Material[i].byteMaterialSize);
@@ -2333,12 +2333,12 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
 	// Nothing to comment here..
-	while(i != 16)
+	while(i != MAX_OBJECT_MATERIAL)
 	{
 		if(pObject->Material[i].byteSlot == materialindex) break;
 		i++;
 	}
-	if(i == 16) return 0;
+	if(i == MAX_OBJECT_MATERIAL) return 0;
 
 	return pObject->Material[i].byteUsed;
 }
@@ -2361,17 +2361,17 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
 	// Nothing to comment here..
-	while(i != 16)
+	while(i != MAX_OBJECT_MATERIAL)
 	{
 		if(pObject->Material[i].byteSlot == materialindex) break;
 		i++;
 	}
-	if(i == 16) return 0;
+	if(i == MAX_OBJECT_MATERIAL) return 0;
 
 	Utility::storeIntegerInNative(amx, params[4], pObject->Material[i].wModelID); //  modelid
 	set_amxstring(amx, params[5], pObject->Material[i].szMaterialTXD, params[6]); // txdname[], txdnamelen = sizeof(txdname)
-	set_amxstring(amx, params[7], pObject->Material[i].szMaterialTexture, params[8]); // texturenamelen = sizeof(txdnamelen),
-	Utility::storeIntegerInNative(amx, params[9], ABGR_ARGB(pObject->Material[i].dwMaterialColor)); // materialcolor
+	set_amxstring(amx, params[7], pObject->Material[i].szMaterialTexture, params[8]); // texturenamelen = sizeof(txdnamelen)
+	Utility::storeIntegerInNative(amx, params[9], ABGR_ARGB(pObject->Material[i].dwMaterialColor)); // materialcolor	
 	return 1;
 }
 
@@ -2393,12 +2393,12 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
 	// Nothing to comment here..
-	while(i != 16)
+	while(i != MAX_OBJECT_MATERIAL)
 	{
 		if(pObject->Material[i].byteSlot == materialindex) break;
 		i++;
 	}
-	if(i == 16) return 0;
+	if(i == MAX_OBJECT_MATERIAL) return 0;
 
 	set_amxstring(amx, params[4], pObject->szMaterialText[i], params[5]); 
 	Utility::storeIntegerInNative(amx, params[6], pObject->Material[i].byteMaterialSize); // materialsize
