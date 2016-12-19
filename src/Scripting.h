@@ -363,7 +363,9 @@ namespace Natives
 	AMX_DECLARE_NATIVE(YSF_ChangeVehicleColor);
 	AMX_DECLARE_NATIVE(YSF_DestroyVehicle);
 	AMX_DECLARE_NATIVE(YSF_ShowPlayerDialog);
-
+	AMX_DECLARE_NATIVE(YSF_SetPlayerObjectMaterial);
+	AMX_DECLARE_NATIVE(YSF_SetPlayerObjectMaterialText);
+	
 	AMX_DECLARE_NATIVE(YSF_SetPlayerTeam);
 	AMX_DECLARE_NATIVE(YSF_SetPlayerSkin);
 	AMX_DECLARE_NATIVE(YSF_SetPlayerFightingStyle);

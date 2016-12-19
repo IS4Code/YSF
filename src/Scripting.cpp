@@ -1335,6 +1335,87 @@ AMX_DECLARE_NATIVE(Natives::YSF_ShowPlayerDialog)
 	return 0;
 }
 
+// native SetPlayerObjectMaterial(playerid, objectid, materialindex, modelid, txdname[], texturename[], materialcolor=0);
+AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
+{
+	CHECK_PARAMS(7, "SetPlayerObjectMaterial", LOADED);
+
+	int playerid = CScriptParams::Get()->ReadInt();
+
+	if (pSetPlayerObjectMaterial(amx, params))
+	{
+		int objectid = CScriptParams::Get()->ReadInt();
+
+		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
+		int index = pObject->dwMaterialCount;
+		if (index < MAX_OBJECT_MATERIAL)
+		{
+			BYTE slot;
+			WORD modelid;
+			DWORD color;
+			char szTXD[64], szTexture[64];
+			CScriptParams::Get()->ReadInline(&slot, &modelid, &szTXD[0], &szTexture[0], &color);
+
+			if (pObject->szMaterialText[index])
+			{
+				free(pObject->szMaterialText[index]);
+				pObject->szMaterialText[index] = nullptr;
+			}
+			pObject->Material[index].byteSlot = slot;
+			pObject->Material[index].wModelID = modelid;
+			pObject->Material[index].byteUsed = 1;
+			pObject->Material[index].dwMaterialColor = color;
+
+			strncpy(pObject->Material[index].szMaterialTXD, szTXD, 64u);
+			strncpy(pObject->Material[index].szMaterialTexture, szTexture, 64u);
+			pObject->dwMaterialCount++;
+		}
+		return 1;
+	}
+	return 0;
+}
+
+// native SetPlayerObjectMaterialText(playerid, objectid, text[], materialindex = 0, materialsize = OBJECT_MATERIAL_SIZE_256x128, fontface[] = "Arial", fontsize = 24, bold = 1, fontcolor = 0xFFFFFFFF, backcolor = 0, textalignment = 0);
+AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
+{
+	CHECK_PARAMS(11, "SetPlayerObjectMaterialText", LOADED);
+
+	int playerid = CScriptParams::Get()->ReadInt();
+
+	if (pSetPlayerObjectMaterialText(amx, params))
+	{
+		int objectid = CScriptParams::Get()->ReadInt();
+
+		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
+		int index = pObject->dwMaterialCount;
+		if (index < MAX_OBJECT_MATERIAL)
+		{
+			char szText[4096], szFontFace[64];
+			BYTE slot, materialsize, fontsize, bold, textalignment;
+			DWORD fontcolor, backcolor;
+			CScriptParams::Get()->ReadInline(&szText[0], &slot, &materialsize, &szFontFace[0], &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
+
+			if (pObject->szMaterialText[index])
+				free(pObject->szMaterialText[index]);
+			
+			pObject->szMaterialText[index] = (char *)calloc(1u, strlen((const char *)szText) + 1);
+			strcpy(pObject->szMaterialText[index], (const char *)szText);
+			pObject->Material[index].byteSlot = slot;
+			pObject->Material[index].byteUsed = 2;
+			pObject->Material[index].byteMaterialSize = materialsize;
+			strncpy(pObject->Material[index].szFont, szFontFace, 64u);
+			pObject->Material[index].byteBold = bold;
+			pObject->Material[index].byteFontSize = fontsize;
+			pObject->Material[index].byteAlignment = textalignment;
+			pObject->Material[index].dwFontColor = fontcolor;
+			pObject->Material[index].dwBackgroundColor = backcolor;
+			pObject->dwMaterialCount++;
+		}
+		return 1;
+	}
+	return 0;
+}
+
 // native TogglePlayerWidescreen(playerid, bool:set);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerWidescreen)
 {
@@ -5695,7 +5776,10 @@ AMX_NATIVE_INFO RedirectedNatives[] =
 	{ "ChangeVehicleColor",				Natives::YSF_ChangeVehicleColor},
 	{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
 	{ "ShowPlayerDialog",				Natives::YSF_ShowPlayerDialog },
+	{ "SetPlayerObjectMaterial",		Natives::YSF_SetPlayerObjectMaterial },
+	{ "SetPlayerObjectMaterialText",	Natives::YSF_SetPlayerObjectMaterialText },
 
+	
 	{ "GangZoneCreate",					Natives::YSF_GangZoneCreate },
 	{ "GangZoneDestroy",				Natives::YSF_GangZoneDestroy },
 	{ "GangZoneShowForPlayer",			Natives::YSF_GangZoneShowForPlayer },
