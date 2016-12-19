@@ -50,20 +50,22 @@ subhook_t CGameMode__OnPlayerStreamOut_hook;
 subhook_t CGameMode__OnDialogResponse_hook;
 
 //----------------------------------------------------
-AMX_NATIVE 
-	pDestroyObject = NULL, 
-	pDestroyPlayerObject = NULL, 
-	pTogglePlayerControllable = NULL, 
+AMX_NATIVE
+	pDestroyObject = NULL,
+	pDestroyPlayerObject = NULL,
+	pTogglePlayerControllable = NULL,
 	pSetPlayerWorldBounds = NULL,
-	pSetPlayerTeam = NULL, 
-	pSetPlayerSkin = NULL, 
-	pSetPlayerFightingStyle = NULL, 
-	pSetPlayerName = NULL, 
-	pSetVehicleToRespawn = NULL, 
-	pChangeVehicleColor = NULL, 
-	pDestroyVehicle = NULL, 
+	pSetPlayerTeam = NULL,
+	pSetPlayerSkin = NULL,
+	pSetPlayerFightingStyle = NULL,
+	pSetPlayerName = NULL,
+	pSetVehicleToRespawn = NULL,
+	pChangeVehicleColor = NULL,
+	pDestroyVehicle = NULL,
 	pAttachObjectToPlayer = NULL,
-	pShowPlayerDialog = NULL;
+	pShowPlayerDialog = NULL,
+	pSetPlayerObjectMaterial = NULL,
+	pSetPlayerObjectMaterialText = NULL;
 
 //----------------------------------------------------
 char gRecordingDataPath[MAX_PATH];
@@ -171,6 +173,12 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 			if (!pShowPlayerDialog && !strcmp(nativelist[i].name, "ShowPlayerDialog"))
 				pShowPlayerDialog = nativelist[i].func;
+
+			if (!pSetPlayerObjectMaterial && !strcmp(nativelist[i].name, "SetPlayerObjectMaterial"))
+				pSetPlayerObjectMaterial = nativelist[i].func;
+
+			if (!pSetPlayerObjectMaterialText && !strcmp(nativelist[i].name, "SetPlayerObjectMaterialText"))
+				pSetPlayerObjectMaterialText = nativelist[i].func;
 
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;

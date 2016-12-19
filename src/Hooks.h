@@ -53,7 +53,10 @@ extern AMX_NATIVE
 	pChangeVehicleColor, 
 	pDestroyVehicle, 
 	pAttachObjectToPlayer,
-	pShowPlayerDialog;
+	pShowPlayerDialog,
+	pSetPlayerObjectMaterial,
+	pSetPlayerObjectMaterialText;
+
 
 extern char gRecordingDataPath[MAX_PATH];
 
