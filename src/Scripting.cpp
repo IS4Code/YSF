@@ -1257,6 +1257,15 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
+	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
+	for (BYTE i = 0; i != MAX_OBJECT_MATERIAL; i++)
+	{
+		if (pObject->szMaterialText[i])
+		{
+			free(pObject->szMaterialText[i]);
+			pObject->szMaterialText[i] = NULL;
+		}
+	}
 	if(pDestroyPlayerObject(amx, params) && IsPlayerConnected(playerid))
 	{
 		if(pPlayerData[playerid]->stObj[objectid].wObjectID != 0xFFFF || pPlayerData[playerid]->stObj[objectid].wAttachPlayerID != INVALID_PLAYER_ID)
@@ -1359,7 +1368,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 			if (pObject->szMaterialText[index])
 			{
 				free(pObject->szMaterialText[index]);
-				pObject->szMaterialText[index] = nullptr;
+				pObject->szMaterialText[index] = NULL;
 			}
 			pObject->Material[index].byteSlot = slot;
 			pObject->Material[index].wModelID = modelid;
