@@ -55,7 +55,7 @@ public:
 	inline void ResetPlayerSkin(WORD playerid) { m_iSkins[playerid] = -1; }
 
 	bool SetPlayerNameForPlayer(WORD nameplayerid, char *name);
-	char *GetPlayerNameForPlayer(WORD nameplayerid);
+	const char *GetPlayerNameForPlayer(WORD nameplayerid);
 	inline void ResetPlayerName(WORD playerid) { m_szNames[playerid][0] = NULL; }
 
 	bool SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style);

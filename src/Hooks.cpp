@@ -585,7 +585,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						{
 							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
-								szName = GetPlayerName(r);
+								szName = (char*)GetPlayerName(r);
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);
@@ -633,7 +633,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 							{
 								memcpy(newdata, &r, sizeof(BYTE));
 								newdata += sizeof(BYTE);
-								szName = GetPlayerName(r);
+								szName = (char*)GetPlayerName(r);
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);

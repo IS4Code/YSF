@@ -57,37 +57,38 @@ public:
 	bool Setup(size_t paramscount, std::string strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
 	cell HandleError();
 
-	template <class templateType> inline void Add(templateType var);
-	template<typename T> void AddInline(T a);
-	template<typename T, typename... Args> void AddInline(T a, Args... args);
+	template<typename T> void Add(T a);
+	template<typename T, typename... Args> void Add(T a, Args... args);
 
-	template <class templateType> void Read(templateType *var);
-	template<typename T> void ReadInline(T a);
-	template<typename T, typename... Args> void ReadInline(T a, Args... args);
+	template<typename T> void Read(T a);
+	template<typename T, typename... Args> void Read(T a, Args... args);
 
 	inline void Skip() { m_pos++; }
 	
-	int ReadInt()
+	const int ReadInt()
 	{
 		int var;
-		Read(&var);
+		ReadInternal(&var);
 		return var;
 	}
 	
-	float ReadFloat()
+	const float ReadFloat()
 	{
 		float var;
-		Read(&var);
+		ReadInternal(&var);
 		return var;
 	}
 	
-	bool ReadBool()
+	const bool ReadBool()
 	{
 		bool var;
-		Read(&var);
+		ReadInternal(&var);
 		return var;
 	}
-private:	
+private:
+	template <class templateType> inline void AddInternal(templateType var);
+	template <class templateType> void ReadInternal(templateType *var);
+
 	void DetectError();
 
 	// private variables
@@ -111,7 +112,7 @@ private:
 //----------------------------------------------------
 
 // Numbers & Floats
-template <class templateType> inline void CScriptParams::Add(templateType var)
+template <class templateType> inline void CScriptParams::AddInternal(templateType var)
 {
 	cell *address;
 	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
@@ -124,7 +125,7 @@ template <class templateType> inline void CScriptParams::Add(templateType var)
 }
 
 // Vectors
-template <> inline void CScriptParams::Add(CVector2D vec)
+template <> inline void CScriptParams::AddInternal(CVector2D vec)
 {
 	cell *address;
 	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
@@ -133,7 +134,7 @@ template <> inline void CScriptParams::Add(CVector2D vec)
 		*address = amx_ftoc(vec.fY);
 }
 
-template <> inline void CScriptParams::Add(CVector vec)
+template <> inline void CScriptParams::AddInternal(CVector vec)
 {
 	cell *address;
 	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
@@ -145,13 +146,13 @@ template <> inline void CScriptParams::Add(CVector vec)
 }
 
 // Strings
-template <> inline void CScriptParams::Add(char* szString)
+template <> inline void CScriptParams::AddInternal(char* szString)
 {
 	set_amxstring(m_AMX, m_params[m_pos], szString, m_params[m_pos + 1]);
 
 	m_pos += 2;
 }
-template <> inline void CScriptParams::Add(std::string &str)
+template <> inline void CScriptParams::AddInternal(std::string &str)
 {
 	set_amxstring(m_AMX, m_params[m_pos], str.c_str(), m_params[m_pos + 1]);
 
@@ -161,40 +162,40 @@ template <> inline void CScriptParams::Add(std::string &str)
 //----------------------------------------------------
 
 template<typename T>
-void inline CScriptParams::AddInline(T a)
+void inline CScriptParams::Add(T a)
 {
-	Add(a);
+	AddInternal(a);
 }
 
 template<typename T, typename... Args>
-void inline CScriptParams::AddInline(T a, Args... args)
+void inline CScriptParams::Add(T a, Args... args)
 {
-	Add(a);
-	AddInline(args...);
+	AddInternal(a);
+	Add(args...);
 }
 
 //----------------------------------------------------
 
 // Numbers & Floats
-template <class templateType> void CScriptParams::Read(templateType* var)
+template <class templateType> void CScriptParams::ReadInternal(templateType* var)
 {
 	*var = (*reinterpret_cast<const templateType*>(&static_cast<const cell&>(m_params[m_pos++])));
 }
 
 // Vectors
-template <> inline void CScriptParams::Read(CVector2D* vec)
+template <> inline void CScriptParams::ReadInternal(CVector2D* vec)
 {
 	vec->fX = amx_ctof(m_params[m_pos++]);
 	vec->fY = amx_ctof(m_params[m_pos++]);
 }
-template <> inline void CScriptParams::Read(CVector* vec)
+template <> inline void CScriptParams::ReadInternal(CVector* vec)
 {
 	vec->fX = amx_ctof(m_params[m_pos++]);
 	vec->fY = amx_ctof(m_params[m_pos++]);
 	vec->fZ = amx_ctof(m_params[m_pos++]);
 }
 // Strings
-template <> inline void CScriptParams::Read(char *result)
+template <> inline void CScriptParams::ReadInternal(char *result)
 {
 	// FUCK amx_StrParam
 	cell *amx_cstr;
@@ -211,15 +212,15 @@ template <> inline void CScriptParams::Read(char *result)
 //----------------------------------------------------
 
 template<typename T>
-void inline CScriptParams::ReadInline(T a)
+void inline CScriptParams::Read(T a)
 {
-	Read(a);
+	ReadInternal(a);
 }
 
 template<typename T, typename... Args>
-void inline CScriptParams::ReadInline(T a, Args... args)
+void inline CScriptParams::Read(T a, Args... args)
 {
-	Read(a);
-	ReadInline(args...);
+	ReadInternal(a);
+	Read(args...);
 }
 #endif

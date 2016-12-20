@@ -316,7 +316,7 @@ void Utility::storeVectorInNative(AMX *amx, cell output, CVector &vec)
 	*address = amx_ftoc(vec.fZ);
 }
 
-char *GetPlayerName(int playerid)
+const char *GetPlayerName(int playerid)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;
 

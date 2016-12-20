@@ -473,7 +473,7 @@ AMX_DECLARE_NATIVE(Natives::SetMaxPlayers)
 {
 	CHECK_PARAMS(1, "SetMaxPlayers", LOADED);
 
-	int maxplayers = CScriptParams::Get()->ReadInt();
+	const int maxplayers = CScriptParams::Get()->ReadInt();
 	if(maxplayers < 1 || maxplayers > MAX_PLAYERS) return 0;
 
 	CSAMPFunctions::SetIntVariable("maxplayers", maxplayers);
@@ -485,7 +485,7 @@ AMX_DECLARE_NATIVE(Natives::SetMaxNPCs)
 {
 	CHECK_PARAMS(1, "SetMaxNPCs", LOADED);
 
-	int maxnpcs = CScriptParams::Get()->ReadInt();
+	const int maxnpcs = CScriptParams::Get()->ReadInt();
 	if(maxnpcs < 0 || maxnpcs > MAX_PLAYERS) return 0;
 
 	CSAMPFunctions::SetIntVariable("maxnpc", maxnpcs);
@@ -497,7 +497,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
 {
 	CHECK_PARAMS(2, "SetPlayerAdmin", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	pNetGame->pPlayerPool->bIsAnAdmin[playerid] = static_cast<BOOL>(CScriptParams::Get()->ReadInt());
@@ -558,14 +558,14 @@ AMX_DECLARE_NATIVE(Natives::AddServerRule)
 	CHECK_PARAMS(3, "AddServerRule", LOADED);
 
 	char name[65], value[64];
-	CScriptParams::Get()->ReadInline(&name[0], &value[0]);
+	CScriptParams::Get()->Read(&name[0], &value[0]);
 
 	if (name && value)
 	{
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
 		if (ConVar == NULL)
 		{
-			CSAMPFunctions::AddStringVariable(name, static_cast<int>(params[3]), value, NULL);
+			CSAMPFunctions::AddStringVariable(name, CScriptParams::Get()->ReadInt(), value, NULL);
 			return 1;
 		}
 	}
@@ -578,7 +578,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRule)
 	CHECK_PARAMS(2, "SetServerRule", LOADED);
 
 	char name[32], value[32];
-	CScriptParams::Get()->ReadInline(&name[0], &value[0]);
+	CScriptParams::Get()->Read(&name[0], &value[0]);
 	if (name && value)
 	{
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
@@ -597,13 +597,13 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleInt)
 	CHECK_PARAMS(2, "SetServerRuleInt", LOADED);
 
 	char name[32];
-	CScriptParams::Get()->ReadInline(&name[0]);
+	CScriptParams::Get()->Read(&name[0]);
 	if (name)
 	{
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
 		if (ConVar != NULL)
 		{
-			CSAMPFunctions::SetIntVariable(name, static_cast<int>(params[2]));
+			CSAMPFunctions::SetIntVariable(name, CScriptParams::Get()->ReadInt());
 			return 1;
 		}
 		return 1;
@@ -617,7 +617,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidServerRule)
 	CHECK_PARAMS(1, "IsValidServerRule", LOADED);
 
 	char name[32];
-	CScriptParams::Get()->ReadInline(&name[0]);
+	CScriptParams::Get()->Read(&name[0]);
 	if (name)
 	{
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
@@ -632,7 +632,7 @@ AMX_DECLARE_NATIVE(Natives::RemoveServerRule)
 	CHECK_PARAMS(1, "RemoveServerRule", LOADED);
 
 	char name[32];
-	CScriptParams::Get()->ReadInline(&name[0]);
+	CScriptParams::Get()->Read(&name[0]);
 	if (name)
 	{
 		//RemoveServerRule(name);
@@ -647,7 +647,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleFlags)
 	CHECK_PARAMS(2, "SetServerRuleFlags", LOADED);
 	
 	char name[32];
-	CScriptParams::Get()->ReadInline(&name[0]);
+	CScriptParams::Get()->Read(&name[0]);
 	if (name)
 	{
 		CSAMPFunctions::ModifyVariableFlags(name, (DWORD)params[2]);
@@ -662,7 +662,7 @@ AMX_DECLARE_NATIVE(Natives::GetServerRuleFlags)
 	CHECK_PARAMS(1, "GetServerRuleFlags", LOADED);
 	
 	char name[32];
-	CScriptParams::Get()->ReadInline(&name[0]);
+	CScriptParams::Get()->Read(&name[0]);
 	if (name)
 	{
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
@@ -681,7 +681,7 @@ AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 {
 	CHECK_PARAMS(14, "GetServerSettings", LOADED);
 
-	CScriptParams::Get()->AddInline(
+	CScriptParams::Get()->Add(
 		  pNetGame->bShowPlayerMarkers
 		, pNetGame->byteShowNameTags
 		, pNetGame->byteStuntBonus
@@ -706,7 +706,7 @@ AMX_DECLARE_NATIVE(Natives::EnableConsoleMSGsForPlayer)
 	CHECK_PARAMS(2, "ToggleConsoleMessagesForPlayer", LOADED);
 
 	int playerid, color;
-	CScriptParams::Get()->ReadInline(&playerid, &color);
+	CScriptParams::Get()->Read(&playerid, &color);
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	CServer::Get()->AddConsolePlayer(static_cast<WORD>(playerid), static_cast<DWORD>(color));
@@ -718,7 +718,7 @@ AMX_DECLARE_NATIVE(Natives::DisableConsoleMSGsForPlayer)
 {
 	CHECK_PARAMS(1, "DisableConsoleMSGsForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	CServer::Get()->RemoveConsolePlayer(static_cast<WORD>(playerid));
@@ -730,7 +730,7 @@ AMX_DECLARE_NATIVE(Natives::HasPlayerConsoleMessages)
 {
 	CHECK_PARAMS(2, "DisableConsoleMSGsForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	DWORD color;
@@ -745,7 +745,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 	CHECK_PARAMS(1, "IsValidNickName", LOADED);
 
 	char name[32];
-	CScriptParams::Get()->ReadInline(&name[0]);
+	CScriptParams::Get()->Read(&name[0]);
 	return CServer::Get()->IsValidNick(name);
 }
 
@@ -754,7 +754,7 @@ AMX_DECLARE_NATIVE(Natives::AllowNickNameCharacter)
 {
 	CHECK_PARAMS(2, "AllowNickNameCharacter", LOADED);
 	
-	char character = static_cast<char>(params[1]);
+	const char character = static_cast<const char>(params[1]);
 
 	// Enable %s is disallowed
 	if(character == '%') return 0;
@@ -798,12 +798,12 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerClass)
 {
 	CHECK_PARAMS(13, "GetPlayerClass", LOADED);
 
-	int classid = CScriptParams::Get()->ReadInt();
+	const int classid = CScriptParams::Get()->ReadInt();
 	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->AvailableSpawns[classid];
-	
-	CScriptParams::Get()->AddInline(pSpawn->byteTeam, pSpawn->iSkin, pSpawn->vecPos, pSpawn->fRotation,
+
+	CScriptParams::Get()->Add(pSpawn->byteTeam, pSpawn->iSkin, pSpawn->vecPos, pSpawn->fRotation,
 		pSpawn->iSpawnWeapons[0], pSpawn->iSpawnWeaponsAmmo[0],
 		pSpawn->iSpawnWeapons[1], pSpawn->iSpawnWeaponsAmmo[1],
 		pSpawn->iSpawnWeapons[2], pSpawn->iSpawnWeaponsAmmo[2]);
@@ -815,12 +815,12 @@ AMX_DECLARE_NATIVE(Natives::EditPlayerClass)
 {
 	CHECK_PARAMS(13, "EditPlayerClass", LOADED);
 
-	int classid = CScriptParams::Get()->ReadInt();
+	const int classid = CScriptParams::Get()->ReadInt();
 	if (classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->AvailableSpawns[classid];
 
-	CScriptParams::Get()->ReadInline(&pSpawn->byteTeam, &pSpawn->iSkin, &pSpawn->vecPos, &pSpawn->fRotation,
+	CScriptParams::Get()->Read(&pSpawn->byteTeam, &pSpawn->iSkin, &pSpawn->vecPos, &pSpawn->fRotation,
 		&pSpawn->iSpawnWeapons[0], &pSpawn->iSpawnWeaponsAmmo[0],
 		&pSpawn->iSpawnWeapons[1], &pSpawn->iSpawnWeaponsAmmo[1],
 		&pSpawn->iSpawnWeapons[2], &pSpawn->iSpawnWeaponsAmmo[2]);
@@ -849,7 +849,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerGravity)
 {
 	CHECK_PARAMS(2, "SetPlayerGravity", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	// Update stored values
@@ -866,7 +866,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerGravity)
 {
 	CHECK_PARAMS(1, "GetPlayerGravity", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return amx_ftoc(pPlayerData[playerid]->fGravity);
@@ -877,9 +877,9 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerTeamForPlayer)
 {
 	CHECK_PARAMS(3, "SetPlayerTeamForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int teamplayerid = CScriptParams::Get()->ReadInt();
-	int team = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int teamplayerid = CScriptParams::Get()->ReadInt();
+	const int team = CScriptParams::Get()->ReadInt();
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(teamplayerid)) return 0;
 	if (team < 0 || team > NO_TEAM) return 0;
@@ -893,8 +893,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerTeamForPlayer)
 {
 	CHECK_PARAMS(2, "GetPlayerTeamForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int teamplayerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int teamplayerid = CScriptParams::Get()->ReadInt();
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(teamplayerid)) return 0;
 
@@ -905,7 +905,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerTeam)
 {
 	CHECK_PARAMS(2, "SetPlayerTeam", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerTeam(amx, params))
 	{
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
@@ -923,9 +923,9 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerSkinForPlayer)
 {
 	CHECK_PARAMS(3, "SetPlayerSkinForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int skinplayerid = CScriptParams::Get()->ReadInt();
-	int skin = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int skinplayerid = CScriptParams::Get()->ReadInt();
+	const int skin = CScriptParams::Get()->ReadInt();
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(skinplayerid)) return 0;
 	if (skin < 0 || skin > 300) return 0;
@@ -939,8 +939,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSkinForPlayer)
 {
 	CHECK_PARAMS(2, "GetPlayerSkinForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int skinplayerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int skinplayerid = CScriptParams::Get()->ReadInt();
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(skinplayerid)) return 0;
 
@@ -951,7 +951,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 {
 	CHECK_PARAMS(2, "SetPlayerSkin", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerSkin(amx, params))
 	{
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
@@ -969,8 +969,8 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerNameForPlayer)
 {
 	CHECK_PARAMS(3, "SetPlayerNameForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int nameplayerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int nameplayerid = CScriptParams::Get()->ReadInt();
 	
 	char name[MAX_PLAYER_NAME];
 	CScriptParams::Get()->Read(&name[0]);
@@ -986,12 +986,12 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerNameForPlayer)
 {
 	CHECK_PARAMS(4, "GetPlayerNameForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int nameplayerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int nameplayerid = CScriptParams::Get()->ReadInt();
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(nameplayerid)) return 0;
 
-	CScriptParams::Get()->Add(&pPlayerData[playerid]->GetPlayerNameForPlayer(static_cast<WORD>(nameplayerid))[0]);
+	CScriptParams::Get()->Add((char*)&pPlayerData[playerid]->GetPlayerNameForPlayer(static_cast<WORD>(nameplayerid))[0]);
 	return 1;
 }
 
@@ -999,8 +999,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 {
 	CHECK_PARAMS(2, "SetPlayerName", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int ret = pSetPlayerName(amx, params);
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int ret = pSetPlayerName(amx, params);
 
 	if(ret == 1)
 	{
@@ -1018,9 +1018,9 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerFightStyleForPlayer)
 {
 	CHECK_PARAMS(3, "SetPlayerFightStyleForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int styleplayerid = CScriptParams::Get()->ReadInt();
-	int style = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int styleplayerid = CScriptParams::Get()->ReadInt();
+	const int style = CScriptParams::Get()->ReadInt();
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(styleplayerid)) return 0;
 
@@ -1033,8 +1033,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerFightStyleForPlayer)
 {
 	CHECK_PARAMS(2, "GetPlayerFightStyleForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int styleplayerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int styleplayerid = CScriptParams::Get()->ReadInt();
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(styleplayerid)) return 0;
 
@@ -1045,7 +1045,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 {
 	CHECK_PARAMS(2, "SetPlayerFightingStyle", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerFightingStyle(amx, params))
 	{
 		for(WORD i = 0; i != MAX_PLAYERS; i++)
@@ -1063,9 +1063,9 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerPosForPlayer)
 {
 	CHECK_PARAMS(6, "SetPlayerPosForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int posplayerid = CScriptParams::Get()->ReadInt();
-	bool forcesync = static_cast<int>(params[6]) != 0;
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int posplayerid = CScriptParams::Get()->ReadInt();
+	const bool forcesync = static_cast<int>(params[6]) != 0;
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(posplayerid)) return 0;
 
 	SAFE_DELETE(pPlayerData[playerid]->vecCustomPos[posplayerid]);
@@ -1098,9 +1098,9 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 {
 	CHECK_PARAMS(7, "SetPlayerRotationQuatForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int posplayerid = CScriptParams::Get()->ReadInt();
-	bool forcesync = static_cast<int>(params[7]) != 0;
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int posplayerid = CScriptParams::Get()->ReadInt();
+	const bool forcesync = static_cast<int>(params[7]) != 0;
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(posplayerid)) return 0;
 
 	if(!forcesync)
@@ -1111,7 +1111,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 	
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 
-	CScriptParams::Get()->ReadInline(&pPlayerData[playerid]->fCustomQuat[posplayerid][0], &pPlayerData[playerid]->fCustomQuat[posplayerid][1], &pPlayerData[playerid]->fCustomQuat[posplayerid][2], &pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
+	CScriptParams::Get()->Read(&pPlayerData[playerid]->fCustomQuat[posplayerid][0], &pPlayerData[playerid]->fCustomQuat[posplayerid][1], &pPlayerData[playerid]->fCustomQuat[posplayerid][2], &pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
 	pPlayerData[playerid]->bCustomQuat[posplayerid] = true;
 
 	RakNet::BitStream bs;
@@ -1149,8 +1149,8 @@ AMX_DECLARE_NATIVE(Natives::ApplyAnimationForPlayer)
 	bool opt1,opt2,opt3,opt4;
 	int time;
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int animplayerid = static_cast<int>(params[2]);
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int animplayerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(animplayerid)) return 0;
 
 	amx_StrParam(amx, params[3], szAnimLib);
@@ -1189,7 +1189,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWeather)
 {
 	CHECK_PARAMS(2, "SetPlayerWeather", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	// Update stored values
@@ -1206,7 +1206,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerWeather)
 {
 	CHECK_PARAMS(1, "GetPlayerWeather", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pPlayerData[playerid]->byteWeather;
@@ -1217,7 +1217,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWorldBounds)
 {
 	CHECK_PARAMS(5, "SetPlayerWorldBounds", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerWorldBounds(amx, params))
 	{
 		for (BYTE i = 0; i != 4; i++)
@@ -1233,7 +1233,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyObject)
 {
 	CHECK_PARAMS(1, "DestroyObject", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 
 	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->pObjects[objectid]) return 0;
@@ -1251,8 +1251,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 {
 	CHECK_PARAMS(2, "DestroyPlayerObject", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 
 	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
@@ -1289,8 +1289,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_TogglePlayerControllable)
 {
 	CHECK_PARAMS(2, "TogglePlayerControllable", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	bool toggle = CScriptParams::Get()->ReadBool();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const bool toggle = CScriptParams::Get()->ReadBool();
 
 	if(pTogglePlayerControllable(amx, params) && IsPlayerConnected(playerid))
 	{
@@ -1305,7 +1305,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_ChangeVehicleColor)
 {
 	CHECK_PARAMS(3, "ChangeVehicleColor", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(pChangeVehicleColor(amx, params))
 	{
 		CServer::Get()->bChangedVehicleColor[vehicleid] = true;
@@ -1319,7 +1319,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 {
 	CHECK_PARAMS(1, "DestroyVehicle", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(pDestroyVehicle(amx, params))
 	{
 		CServer::Get()->bChangedVehicleColor[vehicleid] = false;
@@ -1333,8 +1333,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_ShowPlayerDialog)
 {
 	CHECK_PARAMS(7, "ShowPlayerDialog", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int dialogid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int dialogid = CScriptParams::Get()->ReadInt();
 
 	if (pShowPlayerDialog(amx, params))
 	{
@@ -1349,11 +1349,11 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 {
 	CHECK_PARAMS(7, "SetPlayerObjectMaterial", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 
 	if (pSetPlayerObjectMaterial(amx, params))
 	{
-		int objectid = CScriptParams::Get()->ReadInt();
+		const int objectid = CScriptParams::Get()->ReadInt();
 
 		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 		int index = pObject->dwMaterialCount;
@@ -1363,7 +1363,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 			WORD modelid;
 			DWORD color;
 			char szTXD[64], szTexture[64];
-			CScriptParams::Get()->ReadInline(&slot, &modelid, &szTXD[0], &szTexture[0], &color);
+			CScriptParams::Get()->Read(&slot, &modelid, &szTXD[0], &szTexture[0], &color);
 
 			if (pObject->szMaterialText[index])
 			{
@@ -1389,11 +1389,11 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 {
 	CHECK_PARAMS(11, "SetPlayerObjectMaterialText", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 
 	if (pSetPlayerObjectMaterialText(amx, params))
 	{
-		int objectid = CScriptParams::Get()->ReadInt();
+		const int objectid = CScriptParams::Get()->ReadInt();
 
 		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 		int index = pObject->dwMaterialCount;
@@ -1402,7 +1402,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 			char szText[4096], szFontFace[64];
 			BYTE slot, materialsize, fontsize, bold, textalignment;
 			DWORD fontcolor, backcolor;
-			CScriptParams::Get()->ReadInline(&szText[0], &slot, &materialsize, &szFontFace[0], &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
+			CScriptParams::Get()->Read(&szText[0], &slot, &materialsize, &szFontFace[0], &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 
 			if (pObject->szMaterialText[index])
 				free(pObject->szMaterialText[index]);
@@ -1430,7 +1430,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerWidescreen)
 {
 	CHECK_PARAMS(2, "TogglePlayerWidescreen", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	BYTE set = static_cast<BYTE>(CScriptParams::Get()->ReadInt()) != 0;
@@ -1447,7 +1447,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerWidescreenToggled)
 {
 	CHECK_PARAMS(1, "IsPlayerWideScreen", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pPlayerData[playerid]->bWidescreen;
@@ -1458,11 +1458,11 @@ AMX_DECLARE_NATIVE(Natives::GetSpawnInfo)
 {
 	CHECK_PARAMS(13, "GetSpawnInfo", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->pPlayerPool->pPlayer[playerid]->spawn;
-	CScriptParams::Get()->AddInline(pSpawn->byteTeam, pSpawn->iSkin, pSpawn->vecPos, pSpawn->fRotation,
+	CScriptParams::Get()->Add(pSpawn->byteTeam, pSpawn->iSkin, pSpawn->vecPos, pSpawn->fRotation,
 		pSpawn->iSpawnWeapons[0], pSpawn->iSpawnWeaponsAmmo[0],
 		pSpawn->iSpawnWeapons[1], pSpawn->iSpawnWeaponsAmmo[1],
 		pSpawn->iSpawnWeapons[2], pSpawn->iSpawnWeaponsAmmo[2]);
@@ -1474,8 +1474,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSkillLevel)
 {
 	CHECK_PARAMS(2, "GetPlayerSkillLevel", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int skillid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int skillid = CScriptParams::Get()->ReadInt();
 	
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(skillid < 0 || skillid > 10) return 0;
@@ -1488,7 +1488,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerCheckpointActive)
 {
 	CHECK_PARAMS(1, "IsPlayerCheckpointActive", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bShowCheckpoint;
@@ -1499,11 +1499,11 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerCheckpoint)
 {
 	CHECK_PARAMS(5, "GetPlayerCheckpoint", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-	CScriptParams::Get()->AddInline(pPlayer->vecCPPos, pPlayer->fCPSize);
+	CScriptParams::Get()->Add(pPlayer->vecCPPos, pPlayer->fCPSize);
 	return 1;
 }
 
@@ -1512,7 +1512,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerRaceCheckpointActive)
 {
 	CHECK_PARAMS(1, "IsPlayerRaceCheckpointActive", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bShowRaceCheckpoint;
@@ -1523,11 +1523,11 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerRaceCheckpoint)
 {
 	CHECK_PARAMS(8, "GetPlayerRaceCheckpoint", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-	CScriptParams::Get()->AddInline(pPlayer->vecRaceCPPos, pPlayer->vecRaceCPNextPos, pPlayer->fRaceCPSize);
+	CScriptParams::Get()->Add(pPlayer->vecRaceCPPos, pPlayer->vecRaceCPNextPos, pPlayer->fRaceCPSize);
 	return 1;
 }
 
@@ -1536,10 +1536,10 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerWorldBounds)
 {
 	CHECK_PARAMS(5, "GetPlayerWorldBounds", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	CScriptParams::Get()->AddInline(pPlayerData[playerid]->fBounds[0], pPlayerData[playerid]->fBounds[1], pPlayerData[playerid]->fBounds[2], pPlayerData[playerid]->fBounds[3]);
+	CScriptParams::Get()->Add(pPlayerData[playerid]->fBounds[0], pPlayerData[playerid]->fBounds[1], pPlayerData[playerid]->fBounds[2], pPlayerData[playerid]->fBounds[3]);
 	return 1;
 }
 
@@ -1548,7 +1548,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInModShop)
 {
 	CHECK_PARAMS(1, "IsPlayerInModShop", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bIsInModShop;
@@ -1559,7 +1559,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSirenState)
 {
 	CHECK_PARAMS(1, "GetPlayerSirenState", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
@@ -1572,7 +1572,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLandingGearState)
 {
 	CHECK_PARAMS(1, "GetPlayerLandingGearState", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
@@ -1585,7 +1585,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerHydraReactorAngle)
 {
 	CHECK_PARAMS(1, "GetPlayerHydraReactorAngle", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
@@ -1598,7 +1598,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerTrainSpeed)
 {
 	CHECK_PARAMS(1, "GetPlayerTrainSpeed", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->wVehicleId) return 0;
@@ -1611,7 +1611,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerZAim)
 {
 	CHECK_PARAMS(1, "GetPlayerZAim", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return amx_ftoc(pNetGame->pPlayerPool->pPlayer[playerid]->aimSyncData.fZAim);
@@ -1622,7 +1622,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingOffsets)
 {
 	CHECK_PARAMS(4, "GetPlayerSurfingOffsets", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	CVector vecPos = pNetGame->pPlayerPool->pPlayer[playerid]->syncData.vecSurfing;
@@ -1635,11 +1635,11 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerRotationQuat)
 {
 	CHECK_PARAMS(5, "GetPlayerRotationQuat", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-	CScriptParams::Get()->AddInline(pPlayer->fQuaternion[0], pPlayer->fQuaternion[1], pPlayer->fQuaternion[2], pPlayer->fQuaternion[3]);
+	CScriptParams::Get()->Add(pPlayer->fQuaternion[0], pPlayer->fQuaternion[1], pPlayer->fQuaternion[2], pPlayer->fQuaternion[3]);
 	return 1;
 }
 
@@ -1648,7 +1648,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerDialogID)
 {
 	CHECK_PARAMS(1, "GetPlayerDialogID", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->wDialogID;
@@ -1659,7 +1659,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateID)
 {
 	CHECK_PARAMS(1, "GetPlayerSpectateID", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->wSpectateID;
@@ -1670,7 +1670,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateType)
 {
 	CHECK_PARAMS(1, "GetPlayerSpectateType", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->byteSpectateType;
@@ -1681,7 +1681,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedVehicleID)
 {
 	CHECK_PARAMS(1, "GetPlayerLastSyncedVehicleID", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	return static_cast<cell>(pNetGame->pPlayerPool->pPlayer[playerid]->vehicleSyncData.wVehicleId);
@@ -1692,7 +1692,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedTrailerID)
 {
 	CHECK_PARAMS(1, "GetPlayerLastSyncedTrailerID", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->trailerSyncData.wTrailerID;
@@ -1703,13 +1703,13 @@ AMX_DECLARE_NATIVE(Natives::GetActorSpawnInfo)
 {
 	CHECK_PARAMS(6, "GetActorSpawnInfo", LOADED);
 
-	int actorid = CScriptParams::Get()->ReadInt();
+	const int actorid = CScriptParams::Get()->ReadInt();
 	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
 
 	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
 	if(!pActor) return 0;
 
-	CScriptParams::Get()->AddInline(pActor->iSkinID, pActor->vecSpawnPos, pActor->fSpawnAngle);
+	CScriptParams::Get()->Add(pActor->iSkinID, pActor->vecSpawnPos, pActor->fSpawnAngle);
 	return 1;
 }
 
@@ -1718,7 +1718,7 @@ AMX_DECLARE_NATIVE(Natives::GetActorSkin)
 {
 	CHECK_PARAMS(1, "GetActorSkin", LOADED);
 
-	int actorid = CScriptParams::Get()->ReadInt();
+	const int actorid = CScriptParams::Get()->ReadInt();
 	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
 
 	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
@@ -1733,13 +1733,13 @@ AMX_DECLARE_NATIVE(Natives::GetActorAnimation)
 {
 	CHECK_PARAMS(11, "GetActorAnimation", LOADED);
 
-	int actorid = CScriptParams::Get()->ReadInt();
+	const int actorid = CScriptParams::Get()->ReadInt();
 	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
 
 	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
 	if(!pActor) return 0;
 
-	CScriptParams::Get()->AddInline(&pActor->anim.szAnimLib[0], &pActor->anim.szAnimName[0], pActor->anim.fDelta, pActor->anim.byteLoop, pActor->anim.byteLockX, 
+	CScriptParams::Get()->Add(&pActor->anim.szAnimLib[0], &pActor->anim.szAnimName[0], pActor->anim.fDelta, pActor->anim.byteLoop, pActor->anim.byteLockX, 
 		pActor->anim.byteLockY, pActor->anim.byteFreeze, pActor->anim.iTime);
 	return 1;
 }
@@ -1749,8 +1749,8 @@ AMX_DECLARE_NATIVE(Natives::SendBulletData)
 {
 	CHECK_PARAMS(14, "SendBulletData", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int forplayerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(forplayerid != -1)
@@ -1759,7 +1759,7 @@ AMX_DECLARE_NATIVE(Natives::SendBulletData)
 	}
 
 	CBulletSyncData bulletSync;
-	CScriptParams::Get()->ReadInline(&bulletSync.byteWeaponID, &bulletSync.byteHitType, &bulletSync.wHitID, &bulletSync.vecHitOrigin, &bulletSync.vecHitTarget, &bulletSync.vecCenterOfHit);
+	CScriptParams::Get()->Read(&bulletSync.byteWeaponID, &bulletSync.byteHitType, &bulletSync.wHitID, &bulletSync.vecHitOrigin, &bulletSync.vecHitTarget, &bulletSync.vecCenterOfHit);
 
 	RakNet::BitStream bs;
 	bs.Write((BYTE)ID_BULLET_SYNC);
@@ -1782,10 +1782,10 @@ AMX_DECLARE_NATIVE(Natives::ShowPlayerForPlayer)
 {
 	CHECK_PARAMS(2, "ShowPlayerForPlayer", LOADED);
 
-	int forplayerid = CScriptParams::Get()->ReadInt();
+	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(playerid == forplayerid) return 0;
@@ -1801,10 +1801,10 @@ AMX_DECLARE_NATIVE(Natives::HidePlayerForPlayer)
 {
 	CHECK_PARAMS(2, "HidePlayerForPlayer", LOADED);
 
-	int forplayerid = CScriptParams::Get()->ReadInt();
+	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(playerid == forplayerid) return 0;
@@ -1820,16 +1820,16 @@ AMX_DECLARE_NATIVE(Natives::AddPlayerForPlayer)
 {
 	CHECK_PARAMS(3, "AddPlayerForPlayer", LOADED);
 
-	int forplayerid = CScriptParams::Get()->ReadInt();
+	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(playerid == forplayerid) return 0;
 
-	bool npc = CScriptParams::Get()->ReadBool();
-	char* szName = GetPlayerName(playerid);
+	const bool npc = CScriptParams::Get()->ReadBool();
+	const char* szName = GetPlayerName(playerid);
 	BYTE len = static_cast<BYTE>(strlen(szName));
 
 	RakNet::BitStream bs;
@@ -1847,10 +1847,10 @@ AMX_DECLARE_NATIVE(Natives::RemovePlayerForPlayer)
 {
 	CHECK_PARAMS(2, "RemovePlayerForPlayer", LOADED);
 
-	int forplayerid = CScriptParams::Get()->ReadInt();
+	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(playerid == forplayerid) return 0;
@@ -1867,17 +1867,17 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerChatBubbleForPlayer)
 {
 	CHECK_PARAMS(6, "SetPlayerChatBubbleForPlayer", LOADED);
 
-	int forplayerid = CScriptParams::Get()->ReadInt();
+	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	char str[255];
 	int color;
 	float drawdistance;
 	int expiretime;
-	CScriptParams::Get()->ReadInline(&str[0], &color, &drawdistance, &expiretime);
+	CScriptParams::Get()->Read(&str[0], &color, &drawdistance, &expiretime);
 
 	if(str)
 	{
@@ -1900,8 +1900,8 @@ AMX_DECLARE_NATIVE(Natives::ResetPlayerMarkerForPlayer)
 {
 	CHECK_PARAMS(2, "ResetPlayerMarkerForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int resetplayerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int resetplayerid = CScriptParams::Get()->ReadInt();
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(resetplayerid)) return 0;
 	
@@ -1914,7 +1914,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 {
 	CHECK_PARAMS(2, "SetPlayerVersion", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	
 	char version[29];
@@ -1934,7 +1934,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerSpawned)
 {
 	CHECK_PARAMS(1, "IsPlayerSpawned", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	int state = pNetGame->pPlayerPool->pPlayer[playerid]->byteState;
@@ -1946,7 +1946,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerControllable)
 {
 	CHECK_PARAMS(1, "IsPlayerSpawned", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pPlayerData[playerid]->bControllable;
@@ -1957,7 +1957,7 @@ AMX_DECLARE_NATIVE(Natives::SpawnForWorld)
 {
 	CHECK_PARAMS(1, "SpawnForWorld", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	CSAMPFunctions::SpawnPlayer(playerid);
@@ -1969,7 +1969,7 @@ AMX_DECLARE_NATIVE(Natives::BroadcastDeath)
 {
 	CHECK_PARAMS(1, "BroadcastDeath", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	RakNet::BitStream bsData;
@@ -1983,7 +1983,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerCameraTargetEnabled)
 {
 	CHECK_PARAMS(1, "IsPlayerCameraTargetEnabled", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid]->bCameraTarget;
@@ -1994,7 +1994,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerDisabledKeysSync)
 {
 	CHECK_PARAMS(4, "SetPlayerDisabledKeySync", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	pPlayerData[playerid]->wDisabledKeys = static_cast<WORD>(CScriptParams::Get()->ReadInt());
@@ -2008,10 +2008,10 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 {
 	CHECK_PARAMS(4, "GetPlayerDisabledKeySync", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	CScriptParams::Get()->AddInline(pPlayerData[playerid]->wDisabledKeys, static_cast<short>(pPlayerData[playerid]->wDisabledKeysUD), static_cast<short>(pPlayerData[playerid]->wDisabledKeysLR));
+	CScriptParams::Get()->Add(pPlayerData[playerid]->wDisabledKeys, static_cast<short>(pPlayerData[playerid]->wDisabledKeysUD), static_cast<short>(pPlayerData[playerid]->wDisabledKeysLR));
 	return 1;
 }
 
@@ -2021,8 +2021,8 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerScoresPingsUpdate)
 {
 	CHECK_PARAMS(2, "TogglePlayerScoresPingsUpdate", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	bool toggle = CScriptParams::Get()->ReadBool();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const bool toggle = CScriptParams::Get()->ReadBool();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 
@@ -2035,7 +2035,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerFakePing)
 {
 	CHECK_PARAMS(2, "TogglePlayerFakePing", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	bool toggle = CScriptParams::Get()->ReadBool();
 
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2049,7 +2049,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerFakePing)
 {
 	CHECK_PARAMS(2, "SetPlayerFakePing", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	int fakeping = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2063,7 +2063,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerInServerQuery)
 {
 	CHECK_PARAMS(2, "TogglePlayerInServerQuery", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	pPlayerData[playerid]->bHidden = !(!!params[2]);
@@ -2075,7 +2075,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerToggledInServerQuery)
 {
 	CHECK_PARAMS(1, "IsPlayerToggledInServerQuery", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	return !pPlayerData[playerid]->bHidden;
@@ -2086,7 +2086,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerPaused)
 {
 	CHECK_PARAMS(1, "IsPlayerPaused", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return pPlayerData[playerid]->bAFKState;
@@ -2097,7 +2097,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPausedTime)
 {
 	CHECK_PARAMS(1, "GetPlayerPausedTime", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(!pPlayerData[playerid]->bAFKState) return 0;
@@ -2111,7 +2111,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectDrawDistance)
 {
 	CHECK_PARAMS(1, "GetObjectDrawDistance", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
@@ -2123,7 +2123,7 @@ AMX_DECLARE_NATIVE(Natives::SetObjectMoveSpeed)
 {
 	CHECK_PARAMS(2, "SetObjectMoveSpeed", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
@@ -2136,7 +2136,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMoveSpeed)
 {
 	CHECK_PARAMS(1, "GetObjectMoveSpeed", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
@@ -2148,12 +2148,12 @@ AMX_DECLARE_NATIVE(Natives::GetObjectTarget)
 {
 	CHECK_PARAMS(4, "GetObjectTarget", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-	CScriptParams::Get()->AddInline(pObject->matTarget.pos);
+	CScriptParams::Get()->Add(pObject->matTarget.pos);
 	return 1;
 }
 
@@ -2162,13 +2162,13 @@ AMX_DECLARE_NATIVE(Natives::GetObjectAttachedData)
 {
 	CHECK_PARAMS(4, "GetObjectAttachedData", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-	CScriptParams::Get()->AddInline(pObject->wAttachedVehicleID, pObject->wAttachedObjectID, CServer::Get()->COBJECT_AttachedObjectPlayer[objectid]);
+	CScriptParams::Get()->Add(pObject->wAttachedVehicleID, pObject->wAttachedObjectID, CServer::Get()->COBJECT_AttachedObjectPlayer[objectid]);
 	return 1;
 }
 
@@ -2177,13 +2177,13 @@ AMX_DECLARE_NATIVE(Natives::GetObjectAttachedOffset)
 {
 	CHECK_PARAMS(7, "GetObjectAttachedOffset", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-	CScriptParams::Get()->AddInline(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
+	CScriptParams::Get()->Add(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
 	return 1;
 }
 
@@ -2192,10 +2192,10 @@ AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 {
 	CHECK_PARAMS(2, "IsObjectMaterialSlotUsed", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
-	int materialindex = CScriptParams::Get()->ReadInt();
+	const int materialindex = CScriptParams::Get()->ReadInt();
 	if(materialindex < 0 || materialindex >= 16) return 0;
 
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
@@ -2219,8 +2219,8 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 {
 	CHECK_PARAMS(8, "GetObjectMaterial", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
-	int materialindex = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
+	const int materialindex = CScriptParams::Get()->ReadInt();
 
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2239,7 +2239,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 	if(i == MAX_OBJECT_MATERIAL) return 0;
 	
 	DWORD dwColor = ABGR_ARGB(pObject->Material[i].dwMaterialColor);
-	CScriptParams::Get()->AddInline(pObject->Material[i].wModelID, &pObject->Material[i].szMaterialTXD[0], &pObject->Material[i].szMaterialTexture[0], dwColor);
+	CScriptParams::Get()->Add(pObject->Material[i].wModelID, &pObject->Material[i].szMaterialTXD[0], &pObject->Material[i].szMaterialTexture[0], dwColor);
 	return 1;
 }
 
@@ -2248,8 +2248,8 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 {
 	CHECK_PARAMS(12, "GetObjectMaterialText", LOADED);
 
-	int objectid = static_cast<int>(params[1]);
-	int materialindex = static_cast<int>(params[2]);
+	const int objectid = CScriptParams::Get()->ReadInt();
+	const int materialindex = CScriptParams::Get()->ReadInt();
 
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2283,7 +2283,7 @@ AMX_DECLARE_NATIVE(Natives::IsObjectNoCameraCol)
 {
 	CHECK_PARAMS(1, "IsObjectNoCameraCol", LOADED);
 
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
@@ -2296,8 +2296,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectDrawDistance)
 {
 	CHECK_PARAMS(2, "GetPlayerObjectDrawDistance", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= 1000) return 0;
 
@@ -2311,8 +2311,8 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerObjectMoveSpeed)
 {
 	CHECK_PARAMS(3, "SetPlayerObjectMoveSpeed", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2327,8 +2327,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMoveSpeed)
 {
 	CHECK_PARAMS(2, "GetPlayerObjectMoveSpeed", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2342,15 +2342,15 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectTarget)
 {
 	CHECK_PARAMS(5, "GetPlayerObjectTarget", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	Utility::storeVectorInNative(amx, params[3], pObject->matTarget.pos);
+	CScriptParams::Get()->Add(pObject->matTarget.pos);
 	return 1;
 }
 
@@ -2359,17 +2359,15 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 {
 	CHECK_PARAMS(5, "GetPlayerObjectAttachedData", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	Utility::storeIntegerInNative(amx, params[3], pObject->wAttachedVehicleID);
-	Utility::storeIntegerInNative(amx, params[4], pPlayerData[playerid]->stObj[objectid].wObjectID);
-	Utility::storeIntegerInNative(amx, params[5], pPlayerData[playerid]->stObj[objectid].wAttachPlayerID);
+	CScriptParams::Get()->Add(pObject->wAttachedVehicleID, pPlayerData[playerid]->stObj[objectid].wObjectID, pPlayerData[playerid]->stObj[objectid].wAttachPlayerID);
 	return 1;
 }
 
@@ -2378,8 +2376,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 {
 	CHECK_PARAMS(8, "GetPlayerObjectAttachedOffset", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2400,8 +2398,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 		vecRot = &pPlayerData[playerid]->stObj[objectid].vecRot;
 	}
 	
-	Utility::storeVectorInNative(amx, params[3], *vecOffset);
-	Utility::storeVectorInNative(amx, params[6], *vecRot);
+	CScriptParams::Get()->Add(*vecOffset, *vecRot);
 	return 1;
 }
 
@@ -2410,9 +2407,9 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 {
 	CHECK_PARAMS(3, "IsPlayerObjectMaterialSlotUsed", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
-	int materialindex = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
+	const int materialindex = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2438,9 +2435,9 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 {
 	CHECK_PARAMS(9, "GetPlayerObjectMaterial", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
-	int materialindex = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
+	const int materialindex = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2450,6 +2447,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
+
 	// Nothing to comment here..
 	while(i != MAX_OBJECT_MATERIAL)
 	{
@@ -2470,9 +2468,9 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 {
 	CHECK_PARAMS(13, "GetPlayerObjectMaterialText", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
-	int materialindex = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
+	const int materialindex = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 	if(materialindex < 0 || materialindex >= 16) return 0;
@@ -2506,8 +2504,8 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectNoCameraCol)
 {
 	CHECK_PARAMS(2, "IsPlayerObjectNoCameraCol", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2521,10 +2519,10 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingPlayerObjectID)
 {
 	CHECK_PARAMS(1, "GetPlayerSurfingPlayerObjectID", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
 
-	int surf = pPlayerData[playerid]->wSurfingInfo - MAX_VEHICLES;
+	const int surf = pPlayerData[playerid]->wSurfingInfo - MAX_VEHICLES;
 	if(surf >= 0 && surf < MAX_OBJECTS)
 	{
 		if(pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][surf])
@@ -2538,13 +2536,13 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerCameraTargetPlayerObj)
 {
 	CHECK_PARAMS(1, "GetPlayerCameraTargetPlayerObj", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
 	
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 	if(!pPlayer->bCameraTarget) return INVALID_OBJECT_ID;
 
-	int target = pNetGame->pPlayerPool->pPlayer[playerid]->aimSyncData.wCameraObject;
+	const int target = pNetGame->pPlayerPool->pPlayer[playerid]->aimSyncData.wCameraObject;
 	if(target >= 0 && target < MAX_OBJECTS)
 	{
 		if(pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][target])
@@ -2558,8 +2556,8 @@ AMX_DECLARE_NATIVE(Natives::GetObjectType)
 {
 	CHECK_PARAMS(2, "GetObjectType", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
 
@@ -2578,20 +2576,16 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 {
 	CHECK_PARAMS(15, "GetPlayerAttachedObject", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int slot = static_cast<int>(params[2]);
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int slot = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(slot < 0 || slot >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->attachedObjectSlot[slot]) return 0;
 
 	CAttachedObject *pObject = &pNetGame->pPlayerPool->pPlayer[playerid]->attachedObject[slot];
-	Utility::storeIntegerInNative(amx, params[3], pObject->iBoneiD);
-	Utility::storeIntegerInNative(amx, params[4], pObject->iBoneiD);
-	Utility::storeVectorInNative(amx, params[5], pObject->vecPos);
-	Utility::storeVectorInNative(amx, params[8], pObject->vecRot);
-	Utility::storeVectorInNative(amx, params[11], pObject->vecScale);
-	Utility::storeIntegerInNative(amx, params[14], RGBA_ABGR(pObject->dwMaterialColor1));
-	Utility::storeIntegerInNative(amx, params[15], RGBA_ABGR(pObject->dwMaterialColor2));
+
+	DWORD color1 = RGBA_ABGR(pObject->dwMaterialColor1), color2 = RGBA_ABGR(pObject->dwMaterialColor2);
+	CScriptParams::Get()->Add(pObject->iModelID, pObject->iBoneiD, pObject->vecPos, pObject->vecRot, pObject->vecScale, color1, color2);
 	return 1;
 }
 
@@ -2601,7 +2595,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 {
 	CHECK_PARAMS(7, "GetVehicleSpawnInfo", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	CVehicle* pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
@@ -2625,7 +2619,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 		spawn.iColor1 = v->second.iColor1;
 		spawn.iColor2 = v->second.iColor2;	
 	}
-	CScriptParams::Get()->AddInline(spawn.vecPos, spawn.fRot, spawn.iColor1, spawn.iColor2);
+	CScriptParams::Get()->Add(spawn.vecPos, spawn.fRot, spawn.iColor1, spawn.iColor2);
 	return 1;
 }
 
@@ -2635,7 +2629,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 	if (!CAddress::FUNC_CVehicle__Respawn) return 0;
 	CHECK_PARAMS(10, "SetVehicleSpawnInfo", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	int modelid = CScriptParams::Get()->ReadInt();
@@ -2662,7 +2656,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 
 	CVehicleSpawn spawn;
 	spawn.iModelID = modelid;
-	CScriptParams::Get()->ReadInline(&spawn.vecPos, &spawn.fRot, &spawn.iColor1, &spawn.iColor2);
+	CScriptParams::Get()->Read(&spawn.vecPos, &spawn.fRot, &spawn.iColor1, &spawn.iColor2);
 	spawn.iRespawnTime = pVehicle->customSpawn.iRespawnTime;
 	spawn.iInterior = pVehicle->customSpawn.iInterior;
 
@@ -2707,7 +2701,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleModelCount)
 {
 	CHECK_PARAMS(1, "GetVehicleModelCount", LOADED);
 
-	int modelid = CScriptParams::Get()->ReadInt();
+	const int modelid = CScriptParams::Get()->ReadInt();
 	if(modelid < 400 || modelid > 611) return 0;
 	
 	return pNetGame->pVehiclePool->byteVehicleModelsUsed[modelid - 400];
@@ -2733,7 +2727,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleColor)
 {
 	CHECK_PARAMS(3, "GetVehicleColor", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2743,7 +2737,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleColor)
 	int color1 = CServer::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor1 : pVehicle->customSpawn.iColor1;
 	int color2 = CServer::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor2 : pVehicle->customSpawn.iColor2;
 
-	CScriptParams::Get()->AddInline(color1, color2);
+	CScriptParams::Get()->Add(color1, color2);
 	return 1;
 }
 
@@ -2752,7 +2746,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehiclePaintjob)
 {
 	CHECK_PARAMS(1, "GetVehiclePaintjob", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2766,7 +2760,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleInterior)
 {
 	CHECK_PARAMS(1, "GetVehicleInterior", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2780,7 +2774,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleNumberPlate)
 {
 	CHECK_PARAMS(3, "GetVehicleNumberPlate", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2804,7 +2798,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnDelay)
 {
 	CHECK_PARAMS(2, "SetVehicleRespawnDelay", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2819,7 +2813,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnDelay)
 {
 	CHECK_PARAMS(1, "GetVehicleRespawnDelay", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2833,7 +2827,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleOccupiedTick)
 {
 	CHECK_PARAMS(2, "SetVehicleOccupiedTick", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2848,7 +2842,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleOccupiedTick)
 {
 	CHECK_PARAMS(1, "GetVehicleOccupiedTick", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2862,7 +2856,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnTick)
 {
 	CHECK_PARAMS(2, "SetVehicleRespawnTick", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2877,7 +2871,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnTick)
 {
 	CHECK_PARAMS(1, "GetVehicleRespawnTick", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2891,7 +2885,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleLastDriver)
 {
 	CHECK_PARAMS(1, "GetVehicleLastDriver", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2905,7 +2899,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleCab)
 {
 	CHECK_PARAMS(1, "GetVehicleCab", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2928,7 +2922,7 @@ AMX_DECLARE_NATIVE(Natives::HasVehicleBeenOccupied)
 {
 	CHECK_PARAMS(1, "HasVehicleBeenOccupied", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2942,7 +2936,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleBeenOccupied)
 {
 	CHECK_PARAMS(2, "SetVehicleBeenOccupied", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2957,7 +2951,7 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleOccupied)
 {
 	CHECK_PARAMS(1, "IsVehicleOccupied", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	CPlayer *pPlayer;
@@ -2977,7 +2971,7 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleDead)
 {
 	CHECK_PARAMS(1, "IsVehicleDead", LOADED);
 
-	int vehicleid = CScriptParams::Get()->ReadInt();
+	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	if(!pNetGame->pVehiclePool->pVehicle[vehicleid]) 
@@ -2992,7 +2986,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidGangZone)
 {
 	CHECK_PARAMS(1, "IsValidGangZone", LOADED);
 	
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	return CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid));
@@ -3003,8 +2997,8 @@ AMX_DECLARE_NATIVE(Natives::IsGangZoneVisibleForPlayer)
 {
 	CHECK_PARAMS(2, "IsGangZoneVisibleForPlayer", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
@@ -3018,8 +3012,8 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetColorForPlayer)
 {
 	CHECK_PARAMS(2, "GangZoneGetColorForPlayer", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -3038,8 +3032,8 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetFlashColorForPlayer)
 {
 	CHECK_PARAMS(2, "GangZoneGetFlashColorForPlayer", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -3058,8 +3052,8 @@ AMX_DECLARE_NATIVE(Natives::IsGangZoneFlashingForPlayer)
 {
 	CHECK_PARAMS(2, "IsGangZoneFlashingForPlayer", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -3078,8 +3072,8 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInGangZone)
 {
 	CHECK_PARAMS(2, "IsPlayerInGangZone", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -3098,13 +3092,13 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 {
 	CHECK_PARAMS(5, "GangZoneGetPos", LOADED);
 
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	if(!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
 	
 	CGangZone *pGangZone = CServer::Get()->pGangZonePool->pGangZone[zoneid];
-	CScriptParams::Get()->AddInline(pGangZone->fGangZone[0], pGangZone->fGangZone[1], pGangZone->fGangZone[2], pGangZone->fGangZone[3]);
+	CScriptParams::Get()->Add(pGangZone->fGangZone[0], pGangZone->fGangZone[1], pGangZone->fGangZone[2], pGangZone->fGangZone[3]);
 	return 1;
 }
 
@@ -3114,7 +3108,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)
 {
 	CHECK_PARAMS(1, "IsValidTextDraw", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	return pNetGame->pTextDrawPool->bSlotState[textdrawid];
@@ -3125,10 +3119,10 @@ AMX_DECLARE_NATIVE(Natives::IsTextDrawVisibleForPlayer)
 {
 	CHECK_PARAMS(2, "IsTextDrawVisibleForPlayer", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(playerid < 0 || playerid >= MAX_PLAYERS) return 0;
 
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3141,7 +3135,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 {
 	CHECK_PARAMS(3, "TextDrawGetString", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	const char *szText = (pNetGame->pTextDrawPool->bSlotState[textdrawid]) ? pNetGame->pTextDrawPool->szFontText[textdrawid] : '\0';
@@ -3153,7 +3147,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 {
 	CHECK_PARAMS(3, "TextDrawSetPos", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3168,7 +3162,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetLetterSize)
 {
 	CHECK_PARAMS(3, "TextDrawGetLetterSize", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3183,7 +3177,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetTextSize)
 {
 	CHECK_PARAMS(3, "TextDrawGetTextSize", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3198,7 +3192,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPos)
 {
 	CHECK_PARAMS(3, "TextDrawGetPos", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3213,7 +3207,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetColor)
 {
 	CHECK_PARAMS(1, "TextDrawGetColor", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3227,7 +3221,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetBoxColor)
 {
 	CHECK_PARAMS(1, "TextDrawGetBoxColor", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3241,7 +3235,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetBackgroundColor)
 {
 	CHECK_PARAMS(1, "TextDrawGetBackgroundColor", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3255,7 +3249,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetShadow)
 {
 	CHECK_PARAMS(1, "TextDrawGetShadow", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3269,7 +3263,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetOutline)
 {
 	CHECK_PARAMS(1, "TextDrawGetOutline", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3283,7 +3277,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetFont)
 {
 	CHECK_PARAMS(1, "TextDrawGetOutline", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3297,7 +3291,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsBox)
 {
 	CHECK_PARAMS(1, "TextDrawIsBox", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3311,7 +3305,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsProportional)
 {
 	CHECK_PARAMS(1, "TextDrawIsProportional", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3325,7 +3319,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsSelectable)
 {
 	CHECK_PARAMS(1, "TextDrawIsSelectable", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3339,7 +3333,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetAlignment)
 {
 	CHECK_PARAMS(1, "TextDrawGetAlignment", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3358,7 +3352,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewModel)
 {
 	CHECK_PARAMS(1, "TextDrawGetPreviewModel", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
@@ -3372,13 +3366,13 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewRot)
 {
 	CHECK_PARAMS(5, "TextDrawGetPreviewRot", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 	
-	CScriptParams::Get()->AddInline(pTD->vecRot, pTD->fZoom);
+	CScriptParams::Get()->Add(pTD->vecRot, pTD->fZoom);
 	return 1;
 }
 
@@ -3387,13 +3381,13 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewVehCol)
 {
 	CHECK_PARAMS(3, "TextDrawGetPreviewVehCol", LOADED);
 	
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 	
 	if(!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 	
-	CScriptParams::Get()->AddInline(pTD->color1, pTD->color2);
+	CScriptParams::Get()->Add(pTD->color1, pTD->color2);
 	return 1;
 }
 
@@ -3403,8 +3397,8 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerTextDraw)
 {
 	CHECK_PARAMS(2, "IsValidPlayerTextDraw", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3418,8 +3412,8 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerTextDrawVisible)
 {
 	CHECK_PARAMS(2, "IsPlayerTextDrawVisible", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3433,8 +3427,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetString)
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetString", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3451,8 +3445,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawSetPos)
 {
 	CHECK_PARAMS(4, "PlayerTextDrawSetPos", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3469,8 +3463,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetLetterSize)
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetLetterSize", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3487,8 +3481,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetTextSize)
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetTextSize", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3505,8 +3499,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPos)
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetPos", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3523,8 +3517,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetColor)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetColor", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3539,8 +3533,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBoxColor)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetBoxColor", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3555,8 +3549,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBackgroundCol)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetBackgroundCol", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3571,8 +3565,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetShadow)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetShadow", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3587,8 +3581,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetOutline)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetOutline", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3603,8 +3597,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetFont)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetFont", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3619,8 +3613,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsBox)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsBox", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3635,8 +3629,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsProportional)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsProportional", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3651,8 +3645,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsSelectable)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawIsSelectable", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3667,8 +3661,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetAlignment)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetAlignment", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3688,8 +3682,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewModel)
 {
 	CHECK_PARAMS(2, "PlayerTextDrawGetPreviewModel", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3704,8 +3698,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewRot)
 {
 	CHECK_PARAMS(6, "PlayerTextDrawGetPreviewRot", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3713,7 +3707,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewRot)
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	CScriptParams::Get()->AddInline(pTD->vecRot, pTD->fZoom);
+	CScriptParams::Get()->Add(pTD->vecRot, pTD->fZoom);
 	return 1;
 }
 
@@ -3722,8 +3716,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewVehCol)
 {
 	CHECK_PARAMS(4, "PlayerTextDrawGetPreviewVehCol", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int textdrawid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int textdrawid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(textdrawid >= MAX_PLAYER_TEXT_DRAWS) return 0;
@@ -3731,7 +3725,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewVehCol)
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	CScriptParams::Get()->AddInline(pTD->color1, pTD->color2);
+	CScriptParams::Get()->Add(pTD->color1, pTD->color2);
 	return 1;
 }
 
@@ -3752,7 +3746,7 @@ AMX_DECLARE_NATIVE(Natives::Is3DTextLabelStreamedIn)
 {
 	CHECK_PARAMS(2, "Is3DTextLabelStreamedIn", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -3766,7 +3760,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelText)
 {
 	CHECK_PARAMS(3, "Get3DTextLabelText", LOADED);
 	
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
@@ -3780,7 +3774,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelColor)
 {
 	CHECK_PARAMS(1, "Get3DTextLabelColor", LOADED);
 	
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
@@ -3794,7 +3788,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelPos)
 {
 	CHECK_PARAMS(4, "Get3DTextLabelPos", LOADED);
 	
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
@@ -3809,7 +3803,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelDrawDistance)
 {
 	CHECK_PARAMS(1, "Get3DTextLabelDrawDistance", LOADED);
 	
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
@@ -3823,7 +3817,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelLOS)
 {
 	CHECK_PARAMS(1, "Get3DTextLabelLOS", LOADED);
 	
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
@@ -3837,7 +3831,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelVirtualWorld)
 {
 	CHECK_PARAMS(1, "Get3DTextLabelVirtualWorld", LOADED);
 	
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
@@ -3851,13 +3845,13 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelAttachedData)
 {
 	CHECK_PARAMS(3, "Get3DTextLabelAttachedData", LOADED);
 	
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
 	
 	if(!pNetGame->p3DTextPool->bIsCreated[id]) return 0;
 	C3DText p3DText = pNetGame->p3DTextPool->TextLabels[id];
 
-	CScriptParams::Get()->AddInline(p3DText.wAttachedToPlayerID, p3DText.wAttachedToVehicleID);
+	CScriptParams::Get()->Add(p3DText.wAttachedToPlayerID, p3DText.wAttachedToVehicleID);
 	return 1;
 }
 
@@ -3866,8 +3860,8 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayer3DTextLabel)
 {
 	CHECK_PARAMS(2, "IsValidPlayer3DTextLabel", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3880,8 +3874,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelText)
 {
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelText", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3897,8 +3891,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelColor)
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelColor", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3914,8 +3908,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelPos)
 {
 	CHECK_PARAMS(5, "GetPlayer3DTextLabelPos", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3932,8 +3926,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelDrawDist)
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelDrawDist", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3949,8 +3943,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelLOS)
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelLOS", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3966,8 +3960,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelVirtualW)
 {
 	CHECK_PARAMS(2, "GetPlayer3DTextLabelVirtualW", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3983,8 +3977,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelAttached)
 {
 	CHECK_PARAMS(4, "GetPlayer3DTextLabelAttached", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_3DTEXT_PLAYER) return 0;
@@ -3992,7 +3986,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelAttached)
 	if(!pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->isCreated[id]) return 0;
 	C3DText p3DText = pNetGame->pPlayerPool->pPlayer[playerid]->p3DText->TextLabels[id];
 	
-	CScriptParams::Get()->AddInline(p3DText.wAttachedToPlayerID, p3DText.wAttachedToVehicleID);
+	CScriptParams::Get()->Add(p3DText.wAttachedToPlayerID, p3DText.wAttachedToVehicleID);
 	return 1;
 }
 
@@ -4001,10 +3995,10 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 {
 	CHECK_PARAMS(8, "AttachObjectToPlayer", LOADED);
 	
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
@@ -4014,7 +4008,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 	pAttachObjectToPlayer(amx, params);
 
 	CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
-	CScriptParams::Get()->ReadInline(&pObject->vecAttachedOffset, &pObject->vecAttachedRotation);
+	CScriptParams::Get()->Read(&pObject->vecAttachedOffset, &pObject->vecAttachedRotation);
 	return 1;
 }
 
@@ -4023,8 +4017,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 {
 	CHECK_PARAMS(9, "AttachObjectToPlayer", MORE_PARAMETER_ALLOWED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int objectid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
 	int attachplayerid = CScriptParams::Get()->ReadInt();
 	bool bOnlyAddToInstance;
 
@@ -4035,7 +4029,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 	
 	pPlayerData[playerid]->stObj[objectid].wAttachPlayerID = static_cast<WORD>(attachplayerid);
-	CScriptParams::Get()->ReadInline(&pPlayerData[playerid]->stObj[objectid].vecOffset, &pPlayerData[playerid]->stObj[objectid].vecRot, &bOnlyAddToInstance);
+	CScriptParams::Get()->Read(&pPlayerData[playerid]->stObj[objectid].vecOffset, &pPlayerData[playerid]->stObj[objectid].vecRot, &bOnlyAddToInstance);
 
 	if(!bOnlyAddToInstance)
 	{
@@ -4069,9 +4063,9 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 {
 	CHECK_PARAMS(10, "AttachPlayerObjectToObject", LOADED);
 
-	int forplayerid = CScriptParams::Get()->ReadInt();
-	int wObjectID = CScriptParams::Get()->ReadInt();
-	int wAttachTo = CScriptParams::Get()->ReadInt();
+	const int forplayerid = CScriptParams::Get()->ReadInt();
+	const int wObjectID = CScriptParams::Get()->ReadInt();
+	const int wAttachTo = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(forplayerid)) return 0;
 
@@ -4085,7 +4079,7 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 	CVector vecOffset;
 	CVector vecOffsetRot;
 	BYTE byteSyncRot;
-	CScriptParams::Get()->ReadInline(&vecOffset, &vecOffsetRot, &byteSyncRot);
+	CScriptParams::Get()->Read(&vecOffset, &vecOffsetRot, &byteSyncRot);
 
 	// Store data
 	pPlayerData[forplayerid]->stObj[wObjectID].wObjectID = static_cast<WORD>(wAttachTo);
@@ -4138,7 +4132,7 @@ AMX_DECLARE_NATIVE(Natives::GetRecordingDirectory)
 	if(!CAddress::ADDR_RecordingDirectory) return 0;
 
 	char temp[MAX_PATH];
-	int len = strlen(gRecordingDataPath);
+	const size_t len = strlen(gRecordingDataPath);
 	strcpy(temp, gRecordingDataPath);
 	temp[len - 7] = 0;
 
@@ -4151,7 +4145,7 @@ AMX_DECLARE_NATIVE(Natives::SendClientMessagef)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-	int playerid = static_cast<int>(params[1]);
+	const int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	int len;
@@ -4188,7 +4182,7 @@ AMX_DECLARE_NATIVE(Natives::GameTextForPlayerf)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-	int playerid = static_cast<int>(params[1]);
+	const int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	int len;
@@ -4227,7 +4221,7 @@ AMX_DECLARE_NATIVE(Natives::SendPlayerMessageToPlayerf)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-	int playerid = static_cast<int>(params[1]);
+	const int playerid = static_cast<int>(params[1]);
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	int senderid = static_cast<int>(params[2]);
@@ -4354,7 +4348,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneCreate)
 	CHECK_PARAMS(4, "GangZoneCreate", LOADED);
 
 	float fMinX, fMinY, fMaxX, fMaxY;
-	CScriptParams::Get()->ReadInline(&fMinX, &fMinY, &fMaxX, &fMaxY);
+	CScriptParams::Get()->Read(&fMinX, &fMinY, &fMaxX, &fMaxY);
 
 	// If coordinates are wrong, then won't create bugged zone!
 	if(fMaxX <= fMinX || fMaxY <= fMinY) 
@@ -4374,7 +4368,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneDestroy)
 	CHECK_PARAMS(1, "GangZoneDestroy", LOADED);
 
 	CGangZonePool *pGangZonePool = CServer::Get()->pGangZonePool;
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!pGangZonePool || !pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 	pGangZonePool->Delete(static_cast<WORD>(zoneid));
@@ -4386,8 +4380,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForPlayer)
 {
 	CHECK_PARAMS(3, "GangZoneShowForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 
 	// For security
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -4401,8 +4395,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForPlayer)
 {
 	CHECK_PARAMS(2, "GangZoneHideForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 
 	// For security
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -4417,7 +4411,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForAll)
 {
 	CHECK_PARAMS(2, "GangZoneShowForAll", LOADED);
 
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
 	CServer::Get()->pGangZonePool->ShowForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
@@ -4429,7 +4423,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForAll)
 {
 	CHECK_PARAMS(1, "GangZoneHideForAll", LOADED);
 
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
 	CServer::Get()->pGangZonePool->HideForAll(static_cast<WORD>(zoneid));
@@ -4440,8 +4434,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForPlayer)
 {
 	CHECK_PARAMS(3, "GangZoneFlashForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 
 	// For security
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -4455,7 +4449,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForAll)
 {
 	CHECK_PARAMS(2, "GangZoneFlashForAll", LOADED);
 
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
 	CServer::Get()->pGangZonePool->FlashForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
@@ -4466,8 +4460,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForPlayer)
 {
 	CHECK_PARAMS(2, "GangZoneStopFlashForPlayer", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 
 	// For security
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -4481,7 +4475,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForAll)
 {
 	CHECK_PARAMS(1, "GangZoneStopFlashForAll", LOADED);
 
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
 	CServer::Get()->pGangZonePool->StopFlashForAll(static_cast<WORD>(zoneid));
@@ -4494,7 +4488,7 @@ AMX_DECLARE_NATIVE(Natives::IsMenuDisabled)
 {
 	CHECK_PARAMS(1, "IsMenuDisabled", LOADED);
 	
-	int menuid = CScriptParams::Get()->ReadInt();
+	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 	
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
@@ -4508,10 +4502,10 @@ AMX_DECLARE_NATIVE(Natives::IsMenuRowDisabled)
 {
 	CHECK_PARAMS(2, "IsMenuRowDisabled", LOADED);
 	
-	int menuid = CScriptParams::Get()->ReadInt();
+	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 	
-	int itemid = CScriptParams::Get()->ReadInt();
+	const int itemid = CScriptParams::Get()->ReadInt();
 	if(itemid < 0 || itemid >= 12) return 0;
 
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
@@ -4525,7 +4519,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumns)
 {
 	CHECK_PARAMS(1, "GetMenuColumns", LOADED);
 	
-	int menuid = CScriptParams::Get()->ReadInt();
+	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 	
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
@@ -4539,10 +4533,10 @@ AMX_DECLARE_NATIVE(Natives::GetMenuItems)
 {
 	CHECK_PARAMS(2, "GetMenuItems", LOADED);
 	
-	int menuid = CScriptParams::Get()->ReadInt();
+	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
-	int column = CScriptParams::Get()->ReadInt();
+	const int column = CScriptParams::Get()->ReadInt();
 	if(menuid < 0 || menuid > 2) return 0;
 
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
@@ -4556,7 +4550,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuPos)
 {
 	CHECK_PARAMS(3, "GetMenuColumns", LOADED);
 	
-	int menuid = CScriptParams::Get()->ReadInt();
+	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
@@ -4571,13 +4565,13 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumnWidth)
 {
 	CHECK_PARAMS(4, "GetMenuColumnWidth", LOADED);
 	
-	int menuid = CScriptParams::Get()->ReadInt();
+	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
 	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	CScriptParams::Get()->AddInline(pMenu->fColumn1Width, pMenu->fColumn2Width);
+	CScriptParams::Get()->Add(pMenu->fColumn1Width, pMenu->fColumn2Width);
 	return 1;
 }
 
@@ -4586,10 +4580,10 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumnHeader)
 {
 	CHECK_PARAMS(4, "GetMenuColumnHeader", LOADED);
 	
-	int menuid = CScriptParams::Get()->ReadInt();
+	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
-	int column = CScriptParams::Get()->ReadInt();
+	const int column = CScriptParams::Get()->ReadInt();
 	if(menuid < 0 || menuid > 2) return 0;
 
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
@@ -4604,13 +4598,13 @@ AMX_DECLARE_NATIVE(Natives::GetMenuItem)
 {
 	CHECK_PARAMS(5, "GetMenuItem", LOADED);
 	
-	int menuid = CScriptParams::Get()->ReadInt();
+	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
 
-	int column = CScriptParams::Get()->ReadInt();
+	const int column = CScriptParams::Get()->ReadInt();
 	if(menuid < 0 || menuid > 2) return 0;
 
-	int itemid = CScriptParams::Get()->ReadInt();
+	const int itemid = CScriptParams::Get()->ReadInt();
 	if(itemid < 0 || itemid >= 12) return 0;
 
 	if(!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
@@ -4625,11 +4619,11 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 {
 	CHECK_PARAMS(5, "CreatePlayerGangZone", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	float fMinX, fMinY, fMaxX, fMaxY;
-	CScriptParams::Get()->ReadInline(&fMinX, &fMinY, &fMaxX, &fMaxY);
+	CScriptParams::Get()->Read(&fMinX, &fMinY, &fMaxX, &fMaxY);
 	 
 	// If coordinates are wrong, then won't create bugged zone!
 	if(fMaxX <= fMinX || fMaxY <= fMinY) 
@@ -4650,8 +4644,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneShow)
 {
 	CHECK_PARAMS(3, "PlayerGangZoneShow", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	int color = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -4668,8 +4662,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneHide)
 {
 	CHECK_PARAMS(2, "PlayerGangZoneHide", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -4685,8 +4679,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneFlash)
 {
 	CHECK_PARAMS(3, "PlayerGangZoneFlash", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	int color = CScriptParams::Get()->ReadInt();
 	
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -4702,8 +4696,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneStopFlash)
 {
 	CHECK_PARAMS(2, "PlayerGangZoneStopFlash", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -4719,8 +4713,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneDestroy)
 {
 	CHECK_PARAMS(2, "PlayerGangZoneDestroy", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
@@ -4733,8 +4727,8 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerGangZone)
 {
 	CHECK_PARAMS(2, "IsValidPlayerGangZone", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -4746,8 +4740,8 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInPlayerGangZone)
 {
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -4766,10 +4760,10 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 {
 	CHECK_PARAMS(6, "PlayerGangZoneGetPos", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
 	if(!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
@@ -4778,7 +4772,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 	if(id != 0xFFFF) 
 	{
 		CGangZone *pGangZone = pPlayerData[playerid]->pPlayerZone[zoneid];
-		CScriptParams::Get()->AddInline(pGangZone->fGangZone[0], pGangZone->fGangZone[1], pGangZone->fGangZone[2], pGangZone->fGangZone[3]);
+		CScriptParams::Get()->Add(pGangZone->fGangZone[0], pGangZone->fGangZone[1], pGangZone->fGangZone[2], pGangZone->fGangZone[3]);
 		return 1;
 	}
 	return 0;
@@ -4789,8 +4783,8 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneVisible)
 {
 	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -4804,8 +4798,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetColor)
 {
 	CHECK_PARAMS(2, "PlayerGangZoneGetColor", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -4824,8 +4818,8 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetFlashColor)
 {
 	CHECK_PARAMS(2, "PlayerGangZoneGetFlashColor", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -4844,8 +4838,8 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 {
 	CHECK_PARAMS(2, "IsPlayerGangZoneFlashing", LOADED);
 	
-	int playerid = CScriptParams::Get()->ReadInt();
-	int zoneid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 	
@@ -4866,7 +4860,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
 	CHECK_PARAMS(1, "IsValidPickup", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	return CServer::Get()->pPickupPool->FindPickup(id) != 0;
@@ -4877,8 +4871,8 @@ AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
 	CHECK_PARAMS(2, "IsPickupStreamedIn", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
@@ -4893,7 +4887,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
 	CHECK_PARAMS(4, "GetPickupPos", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
@@ -4908,7 +4902,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
 	CHECK_PARAMS(1, "GetPickupModel", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
@@ -4922,7 +4916,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
 	CHECK_PARAMS(1, "GetPickupType", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
@@ -4936,7 +4930,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
 	CHECK_PARAMS(1, "GetPickupVirtualWorld", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
 	CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
@@ -4950,7 +4944,7 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerPickup)
 {
 	CHECK_PARAMS(7, "CreatePlayerPickup", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
 	return CServer::Get()->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])), (int)params[7]);
@@ -4961,8 +4955,8 @@ AMX_DECLARE_NATIVE(Natives::DestroyPlayerPickup)
 {
 	CHECK_PARAMS(2, "DestroyPlayerPickup", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -4978,8 +4972,8 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerPickup)
 {
 	CHECK_PARAMS(2, "IsValidPlayerPickup", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 
@@ -4991,8 +4985,8 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerPickupStreamedIn)
 {
 	CHECK_PARAMS(2, "IsPlayerPickupStreamedIn", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5007,8 +5001,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupPos)
 {
 	CHECK_PARAMS(5, "GetPlayerPickupPos", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5025,8 +5019,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupModel)
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 	CHECK_PARAMS(2, "GetPlayerPickupModel", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5041,8 +5035,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupType)
 {
 	CHECK_PARAMS(2, "GetPlayerPickupType", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5057,8 +5051,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupVirtualWorld)
 {
 	CHECK_PARAMS(2, "GetPlayerPickupVirtualWorld", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int id = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;	
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
 	
@@ -5075,7 +5069,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
 	CHECK_PARAMS(1, "IsValidPickup", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5087,8 +5081,8 @@ AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
 	CHECK_PARAMS(2, "IsPickupStreamedIn", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
-	int pickupid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int pickupid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 	if (pickupid < 0 || pickupid >= MAX_PICKUPS) return 0;
 
@@ -5100,7 +5094,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
 	CHECK_PARAMS(4, "GetPickupPos", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5115,7 +5109,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
 	CHECK_PARAMS(1, "GetPickupModel", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5129,7 +5123,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
 	CHECK_PARAMS(1, "GetPickupType", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5143,7 +5137,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
 	CHECK_PARAMS(1, "GetPickupVirtualWorld", LOADED);
 
-	int id = CScriptParams::Get()->ReadInt();
+	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
 		return 0;
 
@@ -5179,7 +5173,7 @@ AMX_DECLARE_NATIVE(Natives::SetTimeoutTime)
 {
 	CHECK_PARAMS(2, "SetTimeoutTime", LOADED);
 	
-	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(CScriptParams::Get()->ReadInt());
+	const PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(CScriptParams::Get()->ReadInt());
 	if(playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || !IsPlayerConnected(static_cast<int>(params[1])))
 		return 0;
 
@@ -5200,7 +5194,7 @@ AMX_DECLARE_NATIVE(Natives::SendRPC)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-	bool bBroadcast = static_cast<int>(params[1]) == -1;
+	const bool bBroadcast = static_cast<int>(params[1]) == -1;
 	BYTE rpcid = static_cast<BYTE>(params[2]);
 	
 	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
@@ -5277,8 +5271,8 @@ AMX_DECLARE_NATIVE(Natives::SendData)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-	bool bBroadcast = static_cast<int>(params[1]) == -1;
-	PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
+	const bool bBroadcast = static_cast<int>(params[1]) == -1;
+	const PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));
 
 	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress && !bBroadcast)
 		return 0;
@@ -5393,7 +5387,7 @@ AMX_DECLARE_NATIVE(Natives::FIXED_IsPlayerConnected)
 {
 	CHECK_PARAMS(1, "IsPlayerConnected", LOADED);
 
-	int playerid = CScriptParams::Get()->ReadInt();
+	const int playerid = CScriptParams::Get()->ReadInt();
 	if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;
 
 	return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;

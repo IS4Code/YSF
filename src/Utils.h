@@ -71,7 +71,7 @@ namespace Utility
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);
 bool IsPlayerConnected(int playerid);
-char *GetPlayerName(int playerid);
+const char *GetPlayerName(int playerid);
 
 bool Unlock(void *address, size_t len);
 

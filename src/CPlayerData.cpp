@@ -178,7 +178,7 @@ bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, char *name)
 	return true;
 }
 
-char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
+const char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
 {
 	if (!m_szNames[nameplayerid][0])
 	{
