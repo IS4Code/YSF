@@ -359,6 +359,9 @@ WORD CServer::GetNPCCount()
 
 void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 {
+	const int read_offset = bsSync->GetReadOffset();
+	const int write_offset = bsSync->GetWriteOffset();
+
 	BYTE id;
 	WORD playerid;
 
@@ -485,9 +488,25 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		case ID_VEHICLE_SYNC:
 		{
 			if (!pPlayerData[playerid]->wDisabledKeysLR && !pPlayerData[playerid]->wDisabledKeysUD && !pPlayerData[playerid]->wDisabledKeys) break;
+			
+			const int owerwrite_offset = bsSync->GetReadOffset() + 16; // skip p->vehicleSyncData.wVehicleId
+			bsSync->SetReadOffset(owerwrite_offset); 
 
+			WORD wKeys, wKeysLR, wKeysUD;
+			bsSync->Read(wKeysLR);
+			bsSync->Read(wKeysUD);
+			bsSync->Read(wKeys);
+
+			wKeysLR &= ~pPlayerData[playerid]->wDisabledKeysLR;
+			wKeysUD &= ~pPlayerData[playerid]->wDisabledKeysUD;
+			wKeys &= ~pPlayerData[playerid]->wDisabledKeys;
+
+			bsSync->SetWriteOffset(owerwrite_offset);
+			bsSync->Write(wKeysLR);
+			bsSync->Write(wKeysUD);
+			bsSync->Write(wKeys);
+			/*
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
-			WORD keys = 0;
 
 			bsSync->Reset();
 			bsSync->Write((BYTE)ID_VEHICLE_SYNC);
@@ -572,9 +591,14 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			{
 				bsSync->Write(false);
 			}
+			*/
+			// set default offsets
+			bsSync->SetReadOffset(read_offset);
+			bsSync->SetWriteOffset(write_offset);
 			break;
 		}
 	}
+
 }
 
 void CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
