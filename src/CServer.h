@@ -88,6 +88,9 @@ public:
 
 	void inline EnableNightVisionFix(bool enable) { m_bNightVisionFix = enable; }
 	bool inline IsNightVisionFixEnabled(void) { return m_bNightVisionFix; }
+	
+	void inline ToggleOnServerMessage(bool toggle) { m_bOnServerMessage = toggle; }
+	bool inline IsOnServerMessageEnabled(void) { return m_bOnServerMessage; }
 
 	void SetExtendedNetStatsEnabled(bool enable);
 	bool IsExtendedNetStatsEnabled(void);
@@ -115,6 +118,7 @@ private:
 	int m_iTickRate;
 	bool m_bInitialized = 0;
 	bool m_bNightVisionFix : 1;
+	bool m_bOnServerMessage : 1;
 	DWORD m_dwAFKAccuracy;
 
 	std::set<std::string> m_BannedIPs;

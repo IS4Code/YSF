@@ -38,6 +38,7 @@ void CServer::Initialize(eSAMPVersion version)
 	m_iTicks = 0;
 	m_iTickRate = 5;
 	m_bNightVisionFix = true;
+	m_bOnServerMessage = false;
 	m_dwAFKAccuracy = 1500;
 
 #ifndef _WIN32
@@ -505,6 +506,11 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write(wKeysLR);
 			bsSync->Write(wKeysUD);
 			bsSync->Write(wKeys);
+
+			// set default offsets
+			bsSync->SetReadOffset(read_offset);
+			bsSync->SetWriteOffset(write_offset);
+
 			/*
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 
@@ -592,9 +598,6 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write(false);
 			}
 			*/
-			// set default offsets
-			bsSync->SetReadOffset(read_offset);
-			bsSync->SetWriteOffset(write_offset);
 			break;
 		}
 	}

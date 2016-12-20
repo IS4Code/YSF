@@ -325,6 +325,9 @@ namespace Natives
 	AMX_DECLARE_NATIVE(YSF_GetTickRate);
 	AMX_DECLARE_NATIVE(YSF_EnableNightVisionFix);
 	AMX_DECLARE_NATIVE(YSF_IsNightVisionFixEnabled);
+	AMX_DECLARE_NATIVE(YSF_EnableNightVisionFix);
+	AMX_DECLARE_NATIVE(YSF_ToggleOnServerMessage);
+	AMX_DECLARE_NATIVE(YSF_IsOnServerMessageEnabled);
 	AMX_DECLARE_NATIVE(YSF_SetExtendedNetStatsEnabled);
 	AMX_DECLARE_NATIVE(YSF_IsExtendedNetStatsEnabled);
 	AMX_DECLARE_NATIVE(YSF_SetAFKAccuracy);

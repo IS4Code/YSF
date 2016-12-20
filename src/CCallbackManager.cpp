@@ -206,17 +206,20 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 	}
 }
 
-bool CCallbackManager::OnServerMessage(char* message)
+bool CCallbackManager::OnServerMessage(const char* message)
 {
 	if (!message) return 0;
 
 	// Fix crash caused by % symbol (by default this crash happens in /rcon varlist)
+	size_t len = strlen(message);
+	char* msg = new char[len + 1];
+	strncpy(msg, message, len);
 	size_t i = 0;
-	while (message[i])
+	while (msg[i])
 	{
-		if (message[i] == '%')
+		if (msg[i] == '%')
 		{
-			message[i] = '#';
+			msg[i] = '#';
 		}
 		i++;
 	}
@@ -228,13 +231,15 @@ bool CCallbackManager::OnServerMessage(char* message)
 		if (!amx_FindPublic(iter, "OnServerMessage", &idx))
 		{
 			cell amx_addr;
-			amx_PushString(iter, &amx_addr, nullptr, message, 0, 0);
+			amx_PushString(iter, &amx_addr, nullptr, msg, 0, 0);
 			amx_Exec(iter, &ret, idx);
 			amx_Release(iter, amx_addr);
 
 			if (!ret) return 0;
 		}
 	}
+
+	delete[] msg;
 	return static_cast<int>(ret) != 0;
 }
 

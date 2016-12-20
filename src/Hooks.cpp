@@ -356,15 +356,18 @@ typedef void (*FUNC_logprintf)(const char *msg, ...);
 void HOOK_logprintf(const char *msg, ...)
 {
 	char buffer[1024];
-	//char bufferprint[1024];
 	va_list arguments;
 	va_start(arguments, msg);
 	vsnprintf(buffer, sizeof(buffer), msg, arguments);
 	va_end(arguments);
-	//strncpy(bufferprint, buffer, sizeof(bufferprint));
 
-	// CCallbackManager::OnServerMessage(bufferprint) - isn't stable
-	if (true)
+	bool bAllow;
+	if (CServer::Get()->IsOnServerMessageEnabled())
+		bAllow = CCallbackManager::OnServerMessage(buffer);
+	else
+		bAllow = true;
+
+	if (bAllow)
 	{		
 #ifdef _WIN32		
 		char OEMbuffer[1024];
