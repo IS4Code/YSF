@@ -5746,8 +5746,8 @@ AMX_NATIVE_INFO YSINatives [] =
 	AMX_DEFINE_NATIVE(YSF_GetTickRate)
 	AMX_DEFINE_NATIVE(YSF_EnableNightVisionFix)
 	AMX_DEFINE_NATIVE(YSF_IsNightVisionFixEnabled)
-	AMX_DEFINE_NATIVE(YSF_ToggleOnServerMessage) // R19
-	AMX_DEFINE_NATIVE(YSF_IsOnServerMessageEnabled) // R19
+	AMX_DEFINE_NATIVE(YSF_ToggleOnServerMessage) // R18-2
+	AMX_DEFINE_NATIVE(YSF_IsOnServerMessageEnabled) // R18-2
 	AMX_DEFINE_NATIVE(YSF_SetExtendedNetStatsEnabled) // R17
 	AMX_DEFINE_NATIVE(YSF_IsExtendedNetStatsEnabled) // R17
 	AMX_DEFINE_NATIVE(YSF_SetAFKAccuracy) // R17
