@@ -83,7 +83,7 @@ void CDECL HOOK_CNetGame__SetWeather(void *thisptr, BYTE weatherid)
 {
 	subhook_remove(SetWeather_hook);
 
-	for (int i = 0; i != MAX_PLAYERS; i++)
+	for (int i = 0; i != MAX_PLAYERS; ++i)
 	{
 		if (IsPlayerConnected(i))
 			pPlayerData[i]->byteWeather = weatherid;
@@ -104,7 +104,7 @@ void CDECL HOOK_CNetGame__SetGravity(void *thisptr, float gravity)
 {
 	subhook_remove(SetGravity_hook);
 
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		if (IsPlayerConnected(i))
 			pPlayerData[i]->fGravity = gravity;
@@ -584,7 +584,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						BYTE byteNameLen;
 						DWORD dwScore;
 
-						for (WORD r = 0; r < MAX_PLAYERS; r++)
+						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
 							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
@@ -630,7 +630,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						BYTE byteNameLen;
 						DWORD dwScore, dwPing;
 
-						for (WORD r = 0; r < MAX_PLAYERS; r++)
+						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
 							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{

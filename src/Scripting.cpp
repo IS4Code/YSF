@@ -908,7 +908,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerTeam)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerTeam(amx, params))
 	{
-		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		for(WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
 			if(IsPlayerConnected(i))
 				pPlayerData[i]->ResetPlayerTeam(static_cast<WORD>(playerid));
@@ -954,7 +954,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerSkin(amx, params))
 	{
-		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		for(WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
 			if(IsPlayerConnected(i))
 				pPlayerData[i]->ResetPlayerSkin(static_cast<WORD>(playerid));
@@ -1004,7 +1004,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 
 	if(ret == 1)
 	{
-		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		for(WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
 			if(IsPlayerConnected(i))
 				pPlayerData[i]->ResetPlayerName(static_cast<WORD>(playerid));
@@ -1048,7 +1048,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerFightingStyle(amx, params))
 	{
-		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		for(WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
 			if(IsPlayerConnected(i))
 				pPlayerData[i]->ResetPlayerFightingStyle(static_cast<WORD>(playerid));
@@ -1220,7 +1220,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWorldBounds)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerWorldBounds(amx, params))
 	{
-		for (BYTE i = 0; i != 4; i++)
+		for (BYTE i = 0; i != 4; ++i)
 		{
 			pPlayerData[playerid]->fBounds[i] = CScriptParams::Get()->ReadFloat();
 		}
@@ -1258,7 +1258,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	for (BYTE i = 0; i != MAX_OBJECT_MATERIAL; i++)
+	for (BYTE i = 0; i != MAX_OBJECT_MATERIAL; ++i)
 	{
 		if (pObject->szMaterialText[i])
 		{
@@ -2642,7 +2642,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 	bool bStreamedIn = false;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;		
 
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	for(WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		if(IsPlayerConnected(i))
 		{
@@ -2713,7 +2713,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleModelsUsed)
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 	BYTE byteModelsUsed = 0;
-	for(BYTE i = 0; i != 212; i++)
+	for(BYTE i = 0; i != 212; ++i)
 	{
 		if(pNetGame->pVehiclePool->byteVehicleModelsUsed[i] != 0)
 			byteModelsUsed++;
@@ -2906,7 +2906,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleCab)
 		return 0;
 	
 	CVehicle *pVeh;
-	for(WORD i = 0; i != MAX_VEHICLES; i++)
+	for(WORD i = 0; i != MAX_VEHICLES; ++i)
 	{
 		pVeh = pNetGame->pVehiclePool->pVehicle[i];
 		if(!pVeh) continue;
@@ -2955,7 +2955,7 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleOccupied)
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
 	CPlayer *pPlayer;
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	for(WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		if(!IsPlayerConnected(i)) continue; 
 		pPlayer = pNetGame->pPlayerPool->pPlayer[i];

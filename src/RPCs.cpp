@@ -76,7 +76,7 @@ BYTE RPC_ServerQuit = 0x8A;
 void UpdateScoresPingsIPs(RPCParameters *rpcParams)
 {
 	RakNet::BitStream bsUpdate;
-	for(WORD i = 0; i < MAX_PLAYERS; i++)
+	for(WORD i = 0; i < MAX_PLAYERS; ++i)
 	{
 		if(IsPlayerConnected(i))
 		{
@@ -220,7 +220,7 @@ void PickedUpPickup(RPCParameters* rpcParams)
 		}
 		else
 		{
-			for (PickupMap::iterator p2 = pPlayerData[playerid]->PlayerPickups.begin(); p2 != pPlayerData[playerid]->PlayerPickups.end(); p2++)
+			for (PickupMap::iterator p2 = pPlayerData[playerid]->PlayerPickups.begin(); p2 != pPlayerData[playerid]->PlayerPickups.end(); ++p2)
 			{
 				if (p2->second == p->second)
 				{

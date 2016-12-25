@@ -338,7 +338,7 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 			amx_Push(iter, static_cast<cell>(playerid));
 			amx_Exec(iter, &ret, idx);
 			/*
-			for(int i = 0; i != ((amx_addr_last - amx_addr) / 4); i++)
+			for(int i = 0; i != ((amx_addr_last - amx_addr) / 4); ++i)
 			{
 				amx_Release(iter, amx_addr + (i * 4));
 			}

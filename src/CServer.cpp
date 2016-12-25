@@ -57,15 +57,15 @@ void CServer::Initialize(eSAMPVersion version)
 	InstallPreHooks();
 
 	// Initialize default valid name characters
-	for(BYTE i = '0'; i <= '9'; i++)
+	for(BYTE i = '0'; i <= '9'; ++i)
 	{
 		m_vecValidNameCharacters.insert(i);
 	}
-	for(BYTE i = 'A'; i <= 'Z'; i++)
+	for(BYTE i = 'A'; i <= 'Z'; ++i)
 	{
 		m_vecValidNameCharacters.insert(i);
 	}
-	for(BYTE i = 'a'; i <= 'z'; i++)
+	for(BYTE i = 'a'; i <= 'z'; ++i)
 	{
 		m_vecValidNameCharacters.insert(i);
 	}
@@ -74,7 +74,7 @@ void CServer::Initialize(eSAMPVersion version)
 
 CServer::~CServer()
 {
-	for(int i = 0; i != MAX_PLAYERS; i++)
+	for(int i = 0; i != MAX_PLAYERS; ++i)
 		RemovePlayer(i);
 
 	SAFE_DELETE(pGangZonePool);
@@ -107,7 +107,7 @@ void CServer::Process()
 	if(++m_iTicks >= m_iTickRate)
 	{
 		m_iTicks = 0;
-		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
+		for(WORD playerid = 0; playerid != MAX_PLAYERS; ++playerid)
 		{
 			if(!IsPlayerConnected(playerid)) continue;
 			
@@ -135,7 +135,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 		return 0;
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(WORD i = 0; i != MAX_OBJECTS; i++)
+	for(WORD i = 0; i != MAX_OBJECTS; ++i)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && !pPlayerData[forplayerid]->bAttachedObjectCreated)
 		{
@@ -194,7 +194,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 		return 0;
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(WORD i = 0; i != MAX_OBJECTS; i++)
+	for(WORD i = 0; i != MAX_OBJECTS; ++i)
 	{
 		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && pPlayerData[forplayerid]->bAttachedObjectCreated)
 		{
@@ -332,7 +332,7 @@ WORD CServer::GetMaxPlayers()
 {
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		if (pPlayerPool->bIsNPC[i])
 			count++;
 	return static_cast<WORD>(CSAMPFunctions::GetIntVariable("maxplayers")) - count;
@@ -342,7 +342,7 @@ WORD CServer::GetPlayerCount()
 {
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		if (IsPlayerConnected(i) && !pPlayerPool->bIsNPC[i] && !pPlayerData[i]->bHidden)
 			count++;
 	return count;
@@ -352,7 +352,7 @@ WORD CServer::GetNPCCount()
 {
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		if (pPlayerPool->bIsPlayerConnected[i] && pPlayerPool->bIsNPC[i])
 			count++;
 	return count;

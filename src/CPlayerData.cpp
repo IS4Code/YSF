@@ -51,7 +51,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	};
 
 	// Null object data
-	for(int i = 0; i != MAX_OBJECTS; i++)
+	for(int i = 0; i != MAX_OBJECTS; ++i)
 	{
 		this->stObj[i].wObjectID = INVALID_OBJECT_ID;
 		this->stObj[i].wAttachPlayerID = INVALID_PLAYER_ID;
@@ -223,7 +223,7 @@ WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
 	// Loop though every global gang zone
 	if(!bPlayer)
 	{
-		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; wZone++)
+		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; ++wZone)
 		{
 			if(wClientSideGlobalZoneID[wZone] == zoneid)
 				return wZone;
@@ -231,7 +231,7 @@ WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
 	}
 	else
 	{
-		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; wZone++)
+		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; ++wZone)
 		{
 			if(wClientSidePlayerZoneID[wZone] == zoneid)
 				return wZone;
@@ -295,7 +295,7 @@ void CPlayerData::Process(void)
 	}
 
 	// Process gangzones
-	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
+	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
 	{
 		// If zone id is unused client side, then continue
 		if(byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;
