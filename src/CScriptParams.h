@@ -58,10 +58,10 @@ public:
 	cell HandleError();
 
 	template<typename T> void Add(T a);
-	template<typename T, typename... Args> void Add(T a, Args... args);
+	template<typename T, typename... Args> void Add(T a, Args &&...args);
 
 	template<typename T> void Read(T a);
-	template<typename T, typename... Args> void Read(T a, Args... args);
+	template<typename T, typename... Args> void Read(T a, Args &&...args);
 
 	inline void Skip() { m_pos++; }
 	
@@ -117,7 +117,7 @@ template <class templateType> inline void CScriptParams::AddInternal(templateTyp
 	cell *address;
 	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
 	{
-		if (typeid(var) == typeid(float) || typeid(var) == typeid(double))
+		if (typeid(var).hash_code() == typeid(float).hash_code() || typeid(var).hash_code() == typeid(double).hash_code())
 			*address = amx_ftoc(var);
 		else
 			*address = static_cast<cell>(var);
@@ -168,10 +168,10 @@ void inline CScriptParams::Add(T a)
 }
 
 template<typename T, typename... Args>
-void inline CScriptParams::Add(T a, Args... args)
+void inline CScriptParams::Add(T a, Args &&...args)
 {
 	AddInternal(a);
-	Add(args...);
+	Add(std::forward<Args>(args)...);
 }
 
 //----------------------------------------------------
@@ -218,9 +218,9 @@ void inline CScriptParams::Read(T a)
 }
 
 template<typename T, typename... Args>
-void inline CScriptParams::Read(T a, Args... args)
+void inline CScriptParams::Read(T a, Args &&...args)
 {
 	ReadInternal(a);
-	Read(args...);
+	Read(std::forward<Args>(args)...);
 }
 #endif
