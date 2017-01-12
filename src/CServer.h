@@ -39,7 +39,7 @@ class CGangZonePool;
 class CYSFPickupPool;
 
 #include "CSingleton.h"
-#include "Addresses.h"
+#include "CAddresses.h"
 #include "CGangZonePool.h"
 
 #include <vector>
@@ -54,7 +54,7 @@ public:
 	CServer() = default;
 	~CServer();
 
-	void Initialize(eSAMPVersion version);
+	void Initialize(SAMPVersion version);
 	bool inline IsInitialized(void) { return m_bInitialized; }
 
 	bool AddPlayer(int playerid);
@@ -65,7 +65,7 @@ public:
 	bool OnPlayerStreamIn(WORD playerid, WORD forplayerid);
 	bool OnPlayerStreamOut(WORD playerid, WORD forplayerid);
 
-	eSAMPVersion GetVersion() { return m_Version; }
+	SAMPVersion const &GetVersion() { return m_Version; }
 	
 	void AllowNickNameCharacter(char character, bool enable);
 	bool IsNickNameCharacterAllowed(char character);
@@ -113,7 +113,7 @@ public:
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
 
 private:
-	eSAMPVersion m_Version;
+	SAMPVersion m_Version;
 	int m_iTicks;
 	int m_iTickRate;
 	bool m_bInitialized = 0;

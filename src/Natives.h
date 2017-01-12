@@ -393,7 +393,7 @@ namespace Natives
 	AMX_DECLARE_NATIVE(FIXED_IsPlayerConnected);
 };
 
-int InitScripting(AMX *amx);
+int InitNatives(AMX *amx);
 
-extern AMX_NATIVE_INFO RedirectedNatives[];
+extern AMX_NATIVE_INFO redirected_native_list[];
 #endif

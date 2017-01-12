@@ -34,7 +34,6 @@
 #define YSF_RPCS_H
 
 extern BYTE RPC_Gravity;
-extern BYTE RPC_Weather;
 extern BYTE RPC_CreatePickup;
 extern BYTE RPC_DestroyPickup;
 extern BYTE RPC_SetPlayerTeam;

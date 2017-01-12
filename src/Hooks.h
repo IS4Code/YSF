@@ -40,7 +40,8 @@
 		subhook_free(hookname); \
 	} \
 
-extern AMX_NATIVE 
+extern AMX_NATIVE
+	pSetPlayerWeather,
 	pDestroyObject, 
 	pDestroyPlayerObject, 
 	pTogglePlayerControllable, 

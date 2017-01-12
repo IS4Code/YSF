@@ -51,6 +51,7 @@ subhook_t CGameMode__OnDialogResponse_hook;
 
 //----------------------------------------------------
 AMX_NATIVE
+	pSetPlayerWeather = NULL,
 	pDestroyObject = NULL,
 	pDestroyPlayerObject = NULL,
 	pTogglePlayerControllable = NULL,
@@ -128,13 +129,16 @@ typedef BYTE (*FUNC_amx_Register)(AMX *amx, AMX_NATIVE_INFO *nativelist, int num
 int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 {
 	// amx_Register hook for redirect natives
-	static bool g_bNativesHooked = false;
+	static bool bNativesHooked = false;
 
-	if (!g_bNativesHooked && CServer::Get()->IsInitialized())
+	if (!bNativesHooked && CServer::Get()->IsInitialized())
 	{
 		int i = 0;
 		while (nativelist[i].name)
 		{
+			if (!pSetPlayerWeather && !strcmp(nativelist[i].name, "SetPlayerWeather"))
+				pSetPlayerWeather = nativelist[i].func;
+
 			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyObject"))
 				pDestroyObject = nativelist[i].func;
 
@@ -183,15 +187,15 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
 			
-			while (RedirectedNatives[x].name)
+			while (redirected_native_list[x].name)
 			{
 				//logprintf("asdasd %s", RedirectedNatives[x].name);
-				if (!strcmp(nativelist[i].name, RedirectedNatives[x].name))
+				if (!strcmp(nativelist[i].name, redirected_native_list[x].name))
 				{
-					if (!g_bNativesHooked) g_bNativesHooked = true;
+					if (!bNativesHooked) bNativesHooked = true;
 				
-					//logprintf("native: %s, %s", nativelist[i].name, RedirectedNatives[x].name);
-					nativelist[i].func = RedirectedNatives[x].func;
+					//logprintf("native: %s, %s", nativelist[i].name, redirected_native_list[x].name);
+					nativelist[i].func = redirected_native_list[x].func;
 				}
 				x++;
 			}

@@ -145,7 +145,7 @@
 #include <subhook/subhook.h>
 
 // YSF
-#include "Addresses.h"
+#include "CAddresses.h"
 #include "amxfunctions.h"
 #include "CScriptParams.h"
 #include "CCallbackManager.h"
@@ -155,10 +155,10 @@
 #include "CPlayerData.h"
 #include "CVector.h"
 #include "CServer.h"
-#include "Functions.h"
+#include "CFunctions.h"
 #include "Hooks.h"
 #include "RPCs.h"
-#include "Scripting.h"
+#include "Natives.h"
 #include "Structs.h"
 #include "Utils.h"
 

@@ -35,7 +35,6 @@
 //#define testspawn
 
 BYTE RPC_Gravity = 0x92;
-BYTE RPC_Weather = 0x98;
 
 BYTE RPC_CreatePickup = 95;
 BYTE RPC_DestroyPickup = 63;

@@ -32,7 +32,7 @@
 
 #include "main.h"
 
-void CServer::Initialize(eSAMPVersion version)
+void CServer::Initialize(SAMPVersion version)
 {
 	m_bInitialized = true;
 	m_iTicks = 0;
@@ -225,27 +225,15 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 void CServer::AllowNickNameCharacter(char character, bool enable)
 {
 	if (enable)
-	{
-		auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
-		if (it == m_vecValidNameCharacters.end())
-		{
-			m_vecValidNameCharacters.insert(character);
-		}
-	}
+		m_vecValidNameCharacters.insert(character);
 	else
-	{
-		auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
-		if (it != m_vecValidNameCharacters.end())
-		{
-			m_vecValidNameCharacters.erase(it);
-		}
-	}
+		m_vecValidNameCharacters.erase(character);
+
 }
 
 bool CServer::IsNickNameCharacterAllowed(char character)
 {
-	auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
-	return (it != m_vecValidNameCharacters.end());
+	return m_vecValidNameCharacters.find(character) != m_vecValidNameCharacters.end();
 }
 
 bool CServer::IsValidNick(char *szName)
@@ -266,17 +254,15 @@ bool CServer::IsValidNick(char *szName)
 
 void CServer::AddConsolePlayer(WORD playerid, DWORD color)
 {
-	auto it = m_ConsoleMessagePlayers.find(playerid);
-	if (it == m_ConsoleMessagePlayers.end())
+	if (m_ConsoleMessagePlayers.find(playerid) == m_ConsoleMessagePlayers.end())
 	{
-		m_ConsoleMessagePlayers.insert(std::make_pair(playerid, color));
+		m_ConsoleMessagePlayers.emplace(playerid, color);
 	}
 }
 
 void CServer::RemoveConsolePlayer(WORD playerid)
 {
-	auto it = m_ConsoleMessagePlayers.find(playerid);
-	if (it != m_ConsoleMessagePlayers.end())
+	if (m_ConsoleMessagePlayers.find(playerid) != m_ConsoleMessagePlayers.end())
 	{
 		m_ConsoleMessagePlayers.erase(playerid);
 	}
@@ -297,7 +283,7 @@ void CServer::ProcessConsoleMessages(const char* str)
 {
 	if (!m_ConsoleMessagePlayers.empty())
 	{
-		size_t len = strlen(str);
+		const size_t len = strlen(str);
 		RakNet::BitStream bsParams;
 		for (auto x : m_ConsoleMessagePlayers)
 		{

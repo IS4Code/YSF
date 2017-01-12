@@ -94,7 +94,7 @@ DWORD CAddress::FUNC_CGameMode__OnPlayerStreamIn = NULL;
 DWORD CAddress::FUNC_CGameMode__OnPlayerStreamOut = NULL;
 DWORD CAddress::FUNC_CGameMode__OnDialogResponse = NULL;
 
-void CAddress::Initialize(eSAMPVersion sampVersion)
+void CAddress::Initialize(SAMPVersion sampVersion)
 {
 	// Thx for Whitetiger
 	DWORD dwRestartTime; 
@@ -188,12 +188,12 @@ void CAddress::Initialize(eSAMPVersion sampVersion)
 
 	switch(sampVersion)
 	{
-		case SAMP_VERSION_037:
+		case VERSION_037:
 		{
 			VAR_pRestartWaitTime =						0x081A0840;
 			break;
 		}
-		case SAMP_VERSION_037_R2:
+		case VERSION_037_R2:
 		{
 			VAR_pRestartWaitTime =						0x0815A528; // 12.0
 			ADDR_RecordingDirectory =					0x080CC7D1;

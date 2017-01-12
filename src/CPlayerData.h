@@ -33,7 +33,6 @@
 #ifndef YSF_CPLAYERDATA_H
 #define YSF_CPLAYERDATA_H
 
-//#include "CServer.h"
 #include "Structs.h"
 #include <bitset>
 

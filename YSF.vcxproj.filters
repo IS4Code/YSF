@@ -30,9 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\amxfunctions.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\CCallbackManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -51,12 +48,6 @@
     <ClCompile Include="src\RPCs.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scripting.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utils.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="lib\sdk\amxplugin.cpp">
       <Filter>lib\sdk</Filter>
     </ClCompile>
@@ -72,23 +63,29 @@
     <ClCompile Include="src\CGangZonePool.cpp">
       <Filter>src\Pools</Filter>
     </ClCompile>
-    <ClCompile Include="src\Addresses.cpp">
-      <Filter>src\Hooks</Filter>
-    </ClCompile>
     <ClCompile Include="src\Hooks.cpp">
-      <Filter>src\Hooks</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Functions.cpp">
       <Filter>src\Hooks</Filter>
     </ClCompile>
     <ClCompile Include="src\CScriptParams.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\CAddresses.cpp">
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CFunctions.cpp">
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Natives.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\amxfunctions.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\amxfunctions.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\CCallbackManager.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -107,13 +104,7 @@
     <ClInclude Include="src\RPCs.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scripting.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\Structs.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="lib\subhook\subhook.h">
@@ -128,16 +119,10 @@
     <ClInclude Include="src\CGangZonePool.h">
       <Filter>src\Pools</Filter>
     </ClInclude>
-    <ClInclude Include="src\Addresses.h">
-      <Filter>src\Hooks</Filter>
-    </ClInclude>
     <ClInclude Include="src\Hooks.h">
       <Filter>src\Hooks</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\Functions.h">
-      <Filter>src\Hooks</Filter>
-    </ClInclude>
     <ClInclude Include="src\CVector.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
@@ -167,6 +152,21 @@
     </ClInclude>
     <ClInclude Include="src\CScriptParams.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CAddresses.h">
+      <Filter>src\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CFunctions.h">
+      <Filter>src\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Natives.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\amxfunctions.h">
+      <Filter>src\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

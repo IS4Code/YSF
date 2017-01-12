@@ -69,19 +69,17 @@
 
 #include <vector>
 
-enum eSAMPVersion
+enum class SAMPVersion
 {
-	SAMP_VERSION_UNKNOWN,
-	SAMP_VERSION_037,
-	SAMP_VERSION_037_R2,
-
-	SAMP_VERSION_SKIPPED,
+	VERSION_UNKNOWN,
+	VERSION_037,
+	VERSION_037_R2,
 };
 
 class CAddress
 {
 public:
-	static void	Initialize(eSAMPVersion sampVersion);
+	static void	Initialize(SAMPVersion version);
 
 	static DWORD			FUNC_Logprintf_03Z;
 	static DWORD			FUNC_Logprintf_03ZR2_2;
