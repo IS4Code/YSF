@@ -268,54 +268,6 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 	return result;
 }
 
-std::string Utility::convertNativeStringToString(AMX *amx, cell input)
-{
-	char *string = NULL;
-	amx_StrParam(amx, input, string);
-	return string ? string : "";
-}
-
-void Utility::convertStringToNativeString(AMX *amx, cell output, cell size, char* string)
-{
-	cell *address = NULL;
-	amx_GetAddr(amx, output, &address);
-	amx_SetString(address, string, 0, 0, static_cast<size_t>(size));
-}
-
-void Utility::convertStringToNativeString(AMX *amx, cell output, cell size, std::string string)
-{
-	cell *address = NULL;
-	amx_GetAddr(amx, output, &address);
-	amx_SetString(address, string.c_str(), 0, 0, static_cast<size_t>(size));
-}
-
-void Utility::storeFloatInNative(AMX *amx, cell output, float value)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = amx_ftoc(value);
-}
-
-void Utility::storeVectorInNative(AMX *amx, cell output, CVector2D &vec)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = amx_ftoc(vec.fX);
-	amx_GetAddr(amx, output - 4, &address);
-	*address = amx_ftoc(vec.fY);
-}
-
-void Utility::storeVectorInNative(AMX *amx, cell output, CVector &vec)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = amx_ftoc(vec.fX);
-	amx_GetAddr(amx, output -4, &address);
-	*address = amx_ftoc(vec.fY);
-	amx_GetAddr(amx, output - 8, &address);
-	*address = amx_ftoc(vec.fZ);
-}
-
 const char *GetPlayerName(int playerid)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;

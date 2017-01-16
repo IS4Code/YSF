@@ -39,10 +39,10 @@ AMX_DECLARE_NATIVE(Natives::execute)
 {
 	CHECK_PARAMS(1, "execute", NO_FLAGS);
 	
-	char command[4096];
-	CScriptParams::Get()->Read(&command[0]);
+	std::string command;
+	CScriptParams::Get()->Read(&command);
 
-	system(command);
+	system(command.c_str());
 	return 1;
 }
 
@@ -509,11 +509,11 @@ AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 {
 	CHECK_PARAMS(1, "LoadFilterScript", LOADED);
 	
-	char name[255];
+	std::string name;
 	CScriptParams::Get()->Read(&name[0]);
-	if(name)
+	if (!name.empty())
 	{
-		return CSAMPFunctions::LoadFilterscript(name);
+		return CSAMPFunctions::LoadFilterscript(name.c_str());
 	}
 	return 0;
 }
@@ -523,11 +523,11 @@ AMX_DECLARE_NATIVE(Natives::UnLoadFilterScript)
 {
 	CHECK_PARAMS(1, "UnLoadFilterScript", LOADED);
 	
-	char name[255];
+	std::string name;
 	CScriptParams::Get()->Read(&name[0]);
-	if(name)
+	if(!name.empty())
 	{
-		return CSAMPFunctions::UnLoadFilterscript(name);
+		return CSAMPFunctions::UnLoadFilterscript(name.c_str());
 	}
 	return 0;
 }
@@ -557,15 +557,15 @@ AMX_DECLARE_NATIVE(Natives::AddServerRule)
 {
 	CHECK_PARAMS(3, "AddServerRule", LOADED);
 
-	char name[65], value[64];
-	CScriptParams::Get()->Read(&name[0], &value[0]);
+	std::string name, value;
+	CScriptParams::Get()->Read(&name, &value);
 
-	if (name && value)
+	if (!name.empty() && !value.empty())
 	{
-		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
 		if (ConVar == NULL)
 		{
-			CSAMPFunctions::AddStringVariable(name, CScriptParams::Get()->ReadInt(), value, NULL);
+			CSAMPFunctions::AddStringVariable(const_cast<char*>(name.c_str()), CScriptParams::Get()->ReadInt(), const_cast<char*>(value.c_str()), NULL);
 			return 1;
 		}
 	}
@@ -577,14 +577,14 @@ AMX_DECLARE_NATIVE(Natives::SetServerRule)
 {
 	CHECK_PARAMS(2, "SetServerRule", LOADED);
 
-	char name[32], value[32];
-	CScriptParams::Get()->Read(&name[0], &value[0]);
-	if (name && value)
+	std::string name, value;
+	CScriptParams::Get()->Read(&name, &value);
+	if (!name.empty() && !value.empty())
 	{
-		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
 		if (ConVar != NULL)
 		{
-			CSAMPFunctions::SetStringVariable(name, value);
+			CSAMPFunctions::SetStringVariable(const_cast<char*>(name.c_str()), const_cast<char*>(value.c_str()));
 			return 1;
 		}
 	}
@@ -596,14 +596,14 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleInt)
 {
 	CHECK_PARAMS(2, "SetServerRuleInt", LOADED);
 
-	char name[32];
-	CScriptParams::Get()->Read(&name[0]);
-	if (name)
+	std::string name;
+	CScriptParams::Get()->Read(&name);
+	if (!name.empty())
 	{
-		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
 		if (ConVar != NULL)
 		{
-			CSAMPFunctions::SetIntVariable(name, CScriptParams::Get()->ReadInt());
+			CSAMPFunctions::SetIntVariable(const_cast<char*>(name.c_str()), CScriptParams::Get()->ReadInt());
 			return 1;
 		}
 		return 1;
@@ -616,11 +616,11 @@ AMX_DECLARE_NATIVE(Natives::IsValidServerRule)
 {
 	CHECK_PARAMS(1, "IsValidServerRule", LOADED);
 
-	char name[32];
-	CScriptParams::Get()->Read(&name[0]);
-	if (name)
+	std::string name;
+	CScriptParams::Get()->Read(&name);
+	if (!name.empty())
 	{
-		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
+		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
 		return ConVar != NULL;
 	}
 	return 0;
@@ -631,11 +631,11 @@ AMX_DECLARE_NATIVE(Natives::RemoveServerRule)
 {
 	CHECK_PARAMS(1, "RemoveServerRule", LOADED);
 
-	char name[32];
-	CScriptParams::Get()->Read(&name[0]);
-	if (name)
+	std::string name;
+	CScriptParams::Get()->Read(&name);
+	if (!name.empty())
 	{
-		//RemoveServerRule(name);
+		//RemoveServerRule(name.c_str());
 		return 1;
 	}
 	return 0;
@@ -646,11 +646,11 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleFlags)
 {
 	CHECK_PARAMS(2, "SetServerRuleFlags", LOADED);
 	
-	char name[32];
-	CScriptParams::Get()->Read(&name[0]);
-	if (name)
+	std::string name;
+	CScriptParams::Get()->Read(&name);
+	if (!name.empty())
 	{
-		CSAMPFunctions::ModifyVariableFlags(name, (DWORD)params[2]);
+		CSAMPFunctions::ModifyVariableFlags(const_cast<char*>(name.c_str()), (DWORD)params[2]);
 		return 1;
 	}
 	return 0;
@@ -661,16 +661,13 @@ AMX_DECLARE_NATIVE(Natives::GetServerRuleFlags)
 {
 	CHECK_PARAMS(1, "GetServerRuleFlags", LOADED);
 	
-	char name[32];
-	CScriptParams::Get()->Read(&name[0]);
-	if (name)
+	std::string name;
+	CScriptParams::Get()->Read(&name);
+
+	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
+	if (ConVar != NULL)
 	{
-		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(name);
-		if (ConVar != NULL)
-		{
-			return ConVar->VarFlags;
-		}
-		return 0;
+		return ConVar->VarFlags;
 	}
 	return 0;
 }
@@ -744,9 +741,9 @@ AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 {
 	CHECK_PARAMS(1, "IsValidNickName", LOADED);
 
-	char name[32];
-	CScriptParams::Get()->Read(&name[0]);
-	return CServer::Get()->IsValidNick(name);
+	std::string name;
+	CScriptParams::Get()->Read(&name);
+	return CServer::Get()->IsValidNick(const_cast<char*>(name.c_str()));
 }
 
 // native AllowNickNameCharacter(character, bool:allow);
@@ -972,12 +969,12 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerNameForPlayer)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int nameplayerid = CScriptParams::Get()->ReadInt();
 	
-	char name[MAX_PLAYER_NAME];
-	CScriptParams::Get()->Read(&name[0]);
+	std::string name;
+	CScriptParams::Get()->Read(&name);
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(nameplayerid)) return 0;
 
-	pPlayerData[playerid]->SetPlayerNameForPlayer(static_cast<WORD>(nameplayerid), name);
+	pPlayerData[playerid]->SetPlayerNameForPlayer(static_cast<WORD>(nameplayerid), name.c_str());
 	return 1;
 }
 
@@ -1361,8 +1358,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 			BYTE slot;
 			WORD modelid;
 			DWORD color;
-			char szTXD[64], szTexture[64];
-			CScriptParams::Get()->Read(&slot, &modelid, &szTXD[0], &szTexture[0], &color);
+			std::string szTXD, szTexture;
+			CScriptParams::Get()->Read(&slot, &modelid, &szTXD, &szTexture, &color);
 
 			if (pObject->szMaterialText[index])
 			{
@@ -1374,8 +1371,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 			pObject->Material[index].byteUsed = 1;
 			pObject->Material[index].dwMaterialColor = color;
 
-			strncpy(pObject->Material[index].szMaterialTXD, szTXD, 64u);
-			strncpy(pObject->Material[index].szMaterialTexture, szTexture, 64u);
+			strncpy(pObject->Material[index].szMaterialTXD, szTXD.c_str(), 64u);
+			strncpy(pObject->Material[index].szMaterialTexture, szTexture.c_str(), 64u);
 			pObject->dwMaterialCount++;
 		}
 		return 1;
@@ -1398,20 +1395,20 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 		int index = pObject->dwMaterialCount;
 		if (index < MAX_OBJECT_MATERIAL)
 		{
-			char szText[4096], szFontFace[64];
+			std::string szText, szFontFace;
 			BYTE slot, materialsize, fontsize, bold, textalignment;
 			DWORD fontcolor, backcolor;
-			CScriptParams::Get()->Read(&szText[0], &slot, &materialsize, &szFontFace[0], &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
+			CScriptParams::Get()->Read(&szText, &slot, &materialsize, &szFontFace, &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 
 			if (pObject->szMaterialText[index])
 				free(pObject->szMaterialText[index]);
 			
-			pObject->szMaterialText[index] = (char *)calloc(1u, strlen((const char *)szText) + 1);
-			strcpy(pObject->szMaterialText[index], (const char *)szText);
+			pObject->szMaterialText[index] = (char *)calloc(1u, szText.length() + 1);
+			strcpy(pObject->szMaterialText[index], szText.c_str());
 			pObject->Material[index].byteSlot = slot;
 			pObject->Material[index].byteUsed = 2;
 			pObject->Material[index].byteMaterialSize = materialsize;
-			strncpy(pObject->Material[index].szFont, szFontFace, 64u);
+			strncpy(pObject->Material[index].szFont, szFontFace.c_str(), 64u);
 			pObject->Material[index].byteBold = bold;
 			pObject->Material[index].byteFontSize = fontsize;
 			pObject->Material[index].byteAlignment = textalignment;
@@ -1624,8 +1621,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingOffsets)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	CVector vecPos = pNetGame->pPlayerPool->pPlayer[playerid]->syncData.vecSurfing;
-	Utility::storeVectorInNative(amx, params[2], vecPos);
+	CScriptParams::Get()->Add(pNetGame->pPlayerPool->pPlayer[playerid]->syncData.vecSurfing);
 	return 1;
 }
 
@@ -1872,22 +1868,22 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerChatBubbleForPlayer)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	char str[255];
+	std::string text;
 	int color;
 	float drawdistance;
 	int expiretime;
-	CScriptParams::Get()->Read(&str[0], &color, &drawdistance, &expiretime);
+	CScriptParams::Get()->Read(&text, &color, &drawdistance, &expiretime);
 
-	if(str)
+	if(!text.empty())
 	{
-		BYTE len = static_cast<BYTE>(strlen(str));
+		BYTE len = static_cast<BYTE>(text.length());
 		RakNet::BitStream bs;
 		bs.Write((WORD)playerid);
 		bs.Write(color);
 		bs.Write(drawdistance);
 		bs.Write(expiretime);
 		bs.Write(len);
-		bs.Write(str, len);
+		bs.Write(text.c_str(), len);
 		CSAMPFunctions::RPC(&RPC_ChatBubble, &bs, LOW_PRIORITY, RELIABLE, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0);
 		return 1;
 	}
@@ -1916,13 +1912,13 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 	
-	char version[29];
-	CScriptParams::Get()->Read(&version[0]);
+	std::string version;
+	CScriptParams::Get()->Read(&version);
 
-	if (version && strlen(version) < 28)
+	if (!version.empty() && version.length() < 28)
 	{
 		pNetGame->pPlayerPool->szVersion[playerid][0] = NULL;
-		strcpy(pNetGame->pPlayerPool->szVersion[playerid], version);
+		strcpy(pNetGame->pPlayerPool->szVersion[playerid], version.c_str());
 		return 1;
 	}
 	return 0;
@@ -2266,6 +2262,9 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 	}
 	if(i == MAX_OBJECT_MATERIAL) return 0;
 
+	CScriptParams::Get()->Add(pObject->szMaterialText[i], pObject->Material[i].byteMaterialSize, pObject->Material[i].szFont, pObject->Material[i].byteFontSize,
+		pObject->Material[i].byteBold, pObject->Material[i].dwFontColor, pObject->Material[i].dwBackgroundColor, pObject->Material[i].byteAlignment);
+/*
 	set_amxstring(amx, params[3], pObject->szMaterialText[i], params[4]); 
 	Utility::storeIntegerInNative(amx, params[5], pObject->Material[i].byteMaterialSize);
 	set_amxstring(amx, params[6], pObject->Material[i].szFont, params[7]); 
@@ -2274,6 +2273,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 	Utility::storeIntegerInNative(amx, params[10], pObject->Material[i].dwFontColor);
 	Utility::storeIntegerInNative(amx, params[11], pObject->Material[i].dwBackgroundColor);
 	Utility::storeIntegerInNative(amx, params[12], pObject->Material[i].byteAlignment);
+*/
 	return 1;
 }
 
@@ -2455,10 +2455,13 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 	}
 	if(i == MAX_OBJECT_MATERIAL) return 0;
 
-	Utility::storeIntegerInNative(amx, params[4], pObject->Material[i].wModelID); //  modelid
+	CScriptParams::Get()->Add(pObject->Material[i].wModelID, pObject->Material[i].szMaterialTXD, pObject->Material[i].szMaterialTexture, ABGR_ARGB(pObject->Material[i].dwMaterialColor));
+		/*
+		Utility::storeIntegerInNative(amx, params[4], pObject->Material[i].wModelID); //  modelid
 	set_amxstring(amx, params[5], pObject->Material[i].szMaterialTXD, params[6]); // txdname[], txdnamelen = sizeof(txdname)
 	set_amxstring(amx, params[7], pObject->Material[i].szMaterialTexture, params[8]); // texturenamelen = sizeof(txdnamelen)
-	Utility::storeIntegerInNative(amx, params[9], ABGR_ARGB(pObject->Material[i].dwMaterialColor)); // materialcolor	
+	Utility::storeIntegerInNative(amx, params[9], ); // materialcolor	
+	*/
 	return 1;
 }
 
@@ -2487,6 +2490,9 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 	}
 	if(i == MAX_OBJECT_MATERIAL) return 0;
 
+	CScriptParams::Get()->Add(pObject->szMaterialText[i], pObject->Material[i].byteMaterialSize, pObject->Material[i].szFont, pObject->Material[i].byteFontSize,
+		pObject->Material[i].byteBold, pObject->Material[i].dwFontColor, pObject->Material[i].dwBackgroundColor, pObject->Material[i].byteAlignment);
+	/*
 	set_amxstring(amx, params[4], pObject->szMaterialText[i], params[5]); 
 	Utility::storeIntegerInNative(amx, params[6], pObject->Material[i].byteMaterialSize); // materialsize
 	set_amxstring(amx, params[7], pObject->Material[i].szFont, params[8]); 
@@ -2495,6 +2501,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 	Utility::storeIntegerInNative(amx, params[11], pObject->Material[i].dwFontColor);
 	Utility::storeIntegerInNative(amx, params[12], pObject->Material[i].dwBackgroundColor);
 	Utility::storeIntegerInNative(amx, params[13], pObject->Material[i].byteAlignment);
+	*/
 	return 1;
 }
 
@@ -4006,6 +4013,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 	// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
 	pAttachObjectToPlayer(amx, params);
 
+	// Store values which should be server purpose not mine
 	CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
 	CScriptParams::Get()->Read(&pObject->vecAttachedOffset, &pObject->vecAttachedRotation);
 	return 1;
@@ -4115,11 +4123,11 @@ AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 {
 	CHECK_PARAMS(1, "SetRecordingDirectory", LOADED);
 
-	char dir[MAX_PATH];
-	CScriptParams::Get()->Read(&dir[0]);
-	if (!dir || !CAddress::ADDR_RecordingDirectory) return 0;
+	std::string dir;
+	CScriptParams::Get()->Read(&dir);
+	if (!CAddress::ADDR_RecordingDirectory) return 0;
 
-	strcpy(gRecordingDataPath, dir);
+	strcpy(gRecordingDataPath, dir.c_str());
 	strcat(gRecordingDataPath, "/%s.rec");
 	return 1;
 }
@@ -4419,7 +4427,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForPlayer)
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	CServer::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
+	CServer::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), false, true);
 	return 1;
 }
 

@@ -189,12 +189,12 @@ void CSAMPFunctions::Execute(char* pExecLine)
 	pfn__CConsole__Execute(pConsole, pExecLine);
 }
 
-bool CSAMPFunctions::LoadFilterscript(char *szName)
+bool CSAMPFunctions::LoadFilterscript(const char *szName)
 {
 	return pfn__CFilterscripts__LoadFilterscript(pNetGame->pFilterScriptPool, szName);
 }
 
-bool CSAMPFunctions::UnLoadFilterscript(char *szName)
+bool CSAMPFunctions::UnLoadFilterscript(const char *szName)
 {
 	return pfn__CFilterscripts__UnLoadFilterscript(pNetGame->pFilterScriptPool, szName);
 }

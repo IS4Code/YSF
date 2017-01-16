@@ -53,7 +53,7 @@ public:
 	int GetPlayerSkinForPlayer(WORD skinplayerid);
 	inline void ResetPlayerSkin(WORD playerid) { m_iSkins[playerid] = -1; }
 
-	bool SetPlayerNameForPlayer(WORD nameplayerid, char *name);
+	bool SetPlayerNameForPlayer(WORD nameplayerid, const char *name);
 	const char *GetPlayerNameForPlayer(WORD nameplayerid);
 	inline void ResetPlayerName(WORD playerid) { m_szNames[playerid][0] = NULL; }
 

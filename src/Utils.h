@@ -53,20 +53,6 @@ namespace Utility
 {
 	const char* GetWeaponName(BYTE weaponid);
 	BYTE GetWeaponSlot(BYTE weaponid);
-	std::string convertNativeStringToString(AMX *amx, cell input);
-	void convertStringToNativeString(AMX *amx, cell output, cell size, char* string);
-	void convertStringToNativeString(AMX *amx, cell output, cell size, std::string string);
-	void storeFloatInNative(AMX *amx, cell output, float value);
-	void storeVectorInNative(AMX *amx, cell output, CVector2D &vec);
-	void storeVectorInNative(AMX *amx, cell output, CVector &vec);
-	
-	template <typename T>
-	void storeIntegerInNative(AMX *amx, cell output, T value)
-	{
-		cell *address;
-		amx_GetAddr(amx, output, &address);
-		*address = static_cast<T>(value);
-	}
 };
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);

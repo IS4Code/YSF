@@ -35,6 +35,7 @@
 
 #include <typeinfo>
 #include <sdk/amx/amx.h>
+#include <string>
 
 #include "CSingleton.h"
 #include "CVector.h"
@@ -54,7 +55,7 @@ public:
 		MORE_PARAMETER_ALLOWED = 2,
 	};
 
-	bool Setup(size_t paramscount, std::string strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
+	bool Setup(size_t paramscount, std::string &&strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
 	cell HandleError();
 
 	template<typename T> void Add(T a);
@@ -195,17 +196,24 @@ template <> inline void CScriptParams::ReadInternal(CVector* vec)
 	vec->fZ = amx_ctof(m_params[m_pos++]);
 }
 // Strings
-template <> inline void CScriptParams::ReadInternal(char *result)
+template <> inline void CScriptParams::ReadInternal(std::string *result)
 {
 	// FUCK amx_StrParam
 	cell *amx_cstr;
 	int amx_length;
+	
 	amx_GetAddr(m_AMX, m_params[m_pos++], &amx_cstr);
 	amx_StrLen(amx_cstr, &amx_length);
-	if (amx_length > 0)
+	char* temp = new char[amx_length + 1];
+
+	if (amx_length > 0 && temp != nullptr)
 	{
-		amx_GetString((char*)(result), amx_cstr, sizeof(*(result)) > 1, amx_length + 1);
+		amx_GetString(temp, amx_cstr, 0, amx_length + 1);
 	}
+	result->append(temp);
+
+	delete[] temp;
+	temp = nullptr;
 }
 
 

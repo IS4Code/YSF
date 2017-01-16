@@ -163,7 +163,7 @@ int CPlayerData::GetPlayerSkinForPlayer(WORD skinplayerid)
 	return m_iSkins[skinplayerid];
 }
 
-bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, char *name)
+bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, const char *name)
 {
 	memcpy(&m_szNames[nameplayerid], name, MAX_PLAYER_NAME);
 	BYTE len = static_cast<BYTE>(strlen(name));

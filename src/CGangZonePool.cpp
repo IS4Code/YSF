@@ -251,7 +251,7 @@ void CGangZonePool::HideForAll(WORD wZone)
 		// Skip not connected players
 		if(!IsPlayerConnected(i)) continue;
 
-		HideForPlayer(i, wZone);
+		HideForPlayer(i, wZone, false, true);
 	}
 }
 
