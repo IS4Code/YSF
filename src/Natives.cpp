@@ -1393,7 +1393,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 
 		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 		int index = pObject->dwMaterialCount;
-		if (index < MAX_OBJECT_MATERIAL)
+		if (index < MAX_OBJECT_MATERIAL && CServer::Get()->m_bStorePlayerObjectsMaterial)
 		{
 			std::string szText, szFontFace;
 			BYTE slot, materialsize, fontsize, bold, textalignment;

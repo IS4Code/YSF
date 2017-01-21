@@ -53,6 +53,7 @@ namespace Utility
 {
 	const char* GetWeaponName(BYTE weaponid);
 	BYTE GetWeaponSlot(BYTE weaponid);
+	int CFGLoad(char const * const name, char * const dest = 0, size_t dlen = 0);
 };
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);

@@ -268,6 +268,47 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 	return result;
 }
 
+// Load an entry from server.cfg - Y_Less
+int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
+{
+	std::ifstream
+		f("plugins/YSF.cfg");
+	int
+		ret = 1,
+		len = strlen(name);
+	if (f.is_open())
+	{
+		char
+			line[256];
+		f.clear();
+		while (!f.eof())
+		{
+			f.getline(line, 256);
+			if (f.fail())
+			{
+				goto CFGLoad_close;
+			}
+			// Does the line START with this text?  Anything other than the
+			// first character fails.
+			if (!strncmp(line, name, len) && line[len] <= ' ')
+			{
+				while (line[++len] <= ' ')
+				{
+					if (line[len] == '\0') goto CFGLoad_close;
+				}
+				// Skipped leading spaces, save the value.
+				if (dest) strncpy(dest, line + len, dlen);
+				ret = atoi(line + len);
+				goto CFGLoad_close;
+			}
+		}
+	CFGLoad_close:
+		// Yes, I used a label!  I needed to escape from a double loop.
+		f.close();
+	}
+	return ret;
+}
+
 const char *GetPlayerName(int playerid)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;

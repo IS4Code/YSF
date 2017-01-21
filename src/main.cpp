@@ -70,7 +70,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	char szVersion[64];
 
 	DWORD addr = reinterpret_cast<DWORD>(logprintf);
-	if(addr == CAddress::FUNC_Logprintf_037_R2_1)
+	if(addr == CAddress::FUNC_Logprintf_037_R2_1 || Utility::CFGLoad("SkipVersionCheck"))
 	{
 		version = SAMPVersion::VERSION_037_R2;
 		strcpy(szVersion, "0.3.7 R2-1");

@@ -112,6 +112,14 @@ public:
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
 
+	bool m_bPickupProtection : 1;
+	bool m_bDeathProtection : 1;
+	bool m_bDialogProtection : 1;
+	bool m_bUseCustomSpawn : 1;
+	bool m_bIncreaseRakNetInternalPlayers : 1;
+	int m_iRakNetInternalSleepTime;
+	bool m_bStorePlayerObjectsMaterial : 1;
+
 private:
 	SAMPVersion m_Version;
 	int m_iTicks;
@@ -119,6 +127,7 @@ private:
 	bool m_bInitialized = 0;
 	bool m_bNightVisionFix : 1;
 	bool m_bOnServerMessage : 1;
+
 	DWORD m_dwAFKAccuracy;
 
 	std::set<std::string> m_BannedIPs;

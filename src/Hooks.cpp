@@ -891,7 +891,7 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 	int ret = -1;
 	if (IsPlayerConnected(playerid))
 	{
-		if (pPlayerData[playerid]->wDialogID != dialogid)
+		if (CServer::Get()->m_bDialogProtection && pPlayerData[playerid]->wDialogID != dialogid)
 		{
 			logprintf("YSF: Might dialog hack has been detected for player %s(%d) - which should be: %d, dialogid: %d", GetPlayerName(playerid), playerid, pPlayerData[playerid]->wDialogID, dialogid);
 			ret = 1;
@@ -961,15 +961,8 @@ void InstallPostHooks()
 {
 	CSAMPFunctions::PostInitialize();
 
-	// !!! READ !!!
-	// If "myriad 1" present in server.cfg, then the internal raknet player "pool" will start with MAX_PLAYERS - needed for SetMaxPlayers if you want to increase your slots, eg. add +30 slot for 30 bot, and you paid for 60 slots only.
-	// This isn't enabled by default, because if it's enabled, then doesn't matter which value used for maxplayers in server.cfg, 
-	// server will allow up to connect MAX_PLAYERS at same time (currently 1000). 
-	// use this only if you want to have much NPC to trick hosts to allow them insted of paying for more slots for bots.
-	if(CSAMPFunctions::GetBoolVariable("myriad"))
-	{
-		CSAMPFunctions::Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
-	}
+	if (CServer::Get()->m_bIncreaseRakNetInternalPlayers)
+		CSAMPFunctions::Start(MAX_PLAYERS, 0, CServer::Get()->m_iRakNetInternalSleepTime, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
 
 	// Recreate pools
 	CServer::Get()->pGangZonePool = new CGangZonePool();
