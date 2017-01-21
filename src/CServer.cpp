@@ -41,6 +41,14 @@ void CServer::Initialize(SAMPVersion version)
 	m_bOnServerMessage = false;
 	m_dwAFKAccuracy = 1500;
 
+	m_bPickupProtection = static_cast<int>(Utility::CFGLoad("PickupProtection") != 0);
+	m_bDeathProtection = static_cast<int>(Utility::CFGLoad("DeathProtection") != 0);
+	m_bDialogProtection = static_cast<int>(Utility::CFGLoad("DialogProtection") != 0);
+	m_bUseCustomSpawn = static_cast<int>(Utility::CFGLoad("UseCustomSpawn") != 0);
+	m_bIncreaseRakNetInternalPlayers = static_cast<int>(Utility::CFGLoad("IncreaseRakNetInternalPlayers") != 0);
+	m_iRakNetInternalSleepTime = Utility::CFGLoad("RakNetInternalSleepTime");
+	m_bStorePlayerObjectsMaterial = static_cast<int>(Utility::CFGLoad("StorePlayerObjectsMaterial") != 0);
+
 #ifndef _WIN32
 	LoadTickCount();
 #endif
@@ -392,8 +400,8 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write(false);
 			
 			// UP/DOWN KEYS
-			if (wKeys)
-				bsSync->Write(wKeys);
+			if (wKeysUD)
+				bsSync->Write(wKeysUD);
 			else
 				bsSync->Write(false);
 
