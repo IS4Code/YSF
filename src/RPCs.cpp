@@ -72,213 +72,212 @@ BYTE RPC_DeathBroadcast = 0xA6;
 BYTE RPC_ServerJoin = 0x89;
 BYTE RPC_ServerQuit = 0x8A;
 
-void UpdateScoresPingsIPs(RPCParameters *rpcParams)
+//----------------------------------------------------
+
+void RedirectRPC(BYTE rpcid, void(*functionPointer) (RPCParameters *rpcParams))
 {
-	RakNet::BitStream bsUpdate;
-	for(WORD i = 0; i < MAX_PLAYERS; ++i)
-	{
-		if(IsPlayerConnected(i))
-		{
-			bsUpdate.Write(i);
-
-			if(!pPlayerData[i]->bUpdateScoresPingsDisabled)
-			{
-				bsUpdate.Write(pNetGame->pPlayerPool->dwScore[i]);
-
-				if(pPlayerData[i]->bFakePingToggle)
-					bsUpdate.Write(pPlayerData[i]->dwFakePingValue);
-				else
-					bsUpdate.Write(CSAMPFunctions::GetLastPing(CSAMPFunctions::GetPlayerIDFromIndex(i)));
-			}
-			else
-			{
-				bsUpdate.Write(0);
-				bsUpdate.Write(0);
-			}
-		}
-	}
-
-	CSAMPFunctions::RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, LOW_PRIORITY, UNRELIABLE, 0, rpcParams->sender, false, false);
+	int _rpcid = static_cast<int>(rpcid);
+	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&_rpcid);
+	CSAMPFunctions::RegisterAsRemoteProcedureCall(&_rpcid, functionPointer);
 }
 
-#ifdef testspawn
-void Spawn(RPCParameters *rpcParams)
+//----------------------------------------------------
+
+void InitRPCs()
 {
-	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
-
-	if (pNetGame->iGameState != GAMESTATE_RUNNING) return;
-
-	WORD playerid = pRakServer->GetIndexFromPlayerID(rpcParams->sender);
-	if (!IsPlayerConnected(playerid)) return;
-	CPlayer	*pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-	
-	// Sanity checks
-	if (!pPlayer->bHasSpawnInfo) return;
-	int iSpawnClass = pPlayer->spawn.iSkin;
-	if (iSpawnClass < 0 || iSpawnClass > 319) return;
-
-	// Call OnPlayerSpawn
-	CCallbackManager::OnPlayerSpawn(playerid);
-
-	// Reset all their sync attributes.
-	pPlayer->syncData.vecPosition = pPlayer->spawn.vecPos;
-	pPlayer->syncData.fQuaternion[4] =  pPlayer->spawn.fRotation;
-	pPlayer->vecPosition = pPlayer->spawn.vecPos;
-	pPlayer->wVehicleId = 0;
-	pPlayerData[playerid]->bControllable = true;
-
-	CSAMPFunctions::SpawnPlayer_(playerid);
-}
-#endif
-
-void Death(RPCParameters* rpcParams)
-{
-	RakNet::BitStream bsData( rpcParams->input, rpcParams->numberOfBitsOfData / 8, false );
-
-	WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender)),
-		killerid;
-	BYTE reasonid;
-
-	bsData.Read(reasonid);
-	bsData.Read(killerid);
-
-	if (!IsPlayerConnected(playerid))
-		return;
-
-	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-
-	// If another player killed
-	if(IsPlayerConnected(killerid))
+	// Allow manipulation scoreboard
+	RedirectRPC(RPC_UpdateScoresPingsIPs, [](RPCParameters* rpcParams)
 	{
-		CPlayer *pKiller = pNetGame->pPlayerPool->pPlayer[killerid];
-
-		// If they aren't streamed for each other, then won't call OnPlayerDeath
-		if(!pKiller->byteStreamedIn[playerid] || !pPlayer->byteStreamedIn[killerid])
-			return;
-
-		if( pKiller->syncData.byteWeapon != reasonid && reasonid <= 46 && (reasonid != WEAPON_ROCKETLAUNCHER || reasonid != WEAPON_HEATSEEKER) && pKiller->byteState != PLAYER_STATE_DRIVER)// 46 = parachute
+		RakNet::BitStream bsUpdate;
+		for (WORD i = 0; i < MAX_PLAYERS; ++i)
 		{
-//			logprintf("onplayerdeath error 1, synced weapon: %d, reason: %d", pKiller->syncData.byteWeapon, reasonid);
-			return;
-		}
-
-		if (CSAMPFunctions::GetIntVariable("chatlogging"))
-			logprintf("[kill] %s killed %s %s", GetPlayerName(killerid), GetPlayerName(playerid), Utility::GetWeaponName(reasonid));
-	}
-	else
-	{
-		if (CSAMPFunctions::GetIntVariable("chatlogging"))
-			logprintf("[death] %s died %d", GetPlayerName(playerid), reasonid);
-	}
-	
-	bsData.Reset();
-	bsData.Write((WORD)playerid);
-	CSAMPFunctions::RPC(&RPC_DeathBroadcast, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), true, false);
-	
-	pPlayer->byteState = PLAYER_STATE_WASTED;
-
-	CCallbackManager::OnPlayerDeath(playerid, killerid, reasonid);
-}
-
-void PickedUpPickup(RPCParameters* rpcParams)
-{
-	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
-
-	WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
-	int pickupid;
-
-	// Just for security..
-	if (!IsPlayerConnected(playerid)) return;
-
-	bsData.Read(pickupid);
-
-#ifdef NEW_PICKUP_SYSTEM
-	logprintf("pickup playerid %d, pickupid: %d", playerid, pickupid);
-
-	// Find pickup in player client side pickuppool
-	PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.find(pickupid);
-	if (p != pPlayerData[playerid]->ClientPlayerPickups.end())
-	{
-		logprintf("pos: %f, %f, %f", p->second->vecPos.fX, p->second->vecPos.fY, p->second->vecPos.fZ);
-		// 99% - fake pickup RPC
-		if (GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &p->second->vecPos) > 15.0)
-		{
-			logprintf("fakepickup %d", pickupid);
-			return;
-		}
-
-		// If global pickup
-		if (p->second->type == GLOBAL)
-		{
-			// Find global pickup ID by player pickup pointer
-			WORD pickupid = CServer::Get()->pPickupPool->FindPickup(p->second);
-			if (pickupid != 0xFFFF)
+			if (IsPlayerConnected(i))
 			{
-				CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);
-			}
-		}
-		else
-		{
-			for (PickupMap::iterator p2 = pPlayerData[playerid]->PlayerPickups.begin(); p2 != pPlayerData[playerid]->PlayerPickups.end(); ++p2)
-			{
-				if (p2->second == p->second)
+				bsUpdate.Write(i);
+
+				if (!pPlayerData[i]->bUpdateScoresPingsDisabled)
 				{
-					CCallbackManager::OnPlayerPickedUpPlayerPickup(playerid, (WORD)p2->first);
-					break;
+					bsUpdate.Write(pNetGame->pPlayerPool->dwScore[i]);
+
+					if (pPlayerData[i]->bFakePingToggle)
+						bsUpdate.Write(pPlayerData[i]->dwFakePingValue);
+					else
+						bsUpdate.Write(CSAMPFunctions::GetLastPing(CSAMPFunctions::GetPlayerIDFromIndex(i)));
+				}
+				else
+				{
+					bsUpdate.Write(0);
+					bsUpdate.Write(0);
 				}
 			}
 		}
-	}
-#else
-	if (pickupid >= 0 && pickupid < MAX_PICKUPS)
+
+		CSAMPFunctions::RPC(&RPC_UpdateScoresPingsIPs, &bsUpdate, LOW_PRIORITY, UNRELIABLE, 0, rpcParams->sender, false, false);
+	});
+
+#ifdef testspawn
+	//----------------------------------------------------
+	// Spawning
+	RedirectRPC(RPC_Spawn, [](RPCParameters* rpcParams)
 	{
-		if (pNetGame->pPickupPool->bActive[pickupid])
+		RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+		if (pNetGame->iGameState != GAMESTATE_RUNNING) return;
+
+		WORD playerid = playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
+		if (!IsPlayerConnected(playerid)) return;
+		CPlayer	*pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+
+		// Sanity checks
+		if (!pPlayer->bHasSpawnInfo) return;
+		int iSpawnClass = pPlayer->spawn.iSkin;
+		if (iSpawnClass < 0 || iSpawnClass > 319) return;
+
+		// Call OnPlayerSpawn
+		CCallbackManager::OnPlayerSpawn(playerid);
+
+		// Reset all their sync attributes.
+		pPlayer->syncData.vecPosition = pPlayer->spawn.vecPos;
+		pPlayer->syncData.fQuaternion[4] = pPlayer->spawn.fRotation;
+		pPlayer->vecPosition = pPlayer->spawn.vecPos;
+		pPlayer->wVehicleId = 0;
+		pPlayerData[playerid]->bControllable = true;
+
+		CSAMPFunctions::SpawnPlayer(playerid);
+	});
+#endif
+	//----------------------------------------------------
+	// Protection against fakekill
+	RedirectRPC(RPC_Death, [](RPCParameters* rpcParams)
+	{
+		RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+		WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender)),
+			killerid;
+		BYTE reasonid;
+
+		bsData.Read(reasonid);
+		bsData.Read(killerid);
+
+		if (!IsPlayerConnected(playerid))
+			return;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+
+		// If another player killed
+		if (IsPlayerConnected(killerid))
 		{
-			if (GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &pNetGame->pPickupPool->Pickup[pickupid].vecPos) > 15.0)
+			CPlayer *pKiller = pNetGame->pPlayerPool->pPlayer[killerid];
+
+			// If they aren't streamed for each other, then won't call OnPlayerDeath
+			if (!pKiller->byteStreamedIn[playerid] || !pPlayer->byteStreamedIn[killerid])
+				return;
+
+			if (pKiller->syncData.byteWeapon != reasonid && reasonid <= 46 && (reasonid != WEAPON_ROCKETLAUNCHER || reasonid != WEAPON_HEATSEEKER) && pKiller->byteState != PLAYER_STATE_DRIVER)// 46 = parachute
+			{
+				//			logprintf("onplayerdeath error 1, synced weapon: %d, reason: %d", pKiller->syncData.byteWeapon, reasonid);
+				return;
+			}
+
+			if (CSAMPFunctions::GetIntVariable("chatlogging"))
+				logprintf("[kill] %s killed %s %s", GetPlayerName(killerid), GetPlayerName(playerid), Utility::GetWeaponName(reasonid));
+		}
+		else
+		{
+			if (CSAMPFunctions::GetIntVariable("chatlogging"))
+				logprintf("[death] %s died %d", GetPlayerName(playerid), reasonid);
+		}
+
+		bsData.Reset();
+		bsData.Write((WORD)playerid);
+		CSAMPFunctions::RPC(&RPC_DeathBroadcast, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), true, false);
+
+		pPlayer->byteState = PLAYER_STATE_WASTED;
+
+		CCallbackManager::OnPlayerDeath(playerid, killerid, reasonid);
+	});
+
+	//----------------------------------------------------
+	// Add distance protection to OnPlayerPickupPickup against fake pickup ids
+	RedirectRPC(RPC_PickedUpPickup, [](RPCParameters* rpcParams)
+	{
+		RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+		WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
+		int pickupid;
+
+		// Just for security..
+		if (!IsPlayerConnected(playerid)) return;
+
+		bsData.Read(pickupid);
+
+#ifdef NEW_PICKUP_SYSTEM
+		logprintf("pickup playerid %d, pickupid: %d", playerid, pickupid);
+
+		// Find pickup in player client side pickuppool
+		PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.find(pickupid);
+		if (p != pPlayerData[playerid]->ClientPlayerPickups.end())
+		{
+			logprintf("pos: %f, %f, %f", p->second->vecPos.fX, p->second->vecPos.fY, p->second->vecPos.fZ);
+			// 99% - fake pickup RPC
+			if (GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &p->second->vecPos) > 15.0)
 			{
 				logprintf("fakepickup %d", pickupid);
 				return;
 			}
 
-			CCallbackManager::OnPlayerPickedUpPickup(playerid, static_cast<WORD>(pickupid));
+			// If global pickup
+			if (p->second->type == GLOBAL)
+			{
+				// Find global pickup ID by player pickup pointer
+				WORD pickupid = CServer::Get()->pPickupPool->FindPickup(p->second);
+				if (pickupid != 0xFFFF)
+				{
+					CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);
+				}
+			}
+			else
+			{
+				for (PickupMap::iterator p2 = pPlayerData[playerid]->PlayerPickups.begin(); p2 != pPlayerData[playerid]->PlayerPickups.end(); ++p2)
+				{
+					if (p2->second == p->second)
+					{
+						CCallbackManager::OnPlayerPickedUpPlayerPickup(playerid, (WORD)p2->first);
+						break;
+					}
+				}
+			}
 		}
-	}
+#else
+		if (pickupid >= 0 && pickupid < MAX_PICKUPS)
+		{
+			if (pNetGame->pPickupPool->bActive[pickupid])
+			{
+				if (GetDistance3D(&pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition, &pNetGame->pPickupPool->Pickup[pickupid].vecPos) > 15.0)
+				{
+					logprintf("fakepickup %d", pickupid);
+					return;
+				}
+
+				CCallbackManager::OnPlayerPickedUpPickup(playerid, static_cast<WORD>(pickupid));
+			}
+		}
 #endif
-}
+	});
 
-void ClientCheck(RPCParameters* rpcParams)
-{
-	WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
-	DWORD arg;
-	BYTE type, response;
+	//----------------------------------------------------
+	// Made OnClientCheckResponse work in gamemode
+	RedirectRPC(RPC_ClientCheck, [](RPCParameters* rpcParams)
+	{
+		WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
+		DWORD arg;
+		BYTE type, response;
 
-	RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
-	bsData.Read(type);
-	bsData.Read(arg);
-	bsData.Read(response);
+		RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+		bsData.Read(type);
+		bsData.Read(arg);
+		bsData.Read(response);
 
-	CCallbackManager::OnClientCheckResponse(playerid, type, arg, response);
-}
- 
-void InitRPCs()
-{
-	int rpcid = static_cast<int>(RPC_UpdateScoresPingsIPs);
-	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
-	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, UpdateScoresPingsIPs);
-#ifdef testspawn
-	rpcid = static_cast<int>(RPC_Spawn);
-	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
-	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, Spawn);
-#endif
-	rpcid = static_cast<int>(RPC_Death);
-	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
-	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, Death);
-
-	rpcid = static_cast<int>(RPC_PickedUpPickup);
-	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
-	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, PickedUpPickup);
-
-	rpcid = static_cast<int>(RPC_ClientCheck);
-	CSAMPFunctions::UnregisterAsRemoteProcedureCall(&rpcid);
-	CSAMPFunctions::RegisterAsRemoteProcedureCall(&rpcid, ClientCheck);
+		CCallbackManager::OnClientCheckResponse(playerid, type, arg, response);
+	});
 }
