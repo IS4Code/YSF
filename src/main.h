@@ -57,7 +57,7 @@
 // ------------
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R18-2"
+#define PROJECT_VERSION		"R19"
 
 // ------------
 // OS SPECIFICS
