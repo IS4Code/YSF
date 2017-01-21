@@ -365,10 +365,61 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		{
 			if (!pPlayerData[playerid]->wDisabledKeysLR && !pPlayerData[playerid]->wDisabledKeysUD && !pPlayerData[playerid]->wDisabledKeys
 				&& !pPlayerData[toplayerid]->bCustomPos[playerid] && !pPlayerData[toplayerid]->bCustomQuat[playerid]) break;
+			
+			const int owerwrite_offset = bsSync->GetReadOffset(); // skip p->vehicleSyncData.wVehicleId
+			//bsSync->SetReadOffset(owerwrite_offset);
 
-			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
-			WORD keys = 0;
+			WORD wKeysLR, wKeysUD, wKeys;
+			CVector vecPos;
+			float fQuat[4];
 
+			bsSync->Read(wKeysLR);
+			bsSync->Read(wKeysUD);
+			bsSync->Read(wKeys);
+			bsSync->Read(vecPos);
+			bsSync->Read(fQuat);
+
+			wKeysLR &= ~pPlayerData[playerid]->wDisabledKeysLR;
+			wKeysUD &= ~pPlayerData[playerid]->wDisabledKeysUD;
+			wKeys &= ~pPlayerData[playerid]->wDisabledKeys;
+
+			bsSync->SetWriteOffset(owerwrite_offset);
+			
+			// LEFT/RIGHT KEYS
+			if(wKeysLR)
+				bsSync->Write(wKeysLR);
+			else
+				bsSync->Write(false);
+			
+			// UP/DOWN KEYS
+			if (wKeys)
+				bsSync->Write(wKeys);
+			else
+				bsSync->Write(false);
+
+			// Keys
+			if (wKeys)
+				bsSync->Write(wKeys);
+			else
+				bsSync->Write(false);
+			
+			// Position
+			if (pPlayerData[toplayerid]->bCustomPos[playerid])
+				bsSync->Write(*pPlayerData[toplayerid]->vecCustomPos[playerid]);
+			else
+				bsSync->Write((char*)&vecPos, sizeof(CVector));
+
+			// Rotation (in quaternion)
+			if (pPlayerData[toplayerid]->bCustomQuat[playerid])
+				bsSync->WriteNormQuat(pPlayerData[toplayerid]->fCustomQuat[playerid][0], pPlayerData[toplayerid]->fCustomQuat[playerid][1], pPlayerData[toplayerid]->fCustomQuat[playerid][2], pPlayerData[toplayerid]->fCustomQuat[playerid][3]);
+			else
+				bsSync->WriteNormQuat(fQuat[0], fQuat[1], fQuat[2], fQuat[3]);
+			
+			// restore default offsets
+			bsSync->SetReadOffset(read_offset);
+			bsSync->SetWriteOffset(write_offset);
+
+			/*
 			bsSync->Reset();
 			bsSync->Write((BYTE)ID_PLAYER_SYNC);
 			bsSync->Write(playerid);
@@ -470,6 +521,7 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write((int)p->syncData.dwAnimationData);
 			}
 			else bsSync->Write(false);
+			*/
 			break;
 		}
 		case ID_VEHICLE_SYNC:
@@ -493,7 +545,7 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write(wKeysUD);
 			bsSync->Write(wKeys);
 
-			// set default offsets
+			// restore default offsets
 			bsSync->SetReadOffset(read_offset);
 			bsSync->SetWriteOffset(write_offset);
 
