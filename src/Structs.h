@@ -841,21 +841,21 @@ static_assert(sizeof(CActorAnim) == 142, "Invalid CActorAnim size");
 
 struct CActor
 {
-	BYTE			pad0;				// 0
-	int				iSkinID;			// 1 - 5
-	CVector			vecSpawnPos;	// 5 - 17
-	float			fSpawnAngle;		// 17 - 21
-	DWORD			pad4;				// 21 - 25
-	DWORD			pad5;				// 25 - 29
-	BYTE			byteLoopAnim;		// 29 - 30
+	BYTE			pad0;				
+	int				iSkinID;			
+	CVector			vecSpawnPos;	
+	float			fSpawnAngle;		
+	DWORD			pad4;				
+	DWORD			pad5;				
+	BYTE			byteLoopAnim;		
 	CActorAnim		anim;
-	float			fHealth;			// 172 - 176
-	DWORD			pad;				// 176 - 180
-	float			fAngle;			// 180 - 184
-	CVector			vecPos;			// 184 - 196
-	BYTE			pad8[12];			// 196 - 208
-	BYTE			byteInvulnerable;	// 208 - 209
-	WORD			wActorID;			// 209 - 211
+	float			fHealth;			
+	DWORD			pad;				
+	float			fAngle;			
+	CVector			vecPos;	
+	BYTE			pad8[12];			
+	BYTE			byteInvulnerable;	
+	WORD			wActorID;			
 };
 //static_assert(sizeof(CActor) == 211, "Invalid CActor size");
 

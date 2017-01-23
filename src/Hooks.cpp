@@ -399,8 +399,19 @@ void HOOK_logprintf(const char *msg, ...)
 			fflush(g_fLog);
 		}
 	
-		if (bRconSocketReply) 
+		if (*(WORD*)CAddress::VAR_wRCONUser != INVALID_PLAYER_ID)
+		{
+			DWORD len = strlen(buffer);
+			RakNet::BitStream bsParams;
+			bsParams.Write(0xFFFFFFFF);
+			bsParams.Write((DWORD)len);
+			bsParams.Write(buffer, len);
+			CSAMPFunctions::RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(*(WORD*)CAddress::VAR_wRCONUser), false, false);
+		}
+		else if (bRconSocketReply)
+		{
 			RconSocketReply(buffer);
+		}
 
 		CServer::Get()->ProcessConsoleMessages(buffer);
 	}

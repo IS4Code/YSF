@@ -91,6 +91,7 @@ public:
 
 	// Variables
 	static DWORD			VAR_pRestartWaitTime;
+	static DWORD			VAR_wRCONUser;
 
 	// Functions
 	static DWORD			FUNC_CConsole__AddStringVariable;
