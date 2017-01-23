@@ -828,8 +828,8 @@ struct CSAMPGangZonePool
 
 struct CActorAnim // 140
 {
-	char			szAnimLib[64]; // 0 - 64
-	char			szAnimName[64]; // 64 - 128
+	char			szAnimLib[64 + 1]; // 0 - 64
+	char			szAnimName[64 + 1]; // 64 - 128
 	float			fDelta;		// 128 - 132
 	BYTE			byteLoop;		// 132 - 133
 	BYTE			byteLockX;			// 133 - 134
@@ -837,7 +837,7 @@ struct CActorAnim // 140
 	BYTE			byteFreeze;		// 135 - 136
 	int				iTime;				//  136 - 140
 };
-static_assert(sizeof(CActorAnim) == 140, "Invalid CActorAnim size");
+static_assert(sizeof(CActorAnim) == 142, "Invalid CActorAnim size");
 
 struct CActor
 {
@@ -849,16 +849,15 @@ struct CActor
 	DWORD			pad5;				// 25 - 29
 	BYTE			byteLoopAnim;		// 29 - 30
 	CActorAnim		anim;
-	WORD			wTime;				// 170 - 171
 	float			fHealth;			// 172 - 176
 	DWORD			pad;				// 176 - 180
 	float			fAngle;			// 180 - 184
 	CVector			vecPos;			// 184 - 196
-	DWORD			pad8[3];			// 196 - 208
+	BYTE			pad8[12];			// 196 - 208
 	BYTE			byteInvulnerable;	// 208 - 209
 	WORD			wActorID;			// 209 - 211
 };
-static_assert(sizeof(CActor) == 211, "Invalid CActor size");
+//static_assert(sizeof(CActor) == 211, "Invalid CActor size");
 
 struct CActorPool
 {
