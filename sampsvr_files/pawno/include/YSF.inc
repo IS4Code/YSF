@@ -52,6 +52,12 @@ native E_SERVER_RULE_FLAGS:GetServerRuleFlags(const name[]);
 
 // Server settings
 native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, &limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
+
+// Toggling RCON commands
+native GetRCONCommandName(const cmdname[], changedname[], len = sizeof(changedname));
+native ChangeRCONCommandName(const cmdname[], changedname[]);
+
+// Broadcasting console messages
 native EnableConsoleMSGsForPlayer(playerid, color);
 native DisableConsoleMSGsForPlayer(playerid);
 native HasPlayerConsoleMessages(playerid, &color = 0);
