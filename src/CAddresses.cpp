@@ -98,7 +98,6 @@ DWORD CAddress::FUNC_CGameMode__OnDialogResponse = NULL;
 
 void CAddress::Initialize(SAMPVersion sampVersion)
 {
-	logprintf("pattern: %X", );
 	// Thx for Whitetiger
 	DWORD dwRestartTime; 
 #ifdef _WIN32
