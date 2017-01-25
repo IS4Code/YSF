@@ -153,7 +153,7 @@ template <> inline void CScriptParams::AddInternal(char* szString)
 
 	m_pos += 2;
 }
-template <> inline void CScriptParams::AddInternal(std::string &str)
+template <> inline void CScriptParams::AddInternal(std::string str)
 {
 	set_amxstring(m_AMX, m_params[m_pos], str.c_str(), m_params[m_pos + 1]);
 
@@ -209,9 +209,9 @@ template <> inline void CScriptParams::ReadInternal(std::string *result)
 	if (amx_length > 0 && temp != nullptr)
 	{
 		amx_GetString(temp, amx_cstr, 0, amx_length + 1);
+		result->append(temp);
 	}
-	result->append(temp);
-
+	
 	delete[] temp;
 	temp = nullptr;
 }

@@ -226,6 +226,7 @@ typedef struct _MATRIX4X4
 	CVector pos;
 	float  pad_p;
 } MATRIX4X4, *PMATRIX4X4;
+static_assert(sizeof(_MATRIX4X4) == 64, "Invalid _MATRIX4X4 size");
 
 struct ConsoleVariable_s
 {
@@ -234,6 +235,15 @@ struct ConsoleVariable_s
 	void*			VarPtr;
 	VARCHANGEFUNC	VarChangeFunc;
 };
+static_assert(sizeof(ConsoleVariable_s) == 16, "Invalid ConsoleVariable_s size");
+
+struct ConsoleCommand_s
+{
+	char			szName[255];
+	DWORD			dwFlags;
+	void			(*fptrFunc)();
+};
+static_assert(sizeof(ConsoleCommand_s) == 263, "Invalid ConsoleCommand_s size");
 
 /* -------------------------------------------------------- */
 // CPlayer

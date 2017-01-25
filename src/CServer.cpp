@@ -78,6 +78,14 @@ void CServer::Initialize(SAMPVersion version)
 		m_vecValidNameCharacters.insert(i);
 	}
 	m_vecValidNameCharacters.insert({ ']', '[', '_', '$', '=', '(', ')', '@', '.' });
+
+	// Create mirror from SAMP server's internal array of console commands
+	ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+	do
+	{
+		m_RCONCommands.push_back(std::string(cmds->szName));
+		cmds++;
+	} while (cmds->szName[0] && !cmds->dwFlags);
 }
 
 CServer::~CServer()
@@ -260,6 +268,50 @@ bool CServer::IsValidNick(char *szName)
 	return true;
 }
 
+// Toggling rcon commands
+bool CServer::ChangeRCONCommandName(std::string const &strCmd, std::string const &strNewCmd)
+{
+	auto it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
+	if (it != m_RCONCommands.end())
+	{
+		auto pos = std::distance(m_RCONCommands.begin(), it);
+
+		// Find command in array by it's position in vector
+		ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+		do
+		{
+			cmds++;
+		} while (cmds->szName[0] && !cmds->dwFlags && --pos != 0);
+
+		// Change RCON command in samp server's internal array
+		memcpy(cmds->szName, strNewCmd.c_str(), sizeof(cmds->szName));
+		return 1;
+	}
+	return 0;
+}
+
+bool CServer::GetRCONCommandName(std::string const &strCmd, std::string &strNewCmd)
+{
+	auto it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
+	if (it != m_RCONCommands.end())
+	{
+		auto pos = std::distance(m_RCONCommands.begin(), it);
+
+		// Find command in array by it's position in vector
+		ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+		do
+		{
+			cmds++;
+		} while (cmds->szName[0] && !cmds->dwFlags && --pos != 0);
+
+		// Get changed RCON command
+		strNewCmd.append(cmds->szName);
+		return 1;
+	}
+	return 0;
+}
+
+// Broadcasting console messages to players
 void CServer::AddConsolePlayer(WORD playerid, DWORD color)
 {
 	if (m_ConsoleMessagePlayers.find(playerid) == m_ConsoleMessagePlayers.end())

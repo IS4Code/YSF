@@ -697,6 +697,31 @@ AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 	return 1;
 }
 
+// native GetRCONCommandName(const cmdname[], changedname[]);
+AMX_DECLARE_NATIVE(Natives::ChangeRCONCommandName)
+{
+	CHECK_PARAMS(2, "ChangeRCONCommandName", LOADED);
+
+	std::string name, newname;
+	CScriptParams::Get()->Read(&name, &newname);
+
+	return CServer::Get()->ChangeRCONCommandName(name, newname);
+}
+
+// native GetRCONCommandName(const cmdname[], changedname[], len = sizeof(changedname));
+AMX_DECLARE_NATIVE(Natives::GetRCONCommandName)
+{
+	CHECK_PARAMS(3, "GetRCONCommandName", LOADED);
+
+	std::string name;
+	CScriptParams::Get()->Read(&name);
+
+	std::string changedname;
+	bool ret = CServer::Get()->GetRCONCommandName(name, changedname);
+	CScriptParams::Get()->Add(changedname);
+	return ret;
+}
+
 // native EnableConsoleMSGsForPlayer(playerid, color);
 AMX_DECLARE_NATIVE(Natives::EnableConsoleMSGsForPlayer)
 {
@@ -5483,6 +5508,10 @@ AMX_NATIVE_INFO native_list[] =
 
 	// Server settings
 	AMX_DEFINE_NATIVE(GetServerSettings)
+
+	// RCON Commands
+	AMX_DEFINE_NATIVE(ChangeRCONCommandName) // R19
+	AMX_DEFINE_NATIVE(GetRCONCommandName) // R19
 
 	// Nick name
 	AMX_DEFINE_NATIVE(IsValidNickName)	// R8

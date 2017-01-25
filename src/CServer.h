@@ -56,12 +56,11 @@ public:
 
 	void Initialize(SAMPVersion version);
 	bool inline IsInitialized(void) { return m_bInitialized; }
+	void Process();
 
 	bool AddPlayer(int playerid);
 	bool RemovePlayer(int playerid);
-
-	void Process();
-
+ 
 	bool OnPlayerStreamIn(WORD playerid, WORD forplayerid);
 	bool OnPlayerStreamOut(WORD playerid, WORD forplayerid);
 
@@ -76,8 +75,12 @@ public:
 	inline void UnbanIP(const char* ip) { m_BannedIPs.erase(ip); }
 	inline void ClearBans() { m_BannedIPs.clear(); }
 	inline bool IsBanned(char* ip) { return m_BannedIPs.find(ip) != m_BannedIPs.end(); }
-	
-	// Broadcast console messages to players
+
+	// Toggling rcon commands
+	bool ChangeRCONCommandName(std::string const &strCmd, std::string const &strNewCmd);
+	bool GetRCONCommandName(std::string const &strCmd, std::string &strNewCmd);
+
+	// Broadcasting console messages to players
 	void AddConsolePlayer(WORD playerid, DWORD color);
 	void RemoveConsolePlayer(WORD playerid); 
 	bool IsConsolePlayer(WORD playerid, DWORD &color);
@@ -121,6 +124,7 @@ public:
 	bool m_bStorePlayerObjectsMaterial : 1;
 
 private:
+
 	SAMPVersion m_Version;
 	int m_iTicks;
 	int m_iTickRate;
@@ -131,6 +135,7 @@ private:
 	DWORD m_dwAFKAccuracy;
 
 	std::set<std::string> m_BannedIPs;
+	std::vector<std::string> m_RCONCommands;
 	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
 	std::set<char> m_vecValidNameCharacters;
 };

@@ -52,6 +52,7 @@ DWORD CAddress::FUNC_Logprintf_037_R2_1 = 0x080A91D0;
 // Variables
 DWORD CAddress::VAR_pRestartWaitTime = NULL;
 DWORD CAddress::VAR_wRCONUser = NULL;
+DWORD CAddress::ARRAY_ConsoleCommands = NULL;
 
 // Functions
 DWORD CAddress::FUNC_CConsole__AddStringVariable = NULL;
@@ -97,12 +98,14 @@ DWORD CAddress::FUNC_CGameMode__OnDialogResponse = NULL;
 
 void CAddress::Initialize(SAMPVersion sampVersion)
 {
+	logprintf("pattern: %X", );
 	// Thx for Whitetiger
 	DWORD dwRestartTime; 
 #ifdef _WIN32
 	dwRestartTime =								FindPattern("\xD9\x15\x00\x00\x00\x00\xD8\x1D\x00\x00\x00\x00\xDF\xE0\xF6\xC4\x41\x75\x07", "xx????xx????xxxxxxx") + 6;
 	VAR_pRestartWaitTime =						*(DWORD*)(dwRestartTime + 2);
 	VAR_wRCONUser =								0x004E5874;
+	ARRAY_ConsoleCommands =						FindPattern("echo", "xxxx");
 
 	FUNC_CConsole__AddStringVariable =			FindPattern("\x53\x56\x57\x8B\x7C\x24\x18\x85\xFF", "xxxxxxxxx");
 	FUNC_CConsole__GetStringVariable =			FindPattern("\x8B\x44\x24\x04\x50\xE8\x00\x00\x00\x00\x85\xC0\x74\x0B", "xxxxxx????xxxx");
@@ -148,6 +151,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	// Thx for Mellnik
 	VAR_pRestartWaitTime = 						NULL;
 	VAR_wRCONUser = NULL;
+	ARRAY_ConsoleCommands = NULL;
+
 
 	FUNC_CConsole__AddStringVariable = 			FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\x85\xF6\x74\x00\x89\x34\x24", "xxxxxxx?xx?xxx?xxx");
 	FUNC_CConsole__GetStringVariable =			FUNC_CConsole__AddStringVariable - 0x760;//0x80A0190;
@@ -203,6 +208,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 			FUNC_CVehicle__Respawn =					0x814B4C0;
 			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
 			VAR_wRCONUser =								0x08197DF0;
+			ARRAY_ConsoleCommands =						FindPattern("echo", "xxxx");
 			break;
 		}
 	}
