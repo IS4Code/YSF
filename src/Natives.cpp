@@ -1279,14 +1279,13 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	for (BYTE i = 0; i != MAX_OBJECT_MATERIAL; ++i)
+	
+	auto it = pPlayerData[playerid]->m_PlayerObjectMaterialText.find(objectid);
+	if (it != pPlayerData[playerid]->m_PlayerObjectMaterialText.end())
 	{
-		if (pObject->szMaterialText[i])
-		{
-			free(pObject->szMaterialText[i]);
-			pObject->szMaterialText[i] = NULL;
-		}
+		pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(it);
 	}
+
 	if(pDestroyPlayerObject(amx, params) && IsPlayerConnected(playerid))
 	{
 		if(pPlayerData[playerid]->stObj[objectid].wObjectID != 0xFFFF || pPlayerData[playerid]->stObj[objectid].wAttachPlayerID != INVALID_PLAYER_ID)
@@ -1385,12 +1384,14 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 			DWORD color;
 			std::string szTXD, szTexture;
 			CScriptParams::Get()->Read(&slot, &modelid, &szTXD, &szTexture, &color);
-
+			/*
 			if (pObject->szMaterialText[index])
 			{
 				free(pObject->szMaterialText[index]);
 				pObject->szMaterialText[index] = NULL;
 			}
+			*/
+			pPlayerData[playerid]->m_PlayerObjectMaterialText[objectid][index].clear();
 			pObject->Material[index].byteSlot = slot;
 			pObject->Material[index].wModelID = modelid;
 			pObject->Material[index].byteUsed = 1;
@@ -1425,11 +1426,15 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 			DWORD fontcolor, backcolor;
 			CScriptParams::Get()->Read(&szText, &slot, &materialsize, &szFontFace, &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 
+			/*
 			if (pObject->szMaterialText[index])
 				free(pObject->szMaterialText[index]);
 			
 			pObject->szMaterialText[index] = (char *)calloc(1u, szText.length() + 1);
 			strcpy(pObject->szMaterialText[index], szText.c_str());
+			*/
+
+			pPlayerData[playerid]->m_PlayerObjectMaterialText[objectid][index] = std::move(szText);
 			pObject->Material[index].byteSlot = slot;
 			pObject->Material[index].byteUsed = 2;
 			pObject->Material[index].byteMaterialSize = materialsize;
@@ -2258,8 +2263,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 	}
 	if(i == MAX_OBJECT_MATERIAL) return 0;
 	
-	DWORD dwColor = ABGR_ARGB(pObject->Material[i].dwMaterialColor);
-	CScriptParams::Get()->Add(pObject->Material[i].wModelID, &pObject->Material[i].szMaterialTXD[0], &pObject->Material[i].szMaterialTexture[0], dwColor);
+	CScriptParams::Get()->Add(pObject->Material[i].wModelID, &pObject->Material[i].szMaterialTXD[0], &pObject->Material[i].szMaterialTexture[0], ABGR_ARGB(pObject->Material[i].dwMaterialColor));
 	return 1;
 }
 
@@ -2289,16 +2293,6 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 
 	CScriptParams::Get()->Add(pObject->szMaterialText[i], pObject->Material[i].byteMaterialSize, pObject->Material[i].szFont, pObject->Material[i].byteFontSize,
 		pObject->Material[i].byteBold, pObject->Material[i].dwFontColor, pObject->Material[i].dwBackgroundColor, pObject->Material[i].byteAlignment);
-/*
-	set_amxstring(amx, params[3], pObject->szMaterialText[i], params[4]); 
-	Utility::storeIntegerInNative(amx, params[5], pObject->Material[i].byteMaterialSize);
-	set_amxstring(amx, params[6], pObject->Material[i].szFont, params[7]); 
-	Utility::storeIntegerInNative(amx, params[8], pObject->Material[i].byteFontSize);
-	Utility::storeIntegerInNative(amx, params[9], pObject->Material[i].byteBold);
-	Utility::storeIntegerInNative(amx, params[10], pObject->Material[i].dwFontColor);
-	Utility::storeIntegerInNative(amx, params[11], pObject->Material[i].dwBackgroundColor);
-	Utility::storeIntegerInNative(amx, params[12], pObject->Material[i].byteAlignment);
-*/
 	return 1;
 }
 
@@ -2480,13 +2474,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 	}
 	if(i == MAX_OBJECT_MATERIAL) return 0;
 
-	CScriptParams::Get()->Add(pObject->Material[i].wModelID, pObject->Material[i].szMaterialTXD, pObject->Material[i].szMaterialTexture, ABGR_ARGB(pObject->Material[i].dwMaterialColor));
-		/*
-		Utility::storeIntegerInNative(amx, params[4], pObject->Material[i].wModelID); //  modelid
-	set_amxstring(amx, params[5], pObject->Material[i].szMaterialTXD, params[6]); // txdname[], txdnamelen = sizeof(txdname)
-	set_amxstring(amx, params[7], pObject->Material[i].szMaterialTexture, params[8]); // texturenamelen = sizeof(txdnamelen)
-	Utility::storeIntegerInNative(amx, params[9], ); // materialcolor	
-	*/
+	CScriptParams::Get()->Add(pObject->Material[i].wModelID, &pObject->Material[i].szMaterialTXD[0], &pObject->Material[i].szMaterialTexture[0], ABGR_ARGB(pObject->Material[i].dwMaterialColor));
 	return 1;
 }
 
@@ -2515,18 +2503,17 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 	}
 	if(i == MAX_OBJECT_MATERIAL) return 0;
 
-	CScriptParams::Get()->Add(pObject->szMaterialText[i], pObject->Material[i].byteMaterialSize, pObject->Material[i].szFont, pObject->Material[i].byteFontSize,
+	std::string text;
+	try
+	{
+		text = pPlayerData[playerid]->m_PlayerObjectMaterialText[objectid][materialindex];
+	}
+	catch (...)
+	{
+
+	}
+	CScriptParams::Get()->Add(text, pObject->Material[i].byteMaterialSize, &pObject->Material[i].szFont[0], pObject->Material[i].byteFontSize,
 		pObject->Material[i].byteBold, pObject->Material[i].dwFontColor, pObject->Material[i].dwBackgroundColor, pObject->Material[i].byteAlignment);
-	/*
-	set_amxstring(amx, params[4], pObject->szMaterialText[i], params[5]); 
-	Utility::storeIntegerInNative(amx, params[6], pObject->Material[i].byteMaterialSize); // materialsize
-	set_amxstring(amx, params[7], pObject->Material[i].szFont, params[8]); 
-	Utility::storeIntegerInNative(amx, params[9], pObject->Material[i].byteFontSize);
-	Utility::storeIntegerInNative(amx, params[10], pObject->Material[i].byteBold);
-	Utility::storeIntegerInNative(amx, params[11], pObject->Material[i].dwFontColor);
-	Utility::storeIntegerInNative(amx, params[12], pObject->Material[i].dwBackgroundColor);
-	Utility::storeIntegerInNative(amx, params[13], pObject->Material[i].byteAlignment);
-	*/
 	return 1;
 }
 
@@ -2615,8 +2602,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 
 	CAttachedObject *pObject = &pNetGame->pPlayerPool->pPlayer[playerid]->attachedObject[slot];
 
-	DWORD color1 = RGBA_ABGR(pObject->dwMaterialColor1), color2 = RGBA_ABGR(pObject->dwMaterialColor2);
-	CScriptParams::Get()->Add(pObject->iModelID, pObject->iBoneiD, pObject->vecPos, pObject->vecRot, pObject->vecScale, color1, color2);
+	CScriptParams::Get()->Add(pObject->iModelID, pObject->iBoneiD, pObject->vecPos, pObject->vecRot, pObject->vecScale, 
+		RGBA_ABGR(pObject->dwMaterialColor1), RGBA_ABGR(pObject->dwMaterialColor2));
 	return 1;
 }
 

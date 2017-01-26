@@ -96,6 +96,9 @@ public:
 	CVector *vecCustomPos[MAX_PLAYERS];
 	float fCustomQuat[MAX_PLAYERS][4];
 
+	// Fix for GetPlayerObjectMaterial/MaterialText
+	std::unordered_map<WORD, std::unordered_map<BYTE, std::string>> m_PlayerObjectMaterialText;
+
 	// Gangzones
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];
 
