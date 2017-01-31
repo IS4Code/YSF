@@ -140,58 +140,36 @@ void CServer::Process()
 bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 {
 	//logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
-	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(playerid);
-	PlayerID forplayerId = CSAMPFunctions::GetPlayerIDFromIndex(forplayerid);
-	
-	// For security..
-	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
-		return 0;
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
 
+	RakNet::BitStream bs;
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(WORD i = 0; i != MAX_OBJECTS; ++i)
+	for (auto o : pPlayerData[forplayerid]->m_PlayerObjectsAddon)
 	{
-		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && !pPlayerData[forplayerid]->bAttachedObjectCreated)
+		if (o.second->wAttachPlayerID == playerid && !o.second->bCreated)
 		{
-			//logprintf("should work");
-			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
-			{
-				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
-				return 0;
+			// If object isn't present in waiting queue then add it
+			if (pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.find(o.first) == pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.end())
+			{				
+				bs.Reset();
+				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->wObjectID); // m_wObjectID
+				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->iModel);  // iModel
+				bs.Write((char*)&o.second->vecOffset, sizeof(CVector));
+				bs.Write((char*)&o.second->vecRot, sizeof(CVector));
+				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->fDrawDistance);
+				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->bNoCameraCol);
+				bs.Write((WORD)-1); // wAttachedVehicleID
+				bs.Write((WORD)-1); // wAttachedObjectID
+				bs.Write((BYTE)0); // dwMaterialCount
+				CSAMPFunctions::RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
+
+				o.second->bCreated = true;
+				pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.insert(o.first);
+
+				logprintf("add to waiting queue streamin");
 			}
-
-			//logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
-			// First create the object for the player. We don't remove it from the pools, so we need to send RPC for the client to create object
-			RakNet::BitStream bs;
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->iModel);  // iModel
-
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fZ);
-
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fX);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fY);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->fDrawDistance);
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->bNoCameraCol); 
-			bs.Write((WORD)-1); // wAttachedVehicleID
-			bs.Write((WORD)-1); // wAttachedObjectID
-			bs.Write((BYTE)0); // dwMaterialCount
-
-			CSAMPFunctions::RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
-			
-			pPlayerData[forplayerid]->dwCreateAttachedObj = GetTickCount();
-			pPlayerData[forplayerid]->dwObjectID = i;
-			pPlayerData[forplayerid]->bAttachedObjectCreated = true;
-			/*
-			logprintf("join, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
-				pPlayerData[forplayerid]->stObj[i].wAttachPlayerID,
-				pPlayerData[forplayerid]->stObj[i].vecOffset.fX, pPlayerData[forplayerid]->stObj[i].vecOffset.fY, pPlayerData[forplayerid]->stObj[i].vecOffset.fZ,
-				pPlayerData[forplayerid]->stObj[i].vecRot.fX, pPlayerData[forplayerid]->stObj[i].vecRot.fY, pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-			*/
 		}
 	}
 	return 1;
@@ -200,39 +178,29 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 {
 	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
-	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(playerid);
-	PlayerID forplayerId = CSAMPFunctions::GetPlayerIDFromIndex(forplayerid);
-	
-	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
-		return 0;
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
 
-	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(WORD i = 0; i != MAX_OBJECTS; ++i)
+	for (auto o : pPlayerData[forplayerid]->m_PlayerObjectsAddon)
 	{
-		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && pPlayerData[forplayerid]->bAttachedObjectCreated)
+		if (o.second->wAttachPlayerID == playerid)
 		{
-			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
-			{
-				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - m_pPlayerObjects = 0");
-				return 0;
-			}
+			// If object isn't present in waiting queue then destroy it
+			if (pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.find(o.first) != pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.end())
+				pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.erase(o.first);
 
-			//logprintf("remove objects i: %d, forplayerid: %d", i, forplayerid);
-			if(pPlayerData[playerid]->bAttachedObjectCreated)
+			if (o.second->bCreated)
 			{
-				pPlayerData[playerid]->DestroyObject(i);
+				pPlayerData[playerid]->DestroyObject(o.first);
+				o.second->bCreated = false;
+				logprintf("destroy streamout");
 			}
-			pPlayerData[playerid]->dwCreateAttachedObj = 0;
-			pPlayerData[forplayerid]->bAttachedObjectCreated = false;
-			/*
-			logprintf("leave, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
-				pPlayerData[forplayerid]->stObj[i].wAttachPlayerID,
-				pPlayerData[forplayerid]->stObj[i].vecOffset.fX, pPlayerData[forplayerid]->stObj[i].vecOffset.fY, pPlayerData[forplayerid]->stObj[i].vecOffset.fZ,
-				pPlayerData[forplayerid]->stObj[i].vecRot.fX, pPlayerData[forplayerid]->stObj[i].vecRot.fY, pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-			*/
+			else
+			{
+				logprintf("isn't created streamout");
+			}
+			o.second->bAttached = false;
 		}
 	}
 	return 1;
@@ -274,6 +242,9 @@ bool CServer::ChangeRCONCommandName(std::string const &strCmd, std::string const
 	auto it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
 	if (it != m_RCONCommands.end())
 	{
+		if (strCmd == strNewCmd)
+			return 0;
+
 		auto pos = std::distance(m_RCONCommands.begin(), it);
 
 		// Find command in array by it's position in vector

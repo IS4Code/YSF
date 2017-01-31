@@ -31,6 +31,7 @@
 */
 
 #include "main.h"
+#include <memory>
 
 //----------------------------------------------------
 
@@ -1288,17 +1289,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 
 	if(pDestroyPlayerObject(amx, params) && IsPlayerConnected(playerid))
 	{
-		if(pPlayerData[playerid]->stObj[objectid].wObjectID != 0xFFFF || pPlayerData[playerid]->stObj[objectid].wAttachPlayerID != INVALID_PLAYER_ID)
-		{
-			pPlayerData[playerid]->stObj[objectid].wObjectID = INVALID_OBJECT_ID;
-			pPlayerData[playerid]->stObj[objectid].wAttachPlayerID = INVALID_PLAYER_ID;
-			pPlayerData[playerid]->stObj[objectid].vecOffset = CVector(0.0f, 0.0f, 0.0f);
-			pPlayerData[playerid]->stObj[objectid].vecRot = CVector(0.0f, 0.0f, 0.0f);		
-			pPlayerData[playerid]->dwCreateAttachedObj = 0;
-			pPlayerData[playerid]-> bAttachedObjectCreated = false;
-
-			//logprintf("remove attached shit");
-		}
+		pPlayerData[playerid]->DeleteObjectAddon(static_cast<WORD>(objectid));
 		return 1;
 	}
 	return 0;
@@ -1391,7 +1382,13 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 				pObject->szMaterialText[index] = NULL;
 			}
 			*/
-			pPlayerData[playerid]->m_PlayerObjectMaterialText[objectid][index].clear();
+
+			auto it = pPlayerData[playerid]->m_PlayerObjectMaterialText.find(objectid);
+			if (it != pPlayerData[playerid]->m_PlayerObjectMaterialText.end())
+			{
+				pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(it);
+			}
+
 			pObject->Material[index].byteSlot = slot;
 			pObject->Material[index].wModelID = modelid;
 			pObject->Material[index].byteUsed = 1;
@@ -2385,7 +2382,17 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	CScriptParams::Get()->Add(pObject->wAttachedVehicleID, pPlayerData[playerid]->stObj[objectid].wObjectID, pPlayerData[playerid]->stObj[objectid].wAttachPlayerID);
+
+	WORD attachedobjectid = INVALID_OBJECT_ID;
+	WORD attachedplayerid = INVALID_PLAYER_ID;
+	CPlayerObjectAttachAddon *pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
+	if (pAddon)
+	{
+		attachedobjectid = pAddon->wObjectID;
+		attachedplayerid = pAddon->wAttachPlayerID;
+	}
+
+	CScriptParams::Get()->Add(pObject->wAttachedVehicleID, attachedobjectid, attachedplayerid);
 	return 1;
 }
 
@@ -2402,21 +2409,25 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-	CVector* vecOffset = NULL;
-	CVector* vecRot = NULL;
+	CVector vecOffset;
+	CVector vecRot;
 	
 	if(pObject->wAttachedVehicleID)
 	{
-		vecOffset = &pObject->vecAttachedOffset;
-		vecRot = &pObject->vecAttachedRotation;
+		vecOffset = pObject->vecAttachedOffset;
+		vecRot = pObject->vecAttachedRotation;
 	}
 	else
 	{
-		vecOffset = &pPlayerData[playerid]->stObj[objectid].vecOffset;
-		vecRot = &pPlayerData[playerid]->stObj[objectid].vecRot;
+		CPlayerObjectAttachAddon* pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
+		if (pAddon)
+		{
+			vecOffset = pAddon->vecOffset;
+			vecOffset = pAddon->vecRot;
+		}
 	}
 	
-	CScriptParams::Get()->Add(*vecOffset, *vecRot);
+	CScriptParams::Get()->Add(vecOffset, vecRot);
 	return 1;
 }
 
@@ -2465,7 +2476,6 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
-
 	// Nothing to comment here..
 	while(i != MAX_OBJECT_MATERIAL)
 	{
@@ -4047,33 +4057,49 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 	
-	pPlayerData[playerid]->stObj[objectid].wAttachPlayerID = static_cast<WORD>(attachplayerid);
-	CScriptParams::Get()->Read(&pPlayerData[playerid]->stObj[objectid].vecOffset, &pPlayerData[playerid]->stObj[objectid].vecRot, &bOnlyAddToInstance);
+	// Find the space where to store data
+	CPlayerObjectAttachAddon* pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
+	
+	// Store data
+	pAddon->wObjectID = static_cast<WORD>(objectid);
+	pAddon->wAttachPlayerID = static_cast<WORD>(attachplayerid);
+	pAddon->creation_timepoint = default_clock::now();
 
+	// Read parameters into our map pointer
+	CScriptParams::Get()->Read(&pAddon->vecOffset, &pAddon->vecRot, &bOnlyAddToInstance);
+
+	// If it's allowed to create object immendiately or player attach this object to herself, then create it now
 	if(!bOnlyAddToInstance || playerid == attachplayerid)
 	{
 		if(pNetGame->pPlayerPool->pPlayer[playerid]->byteStreamedIn[attachplayerid] || playerid == attachplayerid)
 		{
 			RakNet::BitStream bs;
 			bs.Write((WORD)objectid); // wObjectID
-			bs.Write((WORD)attachplayerid); // playerid
-			bs.Write(amx_ctof(params[4]));
+			bs.Write((WORD)attachplayerid); // wPlayerid
+			bs.Write((char*)&pAddon->vecOffset, sizeof(CVector));
+			bs.Write((char*)&pAddon->vecRot, sizeof(CVector));
+			pAddon->bCreated = true;
+			pAddon->bAttached = true;
+
+			/*
 			bs.Write(amx_ctof(params[5]));
 			bs.Write(amx_ctof(params[6]));
 			bs.Write(amx_ctof(params[7]));
 			bs.Write(amx_ctof(params[8]));
 			bs.Write(amx_ctof(params[9]));
+			*/
 			CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
-
-			pPlayerData[playerid]->bAttachedObjectCreated = true;
-			pPlayerData[playerid]->dwCreateAttachedObj = 0;
 		}
 	}
 	else
 	{
-		pPlayerData[playerid]->dwCreateAttachedObj = GetTickCount();
-		pPlayerData[playerid]->dwObjectID = static_cast<WORD>(objectid);
-		pPlayerData[playerid]->bAttachedObjectCreated = true;
+		// We'll attach it later to prevent crashes
+		if (pPlayerData[playerid]->m_PlayerObjectsAttachQueue.find(objectid) != pPlayerData[playerid]->m_PlayerObjectsAttachQueue.end())
+			pPlayerData[playerid]->m_PlayerObjectsAttachQueue.erase(objectid);
+
+		// This case GOTTA called only from streamer when object ALREADY created.
+		pPlayerData[playerid]->m_PlayerObjectsAttachQueue.insert(objectid);
+		pAddon->bCreated = true;
 	}
 	return 1;
 }
@@ -4084,46 +4110,46 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 	CHECK_PARAMS(10, "AttachPlayerObjectToObject", LOADED);
 
 	const int forplayerid = CScriptParams::Get()->ReadInt();
-	const int wObjectID = CScriptParams::Get()->ReadInt();
-	const int wAttachTo = CScriptParams::Get()->ReadInt();
+	const int objectid = CScriptParams::Get()->ReadInt();
+	const int attachtoid = CScriptParams::Get()->ReadInt();
 
 	if(!IsPlayerConnected(forplayerid)) return 0;
 
-	if(wObjectID < 1 || wObjectID >= MAX_OBJECTS) return 0;
-	if(wAttachTo < 1 || wAttachTo >= MAX_OBJECTS) return 0;
+	if(objectid < 1 || objectid >= MAX_OBJECTS) return 0;
+	if(attachtoid < 1 || attachtoid >= MAX_OBJECTS) return 0;
 
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	if(!pObjectPool->pPlayerObjects[forplayerid][wObjectID] || !pObjectPool->pPlayerObjects[forplayerid][wAttachTo]) return 0; // Check if object is exist
+	if(!pObjectPool->pPlayerObjects[forplayerid][objectid] || !pObjectPool->pPlayerObjects[forplayerid][attachtoid]) return 0; // Check if object is exist
 
-	// Get data
-	CVector vecOffset;
-	CVector vecOffsetRot;
+	// Find the space where to store data
+	CPlayerObjectAttachAddon* pAddon = pPlayerData[forplayerid]->GetObjectAddon(objectid);
+
+	// Geting data
 	BYTE byteSyncRot;
-	CScriptParams::Get()->Read(&vecOffset, &vecOffsetRot, &byteSyncRot);
-
-	// Store data
-	pPlayerData[forplayerid]->stObj[wObjectID].wObjectID = static_cast<WORD>(wAttachTo);
-	pPlayerData[forplayerid]->stObj[wObjectID].vecOffset = vecOffset;
-	pPlayerData[forplayerid]->stObj[wObjectID].vecRot = vecOffsetRot;
+	CScriptParams::Get()->Read(&pAddon->vecOffset, &pAddon->vecRot, &byteSyncRot);
+	
+	// Storing data
+	pAddon->wObjectID = static_cast<WORD>(attachtoid);
+	pAddon->creation_timepoint = default_clock::now();
 
 	// Attach it
-	int iModelID = pObjectPool->pPlayerObjects[forplayerid][wObjectID]->iModel;
-	CVector vecPos = pObjectPool->pPlayerObjects[forplayerid][wObjectID]->matWorld.pos;
-	CVector vecRot = pObjectPool->pPlayerObjects[forplayerid][wObjectID]->vecRot;
+	int &iModelID = pObjectPool->pPlayerObjects[forplayerid][objectid]->iModel;
+	CVector &vecPos = pObjectPool->pPlayerObjects[forplayerid][objectid]->matWorld.pos;
+	CVector &vecRot = pObjectPool->pPlayerObjects[forplayerid][objectid]->vecRot;
 	float fDrawDistance = 299.0;
-	BYTE byteNoCameraCol = pObjectPool->pPlayerObjects[forplayerid][wObjectID]->bNoCameraCol;
+	BYTE byteNoCameraCol = pObjectPool->pPlayerObjects[forplayerid][objectid]->bNoCameraCol;
 
 	RakNet::BitStream bs;
-	bs.Write((WORD)wObjectID);
+	bs.Write((WORD)objectid);
 	bs.Write(iModelID);
 	bs.Write(vecPos);
 	bs.Write(vecRot);
 	bs.Write(fDrawDistance); // 159
 	bs.Write(byteNoCameraCol);
 	bs.Write((WORD)-1); // attached vehicle
-	bs.Write((WORD)wAttachTo); // attached object
-	bs.Write(vecOffset);
-	bs.Write(vecOffsetRot);	
+	bs.Write((WORD)attachtoid); // attached object
+	bs.Write(pAddon->vecOffset);
+	bs.Write(pAddon->vecRot);
 	bs.Write(byteSyncRot);
 	
 	CSAMPFunctions::RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
