@@ -81,6 +81,8 @@ namespace Natives
 	AMX_DECLARE_NATIVE(ChangeRCONCommandName); // R19
 	AMX_DECLARE_NATIVE(GetRCONCommandName); // R19
 
+	AMX_DECLARE_NATIVE(CallFunctionInScript); // R19
+
 	AMX_DECLARE_NATIVE(IsValidNickName);	// R8
 	AMX_DECLARE_NATIVE(AllowNickNameCharacter); // R7
 	AMX_DECLARE_NATIVE(IsNickNameCharacterAllowed); // R7

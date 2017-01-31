@@ -723,6 +723,146 @@ AMX_DECLARE_NATIVE(Natives::GetRCONCommandName)
 	return ret;
 }
 
+// This function based on maddinat0r's function - Thanks (MySQL plugin/CCallback.cpp)
+// native CallFunctionInScript(const scriptname[], const function[], const format[], {Float,_}:...);
+AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
+{
+	if (CScriptParams::Get()->Setup(3, "CallFunctionInScript", CScriptParams::Flags::MORE_PARAMETER_ALLOWED, amx, params)) return CScriptParams::Get()->HandleError();
+
+	std::string scriptname, function, formatparams;
+	CScriptParams::Get()->Read(&scriptname, &function, &formatparams);
+
+	AMX* pAMX = nullptr;
+	if(scriptname == "GameMode")
+	{
+		pAMX = &pNetGame->pGameModePool->amx;
+	}
+	else
+	{
+		for (BYTE i = 0; i != 16; ++i)
+		{
+			if (scriptname == pNetGame->pFilterScriptPool->szFilterScriptName[i])
+			{
+				pAMX = pNetGame->pFilterScriptPool->pFilterScripts[i];
+				break;
+			}
+		}
+	}
+	
+	if (pAMX == nullptr)
+	{
+		logprintf("script \"%s\" does not exist", scriptname.c_str());
+		return 0;
+	}
+	
+	int cb_idx = -1;
+	if (amx_FindPublic(pAMX, function.c_str(), &cb_idx) != AMX_ERR_NONE)
+	{
+		logprintf("callback \"%s\" does not exist", function.c_str());
+		return 0;
+	}
+	
+	size_t len = formatparams.length();
+	char* format = new char[len + 1];
+	strcpy(format, formatparams.c_str());
+
+	const size_t param_offset = 4;
+	const size_t num_params = len;
+
+	if ((params[0] / sizeof(cell) - (param_offset - 1)) != num_params)
+	{
+		logprintf("parameter count does not match format specifier length %d - %d", num_params, (params[0] / sizeof(cell) - (param_offset - 1)));
+		return 0;
+	}
+
+	cell param_idx = len - 1;
+	cell *address_ptr = nullptr;
+	cell *array_addr_ptr = nullptr;
+
+	cell amx_address = -1;
+	do
+	{
+		cell tmp_addr;
+		if (array_addr_ptr != nullptr && (*format) != 'd' && (*format) != 'i')
+		{
+			logprintf("expected 'd'/'i' specifier for array size (got '%c' instead)", *(format + (len - 1)));
+			return 0;
+		}
+		
+		switch (*(format + (len - 1)))
+		{
+
+			case 'd': //decimal
+			case 'i': //integer
+			case 'b':
+			case 'f':
+			{
+				amx_GetAddr(amx, params[param_offset + param_idx], &address_ptr);
+				cell value = *address_ptr;
+				amx_Push(pAMX, value);
+			}
+			break;
+			case 's': //string
+			{
+				const char *str = nullptr;
+				amx_StrParam(amx, params[param_offset + param_idx], str);
+
+				amx_PushString(pAMX, &tmp_addr, nullptr, str, 0, 0);
+
+				delete[] str;
+			}
+			break;
+			case 'a': //array
+			{
+				amx_GetAddr(amx, params[param_offset + param_idx], &array_addr_ptr);
+				cell value = *(format + (len - 2));
+
+				if (value <= 0)
+				{
+					logprintf("invalid array size '%d'", value);
+					return 0;
+				}
+
+				cell *copied_array = static_cast<cell *>(malloc(value * sizeof(cell)));
+				memcpy(copied_array, array_addr_ptr, value * sizeof(cell));
+
+				amx_PushArray(pAMX, &tmp_addr, nullptr, copied_array, value);
+				free(copied_array);
+
+				if (amx_address < 0)
+					amx_address = tmp_addr;
+
+				array_addr_ptr = nullptr;
+			}
+			break;
+			default:
+			{
+				logprintf("invalid format specifier '%c'", *(format + (len - 1)));
+				return 0;
+				break;
+			}
+		}
+		param_idx--;
+		len--;
+	} 
+	while (len);
+	
+	if (array_addr_ptr != nullptr)
+	{
+		logprintf("no array size specified after 'a' specifier");
+		return 0;
+	}
+	
+	cell ret;
+	amx_Exec(pAMX, &ret, cb_idx);
+
+	if (amx_address >= 0)
+		amx_Release(pAMX, amx_address);
+
+	delete[] format;
+	return ret;
+}
+
 // native EnableConsoleMSGsForPlayer(playerid, color);
 AMX_DECLARE_NATIVE(Natives::EnableConsoleMSGsForPlayer)
 {
@@ -5525,6 +5665,9 @@ AMX_NATIVE_INFO native_list[] =
 	// RCON Commands
 	AMX_DEFINE_NATIVE(ChangeRCONCommandName) // R19
 	AMX_DEFINE_NATIVE(GetRCONCommandName) // R19
+
+	// Per AMX function calling
+	AMX_DEFINE_NATIVE(CallFunctionInScript) // R19
 
 	// Nick name
 	AMX_DEFINE_NATIVE(IsValidNickName)	// R8

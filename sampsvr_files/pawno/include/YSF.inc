@@ -57,6 +57,9 @@ native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplay
 native GetRCONCommandName(const cmdname[], changedname[], len = sizeof(changedname));
 native ChangeRCONCommandName(const cmdname[], changedname[]);
 
+// Per AMX function calling
+native CallFunctionInScript(const scriptname[], const function[], const format[], {Float,_}:...);
+
 // Broadcasting console messages
 native EnableConsoleMSGsForPlayer(playerid, color);
 native DisableConsoleMSGsForPlayer(playerid);
