@@ -778,20 +778,12 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 	cell param_idx = len - 1;
 	cell *address_ptr = nullptr;
 	cell *array_addr_ptr = nullptr;
-
 	cell amx_address = -1;
 	do
 	{
-		cell tmp_addr;
-		if (array_addr_ptr != nullptr && (*format) != 'd' && (*format) != 'i')
-		{
-			logprintf("expected 'd'/'i' specifier for array size (got '%c' instead)", *(format + (len - 1)));
-			return 0;
-		}
-		
+		cell tmp_addr;		
 		switch (*(format + (len - 1)))
 		{
-
 			case 'd': //decimal
 			case 'i': //integer
 			case 'b':
@@ -804,8 +796,14 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 			break;
 			case 's': //string
 			{
-				const char *str = nullptr;
+				char *str = nullptr;
 				amx_StrParam(amx, params[param_offset + param_idx], str);
+				
+				if (str == nullptr)
+				{
+					str = new char[5];
+					strcpy(str, "NULL");
+				}
 
 				amx_PushString(pAMX, &tmp_addr, nullptr, str, 0, 0);
 
@@ -814,19 +812,30 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 			break;
 			case 'a': //array
 			{
+				cell *arraySize;
 				amx_GetAddr(amx, params[param_offset + param_idx], &array_addr_ptr);
-				cell value = *(format + (len - 2));
-
-				if (value <= 0)
+				if(amx_GetAddr(amx, params[param_offset + (param_idx + 1)], &arraySize) != AMX_ERR_NONE)
 				{
-					logprintf("invalid array size '%d'", value);
+					logprintf("missing 'd' / 'i' specifier for array size");
 					return 0;
 				}
 
-				cell *copied_array = static_cast<cell *>(malloc(value * sizeof(cell)));
-				memcpy(copied_array, array_addr_ptr, value * sizeof(cell));
+				if ((*(format + (len))) != 'd' && (*(format + (len))) != 'i')
+				{
+					logprintf("expected 'd'/'i' specifier for array size (got '%c' instead)", *(format + (len)));
+					return 0;
+				}
 
-				amx_PushArray(pAMX, &tmp_addr, nullptr, copied_array, value);
+				if (arraySize <= 0)
+				{
+					logprintf("invalid array size '%d'", arraySize);
+					return 0;
+				}
+
+				cell *copied_array = static_cast<cell *>(malloc(*arraySize * sizeof(cell)));
+				memcpy(copied_array, array_addr_ptr, *arraySize * sizeof(cell));
+
+				amx_PushArray(pAMX, &tmp_addr, nullptr, copied_array, *arraySize);
 				free(copied_array);
 
 				if (amx_address < 0)
@@ -846,12 +855,6 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 		len--;
 	} 
 	while (len);
-	
-	if (array_addr_ptr != nullptr)
-	{
-		logprintf("no array size specified after 'a' specifier");
-		return 0;
-	}
 	
 	cell ret;
 	amx_Exec(pAMX, &ret, cb_idx);
