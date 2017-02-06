@@ -278,6 +278,7 @@ native TextDrawGetAlignment(Text:textdrawid);
 native TextDrawGetPreviewModel(Text:textdrawid);
 native TextDrawGetPreviewRot(Text:textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
 native TextDrawGetPreviewVehCol(Text:textdrawid, &color1, &color2);
+native TextDrawSetStringForPlayer(Text:textdrawid, playerid, const string[], {Float,_}:...);
 
 // Textdraw - Player
 native IsValidPlayerTextDraw(playerid, PlayerText:textdrawid);

@@ -3274,7 +3274,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 }
 
 // Textdraw functions
-// native IsValidTextDraw(textdrawid);
+// native IsValidTextDraw(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)
 {
 	CHECK_PARAMS(1, "IsValidTextDraw", LOADED);
@@ -3285,7 +3285,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)
 	return pNetGame->pTextDrawPool->bSlotState[textdrawid];
 }
 
-// native IsTextDrawVisibleForPlayer(playerid, textdrawid);
+// native IsTextDrawVisibleForPlayer(playerid, Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsTextDrawVisibleForPlayer)
 {
 	CHECK_PARAMS(2, "IsTextDrawVisibleForPlayer", LOADED);
@@ -3301,7 +3301,7 @@ AMX_DECLARE_NATIVE(Natives::IsTextDrawVisibleForPlayer)
 	return pNetGame->pTextDrawPool->bHasText[textdrawid][playerid];
 }
 
-// native TextDrawGetString(textdrawid, text[], len = sizeof(text));
+// native TextDrawGetString(Text:textdrawid, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 {
 	CHECK_PARAMS(3, "TextDrawGetString", LOADED);
@@ -3313,7 +3313,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 	return set_amxstring(amx, params[2], szText, params[3]);
 }
 
-// native TextDrawSetPos(textdrawid, Float:fX, Float:fY);
+// native TextDrawSetPos(Text:textdrawid, Float:fX, Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 {
 	CHECK_PARAMS(3, "TextDrawSetPos", LOADED);
@@ -3328,7 +3328,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 	return 1;
 }
 
-// native TextDrawGetLetterSize(textdrawid, &Float:fX, &Float:fY);
+// native TextDrawGetLetterSize(Text:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetLetterSize)
 {
 	CHECK_PARAMS(3, "TextDrawGetLetterSize", LOADED);
@@ -3343,7 +3343,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetLetterSize)
 	return 1;
 }
 
-// native TextDrawGetTextSize(textdrawid, &Float:fX, &Float:fY);
+// native TextDrawGetTextSize(Text:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetTextSize)
 {
 	CHECK_PARAMS(3, "TextDrawGetTextSize", LOADED);
@@ -3358,7 +3358,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetTextSize)
 	return 1;
 }
 
-// native TextDrawGetPos(textdrawid, &Float:fX, &Float:fY);
+// native TextDrawGetPos(Text:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPos)
 {
 	CHECK_PARAMS(3, "TextDrawGetPos", LOADED);
@@ -3373,7 +3373,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPos)
 	return 1;
 }
 
-// native TextDrawGetColor(textdrawid);
+// native TextDrawGetColor(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetColor)
 {
 	CHECK_PARAMS(1, "TextDrawGetColor", LOADED);
@@ -3387,7 +3387,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetColor)
 	return ABGR_RGBA(pTD->dwLetterColor);
 }
 
-// native TextDrawGetBoxColor(textdrawid);
+// native TextDrawGetBoxColor(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetBoxColor)
 {
 	CHECK_PARAMS(1, "TextDrawGetBoxColor", LOADED);
@@ -3401,7 +3401,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetBoxColor)
 	return ABGR_RGBA(pTD->dwBoxColor);
 }
 
-// native TextDrawGetBackgroundColor(textdrawid);
+// native TextDrawGetBackgroundColor(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetBackgroundColor)
 {
 	CHECK_PARAMS(1, "TextDrawGetBackgroundColor", LOADED);
@@ -3415,7 +3415,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetBackgroundColor)
 	return ABGR_RGBA(pTD->dwBackgroundColor);
 }
 
-// native TextDrawGetShadow(textdrawid);
+// native TextDrawGetShadow(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetShadow)
 {
 	CHECK_PARAMS(1, "TextDrawGetShadow", LOADED);
@@ -3429,7 +3429,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetShadow)
 	return pTD->byteShadow;
 }
 
-// native TextDrawGetOutline(textdrawid);
+// native TextDrawGetOutline(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetOutline)
 {
 	CHECK_PARAMS(1, "TextDrawGetOutline", LOADED);
@@ -3443,7 +3443,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetOutline)
 	return pTD->byteOutline;
 }
 
-// native TextDrawGetFont(textdrawid);
+// native TextDrawGetFont(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetFont)
 {
 	CHECK_PARAMS(1, "TextDrawGetOutline", LOADED);
@@ -3457,7 +3457,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetFont)
 	return pTD->byteStyle;
 }
 
-// native TextDrawIsBox(textdrawid);
+// native TextDrawIsBox(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsBox)
 {
 	CHECK_PARAMS(1, "TextDrawIsBox", LOADED);
@@ -3471,7 +3471,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsBox)
 	return pTD->byteBox;
 }
 
-// native TextDrawIsProportional(textdrawid);
+// native TextDrawIsProportional(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsProportional)
 {
 	CHECK_PARAMS(1, "TextDrawIsProportional", LOADED);
@@ -3485,7 +3485,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsProportional)
 	return pTD->byteProportional;
 }
 
-// native TextDrawIsSelectable(textdrawid);
+// native TextDrawIsSelectable(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsSelectable)
 {
 	CHECK_PARAMS(1, "TextDrawIsSelectable", LOADED);
@@ -3499,7 +3499,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsSelectable)
 	return pTD->byteSelectable;
 }
 
-// native TextDrawGetAlignment(textdrawid);
+// native TextDrawGetAlignment(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetAlignment)
 {
 	CHECK_PARAMS(1, "TextDrawGetAlignment", LOADED);
@@ -3518,7 +3518,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetAlignment)
 	return ret;
 }
 
-// native TextDrawGetPreviewModel(textdrawid);
+// native TextDrawGetPreviewModel(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewModel)
 {
 	CHECK_PARAMS(1, "TextDrawGetPreviewModel", LOADED);
@@ -3532,7 +3532,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewModel)
 	return pTD->dwModelIndex;
 }
 
-// native TextDrawGetPreviewRot(textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
+// native TextDrawGetPreviewRot(Text:textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewRot)
 {
 	CHECK_PARAMS(5, "TextDrawGetPreviewRot", LOADED);
@@ -3547,7 +3547,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewRot)
 	return 1;
 }
 
-// native TextDrawGetPreviewVehCol(textdrawid, &color1, &color2);
+// native TextDrawGetPreviewVehCol(Text:textdrawid, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewVehCol)
 {
 	CHECK_PARAMS(3, "TextDrawGetPreviewVehCol", LOADED);
@@ -3559,6 +3559,33 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewVehCol)
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 	
 	CScriptParams::Get()->Add(pTD->color1, pTD->color2);
+	return 1;
+}
+
+// native TextDrawSetStringForPlayer(Text:textdrawid, playerid, const string[], {Float,_}:...);
+AMX_DECLARE_NATIVE(Natives::TextDrawSetStringForPlayer)
+{
+	if (CScriptParams::Get()->Setup(3, "TextDrawSetStringForPlayer", static_cast<CScriptParams::Flags>(CScriptParams::Flags::LOADED | CScriptParams::Flags::MORE_PARAMETER_ALLOWED), amx, params)) return CScriptParams::Get()->HandleError();
+
+	const int textdrawid = CScriptParams::Get()->ReadInt();
+	if (textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	if (!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
+	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
+
+	int len;
+	char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 3, len);
+	if (!szMessage) return 0;
+
+	RakNet::BitStream bs;
+	bs.Write((WORD)textdrawid);
+	bs.Write((WORD)len);
+	bs.Write(szMessage, len + 1);
+
+	CSAMPFunctions::RPC(&RPC_SetTextDrawString, &bs, HIGH_PRIORITY, RELIABLE, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -5857,6 +5884,7 @@ AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(TextDrawGetPreviewModel)
 	AMX_DEFINE_NATIVE(TextDrawGetPreviewRot)
 	AMX_DEFINE_NATIVE(TextDrawGetPreviewVehCol)
+	AMX_DEFINE_NATIVE(TextDrawSetStringForPlayer) // R19
 
 	// Per-Player Textdraw functions - R4
 	AMX_DEFINE_NATIVE(IsValidPlayerTextDraw)
@@ -5879,6 +5907,7 @@ AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(PlayerTextDrawGetPreviewModel)
 	AMX_DEFINE_NATIVE(PlayerTextDrawGetPreviewRot)
 	AMX_DEFINE_NATIVE(PlayerTextDrawGetPreviewVehCol)
+	AMX_DEFINE_NATIVE(TextDrawSetStringForPlayer) // R19
 
 	// 3D Text
 	AMX_DEFINE_NATIVE(IsValid3DTextLabel) // R4

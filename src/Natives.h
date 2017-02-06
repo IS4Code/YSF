@@ -251,6 +251,7 @@ namespace Natives
 	AMX_DECLARE_NATIVE(TextDrawGetPreviewModel);
 	AMX_DECLARE_NATIVE(TextDrawGetPreviewRot);
 	AMX_DECLARE_NATIVE(TextDrawGetPreviewVehCol);
+	AMX_DECLARE_NATIVE(TextDrawSetStringForPlayer); // R19
 
 	AMX_DECLARE_NATIVE(IsValidPlayerTextDraw);
 	AMX_DECLARE_NATIVE(IsPlayerTextDrawVisible);
