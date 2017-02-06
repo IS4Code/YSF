@@ -47,6 +47,7 @@ void CServer::Initialize(SAMPVersion version)
 	m_bUseCustomSpawn = static_cast<int>(Utility::CFGLoad("UseCustomSpawn") != 0);
 	m_bIncreaseRakNetInternalPlayers = static_cast<int>(Utility::CFGLoad("IncreaseRakNetInternalPlayers") != 0);
 	m_iRakNetInternalSleepTime = Utility::CFGLoad("RakNetInternalSleepTime");
+	m_iAttachObjectDelay = Utility::CFGLoad("AttachObjectDelay");
 	m_bStorePlayerObjectsMaterial = static_cast<int>(Utility::CFGLoad("StorePlayerObjectsMaterial") != 0);
 
 #ifndef _WIN32
@@ -139,7 +140,7 @@ void CServer::Process()
 
 bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 {
-	//logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
+	logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
@@ -177,7 +178,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 
 bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 {
-	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
+	logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
@@ -186,6 +187,8 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	{
 		if (o.second->wAttachPlayerID == playerid)
 		{
+			logprintf("object found: %d - %d", forplayerid, playerid);
+
 			// If object isn't present in waiting queue then destroy it
 			if (pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.find(o.first) != pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.end())
 				pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.erase(o.first);

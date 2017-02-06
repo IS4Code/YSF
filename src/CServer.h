@@ -121,6 +121,7 @@ public:
 	bool m_bUseCustomSpawn : 1;
 	bool m_bIncreaseRakNetInternalPlayers : 1;
 	int m_iRakNetInternalSleepTime;
+	int m_iAttachObjectDelay;
 	bool m_bStorePlayerObjectsMaterial : 1;
 
 private:

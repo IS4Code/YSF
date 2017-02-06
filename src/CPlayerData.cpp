@@ -308,7 +308,7 @@ void CPlayerData::Process(void)
 			{
 				default_clock::duration passed_time = default_clock::now() - it->second->creation_timepoint;
 				logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
-				if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > 3000)
+				if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
 				{
 					RakNet::BitStream bs;
 					bs.Write((WORD)it->first); // wObjectID
