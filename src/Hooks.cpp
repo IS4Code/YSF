@@ -226,7 +226,8 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
-	CServer::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
+	if (!CServer::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)))) return 1;
+
 	return CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }
 
@@ -504,32 +505,55 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
-					char* szHostname = CSAMPFunctions::GetStringVariable("hostname");
-					size_t dwHostnameLen = strlen(szHostname);
-					if (dwHostnameLen > 50) dwHostnameLen = 50;
+					char *temp;
 
-					char* szGameMode = CSAMPFunctions::GetStringVariable("gamemodetext");
-					size_t dwGameModeLen = strlen(szGameMode);
-					if (dwGameModeLen > 30) dwGameModeLen = 30;
+					char szHostname[51];
+					temp = CSAMPFunctions::GetStringVariable("hostname");
+					size_t dwHostnameLen = strlen(temp);
+					if (dwHostnameLen > 50) 
+						dwHostnameLen = 50;
+					
+					memcpy(szHostname, temp, dwHostnameLen);
+					szHostname[dwHostnameLen] = 0;
 
-					char* szLanguage = CSAMPFunctions::GetStringVariable("language");
-					char* szMapName = (!szLanguage[0]) ? CSAMPFunctions::GetStringVariable("mapname") : szLanguage;
+					char szGameMode[31];
+					temp = CSAMPFunctions::GetStringVariable("gamemodetext");
+					size_t dwGameModeLen = strlen(temp);
+					if (dwGameModeLen > 30) 
+						dwGameModeLen = 30;
+					
+					memcpy(szGameMode, temp, dwGameModeLen);
+					szGameMode[dwGameModeLen] = 0;
 
-					size_t dwMapNameLen = strlen(szMapName);
-					if (dwMapNameLen > 30) dwMapNameLen = 30;
+					char szMapName[31];
+					temp = CSAMPFunctions::GetStringVariable("language");
+					if (!temp[0]) 
+						temp = CSAMPFunctions::GetStringVariable("mapname");
+					
+					size_t dwMapNameLen = strlen(temp);
+					if (dwMapNameLen > 30) 
+						dwMapNameLen = 30;
+
+					memcpy(szMapName, temp, dwMapNameLen);
+					szMapName[dwMapNameLen] = 0;
+
+					bool stringsChanged = CCallbackManager::OnServerQueryInfo(binaryAddress, szHostname, szGameMode, szMapName);
+					if (stringsChanged)
+					{
+						dwHostnameLen = strlen(szHostname);
+						dwGameModeLen = strlen(szGameMode);
+						dwMapNameLen = strlen(szMapName);
+					}
 
 					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
-//					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
-
 					WORD wMaxPlayers = CServer::Get()->GetMaxPlayers();
-
 					BYTE byteIsPassworded = CSAMPFunctions::GetStringVariable("password")[0] != 0;
 
 					size_t datalen = 28;	// Previous data = 11b
-					// IsPassworded = 1b
-					// Player count = 2b
-					// Max player count = 2b
-					// String-length bytes = 12b (3 * sizeof(DWORD))
+											// IsPassworded = 1b
+											// Player count = 2b
+											// Max player count = 2b
+											// String-length bytes = 12b (3 * sizeof(DWORD))
 					datalen += dwHostnameLen;
 					datalen += dwGameModeLen;
 					datalen += dwMapNameLen;

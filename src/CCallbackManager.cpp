@@ -245,6 +245,9 @@ bool CCallbackManager::OnServerMessage(const char* message)
 
 bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command)
 {
+	in_addr in;
+	in.s_addr = binaryAddress;
+
 	int idx = -1;
 	cell ret = 1;
 	for (auto iter : m_setAMX)
@@ -252,10 +255,6 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 		if(!amx_FindPublic(iter, "OnRemoteRCONPacket", &idx))
 		{
 			cell amx_addr;
-			
-			in_addr in;
-			in.s_addr = binaryAddress;
-
 			amx_PushString(iter, &amx_addr, nullptr, command, 0, 0);
 			amx_Push(iter, static_cast<cell>(success));
 			amx_PushString(iter, &amx_addr, nullptr, password, 0, 0);
@@ -362,6 +361,83 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 			*usecjwalk = static_cast<int>(phys_ptr[14]) != 0;
 		}
 	}
+}
+
+bool CCallbackManager::OnOutcomeScmEvent(WORD playerid, WORD issuerid, int eventid, int vehicleid, int arg1, int arg2)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnOutcomeScmEvent", &idx))
+		{
+			amx_Push(iter, static_cast<cell>(arg2));
+			amx_Push(iter, static_cast<cell>(arg1));
+			amx_Push(iter, static_cast<cell>(vehicleid));
+			amx_Push(iter, static_cast<cell>(eventid));
+			amx_Push(iter, static_cast<cell>(issuerid));
+			amx_Push(iter, static_cast<cell>(playerid));
+
+			amx_Exec(iter, &ret, idx);
+
+			if (!ret) return false;
+		}
+	}
+	return static_cast<int>(ret) != 0;
+}
+
+bool CCallbackManager::OnServerQueryInfo(unsigned int binaryAddress, char(&hostname)[51], char(&gameMode)[31], char(&language)[31])
+{
+	in_addr in;
+	in.s_addr = binaryAddress;
+
+	int idx = -1;
+	cell ret = 0;
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnServerQueryInfo", &idx))
+		{
+			cell amx_addr, amx_addr_last;
+
+			// Mirroring characters from char array to cell array
+			cell languageCells[sizeof(language)];
+			for (int i = 0; i < sizeof(language); i++)
+				languageCells[i] = language[i];
+
+			cell gameModeCells[sizeof(gameMode)];
+			for (int i = 0; i < sizeof(gameMode); i++)
+				gameModeCells[i] = gameMode[i];
+
+			cell hostnameCells[sizeof(hostname)];
+			for (int i = 0; i < sizeof(hostname); i++)
+				hostnameCells[i] = hostname[i];
+			
+			cell *outputHostname, *outputGameMode, *outputLanguage;
+			amx_PushArray(iter, &amx_addr, &outputLanguage, languageCells, sizeof(language));
+			amx_PushArray(iter, &amx_addr_last, &outputGameMode, gameModeCells, sizeof(gameMode));
+			amx_PushArray(iter, &amx_addr_last, &outputHostname, hostnameCells, sizeof(hostname));
+			amx_PushString(iter, &amx_addr_last, nullptr, inet_ntoa(in), 0, 0);
+			amx_Exec(iter, &ret, idx);
+			amx_Release(iter, amx_addr);
+
+			// If returned value isn't 0, then write changes back
+			if (ret)
+			{
+				for (int i = 0; i < sizeof(hostname); i++)
+					hostname[i] = outputHostname[i];
+				
+				for (int i = 0; i < sizeof(gameMode); i++)
+					gameMode[i] = outputGameMode[i];
+				
+				for (int i = 0; i < sizeof(language); i++)
+					language[i] = outputLanguage[i];
+			}
+		
+			if (ret) 
+				return true;
+		}
+	}
+	return static_cast<int>(ret) != 0;
 }
 
 void CCallbackManager::OnClientCheckResponse(WORD playerid, BYTE type, DWORD arg, BYTE response)

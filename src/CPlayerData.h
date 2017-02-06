@@ -97,6 +97,7 @@ public:
 	void Process(void);
 
 	WORD wPlayerID;
+	int iNPCProcessID;
 	WORD wSurfingInfo;
 	WORD wDialogID;
 

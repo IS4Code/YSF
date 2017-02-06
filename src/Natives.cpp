@@ -493,6 +493,24 @@ AMX_DECLARE_NATIVE(Natives::SetMaxNPCs)
 	return 1;
 }
 
+// native GetSyncBounds(&Float:hmin, &Float:hmax, &Float:vmin, &Float:vmax);
+AMX_DECLARE_NATIVE(Natives::GetSyncBounds)
+{
+	CHECK_PARAMS(4, "GetSyncBounds", LOADED);
+
+	CScriptParams::Get()->Add(*(float*)CAddress::VAR_pPosSyncBounds[0], *(float*)CAddress::VAR_pPosSyncBounds[1], *(float*)CAddress::VAR_pPosSyncBounds[2], *(float*)CAddress::VAR_pPosSyncBounds[3]);
+	return 1;
+}
+
+// native SetSyncBounds(Float:hmin, Float:hmax, Float:vmin, Float:vmax);
+AMX_DECLARE_NATIVE(Natives::SetSyncBounds)
+{
+	CHECK_PARAMS(4, "SetSyncBounds", LOADED);
+
+	CScriptParams::Get()->Read(&CAddress::VAR_pPosSyncBounds[0], &CAddress::VAR_pPosSyncBounds[1], &CAddress::VAR_pPosSyncBounds[2], &CAddress::VAR_pPosSyncBounds[3]);
+	return 1;
+}
+
 // native SetPlayerAdmin(playerid, bool:admin);
 AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
 {
@@ -511,7 +529,7 @@ AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 	CHECK_PARAMS(1, "LoadFilterScript", LOADED);
 	
 	std::string name;
-	CScriptParams::Get()->Read(&name[0]);
+	CScriptParams::Get()->Read(&name);
 	if (!name.empty())
 	{
 		return CSAMPFunctions::LoadFilterscript(name.c_str());
@@ -525,7 +543,7 @@ AMX_DECLARE_NATIVE(Natives::UnLoadFilterScript)
 	CHECK_PARAMS(1, "UnLoadFilterScript", LOADED);
 	
 	std::string name;
-	CScriptParams::Get()->Read(&name[0]);
+	CScriptParams::Get()->Read(&name);
 	if(!name.empty())
 	{
 		return CSAMPFunctions::UnLoadFilterscript(name.c_str());
@@ -695,6 +713,21 @@ AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 		, pNetGame->fNameTagDrawDistance
 		, pNetGame->fPlayerMarkesLimit
 	);
+	return 1;
+}
+
+// native GetNPCCommandLine(npcid, npcscript[], length = sizeof(npcscript));
+AMX_DECLARE_NATIVE(Natives::GetNPCCommandLine)
+{
+	CHECK_PARAMS(3, "GetNPCCommandLine", LOADED);
+
+	const int npcid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(npcid)) return 0;
+
+	char *szCommandLine = CServer::Get()->GetNPCCommandLine(static_cast<WORD>(npcid));
+	if (szCommandLine == NULL) return 0;
+
+	CScriptParams::Get()->Add(&szCommandLine[0]);
 	return 1;
 }
 
@@ -3149,6 +3182,73 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleDead)
 		return 0;
 
 	return pNetGame->pVehiclePool->pVehicle[vehicleid]->bDead;
+}
+
+// native SetVehicleParamsSirenState(vehicleid, sirenState);
+AMX_DECLARE_NATIVE(Natives::SetVehicleParamsSirenState)
+{
+	CHECK_PARAMS(2, "SetVehicleParamsSirenState", LOADED);
+
+	const int vehicleid = CScriptParams::Get()->ReadInt();
+	if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+
+	if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
+		return 0;
+
+	BYTE sirenState = static_cast<BYTE>(params[2]);
+
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->vehParamEx.siren = sirenState;
+	return 1;
+}
+
+// native ToggleVehicleSirenEnabled(vehicleid, enabled);
+AMX_DECLARE_NATIVE(Natives::ToggleVehicleSirenEnabled)
+{
+	CHECK_PARAMS(2, "ToggleVehicleSirenEnabled", LOADED);
+
+	const int vehicleid = CScriptParams::Get()->ReadInt();
+	if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+
+	if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
+		return 0;
+
+	BYTE enabled = static_cast<BYTE>(params[2]);
+
+	pNetGame->pVehiclePool->pVehicle[vehicleid]->byteSirenEnabled = enabled;
+	return 1;
+}
+
+// native IsVehicleSirenEnabled(vehicleid);
+AMX_DECLARE_NATIVE(Natives::IsVehicleSirenEnabled)
+{
+	CHECK_PARAMS(1, "IsVehicleSirenEnabled", LOADED);
+
+	const int vehicleid = CScriptParams::Get()->ReadInt();
+	if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+
+	if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
+		return 0;
+
+	return pNetGame->pVehiclePool->pVehicle[vehicleid]->byteSirenEnabled;
+}
+
+// native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY, &Float:rightZ, &Float:upX, &Float:upY, &Float:upZ, &Float:atX, &Float:atY, &Float:atZ);
+AMX_DECLARE_NATIVE(Natives::GetVehicleMatrix)
+{
+	CHECK_PARAMS(10, "GetVehicleMatrix", LOADED);
+
+	const int vehicleid = CScriptParams::Get()->ReadInt();
+	if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+
+	if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
+		return 0;
+
+	MATRIX4X4* matrix = &pNetGame->pVehiclePool->pVehicle[vehicleid]->vehMatrix;
+
+	// IS4 Note for the future - vehicles remotely updated have the "at" vector zeroed, which corrupts results from GetVehicleRotationQuat
+	// Might be a reasonable method to replace IsValidQuaternion from i_quat
+	CScriptParams::Get()->Add(matrix->right, matrix->up, matrix->at);
+	return 1;
 }
 
 // Gangzone functions
@@ -5666,6 +5766,8 @@ AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetModeRestartTime)
 	AMX_DEFINE_NATIVE(SetMaxPlayers) // R8
 	AMX_DEFINE_NATIVE(SetMaxNPCs) // R8
+	AMX_DEFINE_NATIVE(GetSyncBounds) // R19
+	AMX_DEFINE_NATIVE(SetSyncBounds) // R19
 
 	AMX_DEFINE_NATIVE(SetPlayerAdmin)
 	AMX_DEFINE_NATIVE(LoadFilterScript)
@@ -5683,6 +5785,7 @@ AMX_NATIVE_INFO native_list[] =
 
 	// Server settings
 	AMX_DEFINE_NATIVE(GetServerSettings)
+	AMX_DEFINE_NATIVE(GetNPCCommandLine) // R19
 
 	// RCON Commands
 	AMX_DEFINE_NATIVE(ChangeRCONCommandName) // R19
@@ -5828,6 +5931,10 @@ AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetVehicleBeenOccupied) // R9
 	AMX_DEFINE_NATIVE(IsVehicleOccupied) // R9
 	AMX_DEFINE_NATIVE(IsVehicleDead) // R9
+	AMX_DEFINE_NATIVE(SetVehicleParamsSirenState) // R19
+	AMX_DEFINE_NATIVE(ToggleVehicleSirenEnabled) // R19
+	AMX_DEFINE_NATIVE(IsVehicleSirenEnabled) // R19
+	AMX_DEFINE_NATIVE(GetVehicleMatrix) // R19
 	AMX_DEFINE_NATIVE(GetVehicleModelCount) // R17
 	AMX_DEFINE_NATIVE(GetVehicleModelsUsed) // R17
 

@@ -51,6 +51,7 @@ DWORD CAddress::FUNC_Logprintf_037_R2_1 = 0x080A91D0;
 
 // Variables
 DWORD CAddress::VAR_pRestartWaitTime = NULL;
+DWORD CAddress::VAR_pPosSyncBounds[4];
 DWORD CAddress::VAR_wRCONUser = NULL;
 DWORD CAddress::ARRAY_ConsoleCommands = NULL;
 
@@ -99,10 +100,25 @@ DWORD CAddress::FUNC_CGameMode__OnDialogResponse = NULL;
 void CAddress::Initialize(SAMPVersion sampVersion)
 {
 	// Thx for Whitetiger
-	DWORD dwRestartTime; 
+	DWORD dwTemp; 
 #ifdef _WIN32
-	dwRestartTime =								FindPattern("\xD9\x15\x00\x00\x00\x00\xD8\x1D\x00\x00\x00\x00\xDF\xE0\xF6\xC4\x41\x75\x07", "xx????xx????xxxxxxx") + 6;
-	VAR_pRestartWaitTime =						*(DWORD*)(dwRestartTime + 2);
+	dwTemp =									FindPattern("\xD9\x15\x00\x00\x00\x00\xD8\x1D\x00\x00\x00\x00\xDF\xE0\xF6\xC4\x41\x75\x07", "xx????xx????xxxxxxx") + 6;
+	VAR_pRestartWaitTime =						*(DWORD*)(dwTemp + 2);
+	
+	// Sync bounds addresses
+	dwTemp = FindPattern("Shot out of bounds.\0", "xxxxxxxxxxxxxxxxxxxx");
+	if (dwTemp)
+	{
+		VAR_pPosSyncBounds[0] = dwTemp + 20;
+		VAR_pPosSyncBounds[1] = VAR_pPosSyncBounds[0] + 4;
+	}
+	dwTemp = FindPattern("Offset out of bounds.\0\0\0", "xxxxxxxxxxxxxxxxxxxxxxxx");
+	if (dwTemp)
+	{
+		VAR_pPosSyncBounds[2] = dwTemp + 24;
+	}
+	VAR_pPosSyncBounds[3] =						FindPattern("\x00\x50\x43\x48\x00\x00\xC8\xC2\x00\x00\x00\x3F\xB2\x00\x00\x00\xAD\x00\x00\x00\xAE\x00\x00\x00maxnpc", "????xxxxxxxxxxxxxxxxxxxxxxxxxx");
+
 	VAR_wRCONUser =								0x004E5874;
 	ARRAY_ConsoleCommands =						FindPattern("echo", "xxxx");
 
@@ -203,6 +219,10 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 		case SAMPVersion::VERSION_037_R2:
 		{
 			VAR_pRestartWaitTime =						0x0815A528; // 12.0
+			VAR_pPosSyncBounds[0] =						0x08150710;
+			VAR_pPosSyncBounds[1] =						0x0815070C;
+			VAR_pPosSyncBounds[2] =						0x08150718;
+			VAR_pPosSyncBounds[3] =						0x08150714;
 			ADDR_RecordingDirectory =					0x080CC7D1;
 			FUNC_CVehicle__Respawn =					0x814B4C0;
 			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
@@ -255,6 +275,13 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
 		Unlock((void*)VAR_pRestartWaitTime, 4);
+
+	for (BYTE i = 0; i < 4; i++)
+	{
+		if (VAR_pPosSyncBounds[i])
+			Unlock((void*)VAR_pPosSyncBounds[i], 4);
+	}
+
 
 	// Patch GetNetworkStats to get more advanced stats than default
 	if(ADDR_GetNetworkStats_VerbosityLevel)

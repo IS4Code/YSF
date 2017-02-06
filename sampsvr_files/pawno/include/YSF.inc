@@ -17,6 +17,14 @@ enum E_SERVER_RULE_FLAGS (<<= 1)
 	CON_VARFLAG_UNREMOVABLE
 }
 
+enum E_SCM_EVENT_TYPE
+{
+    SCM_EVENT_PAINTJOB = 1,
+    SCM_EVENT_MOD = 2,
+    SCM_EVENT_RESPRAY = 3,
+    SCM_EVENT_MOD_SHOP = 4
+}
+
 // Execute
 native execute(const command[]);
 
@@ -52,6 +60,7 @@ native E_SERVER_RULE_FLAGS:GetServerRuleFlags(const name[]);
 
 // Server settings
 native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, &limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
+native GetNPCCommandLine(npcid, npcscript[], length = sizeof(npcscript));
 
 // Toggling RCON commands
 native GetRCONCommandName(const cmdname[], changedname[], len = sizeof(changedname));
@@ -230,6 +239,10 @@ native HasVehicleBeenOccupied(vehicleid);
 native SetVehicleBeenOccupied(vehicleid, occupied);
 native IsVehicleOccupied(vehicleid);
 native IsVehicleDead(vehicleid);
+native SetVehicleParamsSirenState(vehicleid, sirenState);
+native ToggleVehicleSirenEnabled(vehicleid, enabled);
+native IsVehicleSirenEnabled(vehicleid);
+native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY, &Float:rightZ, &Float:upX, &Float:upY, &Float:upZ, &Float:atX, &Float:atY, &Float:atZ);
 native GetVehicleModelCount(modelid);
 native GetVehicleModelsUsed();
 
@@ -377,6 +390,8 @@ forward OnRemoteRCONPacket(const ipaddr[], port, const password[], success, cons
 forward OnServerMessage(const msg[]);
 forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
 				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
+forward OnOutcomeScmEvent(playerid, issuerid, E_SCM_EVENT_TYPE:eventid, vehicleid, arg1, arg2);
+forward OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31]);
 
 
 //////////////////////////////////////////////////////////////

@@ -91,6 +91,7 @@ public:
 
 	// Variables
 	static DWORD			VAR_pRestartWaitTime;
+	static DWORD			VAR_pPosSyncBounds[4];
 	static DWORD			VAR_wRCONUser;
 	static DWORD			ARRAY_ConsoleCommands;
 

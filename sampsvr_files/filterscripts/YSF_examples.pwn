@@ -1081,4 +1081,15 @@ public OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:glo
 	disableenterexits = false;
     printf("lófasz - %d", limitglobalchat);
 }
+/*
+public OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31])
+{
+	format(hostname, sizeof(hostname), "qwe");
+	format(gamemode, sizeof(gamemode), "asd");
+	format(language, sizeof(language), "1234");
+
+	printf("OnServerQueryInfo: ip: %d, hostname: %s, gammeode: %s, language: %s", ipaddr, hostname, gamemode, language);
+	return 1;
+}
+*/
 

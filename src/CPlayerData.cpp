@@ -51,6 +51,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	};
 
 	wPlayerID = playerid;
+	iNPCProcessID = -1;
 	wSurfingInfo = 0;
 	wDialogID = -1;
 	
@@ -103,6 +104,13 @@ CPlayerData::CPlayerData( WORD playerid )
 	if (pNetGame->pPlayerPool->pPlayer[playerid])
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->dwNickNameColor = dwPlayerColors[playerid % 100];
+	}
+
+	// Store NPC Process ID if it's an NPC
+	if (pNetGame->pPlayerPool->bIsNPC[playerid])
+	{
+		if (CSAMPFunctions::GetPlayerIDFromIndex(playerid).binaryAddress == 0x0100007F)
+			iNPCProcessID = CServer::Get()->FindNPCProcessID(playerid);
 	}
 }
 

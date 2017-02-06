@@ -679,7 +679,7 @@ struct CVehicle
     DWORD			vehOccupiedTick;	// 257 - 261
     DWORD			vehRespawnTick;		// 261 - 265
 	BYTE			byteSirenEnabled;	// 265 - 266
-	BYTE			byteNewSirenState;	// 266 - 267
+	BYTE			byteNewSirenState;	// 266 - 267 : passed to OnVehicleSirenStateChange
 };
 static_assert(sizeof(CVehicle) == 267, "Invalid CVehicle size");
 

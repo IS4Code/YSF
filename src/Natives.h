@@ -62,6 +62,8 @@ namespace Natives
 	AMX_DECLARE_NATIVE(GetModeRestartTime);
 	AMX_DECLARE_NATIVE(SetMaxPlayers); // R8
 	AMX_DECLARE_NATIVE(SetMaxNPCs); // R8
+	AMX_DECLARE_NATIVE(GetSyncBounds); // R19
+	AMX_DECLARE_NATIVE(SetSyncBounds); // R19
 
 	AMX_DECLARE_NATIVE(SetPlayerAdmin);
 	AMX_DECLARE_NATIVE(LoadFilterScript);
@@ -77,6 +79,7 @@ namespace Natives
 	AMX_DECLARE_NATIVE(GetServerRuleFlags); // R12
 
 	AMX_DECLARE_NATIVE(GetServerSettings);
+	AMX_DECLARE_NATIVE(GetNPCCommandLine); // R19
 
 	AMX_DECLARE_NATIVE(ChangeRCONCommandName); // R19
 	AMX_DECLARE_NATIVE(GetRCONCommandName); // R19
@@ -205,6 +208,10 @@ namespace Natives
 	AMX_DECLARE_NATIVE(SetVehicleBeenOccupied); // R9
 	AMX_DECLARE_NATIVE(IsVehicleOccupied); // R9
 	AMX_DECLARE_NATIVE(IsVehicleDead); // R9
+	AMX_DECLARE_NATIVE(SetVehicleParamsSirenState); // R19
+	AMX_DECLARE_NATIVE(ToggleVehicleSirenEnabled); // R19
+	AMX_DECLARE_NATIVE(IsVehicleSirenEnabled); // R19
+	AMX_DECLARE_NATIVE(GetVehicleMatrix); // R19
 	AMX_DECLARE_NATIVE(SetVehicleSpawnInfo); // R12
 	AMX_DECLARE_NATIVE(GetVehicleModelCount); // R17
 	AMX_DECLARE_NATIVE(GetVehicleModelsUsed); // R17

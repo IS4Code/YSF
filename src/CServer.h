@@ -106,7 +106,10 @@ public:
 	WORD GetNPCCount();
 
 	void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
-	void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
+	bool RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
+
+	char* GetNPCCommandLine(WORD npcid);
+	int FindNPCProcessID(WORD npcid);
 
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;
