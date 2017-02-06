@@ -140,7 +140,7 @@ void CServer::Process()
 
 bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 {
-	logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
+	//logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
@@ -167,9 +167,10 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 				CSAMPFunctions::RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
 
 				o.second->bCreated = true;
+				o.second->creation_timepoint = default_clock::now();
 				pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.insert(o.first);
 
-				logprintf("add to waiting queue streamin");
+				//logprintf("add to waiting queue streamin");
 			}
 		}
 	}
@@ -178,7 +179,7 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 
 bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 {
-	logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
+	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
@@ -187,7 +188,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	{
 		if (o.second->wAttachPlayerID == playerid)
 		{
-			logprintf("object found: %d - %d", forplayerid, playerid);
+			//logprintf("object found: %d - %d", forplayerid, playerid);
 
 			// If object isn't present in waiting queue then destroy it
 			if (pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.find(o.first) != pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.end())
@@ -197,11 +198,11 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 			{
 				pPlayerData[playerid]->DestroyObject(o.first);
 				o.second->bCreated = false;
-				logprintf("destroy streamout");
+				//logprintf("destroy streamout");
 			}
 			else
 			{
-				logprintf("isn't created streamout");
+				//logprintf("isn't created streamout");
 			}
 			o.second->bAttached = false;
 		}

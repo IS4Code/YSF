@@ -4250,14 +4250,6 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 			bs.Write((char*)&pAddon->vecRot, sizeof(CVector));
 			pAddon->bCreated = true;
 			pAddon->bAttached = true;
-
-			/*
-			bs.Write(amx_ctof(params[5]));
-			bs.Write(amx_ctof(params[6]));
-			bs.Write(amx_ctof(params[7]));
-			bs.Write(amx_ctof(params[8]));
-			bs.Write(amx_ctof(params[9]));
-			*/
 			CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
 		}
 	}
