@@ -50,14 +50,12 @@ extern AMX_NATIVE
 	pSetPlayerSkin, 
 	pSetPlayerFightingStyle, 
 	pSetPlayerName, 
-	pSetVehicleToRespawn, 
 	pChangeVehicleColor, 
 	pDestroyVehicle, 
 	pAttachObjectToPlayer,
 	pShowPlayerDialog,
 	pSetPlayerObjectMaterial,
 	pSetPlayerObjectMaterialText;
-
 
 extern char gRecordingDataPath[MAX_PATH];
 

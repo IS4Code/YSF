@@ -278,9 +278,9 @@ void CPlayerData::DeleteObjectAddon(WORD objectid)
 	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 	if (it != m_PlayerObjectsAddon.end())
 	{
-		m_PlayerObjectsAddon.erase(objectid);
-		m_PlayerObjectsAttachQueue.erase(it->first);
 		SAFE_DELETE(it->second);
+		m_PlayerObjectsAttachQueue.erase(it->first);
+		m_PlayerObjectsAddon.erase(it);
 	}
 }
 

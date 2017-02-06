@@ -124,13 +124,8 @@ public:
 		if (ret >= 360.0f) ret -= 360.0f;
 		return ret;
 	}
-	
-	CVector operator = (const CVector& vecRight)
-	{
-		return CVector(vecRight.fX, vecRight.fY, vecRight.fZ);
-	}
 
-    CVector operator + ( const CVector& vecRight ) const
+	CVector operator + ( const CVector& vecRight ) const
     {
         return CVector ( fX + vecRight.fX, fY + vecRight.fY, fZ + vecRight.fZ );
     }

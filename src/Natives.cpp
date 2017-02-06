@@ -1510,6 +1510,11 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 	if(pDestroyVehicle(amx, params))
 	{
 		CServer::Get()->bChangedVehicleColor[vehicleid] = false;
+		auto v = CServer::Get()->vehicleSpawnData.find(vehicleid);
+		if (v != CServer::Get()->vehicleSpawnData.end())
+		{
+			CServer::Get()->vehicleSpawnData.erase(v);
+		}
 		return 1;
 	}
 	return 0;
@@ -2814,7 +2819,6 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 		spawn.fRot = pVehicle->customSpawn.fRot;
 		spawn.iColor1 = pVehicle->customSpawn.iColor1;
 		spawn.iColor2 = pVehicle->customSpawn.iColor2;
-
 	}
 	else
 	{
@@ -2877,14 +2881,8 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 	{
 		spawn.iInterior = interior;
 	}
-	
-	auto v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
-	if(v != CServer::Get()->vehicleSpawnData.end())
-	{
-		CServer::Get()->vehicleSpawnData.erase(v);
-		// logprintf("add custom");
-	}
-	CServer::Get()->vehicleSpawnData.emplace(vehicleid, spawn);
+
+	CServer::Get()->vehicleSpawnData[vehicleid] = spawn;
 
 	// logprintf("streamedin: %d, iRespawnTime: %d, interior: %d", bStreamedIn, respawntime, interior);
 

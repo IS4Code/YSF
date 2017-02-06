@@ -60,7 +60,6 @@ AMX_NATIVE
 	pSetPlayerSkin = NULL,
 	pSetPlayerFightingStyle = NULL,
 	pSetPlayerName = NULL,
-	pSetVehicleToRespawn = NULL,
 	pChangeVehicleColor = NULL,
 	pDestroyVehicle = NULL,
 	pAttachObjectToPlayer = NULL,
@@ -163,9 +162,6 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			if(!pSetPlayerName && !strcmp(nativelist[i].name, "SetPlayerName"))
 				pSetPlayerName = nativelist[i].func;
 			
-			if(!pSetVehicleToRespawn && !strcmp(nativelist[i].name, "SetVehicleToRespawn"))
-				pSetVehicleToRespawn = nativelist[i].func;
-
 			if(!pChangeVehicleColor && !strcmp(nativelist[i].name, "ChangeVehicleColor"))
 				pChangeVehicleColor = nativelist[i].func;
 
