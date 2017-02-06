@@ -102,7 +102,7 @@
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST "C:\Users\Ati\Desktop\SERVER\plugins" copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\SERVER\plugins\YSF.dll"</Command>
+      <Command>IF EXIST "C:\Users\Ati\Desktop\tesztszerver\plugins" copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plugins\$(TargetName).dll"</Command>
       <Message>
       </Message>
     </PostBuildEvent>
@@ -161,6 +161,18 @@
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="sampsvr_files\filterscripts\YSF_examples.pwn">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="sampsvr_files\filterscripts\YSF_tests.pwn">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="sampsvr_files\pawno\include\YSF.inc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="sampsvr_files\plugins\YSF.cfg">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
     <None Include="YSF.def" />
   </ItemGroup>
   <ItemGroup>

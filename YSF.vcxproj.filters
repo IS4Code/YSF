@@ -28,6 +28,21 @@
     <Filter Include="lib\sdk\amx">
       <UniqueIdentifier>{da3c76af-a563-4c2c-a802-c4a6575e3eea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sampsvr_files">
+      <UniqueIdentifier>{05c23c30-bbf6-4112-b0b6-aec3b538fec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\filterscripts">
+      <UniqueIdentifier>{a794a953-d45d-4e55-846f-178c807cb34f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\pawno">
+      <UniqueIdentifier>{d9cdb9cf-d8e4-4c11-a08c-4ec426dcd9b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\pawno\include">
+      <UniqueIdentifier>{e4e46ef4-946d-4591-9e7f-c224d647e8c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\plugins">
+      <UniqueIdentifier>{aeb8301c-bdba-45aa-b5a8-d7e732c5e2ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CCallbackManager.cpp">
@@ -171,6 +186,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="YSF.def" />
+    <None Include="sampsvr_files\filterscripts\YSF_examples.pwn">
+      <Filter>sampsvr_files\filterscripts</Filter>
+    </None>
+    <None Include="sampsvr_files\filterscripts\YSF_tests.pwn">
+      <Filter>sampsvr_files\filterscripts</Filter>
+    </None>
+    <None Include="sampsvr_files\pawno\include\YSF.inc">
+      <Filter>sampsvr_files\pawno\include</Filter>
+    </None>
+    <None Include="sampsvr_files\plugins\YSF.cfg">
+      <Filter>sampsvr_files\plugins</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="YSF.rc" />
