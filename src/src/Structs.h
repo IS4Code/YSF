@@ -226,7 +226,6 @@ typedef struct _MATRIX4X4
 	CVector pos;
 	float  pad_p;
 } MATRIX4X4, *PMATRIX4X4;
-static_assert(sizeof(_MATRIX4X4) == 64, "Invalid _MATRIX4X4 size");
 
 struct ConsoleVariable_s
 {
@@ -235,7 +234,6 @@ struct ConsoleVariable_s
 	void*			VarPtr;
 	VARCHANGEFUNC	VarChangeFunc;
 };
-static_assert(sizeof(ConsoleVariable_s) == 16, "Invalid ConsoleVariable_s size");
 
 struct ConsoleCommand_s
 {
@@ -243,7 +241,6 @@ struct ConsoleCommand_s
 	DWORD			dwFlags;
 	void			(*fptrFunc)();
 };
-static_assert(sizeof(ConsoleCommand_s) == 263, "Invalid ConsoleCommand_s size");
 
 /* -------------------------------------------------------- */
 // CPlayer
@@ -264,7 +261,6 @@ struct CAimSyncData
 	WORD			wCameraPlayer;			// 35 - 37
 	WORD			wCameraActor;			// 37 - 39
 };
-static_assert(sizeof(CAimSyncData) == 39, "Invalid CAimSyncData size");
 
 struct CVehicleSyncData
 {
@@ -289,7 +285,6 @@ struct CVehicleSyncData
             float           fTrainSpeed;
     };
 };
-static_assert(sizeof(CVehicleSyncData) == 63, "Invalid CVehicleSyncData size");
 
 struct CPassengerSyncData
 {
@@ -304,7 +299,6 @@ struct CPassengerSyncData
 	WORD			wKeys;					// 0x0068 - 0x006A
 	CVector			vecPosition;			// 0x006A - 0x0076
 };
-static_assert(sizeof(CPassengerSyncData) == 24, "Invalid CPassengerSyncData size");
 
 struct CSyncData
 {
@@ -331,7 +325,6 @@ struct CSyncData
 		};
 	};
 };
-static_assert(sizeof(CSyncData) == 68, "Invalid CSyncData size");
 
 struct CUnoccupiedSyncData
 {
@@ -344,7 +337,6 @@ struct CUnoccupiedSyncData
 	CVector			vecTurnVelocity;		// + 0x0033
 	float			fHealth;					// + 0x003F
 };
-static_assert(sizeof(CUnoccupiedSyncData) == 67, "Invalid CUnoccupiedSyncData size");
 
 struct CSpectatingSyncData
 {
@@ -353,7 +345,6 @@ struct CSpectatingSyncData
 	WORD			wKeysOnSpectating;						// + 0x0004
 	CVector			vecPosition;							// + 0x0006
 };
-static_assert(sizeof(CSpectatingSyncData) == 18, "Invalid CSpectatingSyncData size");
 
 struct CTrailerSyncData
 {
@@ -364,7 +355,6 @@ struct CTrailerSyncData
 	CVector			vecVelocity;			// + 0x0026
 	DWORD			pad;
 };
-static_assert(sizeof(CTrailerSyncData) == 54, "Invalid CTrailerSyncData size");
 
 typedef struct CTextdraw
 {
@@ -397,7 +387,6 @@ typedef struct CTextdraw
 	WORD			color1; // 59 - 61
 	WORD			color2; // 61 - 63
 } _CTextdraw;
-static_assert(sizeof(CTextdraw) == 63, "Invalid CTextdraw size");
 
 struct CPlayerTextDraw
 {
@@ -406,7 +395,6 @@ struct CPlayerTextDraw
 	char			*szFontText[MAX_PLAYER_TEXT_DRAWS];
 	bool			bHasText[MAX_PLAYER_TEXT_DRAWS];
 };
-static_assert(sizeof(CPlayerTextDraw) == 2048 + 1024 + 256, "Invalid CPlayerTextDraw size");
 
 struct C3DText
 {
@@ -419,7 +407,6 @@ struct C3DText
 	WORD			wAttachedToPlayerID;    // + 0x1D
 	WORD			wAttachedToVehicleID;   // + 0x1F
 };
-static_assert(sizeof(C3DText) == 33, "Invalid C3DText size");
 
 struct CPlayerText3DLabels
 {
@@ -428,7 +415,6 @@ struct CPlayerText3DLabels
 	BYTE			unknown9800[MAX_3DTEXT_PLAYER];				// + 0x9400
 	WORD			wOwnerID;
 };
-static_assert(sizeof(CPlayerText3DLabels) == 38914, "Invalid CPlayerText3DLabels size");
 
 struct CAttachedObject
 {
@@ -440,7 +426,6 @@ struct CAttachedObject
 	DWORD			dwMaterialColor1;
 	DWORD			dwMaterialColor2;
 };
-static_assert(sizeof(CAttachedObject) == 52, "Invalid CAttachedObject size");
 
 struct CPlayerSpawnInfo
 {
@@ -452,7 +437,6 @@ struct CPlayerSpawnInfo
 	int				iSpawnWeapons[3];		// 22 - 34
 	int				iSpawnWeaponsAmmo[3];	// 34 - 46
 };
-static_assert(sizeof(CPlayerSpawnInfo) == 46, "Invalid CPlayerSpawnInfo size");
 
 struct CBulletSyncData
 {
@@ -463,7 +447,6 @@ struct CBulletSyncData
 	CVector			vecCenterOfHit;
 	BYTE			byteWeaponID;
 }; 
-static_assert(sizeof(CBulletSyncData) == 40, "Invalid CBulletSyncData size");
 
 struct CPVar
 {
@@ -474,7 +457,6 @@ struct CPVar
     float			fValue;
     char*			szValue;
 };
-static_assert(sizeof(CPVar) == 61, "Invalid CPVar size");
 
 struct CPlayerVar
 {
@@ -482,7 +464,6 @@ struct CPlayerVar
 	BOOL			bIsPVarActive[MAX_PVARS];
     int				iUpperIndex;
 };
-static_assert(sizeof(CPlayerVar) == 48800 + 3200 + 4, "Invalid CPlayerVar size");
 
 struct CPlayer
 {
@@ -579,7 +560,6 @@ struct CPlayer
 	PAD(unused, 9);								// 11473 - 11482
 	CPlayerVar*				pPlayerVars;		// 11482 - 11486
 };
-static_assert(sizeof(CPlayer) == 11486, "Invalid CPlayer size");
 
 struct CPlayerPool
 {
@@ -602,7 +582,6 @@ struct CPlayerPool
 	DWORD			dwConnectedPlayers;						// 199012 - 199016
 	DWORD			dwPlayerPoolSize;						// 199016 - 199020
 };
-static_assert(sizeof(CPlayerPool) == 199020, "Invalid CPlayerPool size");
 
 /* -------------------------------------------------------- */
 // CVehicle
@@ -618,7 +597,6 @@ struct CVehicleSpawn
     int				iRespawnTime;
     int				iInterior;
 };
-static_assert(sizeof(CVehicleSpawn) == 36, "Invalid CVehicleSpawn size");
 
 struct CVehicleModInfo
 {
@@ -627,7 +605,6 @@ struct CVehicleModInfo
     int				iColor1;                             // + 0x000F
     int				iColor2;                             // + 0x0010
 };
-static_assert(sizeof(CVehicleModInfo) == 23, "Invalid CVehicleModInfo size");
 
 struct CVehicleParams
 {
@@ -648,7 +625,6 @@ struct CVehicleParams
 	char window_backleft;
 	char window_backright; // 15 - 16
 };
-static_assert(sizeof(CVehicleParams) == 16, "Invalid CVehicleParams size");
 
 struct CVehicle
 {
@@ -681,7 +657,6 @@ struct CVehicle
 	BYTE			byteSirenEnabled;	// 265 - 266
 	BYTE			byteNewSirenState;	// 266 - 267 : passed to OnVehicleSirenStateChange
 };
-static_assert(sizeof(CVehicle) == 267, "Invalid CVehicle size");
 
 struct CVehiclePool
 {
@@ -691,7 +666,6 @@ struct CVehiclePool
 	CVehicle		*pVehicle[MAX_VEHICLES];			// 16212 - 24212
 	DWORD			dwVehiclePoolSize;					// 24212 - 24216
 };
-static_assert(sizeof(CVehiclePool) == 24216, "Invalid CVehiclePool size");
 
 /* -------------------------------------------------------- */
 // CPickup
@@ -732,7 +706,6 @@ struct CObjectMaterial
 	DWORD			dwBackgroundColor;		// 407 - 411
 	BYTE			byteAlignment;			// 411 - 412
 };
-static_assert(sizeof(CObjectMaterial) == 215, "Invalid CObjectMaterial size");
 
 struct CObject
 {
@@ -756,7 +729,6 @@ struct CObject
 	CObjectMaterial	Material[MAX_OBJECT_MATERIAL];		// 197 - 3637
 	char			*szMaterialText[MAX_OBJECT_MATERIAL];// 3637 - 3653
 };
-static_assert(sizeof(CObject) == 3701, "Invalid CObject size");
 
 struct CObjectPool
 {
@@ -847,7 +819,6 @@ struct CActorAnim // 140
 	BYTE			byteFreeze;		// 135 - 136
 	int				iTime;				//  136 - 140
 };
-static_assert(sizeof(CActorAnim) == 142, "Invalid CActorAnim size");
 
 struct CActor
 {
@@ -867,7 +838,6 @@ struct CActor
 	BYTE			byteInvulnerable;	
 	WORD			wActorID;			
 };
-//static_assert(sizeof(CActor) == 211, "Invalid CActor size");
 
 struct CActorPool
 {
