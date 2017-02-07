@@ -97,5 +97,5 @@ cell CScriptParams::HandleError()
 			break;
 		}
 	}
-	return std::numeric_limits<int>::lowest() + (m_error - 1);
+	return INT_MIN + (m_error - 1);
 }

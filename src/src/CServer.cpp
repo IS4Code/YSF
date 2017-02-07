@@ -266,13 +266,13 @@ bool CServer::IsValidNick(char *szName)
 // Toggling rcon commands
 bool CServer::ChangeRCONCommandName(std::string const &strCmd, std::string const &strNewCmd)
 {
-	auto it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
+	std::vector<std::string>::iterator it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
 	if (it != m_RCONCommands.end())
 	{
 		if (strCmd == strNewCmd)
 			return 0;
 
-		auto pos = std::distance(m_RCONCommands.begin(), it);
+		int pos = std::distance(m_RCONCommands.begin(), it);
 
 		// Find command in array by it's position in vector
 		ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
@@ -290,10 +290,10 @@ bool CServer::ChangeRCONCommandName(std::string const &strCmd, std::string const
 
 bool CServer::GetRCONCommandName(std::string const &strCmd, std::string &strNewCmd)
 {
-	auto it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
+	std::vector<std::string>::iterator it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
 	if (it != m_RCONCommands.end())
 	{
-		auto pos = std::distance(m_RCONCommands.begin(), it);
+		int pos = std::distance(m_RCONCommands.begin(), it);
 
 		// Find command in array by it's position in vector
 		ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
@@ -328,7 +328,7 @@ void CServer::RemoveConsolePlayer(WORD playerid)
 
 bool CServer::IsConsolePlayer(WORD playerid, DWORD &color)
 {
-	auto it = m_ConsoleMessagePlayers.find(playerid);
+	std::map<WORD, DWORD>::iterator it = m_ConsoleMessagePlayers.find(playerid);
 	if (it != m_ConsoleMessagePlayers.end())
 	{
 		color = it->second;

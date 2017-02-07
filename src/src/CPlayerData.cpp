@@ -274,7 +274,7 @@ CPlayerObjectAttachAddon* CPlayerData::GetObjectAddon(WORD objectid)
 
 CPlayerObjectAttachAddon const* CPlayerData::FindObjectAddon(WORD objectid)
 {
-	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
+	std::map<WORD, CPlayerObjectAttachAddon*>::iterator it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 	if (it == m_PlayerObjectsAddon.end())
 		return NULL;
 
@@ -283,7 +283,7 @@ CPlayerObjectAttachAddon const* CPlayerData::FindObjectAddon(WORD objectid)
 
 void CPlayerData::DeleteObjectAddon(WORD objectid)
 {
-	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
+	std::map<WORD, CPlayerObjectAttachAddon*>::iterator it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 	if (it != m_PlayerObjectsAddon.end())
 	{
 		SAFE_DELETE(it->second);
@@ -319,7 +319,7 @@ void CPlayerData::Process(void)
 	{
 		for (std::set<WORD>::iterator o = m_PlayerObjectsAttachQueue.begin(); o != m_PlayerObjectsAttachQueue.end(); )
 		{
-			auto it = m_PlayerObjectsAddon.find(*(o));
+			std::map<WORD, CPlayerObjectAttachAddon*>::iterator it = m_PlayerObjectsAddon.find(*(o));
 			if (it != m_PlayerObjectsAddon.end() && it->second->bCreated)
 			{
 				DWORD passed_time = GetTickCount() - it->second->creation_timepoint;

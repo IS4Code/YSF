@@ -45,7 +45,6 @@ class CYSFPickupPool;
 #include <vector>
 #include <set>
 #include <bitset>
-#include <unordered_map>
 
 class CServer : public CSingleton<CServer>
 {
