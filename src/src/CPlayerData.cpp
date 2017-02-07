@@ -276,7 +276,7 @@ CPlayerObjectAttachAddon const* CPlayerData::FindObjectAddon(WORD objectid)
 {
 	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 	if (it == m_PlayerObjectsAddon.end())
-		return nullptr;
+		return NULL;
 
 	return it->second;
 }

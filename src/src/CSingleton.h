@@ -48,20 +48,20 @@ public:
 
 	inline static T *Get()
 	{
-		if (m_Instance == nullptr)
+		if (m_Instance == NULL)
 			m_Instance = new T;
 		return m_Instance;
 	}
 
 	inline static void Destroy()
 	{
-		if (m_Instance != nullptr)
+		if (m_Instance != NULL)
 		{
 			delete m_Instance;
-			m_Instance = nullptr;
+			m_Instance = NULL;
 		}
 	}
 };
 
 template <class T>
-T* CSingleton<T>::m_Instance = nullptr;
+T* CSingleton<T>::m_Instance = NULL;

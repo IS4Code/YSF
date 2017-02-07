@@ -132,7 +132,7 @@ public:
 	std::set<WORD> m_PlayerObjectsAttachQueue;
 
 	// Fix for GetPlayerObjectMaterial/MaterialText - i keep this outside from containers above
-	std::map<WORD, std::map<BYTE, std::string>> m_PlayerObjectMaterialText;
+	std::map<WORD, std::map<BYTE, std::string> > m_PlayerObjectMaterialText;
 
 	// Gangzones
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];

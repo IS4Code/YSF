@@ -53,7 +53,7 @@ public:
 		MORE_PARAMETER_ALLOWED = 2,
 	};
 
-	bool Setup(size_t paramscount, std::string &&strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
+	bool Setup(size_t paramscount, std::string &strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
 	cell HandleError();
 	
 	template<typename T> void Add(T a);
@@ -205,7 +205,7 @@ template <> inline void CScriptParams::ReadInternal(std::string *result)
 	amx_StrLen(amx_cstr, &amx_length);
 	char* temp = new char[amx_length + 1];
 
-	if (amx_length > 0 && temp != nullptr)
+	if (amx_length > 0 && temp != NULL)
 	{
 		amx_GetString(temp, amx_cstr, 0, amx_length + 1);
 		result->append(temp);

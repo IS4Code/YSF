@@ -231,7 +231,7 @@ bool CCallbackManager::OnServerMessage(const char* message)
 		if (!amx_FindPublic(*iter, "OnServerMessage", &idx))
 		{
 			cell amx_addr;
-			amx_PushString(*iter, &amx_addr, nullptr, msg, 0, 0);
+			amx_PushString(*iter, &amx_addr, NULL, msg, 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
 
@@ -255,11 +255,11 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 		if(!amx_FindPublic(*iter, "OnRemoteRCONPacket", &idx))
 		{
 			cell amx_addr;
-			amx_PushString(*iter, &amx_addr, nullptr, command, 0, 0);
+			amx_PushString(*iter, &amx_addr, NULL, command, 0, 0);
 			amx_Push(*iter, static_cast<cell>(success));
-			amx_PushString(*iter, &amx_addr, nullptr, password, 0, 0);
+			amx_PushString(*iter, &amx_addr, NULL, password, 0, 0);
 			amx_Push(*iter, static_cast<cell>(port));
-			amx_PushString(*iter, &amx_addr, nullptr, inet_ntoa(in), 0, 0);
+			amx_PushString(*iter, &amx_addr, NULL, inet_ntoa(in), 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
 
@@ -416,7 +416,7 @@ bool CCallbackManager::OnServerQueryInfo(unsigned int binaryAddress, char(&hostn
 			amx_PushArray(*iter, &amx_addr, &outputLanguage, languageCells, sizeof(language));
 			amx_PushArray(*iter, &amx_addr_last, &outputGameMode, gameModeCells, sizeof(gameMode));
 			amx_PushArray(*iter, &amx_addr_last, &outputHostname, hostnameCells, sizeof(hostname));
-			amx_PushString(*iter, &amx_addr_last, nullptr, inet_ntoa(in), 0, 0);
+			amx_PushString(*iter, &amx_addr_last, NULL, inet_ntoa(in), 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
 
