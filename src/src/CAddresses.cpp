@@ -211,12 +211,12 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 
 	switch(sampVersion)
 	{
-		case SAMPVersion::VERSION_037:
+		case VERSION_037:
 		{
 			VAR_pRestartWaitTime =						0x081A0840;
 			break;
 		}
-		case SAMPVersion::VERSION_037_R2:
+		case VERSION_037_R2:
 		{
 			VAR_pRestartWaitTime =						0x0815A528; // 12.0
 			VAR_pPosSyncBounds[0] =						0x08150710;

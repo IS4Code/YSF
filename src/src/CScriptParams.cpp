@@ -38,7 +38,7 @@ bool CScriptParams::Setup(size_t paramscount, std::string strNativeName, Flags f
 {
 	// Initialize variables for later use
 	m_paramscount = paramscount;
-	m_strNativeName = std::move(strNativeName);
+	m_strNativeName = strNativeName;
 	m_flags = flags;
 	m_AMX = amx;
 	m_params = params;

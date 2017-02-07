@@ -334,7 +334,10 @@ void CPlayerData::Process(void)
 					CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 
 					it->second->bAttached = true;
-					o = m_PlayerObjectsAttachQueue.erase(o);
+					std::set<WORD>::iterator tmp = o;
+					tmp++;
+					m_PlayerObjectsAttachQueue.erase(o);
+					o = tmp;
 
 					logprintf("attached and removed: %d", it->first);
 				}
