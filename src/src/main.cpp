@@ -110,8 +110,8 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 {
 	UninstallHooks();
 
-	CServer::CSingleton::Destroy();
-	CScriptParams::CSingleton::Destroy();
+	CServer::Destroy();
+	CScriptParams::Destroy();
 
 	// Corrected apperance in log file
 	logprintf("\n");

@@ -1614,7 +1614,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 			strcpy(pObject->szMaterialText[index], szText.c_str());
 			*/
 
-			pPlayerData[playerid]->m_PlayerObjectMaterialText[objectid][index] = std::move(szText);
+			pPlayerData[playerid]->m_PlayerObjectMaterialText[objectid][index] = szText;
 			pObject->Material[index].byteSlot = slot;
 			pObject->Material[index].byteUsed = 2;
 			pObject->Material[index].byteMaterialSize = materialsize;
