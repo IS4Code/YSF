@@ -5,7 +5,7 @@
 # make YSF
 #
 
-GPP = g++ -m32 -std=c++11 -Ilib -fno-stack-protector
+GPP = g++ -m32 -Ilib -fno-stack-protector
 GCC = gcc -m32 -Ilib -fno-stack-protector
 YSF_OUTFILE = "./YSF.so"
 
