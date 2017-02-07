@@ -71,7 +71,7 @@ extern BYTE RPC_ServerQuit;
 
 void InitRPCs();
 
-enum PacketEnumeration : unsigned char
+enum PacketEnumeration
 {	
 	RPC_InitGame = 0x8B, 
 	RPC_ScmEvent = 96,

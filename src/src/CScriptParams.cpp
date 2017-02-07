@@ -34,7 +34,7 @@
 
 //----------------------------------------------------
 
-bool CScriptParams::Setup(size_t paramscount, std::string &strNativeName, Flags flags, AMX* amx, cell* params, size_t start)
+bool CScriptParams::Setup(size_t paramscount, std::string strNativeName, Flags flags, AMX* amx, cell* params, size_t start)
 {
 	// Initialize variables for later use
 	m_paramscount = paramscount;

@@ -134,7 +134,6 @@
 #include <stdarg.h>
 
 // STL
-#include <unordered_map>
 #include <string>
 #include <vector>
 #include <fstream>

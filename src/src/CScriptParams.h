@@ -53,7 +53,7 @@ public:
 		MORE_PARAMETER_ALLOWED = 2,
 	};
 
-	bool Setup(size_t paramscount, std::string &strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
+	bool Setup(size_t paramscount, std::string strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
 	cell HandleError();
 	
 	template<typename T> void Add(T a);
