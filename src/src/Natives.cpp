@@ -767,7 +767,7 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 	std::string scriptname, function, formatparams;
 	CScriptParams::Get()->Read(&scriptname, &function, &formatparams);
 
-	AMX* pAMX = nullptr;
+	AMX* pAMX = NULL;
 	if(scriptname == "GameMode")
 	{
 		pAMX = &pNetGame->pGameModePool->amx;
@@ -784,7 +784,7 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 		}
 	}
 	
-	if (pAMX == nullptr)
+	if (pAMX == NULL)
 	{
 		logprintf("script \"%s\" does not exist", scriptname.c_str());
 		return 0;
@@ -811,8 +811,8 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 	}
 
 	cell param_idx = len - 1;
-	cell *address_ptr = nullptr;
-	cell *array_addr_ptr = nullptr;
+	cell *address_ptr = NULL;
+	cell *array_addr_ptr = NULL;
 	cell amx_address = -1;
 	do
 	{
@@ -831,16 +831,16 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 			break;
 			case 's': //string
 			{
-				char *str = nullptr;
+				char *str = NULL;
 				amx_StrParam(amx, params[param_offset + param_idx], str);
 				
-				if (str == nullptr)
+				if (str == NULL)
 				{
 					str = new char[5];
 					strcpy(str, "NULL");
 				}
 
-				amx_PushString(pAMX, &tmp_addr, nullptr, str, 0, 0);
+				amx_PushString(pAMX, &tmp_addr, NULL, str, 0, 0);
 
 				delete[] str;
 			}
@@ -870,13 +870,13 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 				cell *copied_array = static_cast<cell *>(malloc(*arraySize * sizeof(cell)));
 				memcpy(copied_array, array_addr_ptr, *arraySize * sizeof(cell));
 
-				amx_PushArray(pAMX, &tmp_addr, nullptr, copied_array, *arraySize);
+				amx_PushArray(pAMX, &tmp_addr, NULL, copied_array, *arraySize);
 				free(copied_array);
 
 				if (amx_address < 0)
 					amx_address = tmp_addr;
 
-				array_addr_ptr = nullptr;
+				array_addr_ptr = NULL;
 			}
 			break;
 			default:

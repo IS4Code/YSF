@@ -132,7 +132,7 @@ template <class templateType> inline void CScriptParams::AddInternal(templateTyp
 	cell *address;
 	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
 	{
-		if (typeid(var).hash_code() == typeid(float).hash_code() || typeid(var).hash_code() == typeid(double).hash_code())
+		if (typeid(templateType) == typeid(float) || typeid(templateType) == typeid(double))
 			*address = amx_ftoc(var);
 		else
 			*address = static_cast<cell>(var);
@@ -212,7 +212,7 @@ template <> inline void CScriptParams::ReadInternal(std::string *result)
 	}
 	
 	delete[] temp;
-	temp = nullptr;
+	temp = NULL;
 }
 
 
