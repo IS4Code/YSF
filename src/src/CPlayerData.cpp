@@ -259,7 +259,7 @@ bool CPlayerData::DestroyObject(WORD objectid)
 CPlayerObjectAttachAddon* CPlayerData::GetObjectAddon(WORD objectid)
 {
 	CPlayerObjectAttachAddon* pAddon;
-	std::unordered_map<WORD, CPlayerObjectAttachAddon*>::iterator it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
+	std::map<WORD, CPlayerObjectAttachAddon*>::iterator it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 	if (it == m_PlayerObjectsAddon.end())
 	{
 		pAddon = new CPlayerObjectAttachAddon();

@@ -113,7 +113,7 @@ public:
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;
 
-	std::unordered_map<int, CVehicleSpawn> vehicleSpawnData;
+	std::map<int, CVehicleSpawn> vehicleSpawnData;
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
 
@@ -139,7 +139,7 @@ private:
 
 	std::set<std::string> m_BannedIPs;
 	std::vector<std::string> m_RCONCommands;
-	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
+	std::map<WORD, DWORD> m_ConsoleMessagePlayers;
 	std::set<char> m_vecValidNameCharacters;
 };
 

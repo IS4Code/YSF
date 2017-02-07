@@ -168,8 +168,8 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 
 	RakNet::BitStream bs;
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	std::unordered_map<WORD, CPlayerObjectAttachAddon*> &map = pPlayerData[forplayerid]->m_PlayerObjectsAddon;
-	for (std::unordered_map<WORD, CPlayerObjectAttachAddon*>::iterator o = map.begin(); o != map.end(); ++o)
+	std::map<WORD, CPlayerObjectAttachAddon*> &map = pPlayerData[forplayerid]->m_PlayerObjectsAddon;
+	for (std::map<WORD, CPlayerObjectAttachAddon*>::iterator o = map.begin(); o != map.end(); ++o)
 	{
 		if (o->second->wAttachPlayerID == playerid && !o->second->bCreated)
 		{
@@ -206,8 +206,8 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
 
-	std::unordered_map<WORD, CPlayerObjectAttachAddon*> &map = pPlayerData[forplayerid]->m_PlayerObjectsAddon;
-	for (std::unordered_map<WORD, CPlayerObjectAttachAddon*>::iterator o = map.begin(); o != map.end(); ++o)
+	std::map<WORD, CPlayerObjectAttachAddon*> &map = pPlayerData[forplayerid]->m_PlayerObjectsAddon;
+	for (std::map<WORD, CPlayerObjectAttachAddon*>::iterator o = map.begin(); o != map.end(); ++o)
 	{
 		if (o->second->wAttachPlayerID == playerid)
 		{
@@ -343,7 +343,7 @@ void CServer::ProcessConsoleMessages(const char* str)
 	{
 		const size_t len = strlen(str);
 		RakNet::BitStream bsParams;
-		for (std::unordered_map<WORD, DWORD>::iterator x = m_ConsoleMessagePlayers.begin(); x != m_ConsoleMessagePlayers.end(); ++x)
+		for (std::map<WORD, DWORD>::iterator x = m_ConsoleMessagePlayers.begin(); x != m_ConsoleMessagePlayers.end(); ++x)
 		{
 			bsParams.Reset();
 			bsParams.Write((DWORD)x->second);

@@ -65,7 +65,7 @@ public:
 	ePickupType type;
 };
 
-typedef std::unordered_map<int, CPickup*> PickupMap;
+typedef std::map<int, CPickup*> PickupMap;
 
 class CYSFPickupPool
 {

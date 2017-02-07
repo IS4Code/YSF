@@ -69,7 +69,7 @@ public:
 
 
 
-	//std::unordered_map<BYTE, std::string> strMaterialText;
+	//std::map<BYTE, std::string> strMaterialText;
 };
 
 class CPlayerData
@@ -128,11 +128,11 @@ public:
 	void DeleteObjectAddon(WORD objectid);
 
 	// Containers to store attached offset of AttachPlayerObjectToPlayer
-	std::unordered_map<WORD, CPlayerObjectAttachAddon*> m_PlayerObjectsAddon;
+	std::map<WORD, CPlayerObjectAttachAddon*> m_PlayerObjectsAddon;
 	std::set<WORD> m_PlayerObjectsAttachQueue;
 
 	// Fix for GetPlayerObjectMaterial/MaterialText - i keep this outside from containers above
-	std::unordered_map<WORD, std::unordered_map<BYTE, std::string>> m_PlayerObjectMaterialText;
+	std::map<WORD, std::map<BYTE, std::string>> m_PlayerObjectMaterialText;
 
 	// Gangzones
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];
