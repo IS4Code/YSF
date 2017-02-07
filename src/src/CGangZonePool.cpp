@@ -1,3 +1,35 @@
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
+
 #include "main.h"
 
 CGangZonePool::CGangZonePool()
@@ -8,7 +40,7 @@ CGangZonePool::CGangZonePool()
 
 CGangZonePool::~CGangZonePool()
 {
-	for (WORD i = 0; i != MAX_GANG_ZONES; i++)
+	for (WORD i = 0; i != MAX_GANG_ZONES; ++i)
 	{
 		SAFE_DELETE(pGangZone[i]);
 	}
@@ -54,10 +86,10 @@ WORD CGangZonePool::New(WORD playerid, float fMinX, float fMinY, float fMaxX, fl
 
 void CGangZonePool::Delete(WORD wZone)
 {
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		// Skip not connected players
-		if (!IsPlayerConnectedEx(i)) continue;
+		if (!IsPlayerConnected(i)) continue;
 
 		HideForPlayer(i, wZone);
 	}
@@ -120,16 +152,16 @@ bool CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 	bsParams.Write(pZone->fGangZone[2]);
 	bsParams.Write(pZone->fGangZone[3]);
 	bsParams.Write(RGBA_ABGR(dwColor));
-	pRakServer->RPC(&RPC_ShowGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_ShowGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
 void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 {
-	for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
+	for(WORD playerid = 0; playerid != MAX_PLAYERS; ++playerid)
 	{
 		// Skip not connected players
-		if(!IsPlayerConnectedEx(playerid)) continue;
+		if(!IsPlayerConnected(playerid)) continue;
 
 		WORD i = 0;
 
@@ -156,7 +188,7 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 		bsParams.Write(pGangZone[wZone]->fGangZone[2]);
 		bsParams.Write(pGangZone[wZone]->fGangZone[3]);
 		bsParams.Write(RGBA_ABGR(dwColor));
-		pRakServer->RPC(&RPC_ShowGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+		CSAMPFunctions::RPC(&RPC_ShowGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	}
 }
 
@@ -208,18 +240,18 @@ bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone, b
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
-	pRakServer->RPC(&RPC_HideGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_HideGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
 void CGangZonePool::HideForAll(WORD wZone)
 {
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	for(WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		// Skip not connected players
-		if(!IsPlayerConnectedEx(i)) continue;
+		if(!IsPlayerConnected(i)) continue;
 
-		HideForPlayer(i, wZone);
+		HideForPlayer(i, wZone, false, true);
 	}
 }
 
@@ -252,15 +284,15 @@ void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, boo
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
 	bsParams.Write(RGBA_ABGR(dwColor));
-	pRakServer->RPC(&RPC_FlashGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_FlashGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 }
 
 void CGangZonePool::FlashForAll(WORD wZone, DWORD dwColor)
 {
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	for(WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		// Skip not connected players
-		if(!IsPlayerConnectedEx(i)) continue;
+		if(!IsPlayerConnected(i)) continue;
 
 		FlashForPlayer(i, wZone, dwColor);
 	}
@@ -294,15 +326,15 @@ void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZo
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
-	pRakServer->RPC(&RPC_StopFlashGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, pRakServer->GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_StopFlashGangZone, &bsParams, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 }
 
 void CGangZonePool::StopFlashForAll(WORD wZone)
 {
-	for(WORD i = 0; i != MAX_PLAYERS; i++)
+	for(WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		// Skip not connected players
-		if(!IsPlayerConnectedEx(i)) continue;
+		if(!IsPlayerConnected(i)) continue;
 
 		StopFlashForPlayer(i, wZone);
 	}

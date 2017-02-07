@@ -1,64 +1,82 @@
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
+
 #ifndef YSF_CPLAYERDATA_H
 #define YSF_CPLAYERDATA_H
 
-//#include "CServer.h"
 #include "Structs.h"
 #include <bitset>
-#include <sampgdk/sampgdk.h>
+//#include <chrono>
 
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
 
-//#define MAX_PLAYERS					500
-//#define MAX_OBJECTS					1000
-//#define MAX_GANG_ZONES				1024
-//#define MAX_PICKUPS					4096
-//#define	MAX_TEXT_DRAWS				2048
-//#define	MAX_PLAYER_TEXT_DRAWS		256
-//#define	MAX_3DTEXT_GLOBAL			1024
-//#define MAX_MENUS					128
-//#define INVALID_PLAYER_ID			65535
-#define MAX_FILTER_SCRIPTS			16
+//using default_clock = std::chrono::steady_clock;
+
+class CPlayerObjectAttachAddon
+{
+public:
+	CPlayerObjectAttachAddon();
+
 /*
-#define PLAYER_STATE_NONE						0
-#define PLAYER_STATE_ONFOOT						1
-#define PLAYER_STATE_DRIVER						2
-#define PLAYER_STATE_PASSENGER					3
-#define PLAYER_STATE_EXIT_VEHICLE				4
-#define PLAYER_STATE_ENTER_VEHICLE_DRIVER		5
-#define PLAYER_STATE_ENTER_VEHICLE_PASSENGER	6
-#define PLAYER_STATE_WASTED						7
-#define PLAYER_STATE_SPAWNED					8
-#define PLAYER_STATE_SPECTATING					9
+	CPlayerObjectAttachAddon::CPlayerObjectAttachAddon() :
+		: wObjectID(INVALID_OBJECT_ID), wAttachPlayerID(INVALID_PLAYER_ID)
+	{
 
-#define UPDATE_TYPE_NONE		0
-#define UPDATE_TYPE_ONFOOT		1
-#define UPDATE_TYPE_INCAR		2
-#define UPDATE_TYPE_PASSENGER	3
-
-#define SPECTATE_TYPE_NONE		0
-#define SPECTATE_TYPE_PLAYER	1
-#define SPECTATE_TYPE_VEHICLE	2
-
-#define SPECIAL_ACTION_NONE				0
-#define SPECIAL_ACTION_USEJETPACK		2
-#define SPECIAL_ACTION_DANCE1			5
-#define SPECIAL_ACTION_DANCE2			6
-#define SPECIAL_ACTION_DANCE3			7
-#define SPECIAL_ACTION_DANCE4			8
-#define SPECIAL_ACTION_HANDSUP			10
-#define SPECIAL_ACTION_USECELLPHONE		11
-#define SPECIAL_ACTION_SITTING			12
-#define SPECIAL_ACTION_STOPUSECELLPHONE 13
+	}
+	CPlayerObjectAttachAddon::CPlayerObjectAttachAddon(WORD &objectid, WORD &attachplayer, CVector &vecoffset, CVector &vecrot) 
+		: wObjectID(objectid), wAttachPlayerID(attachplayer), vecOffset(vecoffset), vecRot(vecrot)
+	{
+		
+	}
 */
+	WORD wObjectID;
+	WORD wAttachPlayerID;
+	CVector vecOffset;
+	CVector vecRot;
+	DWORD creation_timepoint;
+	bool bCreated;
+	bool bAttached;
+
+
+
+	//std::unordered_map<BYTE, std::string> strMaterialText;
+};
 
 class CPlayerData
 {
 public:
 	CPlayerData(WORD playerid);
 	~CPlayerData(void);
-
-	bool ResetPlayerMarkerForPlayer(WORD resetplayerid);
 
 	bool SetPlayerTeamForPlayer(WORD teamplayerid, int team);
 	int GetPlayerTeamForPlayer(WORD teamplayerid);
@@ -68,46 +86,55 @@ public:
 	int GetPlayerSkinForPlayer(WORD skinplayerid);
 	inline void ResetPlayerSkin(WORD playerid) { m_iSkins[playerid] = -1; }
 
-	bool SetPlayerNameForPlayer(WORD nameplayerid, char *name);
-	char *GetPlayerNameForPlayer(WORD nameplayerid);
+	bool SetPlayerNameForPlayer(WORD nameplayerid, const char *name);
+	const char *GetPlayerNameForPlayer(WORD nameplayerid);
 	inline void ResetPlayerName(WORD playerid) { m_szNames[playerid][0] = NULL; }
 
 	bool SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style);
 	int GetPlayerFightingStyleForPlayer(WORD styleplayerid);
 	inline void ResetPlayerFightingStyle(WORD playerid){ m_iFightingStyles[playerid] = -1; }
 
+	void ResetPlayerMarkerForPlayer(WORD resetplayerid);
+	
 	WORD GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer = false);
-	bool DestroyObject_(WORD objectid);
+	bool DestroyObject(WORD objectid);
 
 	void Process(void);
 
-	struct sObj
-	{
-		WORD wObjectID;
-		WORD wAttachPlayerID;
-		CVector vecOffset;
-		CVector vecRot;
-	} stObj[MAX_OBJECTS];
-
 	WORD wPlayerID;
-	
+	int iNPCProcessID;
+	WORD wSurfingInfo;
+	WORD wDialogID;
+
+	// Variables to store disabled keys
+	WORD wDisabledKeys;
+	WORD wDisabledKeysUD;
+	WORD wDisabledKeysLR;
+
+	// Per-player things
 	float fGravity;
 	BYTE byteWeather;
 	float fBounds[4];
 
-	BYTE byteTeam;
-
-	int npcPid;
-	
-	// Special shits for store sync data
-	WORD dwDisabledKeys;
-
-		// Per-player pos
-	bool bCustomPos[MAX_PLAYERS];
-	bool bCustomQuat[MAX_PLAYERS];
+	// Per-player pos
+	std::bitset<MAX_PLAYERS> bCustomPos;
+	std::bitset<MAX_PLAYERS> bCustomQuat;
 	CVector *vecCustomPos[MAX_PLAYERS];
 	float fCustomQuat[MAX_PLAYERS][4];
 
+	CPlayerObjectAttachAddon* GetObjectAddon(WORD objectid);
+	CPlayerObjectAttachAddon const* FindObjectAddon(WORD objectid);
+
+	void DeleteObjectAddon(WORD objectid);
+
+	// Containers to store attached offset of AttachPlayerObjectToPlayer
+	std::unordered_map<WORD, CPlayerObjectAttachAddon*> m_PlayerObjectsAddon;
+	std::set<WORD> m_PlayerObjectsAttachQueue;
+
+	// Fix for GetPlayerObjectMaterial/MaterialText - i keep this outside from containers above
+	std::unordered_map<WORD, std::unordered_map<BYTE, std::string>> m_PlayerObjectMaterialText;
+
+	// Gangzones
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];
 
 	// [clientsideid] = serversideid
@@ -133,12 +160,7 @@ public:
 	DWORD dwLastUpdateTick;
 	DWORD dwCreateAttachedObj;
 	WORD dwObjectID;
-
-	DWORD dwFPS;
-	DWORD dwLastDrunkLevel;
-	WORD wSurfingInfo;
-	WORD wDialogID;
-
+	
 	bool bObjectsRemoved : 1;
 	bool bWidescreen : 1;
 	bool bUpdateScoresPingsDisabled : 1;
@@ -156,6 +178,4 @@ private:
 	char m_szNames[MAX_PLAYERS][MAX_PLAYER_NAME];
 };
 
-void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
-bool RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
 #endif

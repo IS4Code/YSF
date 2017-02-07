@@ -1,16 +1,37 @@
-/* =========================================
-			
-		FCNPC - Fully Controllable NPC
-			----------------------
-
-	- File: Utils.cpp
-	- Author(s): OrMisicL
-
-  =========================================*/
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
 
 #include "main.h"
 #pragma comment( lib, "psapi.lib" )
-
 
 // Linux GetTickCount
 #ifndef _WIN32
@@ -43,7 +64,7 @@ float GetDistance3D(CVector *vecPosition, CVector *_vecPosition)
 	return ((float)sqrt(fSX + fSY + fSZ));	
 }
 
-bool IsPlayerConnectedEx(int playerid)
+bool IsPlayerConnected(int playerid)
 {
 	if (playerid < 0 || playerid >= MAX_PLAYERS)
 		return false;
@@ -51,7 +72,7 @@ bool IsPlayerConnectedEx(int playerid)
 	return pPlayerData[playerid] != NULL && pNetGame->pPlayerPool->pPlayer != NULL;
 }
 
-const char* CUtils::GetWeaponName_(BYTE weaponid)
+const char* Utility::GetWeaponName(BYTE weaponid)
 {
 	switch (weaponid)
 	{
@@ -165,7 +186,7 @@ const char* CUtils::GetWeaponName_(BYTE weaponid)
 	return "";
 }
 
-BYTE CUtils::GetWeaponSlot(BYTE weaponid)
+BYTE Utility::GetWeaponSlot(BYTE weaponid)
 {
 	BYTE result; // eax@2
 
@@ -248,34 +269,53 @@ BYTE CUtils::GetWeaponSlot(BYTE weaponid)
 	return result;
 }
 
-char *GetPlayerName_(int playerid)
+// Load an entry from server.cfg - Y_Less
+int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 {
-	if (!IsPlayerConnectedEx(playerid)) return NULL;
+	std::ifstream
+		f("plugins/YSF.cfg");
+	int
+		ret = 1,
+		len = strlen(name);
+	if (f.is_open())
+	{
+		char
+			line[256];
+		f.clear();
+		while (!f.eof())
+		{
+			f.getline(line, 256);
+			if (f.fail())
+			{
+				goto CFGLoad_close;
+			}
+			// Does the line START with this text?  Anything other than the
+			// first character fails.
+			if (!strncmp(line, name, len) && line[len] <= ' ')
+			{
+				while (line[++len] <= ' ')
+				{
+					if (line[len] == '\0') goto CFGLoad_close;
+				}
+				// Skipped leading spaces, save the value.
+				if (dest) strncpy(dest, line + len, dlen);
+				ret = atoi(line + len);
+				goto CFGLoad_close;
+			}
+		}
+	CFGLoad_close:
+		// Yes, I used a label!  I needed to escape from a double loop.
+		f.close();
+	}
+	return ret;
+}
+
+const char *GetPlayerName(int playerid)
+{
+	if (!IsPlayerConnected(playerid)) return NULL;
 
 	// Get the player name pointer from memory.
 	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
-}
-
-// Created by: https://github.com/Zeex/sampgdk/blob/master/plugins/unlimitedfs/unlimitedfs.cpp
-std::string GetServerCfgOption(const std::string &option)
-{
-	std::string name, value;
-	std::string line;
-	std::fstream server_cfg("server.cfg");
-	if (server_cfg)
-	{
-		while (std::getline(server_cfg, line))
-		{
-			std::stringstream ss(line);
-			ss >> name;
-			if (name == option)
-			{
-				ss >> value;
-				break;
-			}
-		}
-	}
-	return "0";
 }
 
 // Y_Less - original YSF
@@ -293,39 +333,7 @@ bool Unlock(void *address, size_t len)
 		return !mprotect(reinterpret_cast <void*>(iAddr), len, PROT_READ | PROT_WRITE | PROT_EXEC);
 	#endif
 }
-/*
-// Y_Less - fixes2
-void AssemblySwap(char * addr, char * dat, int len)
-{
-	char
-		swp;
-	while (len--)
-	{
-		swp = addr[len];
-		addr[len] = dat[len];
-		dat[len] = swp;
-	}
-}
 
-void AssemblyRedirect(void * from, void * to, char * ret)
-{
-	#ifdef LINUX
-		size_t
-			iPageSize = getpagesize(),
-			iAddr = ((reinterpret_cast <uint32_t>(from) / iPageSize) * iPageSize),
-			iCount = (5 / iPageSize) * iPageSize + iPageSize * 2;
-		mprotect(reinterpret_cast <void*>(iAddr), iCount, PROT_READ | PROT_WRITE | PROT_EXEC);
-		//mprotect(from, 5, PROT_READ | PROT_WRITE | PROT_EXEC);
-	#else
-		DWORD
-			old;
-		VirtualProtect(from, 5, PAGE_EXECUTE_READWRITE, &old);
-	#endif
-	*((unsigned char *)ret) = 0xE9;
-	*((char **)(ret + 1)) = (char *)((char *)to - (char *)from) - 5;
-	AssemblySwap((char *)from, ret, 5);
-}
-*/
 bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask)
 {
 	for(; *mask; ++mask, ++data, ++pattern)
@@ -349,7 +357,7 @@ DWORD FindPattern(char *pattern, char *mask)
 	size = (DWORD)info.SizeOfImage;
 #else
 	address = 0x804b480; // around the elf base
-	size = 0x8128B80 - address; // size of the elf base is too small, build more moonwells
+	size = 0x8128B80 - address;
 #endif
 	for(i = 0; i < size; ++i)
 	{
@@ -366,7 +374,7 @@ void InstallJump(unsigned long addr, void *func)
 	VirtualProtect((LPVOID)addr, 5, PAGE_EXECUTE_READWRITE, &dwOld);
 #else
 	int pagesize = sysconf(_SC_PAGE_SIZE);
-	void *unpraddr = (void *)((((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize);
+	void *unpraddr = (void *)(((int)addr + pagesize - 1) & ~(pagesize - 1)) - pagesize;
 	mprotect(unpraddr, pagesize, PROT_WRITE);
 #endif
 	*(unsigned char *)addr = 0xE9;

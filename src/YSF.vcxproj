@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Release|Win32">
@@ -127,22 +127,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lib\raknet\BitStream.cpp" />
-    <ClCompile Include="lib\sampgdk\sampgdk.c" />
     <ClCompile Include="lib\sdk\amxplugin.cpp" />
     <ClCompile Include="lib\subhook\subhook.c" />
-    <ClCompile Include="src\Addresses.cpp" />
     <ClCompile Include="src\amxfunctions.cpp" />
+    <ClCompile Include="src\CAddresses.cpp" />
     <ClCompile Include="src\CCallbackManager.cpp" />
+    <ClCompile Include="src\CFunctions.cpp" />
     <ClCompile Include="src\CGangZonePool.cpp" />
     <ClCompile Include="src\CModelSizes.cpp" />
     <ClCompile Include="src\CPickupPool.cpp" />
     <ClCompile Include="src\CPlayerData.cpp" />
+    <ClCompile Include="src\CScriptParams.cpp" />
     <ClCompile Include="src\CServer.cpp" />
-    <ClCompile Include="src\Functions.cpp" />
     <ClCompile Include="src\Hooks.cpp" />
+    <ClCompile Include="src\Natives.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RPCs.cpp" />
-    <ClCompile Include="src\Scripting.cpp" />
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,18 +153,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\raknet\BitStream.h" />
-    <ClInclude Include="lib\sampgdk\sampgdk.h" />
     <ClInclude Include="lib\subhook\subhook.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Addresses.h" />
     <ClInclude Include="src\amxfunctions.h" />
+    <ClInclude Include="src\CAddresses.h" />
     <ClInclude Include="src\CCallbackManager.h" />
+    <ClInclude Include="src\CFunctions.h" />
     <ClInclude Include="src\CGangZonePool.h" />
     <ClInclude Include="src\CModelSizes.h" />
     <ClInclude Include="src\CPickupPool.h" />
     <ClInclude Include="src\CPlayerData.h" />
+    <ClInclude Include="src\CScriptParams.h" />
     <ClInclude Include="src\CServer.h" />
+    <ClInclude Include="src\CSingleton.h" />
     <ClInclude Include="src\CVector.h" />
+    <ClInclude Include="src\CVector2D.h" />
     <ClInclude Include="src\Functions.h" />
     <ClInclude Include="src\Hooks.h" />
     <ClInclude Include="src\main.h" />

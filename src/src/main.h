@@ -1,3 +1,35 @@
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
+
 #ifndef YSF_MAIN_H
 #define YSF_MAIN_H
 
@@ -7,7 +39,6 @@
 #pragma warning(disable: 4995)
 
 //#define NEW_PICKUP_SYSTEM
-//#define CUSTOM_BANLIST
 
 #define PI 3.14159265
 
@@ -26,7 +57,7 @@
 // ------------
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"2.2.1"
+#define PROJECT_VERSION		"R19"
 
 // ------------
 // OS SPECIFICS
@@ -103,57 +134,44 @@
 #include <stdarg.h>
 
 // STL
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include <fstream>
 #include <iostream>
 #include <sstream>
-
-// SAMP GDK
-#include <sampgdk/sampgdk.h>
-using sampgdk::logprintf;
-
-#undef amx_ftoc
-#undef amx_ctof
-#if PAWN_CELL_SIZE==32
-  #define amx_ftoc(f)   ( * reinterpret_cast<const cell*>(&static_cast<const float&>(f)) )   /* float to cell */
-  #define amx_ctof(c)   ( * reinterpret_cast<const float*>(&static_cast<const cell&>(c)) )  /* cell to float */
-#elif PAWN_CELL_SIZE==64
-  #define amx_ftoc(f)   ( * reinterpret_cast<const cell*>(&static_cast<const double&>(f)) )   /* float to cell */
-  #define amx_ctof(c)   ( * reinterpret_cast<const double*>(&static_cast<const cell&>(c)) )  /* cell to float */
-#endif
 	
 // Subhook
 #include <subhook/subhook.h>
 
 // YSF
-#include "Addresses.h"
+#include "CAddresses.h"
 #include "amxfunctions.h"
+#include "CScriptParams.h"
 #include "CCallbackManager.h"
 #include "CGangZonePool.h"
 #include "CModelSizes.h"
 #include "CPickupPool.h"
 #include "CPlayerData.h"
 #include "CVector.h"
-#include "Functions.h"
+#include "CServer.h"
+#include "CFunctions.h"
 #include "Hooks.h"
 #include "RPCs.h"
-#include "Scripting.h"
+#include "Natives.h"
 #include "Structs.h"
 #include "Utils.h"
 
 // ---------
 // EXTERNALS
 // ---------
-
+extern void *pAMXFunctions;
 extern void **ppPluginData;
 	
-extern CServer *pServer;
-extern CPlayerData *pPlayerData[MAX_PLAYERS];
-
 extern CNetGame *pNetGame;
 extern void *pConsole;
-extern RakServer *pRakServer;
+extern void *pRakServer;
+
+extern CPlayerData *pPlayerData[MAX_PLAYERS];
 
 #endif

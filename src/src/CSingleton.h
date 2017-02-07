@@ -30,47 +30,38 @@
 *
 */
 
-#ifndef YSF_CGANGZONEPOOL_H
-#define YSF_CGANGZONEPOOL_H
+#pragma once
 
-#include "main.h"
-#include <cstddef>
+// maddinat0r - thx! https://github.com/maddinat0r/samp-discord-connector/blob/master/src/CSingleton.hpp
 
-class CGangZone
+template<class T>
+class CSingleton
 {
-public:
-	float fGangZone[4];
-};
-
-class CGangZonePool
-{
-public:
-	CGangZone*				pGangZone[1024];
+protected:
+	static T *m_Instance;
 
 public:
-	CGangZonePool();
-	~CGangZonePool();
-	
-	WORD New(float fMinX, float fMinY, float fMaxX, float fMaxY);
-	WORD New(WORD playerid, float fMinX, float fMinY, float fMaxX, float fMaxY);
-	void Delete(WORD wZone);
-	void Delete(WORD playerid, WORD wZone);
+	CSingleton()
+	{ }
+	virtual ~CSingleton()
+	{ }
 
-	bool ShowForPlayer(WORD bytePlayer, WORD wZone, DWORD dwColor, bool bPlayerZone = false);
-	void ShowForAll(WORD wZone, DWORD dwColor);
-	bool HideForPlayer(WORD bytePlayer, WORD wZone, bool bPlayerZone = false, bool bCallCallback = false);
-	void HideForAll(WORD wZone);
-	void FlashForPlayer(WORD bytePlayer, WORD wZone, DWORD dwColor, bool bPlayerZone = false);
-	void FlashForAll(WORD wZone, DWORD dwColor);
-	void StopFlashForPlayer(WORD bytePlayer, WORD wZone, bool bPlayerZone = false);
-	void StopFlashForAll(WORD wZone);
-
-	bool GetSlotState(WORD wZone)
+	inline static T *Get()
 	{
-		if (wZone >= 1024) return 0;
-		return pGangZone[wZone] != NULL;
-	};
+		if (m_Instance == nullptr)
+			m_Instance = new T;
+		return m_Instance;
+	}
 
+	inline static void Destroy()
+	{
+		if (m_Instance != nullptr)
+		{
+			delete m_Instance;
+			m_Instance = nullptr;
+		}
+	}
 };
 
-#endif
+template <class T>
+T* CSingleton<T>::m_Instance = nullptr;

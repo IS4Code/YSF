@@ -4,6 +4,10 @@
 #endif
 #define _YSF_included
 
+#define YSF_ERROR_ISNT_LOADED 					cellmin
+#define YSF_ERROR_PARAMETER_COUNT_ISNT_EQUAL 	(cellmin + 1)
+#define YSF_ERROR_PARAMETER_COUNT_ISNT_ENOUGH 	(cellmin + 2)
+
 // Definitions
 enum E_SERVER_RULE_FLAGS (<<= 1)
 {
@@ -20,6 +24,9 @@ enum E_SCM_EVENT_TYPE
     SCM_EVENT_RESPRAY = 3,
     SCM_EVENT_MOD_SHOP = 4
 }
+
+// Execute
+native execute(const command[]);
 
 // File functions
 native ffind(const pattern[], filename[], len, &idx);
@@ -54,23 +61,34 @@ native SetServerRule(const name[], const value[]);
 native IsValidServerRule(const name[]);
 native SetServerRuleFlags(const name[], E_SERVER_RULE_FLAGS:flags);
 native E_SERVER_RULE_FLAGS:GetServerRuleFlags(const name[]);
-// Just for backward compatibility...
-native ModifyFlag(const name[], flags);
 
 // Server settings
 native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, &limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
+native GetNPCCommandLine(npcid, npcscript[], length = sizeof(npcscript));
+
+// Toggling RCON commands
+native GetRCONCommandName(const cmdname[], changedname[], len = sizeof(changedname));
+native ChangeRCONCommandName(const cmdname[], changedname[]);
+
+// Per AMX function calling
+native CallFunctionInScript(const scriptname[], const function[], const format[], {Float,_}:...);
+
+// Broadcasting console messages
+native EnableConsoleMSGsForPlayer(playerid, color);
+native DisableConsoleMSGsForPlayer(playerid);
+native HasPlayerConsoleMessages(playerid, &color = 0);
 
 // YSF settings
 native YSF_SetTickRate(ticks);
 native YSF_GetTickRate();
 native YSF_EnableNightVisionFix(enable);
 native YSF_IsNightVisionFixEnabled();
+native YSF_ToggleOnServerMessage(toggle);
+native YSF_IsOnServerMessageEnabled();
 native YSF_SetExtendedNetStatsEnabled(enable);
 native YSF_IsExtendedNetStatsEnabled();
 native YSF_SetAFKAccuracy(time_ms);
 native YSF_GetAFKAccuracy();
-native YSF_ToggleNPCTracking(bool:enable);
-native YSF_IsNPCTrackingEnabled();
 
 native SetRecordingDirectory(const dir[]);
 native GetRecordingDirectory(dir[], len = sizeof(dir));
@@ -121,12 +139,13 @@ native Float:GetPlayerTrainSpeed(playerid);
 native Float:GetPlayerZAim(playerid);
 native GetPlayerSurfingOffsets(playerid, &Float:fOffsetX, &Float:fOffsetY, &Float:fOffsetZ);
 native GetPlayerRotationQuat(playerid, &Float:w, &Float:x, &Float:y, &Float:z);
+native GetPlayerDialogID(playerid);
 native GetPlayerSpectateID(playerid);
 native GetPlayerSpectateType(playerid);
 native GetPlayerLastSyncedVehicleID(playerid);
 native GetPlayerLastSyncedTrailerID(playerid);
 
-native SendBulletData(sender, hitid, hittype, weaponid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ, forplayerid = -1);
+native SendBulletData(senderid, forplayerid = -1, weaponid, hittype, hitid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ);
 native ShowPlayerForPlayer(forplayerid, playerid);
 native HidePlayerForPlayer(forplayerid, playerid);
 native AddPlayerForPlayer(forplayerid, playerid, isnpc = 0);
@@ -139,10 +158,8 @@ native IsPlayerControllable(playerid);
 native SpawnForWorld(playerid);
 native BroadcastDeath(playerid);
 native IsPlayerCameraTargetEnabled(playerid);
-native SetPlayerDisabledKeysSync(playerid, keys);
-native GetPlayerDisabledKeysSync(playerid);
-
-native GetNPCCommandLine(npcid, script[], length=sizeof(script));
+native SetPlayerDisabledKeysSync(playerid, keys, updown = 0, leftright = 0);
+native GetPlayerDisabledKeysSync(playerid, &keys, &updown = 0, &leftright = 0);
 
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX, &Float:fY, &Float:fZ, &Float:fAngle);
@@ -199,7 +216,6 @@ native IsBanned(const ipaddress[]);
 
 // RakNet
 native SetTimeoutTime(playerid, time_ms);
-native GetMTUSize();
 native GetLocalIP(index, localip[], len = sizeof(localip));
 
 // Vehicle functions
@@ -227,13 +243,12 @@ native HasVehicleBeenOccupied(vehicleid);
 native SetVehicleBeenOccupied(vehicleid, occupied);
 native IsVehicleOccupied(vehicleid);
 native IsVehicleDead(vehicleid);
-native GetVehicleModelCount(modelid);
-native GetVehicleModelsUsed();
 native SetVehicleParamsSirenState(vehicleid, sirenState);
-native ToggleVehicleSirenEnabled(vehicleid, bool:enabled);
+native ToggleVehicleSirenEnabled(vehicleid, enabled);
 native IsVehicleSirenEnabled(vehicleid);
 native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY, &Float:rightZ, &Float:upX, &Float:upY, &Float:upZ, &Float:atX, &Float:atY, &Float:atZ);
-native SetVehicleMatrix(vehicleid, Float:rightX, Float:rightY, Float:rightZ, Float:upX, Float:upY, Float:upZ, Float:atX, Float:atY, Float:atZ);
+native GetVehicleModelCount(modelid);
+native GetVehicleModelsUsed();
 
 // Gangzones - Global
 native IsValidGangZone(zoneid);
@@ -280,6 +295,7 @@ native TextDrawGetAlignment(Text:textdrawid);
 native TextDrawGetPreviewModel(Text:textdrawid);
 native TextDrawGetPreviewRot(Text:textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
 native TextDrawGetPreviewVehCol(Text:textdrawid, &color1, &color2);
+native TextDrawSetStringForPlayer(Text:textdrawid, playerid, const string[], {Float,_}:...);
 
 // Textdraw - Player
 native IsValidPlayerTextDraw(playerid, PlayerText:textdrawid);
@@ -376,9 +392,11 @@ forward OnPlayerPauseStateChange(playerid, pausestate);
 forward OnPlayerStatsAndWeaponsUpdate(playerid);
 forward OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const command[]);
 forward OnServerMessage(const msg[]);
-forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights, &spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
+forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
+				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
 forward OnOutcomeScmEvent(playerid, issuerid, E_SCM_EVENT_TYPE:eventid, vehicleid, arg1, arg2);
-forward OnServerQueryInfo(addr[], hostname[51], gameMode[31], language[31]);
+forward OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31]);
+
 
 //////////////////////////////////////////////////////////////
 // Fixes
@@ -393,7 +411,9 @@ forward OnServerQueryInfo(addr[], hostname[51], gameMode[31], language[31]);
 	native Float:GetGravity();
 #endif
 
-native GetWeather();
+#if !defined GetWeather
+	#define GetWeather() GetConsoleVarAsInt("weather")
+#endif
 native GetWeaponSlot(weaponid);
 
 enum

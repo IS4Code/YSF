@@ -7,9 +7,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lib\sampgdk">
-      <UniqueIdentifier>{895362e9-8379-4bbb-bf26-8bcc1277b64c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="lib\sdk">
       <UniqueIdentifier>{cf2fd8c7-4b12-4411-bef1-d247294dc722}</UniqueIdentifier>
     </Filter>
@@ -25,11 +22,29 @@
     <Filter Include="src\Hooks">
       <UniqueIdentifier>{8b47fa9b-b09f-4a2b-b153-fb1c290c91bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Utils">
+      <UniqueIdentifier>{4a52d11b-07f9-4599-aabb-5e197bc0265a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdk\amx">
+      <UniqueIdentifier>{da3c76af-a563-4c2c-a802-c4a6575e3eea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files">
+      <UniqueIdentifier>{05c23c30-bbf6-4112-b0b6-aec3b538fec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\filterscripts">
+      <UniqueIdentifier>{a794a953-d45d-4e55-846f-178c807cb34f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\pawno">
+      <UniqueIdentifier>{d9cdb9cf-d8e4-4c11-a08c-4ec426dcd9b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\pawno\include">
+      <UniqueIdentifier>{e4e46ef4-946d-4591-9e7f-c224d647e8c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\plugins">
+      <UniqueIdentifier>{aeb8301c-bdba-45aa-b5a8-d7e732c5e2ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\amxfunctions.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\CCallbackManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -48,12 +63,6 @@
     <ClCompile Include="src\RPCs.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scripting.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Utils.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="lib\sdk\amxplugin.cpp">
       <Filter>lib\sdk</Filter>
     </ClCompile>
@@ -69,23 +78,30 @@
     <ClCompile Include="src\CGangZonePool.cpp">
       <Filter>src\Pools</Filter>
     </ClCompile>
-    <ClCompile Include="src\Addresses.cpp">
-      <Filter>src\Hooks</Filter>
-    </ClCompile>
     <ClCompile Include="src\Hooks.cpp">
       <Filter>src\Hooks</Filter>
     </ClCompile>
-    <ClCompile Include="src\Functions.cpp">
-      <Filter>src\Hooks</Filter>
+    <ClCompile Include="src\Utils.cpp">
+      <Filter>src\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="lib\sampgdk\sampgdk.c">
-      <Filter>lib\sampgdk</Filter>
+    <ClCompile Include="src\amxfunctions.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\sampgdk\sampgdk.c" />
+    <ClCompile Include="src\Addresses.cpp" />
+    <ClCompile Include="src\Functions.cpp" />
+    <ClCompile Include="src\Scripting.cpp" />
+    <ClCompile Include="src\CAddresses.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CFunctions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CScriptParams.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\amxfunctions.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\CCallbackManager.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -93,9 +109,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\CPlayerData.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CVector.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\CServer.h">
@@ -107,13 +120,7 @@
     <ClInclude Include="src\RPCs.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scripting.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\Structs.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Utils.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="lib\subhook\subhook.h">
@@ -128,18 +135,37 @@
     <ClInclude Include="src\CGangZonePool.h">
       <Filter>src\Pools</Filter>
     </ClInclude>
-    <ClInclude Include="src\Addresses.h">
-      <Filter>src\Hooks</Filter>
-    </ClInclude>
     <ClInclude Include="src\Hooks.h">
       <Filter>src\Hooks</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\Functions.h">
-      <Filter>src\Hooks</Filter>
+    <ClInclude Include="src\CVector.h">
+      <Filter>src\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="lib\sampgdk\sampgdk.h">
-      <Filter>lib\sampgdk</Filter>
+    <ClInclude Include="src\Utils.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\amxfunctions.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sampgdk\sampgdk.h" />
+    <ClInclude Include="src\Addresses.h" />
+    <ClInclude Include="src\Functions.h" />
+    <ClInclude Include="src\Scripting.h" />
+    <ClInclude Include="src\CAddresses.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CFunctions.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CScriptParams.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CSingleton.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CVector2D.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

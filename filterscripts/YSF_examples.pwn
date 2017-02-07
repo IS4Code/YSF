@@ -5,6 +5,11 @@
 #include <YSF>
 #tryinclude <streamer>
 
+#define XCOLOR_ORANGE			FF9900
+#define XCOLOR_DEFAULT 			A9C4E4
+#define XCOLOR_SAMP 			EE5555
+#define XCOLOR_LIME 			99FF00
+
 new
 	g_szFormatString[4096], tmp[4096];
 
@@ -16,6 +21,14 @@ new
 
 public OnFilterScriptInit()
 {
+	ChangeRCONCommandName("gmx", ""); // disable GMX
+	ChangeRCONCommandName("varlist", "vars"); // change "varlist" rcon cmd to "vars"
+
+	new cmd[255];
+	GetRCONCommandName("varlist", cmd);
+	printf("varlist new command: %s", cmd);
+	GetRCONCommandName("gmx", cmd);
+	printf("gmx new command: %s", cmd);
 
 /*
 	AllowNickNameCharacter('!', true);
@@ -180,7 +193,7 @@ CMD:hidefromquery(playerid, params[])
 	new update;
 	if(sscanf(params, "d", update)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /hidefromquery <hide>");
 
-    TogglePlayerOnPlayerList(playerid, !update);
+    TogglePlayerInServerQuery(playerid, !update);
 	SendClientMessagef(playerid, -1, "TogglePlayerOnPlayerList = %d", !update);
 	return 1;
 }
@@ -270,7 +283,7 @@ CMD:shotme(playerid, params[])
 
 	new Float:x, Float:y, Float:z;
 	GetPlayerPos(playertwo, x, y, z);
-	SendBulletData(playertwo, playerid, BULLET_HIT_TYPE_PLAYER, GetPlayerWeapon(playerid), x, y, z, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1);
+	SendBulletData(playertwo, _, GetPlayerWeapon(playertwo), BULLET_HIT_TYPE_PLAYER, playerid, x, y, z, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1);
 	return 1;
 }
 
@@ -294,6 +307,26 @@ CMD:hideplayer(playerid, params[])
 	return 1;
 }
 
+CMD:addplayer(playerid, params[])
+{
+	new playertwo, isnpc;
+	if(sscanf(params, "uD(0)", playertwo, isnpc)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /addplayer <playertwo> <isnpc = 0>");
+
+	AddPlayerForPlayer(playerid, playertwo, isnpc);
+	SendClientMessagef(playerid, -1, "add player %s(%d)", pName(playertwo), playertwo);
+	return 1;
+}
+
+CMD:removeplayer(playerid, params[])
+{
+	new playertwo;
+	if(sscanf(params, "u", playertwo)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /removeplayer <playertwo>");
+
+	RemovePlayerForPlayer(playerid, playertwo);
+	SendClientMessagef(playerid, -1, "remove player %s(%d)", pName(playertwo), playertwo);
+	return 1;
+}
+
 CMD:spawnforworld(playerid, params[])
 {
 	new playertwo;
@@ -312,14 +345,29 @@ CMD:broadcastdeath(playerid, params[])
 	return 1;
 }
 
+CMD:consolemsgs(playerid, params[])
+{
+	new enable, color;
+	if(sscanf(params, "uN(0xFFFFFFAA)", enable, color)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /consolemsgs <enable> <color = 0xFFFFFFAA>");
+
+	if(enable)
+		EnableConsoleMSGsForPlayer(playerid, color);
+	else
+		DisableConsoleMSGsForPlayer(playerid);
+		
+    SendClientMessagef(playerid, 0xFF0000AA, "Console messages = %d, color: %x", enable, color);
+	return 1;
+}
+
 CMD:psyncdata(playerid, params[])
 {
 	new player1;
-	if(sscanf(params, "u", player1)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /psyncdata <playerid>");
+	if(sscanf(params, "D(-1)", player1)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /psyncdata <playerid>");
+	if(player1 == -1) player1 = playerid;
 
 	new
 	    Float:x, Float:y, Float:z, Float:qw, Float:qx, Float:qy, Float:qz, teamid, modelid, Float:fX, Float:fY, Float:fZ, Float:fAngle, weapon[3], weapon_ammo[3],
-	    Float:fCP[4], Float:fRaceCP[7], Float:fBounds[4];
+	    Float:fCP[4], Float:fRaceCP[7], Float:fBounds[4], keys, ud, lr, weaponid = GetPlayerWeapon(playerid), weaponname[45];
 
 	GetPlayerSurfingOffsets(player1, x, y, z);
 	GetPlayerRotationQuat(player1, qw, qx, qy, qz);
@@ -327,17 +375,20 @@ CMD:psyncdata(playerid, params[])
 	GetPlayerCheckpoint(player1, fCP[0], fCP[1], fCP[2], fCP[3]);
 	GetPlayerRaceCheckpoint(player1, fRaceCP[0], fRaceCP[1], fRaceCP[2], fRaceCP[3], fRaceCP[4], fRaceCP[5], fRaceCP[6]);
 	GetPlayerWorldBounds(player1, fBounds[0], fBounds[1], fBounds[2], fBounds[3]);
-
+	GetPlayerDisabledKeysSync(player1, keys, ud, lr);
+	GetWeaponName(weaponid, weaponname, sizeof(weaponname));
+	
     tmp[0] = EOS;
 	strcatf(tmp, "siren: %d, gear: %d, reactor: %d, trainspeed: %f, zaim: %f, surf: %f, %f, %f\n", GetPlayerSirenState(player1), GetPlayerLandingGearState(player1), GetPlayerHydraReactorAngle(player1), GetPlayerTrainSpeed(player1), GetPlayerZAim(player1), x, y, z);
-	strcatf(tmp, "server gravity: %.3f, quat: %f, %f, %f, %f, weather: %d, inmodshop: %d, cameratarget: %d\n", GetGravity(), qw, qx, qy, qz, GetPlayerWeather(player1), IsPlayerInModShop(player1), IsPlayerCameraTargetEnabled(player1));
+	strcatf(tmp, "server gravity: %.3f, player gravity: %.3f, quat: %f, %f, %f, %f, server weather: %d, player weather: %d, inmodshop: %d, cameratarget: %d\n", GetGravity(), GetPlayerGravity(player1), qw, qx, qy, qz, GetWeather(), GetPlayerWeather(player1), IsPlayerInModShop(player1), IsPlayerCameraTargetEnabled(player1));
 	strcatf(tmp, "teamid: %d, skinid: %d, spawn: %.4f, %.4f, %.4f, %.4f, spawned: %d\n", teamid, modelid, fX, fY, fZ, fAngle, IsPlayerSpawned(player1));
 	strcatf(tmp, "weapon1: %d, %d, weapon2: %d, %d, weapon3: %d, %d\n", weapon[0], weapon_ammo[0], weapon[1], weapon_ammo[1], weapon[2], weapon_ammo[2]);
-	strcatf(tmp, "specid: %d, spectype: %d, \n", GetPlayerSpectateID(player1), GetPlayerSpectateType(player1));
+	strcatf(tmp, "specid: %d, spectype: %d, dialogid: %d\n", GetPlayerSpectateID(player1), GetPlayerSpectateType(player1), GetPlayerDialogID(player1));
 	strcatf(tmp, "checkpoint %d: %f, %f, %f, size: %f\n", IsPlayerCheckpointActive(player1), fCP[0], fCP[1], fCP[2], fCP[3]);
 	strcatf(tmp, "race checkpoint %d: %f, %f, %f, next: %f, %f, %f, size: %f\n", IsPlayerRaceCheckpointActive(player1), fRaceCP[0], fRaceCP[1], fRaceCP[2], fRaceCP[3], fRaceCP[4], fRaceCP[5], fRaceCP[6]);
-	strcatf(tmp, "worldbounds: %f, %f, %f, %f, gravity: %.3f, widescreen: %d, surfplayerobject: %d\n", fBounds[0], fBounds[1], fBounds[2], fBounds[3], GetPlayerGravity(player1), IsPlayerWidescreenToggled(player1), GetPlayerSurfingPlayerObjectID(player1));
-	strcatf(tmp, "last synced - vehicle: %d, trailer: %d, pause: %d, controllable: %d\n", GetPlayerLastSyncedVehicleID(player1), GetPlayerLastSyncedTrailerID(player1), GetPlayerPausedTime(player1), IsPlayerControllable(player1));
+	strcatf(tmp, "worldbounds: %.2f, %.2f, %.2f, %.2f, widescreen: %d, surfplayerobject: %d\n", fBounds[0], fBounds[1], fBounds[2], fBounds[3], IsPlayerWidescreenToggled(player1), GetPlayerSurfingPlayerObjectID(player1));
+	strcatf(tmp, "last synced - vehicle: %d, trailer: %d, pause: %d, controllable: %d, consolemessages: %d\n", GetPlayerLastSyncedVehicleID(player1), GetPlayerLastSyncedTrailerID(player1), GetPlayerPausedTime(player1), IsPlayerControllable(player1), HasPlayerConsoleMessages(player1));
+	strcatf(tmp, "disabledkeys - keys: %d, ud: %d, lr: %d, inquery: %d, current weapon: %s (%d) - slot: %d\n", keys, ud, lr, IsPlayerToggledInServerQuery(player1), weaponname, weaponid, GetWeaponSlot(weaponid));
 
 	new str[64];
 	format(str, sizeof(str), "Info - YSF - {%06x}%s(%d)", GetPlayerColor(player1) >>> 8, pName(player1), player1);
@@ -367,8 +418,10 @@ CMD:setplayerver(playerid, params[])
 
 CMD:disablekey(playerid, params[])
 {
-	SetPlayerDisabledKeysSync(playerid, strval(params));
-	SendClientMessagef(playerid, -1, "disabled: %d", GetPlayerDisabledKeysSync(playerid));
+	new keys, ud, lr;
+	SetPlayerDisabledKeysSync(playerid, strval(params), 1, 1);
+	GetPlayerDisabledKeysSync(playerid, keys, ud, lr);
+	SendClientMessagef(playerid, -1, "disabled - keys: %d, ud: %d, lr: %d", keys, ud, lr);
 	return 1;
 }
 
@@ -930,6 +983,29 @@ CMD:ysf_netstats(playerid, params[])
     return 1;
 }
 
+CMD:isbannedip(playerid, params[])
+{
+    SendClientMessagef(playerid, -1, "IsBanned(%s): %d", params, IsBanned(params));
+    return 1;
+}
+
+CMD:exec(playerid, params[])
+{
+    execute(params);
+    SendClientMessagef(playerid, -1, "exec: %s", params);
+    return 1;
+}
+
+CMD:localip(playerid, params[])
+{
+	new index;
+	if(sscanf(params, "d", index)) return SendClientMessagef(playerid, 0xFF0000AA, "USAGE: /localip <index>");
+
+    new ipaddr[32];
+    GetLocalIP(index, ipaddr, sizeof(ipaddr));
+    SendClientMessagef(playerid, -1, "localip <%d>: %s", index, ipaddr);
+    return 1;
+}
 
 stock pName(playerid)
 {
@@ -988,10 +1064,7 @@ public OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const
 }
 
 
-forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
-				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
-
-public OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
+public OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
 				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire)
 
 {
@@ -1008,4 +1081,15 @@ public OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalcha
 	disableenterexits = false;
     printf("lófasz - %d", limitglobalchat);
 }
+/*
+public OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31])
+{
+	format(hostname, sizeof(hostname), "qwe");
+	format(gamemode, sizeof(gamemode), "asd");
+	format(language, sizeof(language), "1234");
+
+	printf("OnServerQueryInfo: ip: %d, hostname: %s, gammeode: %s, language: %s", ipaddr, hostname, gamemode, language);
+	return 1;
+}
+*/
 

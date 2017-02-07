@@ -1,16 +1,61 @@
+/*
+*  Version: MPL 1.1
+*
+*  The contents of this file are subject to the Mozilla Public License Version
+*  1.1 (the "License"); you may not use this file except in compliance with
+*  the License. You may obtain a copy of the License at
+*  http://www.mozilla.org/MPL/
+*
+*  Software distributed under the License is distributed on an "AS IS" basis,
+*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+*  for the specific language governing rights and limitations under the
+*  License.
+*
+*  The Original Code is the YSI 2.0 SA:MP plugin.
+*
+*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+*  Portions created by the Initial Developer are Copyright (C) 2008
+*  the Initial Developer. All Rights Reserved. The development was abandobed
+*  around 2010, afterwards kurta999 has continued it.
+*
+*  Contributor(s):
+*
+*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
+*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
+*
+*  Special Thanks to:
+*
+*	SA:MP Team past, present and future
+*	Incognito, maddinat0r, OrMisicL, Zeex
+*
+*/
+
 #ifndef YSF_HOOKS_H
 #define YSF_HOOKS_H
 
-#include <sampgdk/sampgdk.h>
+#define SUBHOOK_REMOVE(hookname) \
+	if(hookname) \
+	{ \
+		subhook_remove(hookname); \
+		subhook_free(hookname); \
+	} \
 
-// Hopefully this will be optimised out
-// Unfortunately I can't get ANY direct cast to work
-// pointer_to_member seems like a very special structure
-// Edit: Seems like it is optimised out, good, so this
-// just bypasses the compilers checks to do what I want
-#define POINTER_TO_MEMBER(m,n,o) temp = n, m = *(o *)&temp
-
-extern AMX_NATIVE pDestroyObject, pDestroyPlayerObject, pTogglePlayerControllable, pSetPlayerWorldBounds, pSetPlayerTeam, pSetPlayerSkin, pSetPlayerFightingStyle, pSetPlayerName, pSetVehicleToRespawn, pChangeVehicleColor, pDestroyVehicle, pAttachObjectToPlayer;
+extern AMX_NATIVE
+	pSetPlayerWeather,
+	pDestroyObject, 
+	pDestroyPlayerObject, 
+	pTogglePlayerControllable, 
+	pSetPlayerWorldBounds, 
+	pSetPlayerTeam, 
+	pSetPlayerSkin, 
+	pSetPlayerFightingStyle, 
+	pSetPlayerName, 
+	pChangeVehicleColor, 
+	pDestroyVehicle, 
+	pAttachObjectToPlayer,
+	pShowPlayerDialog,
+	pSetPlayerObjectMaterial,
+	pSetPlayerObjectMaterialText;
 
 extern char gRecordingDataPath[MAX_PATH];
 

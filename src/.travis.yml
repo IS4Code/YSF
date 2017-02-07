@@ -1,0 +1,11 @@
+language: cpp
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    packages:
+    - g++-multilib
+    
+script: 
+    - make YSF
