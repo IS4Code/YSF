@@ -498,7 +498,11 @@ AMX_DECLARE_NATIVE(Natives::GetSyncBounds)
 {
 	CHECK_PARAMS(4, "GetSyncBounds", LOADED);
 
-	CScriptParams::Get()->Add(*(float*)CAddress::VAR_pPosSyncBounds[0], *(float*)CAddress::VAR_pPosSyncBounds[1], *(float*)CAddress::VAR_pPosSyncBounds[2], *(float*)CAddress::VAR_pPosSyncBounds[3]);
+	float fBounds[4];
+	for (BYTE i = 0; i != 4; ++i)
+		fBounds[i] = *(float*)CAddress::VAR_pPosSyncBounds[i];
+
+	CScriptParams::Get()->Add(fBounds[0], fBounds[1], fBounds[2], fBounds[3]);
 	return 1;
 }
 
@@ -507,7 +511,8 @@ AMX_DECLARE_NATIVE(Natives::SetSyncBounds)
 {
 	CHECK_PARAMS(4, "SetSyncBounds", LOADED);
 
-	CScriptParams::Get()->Read(&CAddress::VAR_pPosSyncBounds[0], &CAddress::VAR_pPosSyncBounds[1], &CAddress::VAR_pPosSyncBounds[2], &CAddress::VAR_pPosSyncBounds[3]);
+	for (BYTE i = 0; i != 4; ++i)
+		*(float*)CAddress::VAR_pPosSyncBounds[i] = CScriptParams::Get()->ReadFloat();
 	return 1;
 }
 

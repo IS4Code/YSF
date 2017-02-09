@@ -315,7 +315,7 @@ void CPlayerData::Process(void)
 			if (it != m_PlayerObjectsAddon.end() && it->second->bCreated)
 			{
 				default_clock::duration passed_time = default_clock::now() - it->second->creation_timepoint;
-				logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
+				//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
 				if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
 				{
 					RakNet::BitStream bs;
@@ -328,7 +328,7 @@ void CPlayerData::Process(void)
 					it->second->bAttached = true;
 					o = m_PlayerObjectsAttachQueue.erase(o);
 
-					logprintf("attached and removed: %d", it->first);
+					//logprintf("attached and removed: %d", it->first);
 				}
 				else
 				{
@@ -337,7 +337,7 @@ void CPlayerData::Process(void)
 			}
 			else
 			{
-				logprintf("YSF: Error at looping trough attached object queue");
+				//logprintf("YSF: Error at looping trough attached object queue");
 			}
 		}
 	}

@@ -212,8 +212,7 @@ template <> inline void CScriptParams::ReadInternal(std::string *result)
 		result->append(temp);
 	}
 	
-	delete[] temp;
-	temp = nullptr;
+	SAFE_DELETE(temp);
 }
 
 

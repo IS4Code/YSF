@@ -12,6 +12,7 @@
 *.db
 *.opendb
 *.amx
+rus.txt
 
 # Build results
 [Dd]ebug/

@@ -62,6 +62,10 @@ native E_SERVER_RULE_FLAGS:GetServerRuleFlags(const name[]);
 native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, &limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
 native GetNPCCommandLine(npcid, npcscript[], length = sizeof(npcscript));
 
+// Player position sync bounds
+native GetSyncBounds(&Float:hmin, &Float:hmax, &Float:vmin, &Float:vmax);
+native SetSyncBounds(Float:hmin, Float:hmax, Float:vmin, Float:vmax);
+
 // Toggling RCON commands
 native GetRCONCommandName(const cmdname[], changedname[], len = sizeof(changedname));
 native ChangeRCONCommandName(const cmdname[], changedname[]);

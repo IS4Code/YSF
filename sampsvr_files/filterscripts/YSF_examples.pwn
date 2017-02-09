@@ -23,7 +23,11 @@ public OnFilterScriptInit()
 {
 	ChangeRCONCommandName("gmx", ""); // disable GMX
 	ChangeRCONCommandName("varlist", "vars"); // change "varlist" rcon cmd to "vars"
-
+    SetSyncBounds(-40000.0, 40000.0, -40000.0, 40000.0);
+	new Float:bound[4];
+	GetSyncBounds(bound[0], bound[1], bound[2], bound[3]);
+	printf("bounds: %f, %f, %f, %f", bound[0], bound[1], bound[2], bound[3]);
+	
 	new cmd[255];
 	GetRCONCommandName("varlist", cmd);
 	printf("varlist new command: %s", cmd);
