@@ -406,7 +406,7 @@ CMD:psyncdata(playerid, params[])
 
 	new str[64];
 	format(str, sizeof(str), "Info - YSF - {%06x}%s(%d)", GetPlayerColor(player1) >>> 8, pName(player1), player1);
-	ShowPlayerDialog(playerid, 5000, DIALOG_STYLE_MSGBOX, str, tmp, "Ok");
+	ShowPlayerDialog(playerid, 5000, DIALOG_STYLE_MSGBOX, str, tmp, "Ok", "");
 	return 1;
 }
 
