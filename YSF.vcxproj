@@ -81,6 +81,7 @@
       <StructMemberAlignment>1Byte</StructMemberAlignment>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnforceTypeConversionRules>false</EnforceTypeConversionRules>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;BOOST_CHRONO_HEADER_ONLY;_CRT_SECURE_NO_WARNINGS;NDEBUG;SAMPGDK_AMALGAMATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -94,14 +95,14 @@
       <ImportLibrary>bin\win32\Release\YSF.lib</ImportLibrary>
       <ModuleDefinitionFile>YSF.def</ModuleDefinitionFile>
       <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;winmm.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;psapi.lib;winmm.lib;Ws2_32.lib;wbemuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>false</DataExecutionPrevention>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST "C:\Users\Ati\Desktop\SERVER\plugins" copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\SERVER\plugins\YSF.dll"</Command>
+      <Command>IF EXIST "C:\Users\Ati\Desktop\tesztszerver\plugins" copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plugins\$(TargetName).dll"</Command>
       <Message>
       </Message>
     </PostBuildEvent>
@@ -129,7 +130,7 @@
       <ModuleDefinitionFile>YSF.def</ModuleDefinitionFile>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
       <OutputFile>$(OutDir)$(TargetName).dll</OutputFile>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Ws2_32.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Ws2_32.lib;Psapi.lib;wbemuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
       <MapExports>true</MapExports>
@@ -143,7 +144,7 @@
     <ClCompile Include="lib\raknet\BitStream.cpp" />
     <ClCompile Include="lib\sdk\amxplugin.cpp" />
     <ClCompile Include="lib\subhook\subhook.c" />
-    <ClCompile Include="src\Addresses.cpp" />
+    <ClCompile Include="src\CAddresses.cpp" />
     <ClCompile Include="src\amxfunctions.cpp" />
     <ClCompile Include="src\CScriptParams.cpp" />
     <ClCompile Include="src\CCallbackManager.cpp" />
@@ -152,14 +153,26 @@
     <ClCompile Include="src\CPickupPool.cpp" />
     <ClCompile Include="src\CPlayerData.cpp" />
     <ClCompile Include="src\CServer.cpp" />
-    <ClCompile Include="src\Functions.cpp" />
+    <ClCompile Include="src\CFunctions.cpp" />
     <ClCompile Include="src\Hooks.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\RPCs.cpp" />
-    <ClCompile Include="src\Scripting.cpp" />
+    <ClCompile Include="src\Natives.cpp" />
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="sampsvr_files\filterscripts\YSF_examples.pwn">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="sampsvr_files\filterscripts\YSF_tests.pwn">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="sampsvr_files\pawno\include\YSF.inc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="sampsvr_files\plugins\YSF.cfg">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </None>
     <None Include="YSF.def" />
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +188,7 @@
     <ClInclude Include="lib\sdk\plugincommon.h" />
     <ClInclude Include="lib\subhook\subhook.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="src\Addresses.h" />
+    <ClInclude Include="src\CAddresses.h" />
     <ClInclude Include="src\amxfunctions.h" />
     <ClInclude Include="src\CScriptParams.h" />
     <ClInclude Include="src\CCallbackManager.h" />
@@ -187,11 +200,11 @@
     <ClInclude Include="src\CSingleton.h" />
     <ClInclude Include="src\CVector.h" />
     <ClInclude Include="src\CVector2D.h" />
-    <ClInclude Include="src\Functions.h" />
+    <ClInclude Include="src\CFunctions.h" />
     <ClInclude Include="src\Hooks.h" />
     <ClInclude Include="src\main.h" />
     <ClInclude Include="src\RPCs.h" />
-    <ClInclude Include="src\Scripting.h" />
+    <ClInclude Include="src\Natives.h" />
     <ClInclude Include="src\Structs.h" />
     <ClInclude Include="src\Utils.h" />
   </ItemGroup>

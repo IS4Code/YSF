@@ -39,7 +39,7 @@ class CGangZonePool;
 class CYSFPickupPool;
 
 #include "CSingleton.h"
-#include "Addresses.h"
+#include "CAddresses.h"
 #include "CGangZonePool.h"
 
 #include <vector>
@@ -54,18 +54,17 @@ public:
 	CServer() = default;
 	~CServer();
 
-	void Initialize(eSAMPVersion version);
+	void Initialize(SAMPVersion version);
 	bool inline IsInitialized(void) { return m_bInitialized; }
+	void Process();
 
 	bool AddPlayer(int playerid);
 	bool RemovePlayer(int playerid);
-
-	void Process();
-
+ 
 	bool OnPlayerStreamIn(WORD playerid, WORD forplayerid);
 	bool OnPlayerStreamOut(WORD playerid, WORD forplayerid);
 
-	eSAMPVersion GetVersion() { return m_Version; }
+	SAMPVersion const &GetVersion() { return m_Version; }
 	
 	void AllowNickNameCharacter(char character, bool enable);
 	bool IsNickNameCharacterAllowed(char character);
@@ -76,8 +75,12 @@ public:
 	inline void UnbanIP(const char* ip) { m_BannedIPs.erase(ip); }
 	inline void ClearBans() { m_BannedIPs.clear(); }
 	inline bool IsBanned(char* ip) { return m_BannedIPs.find(ip) != m_BannedIPs.end(); }
-	
-	// Broadcast console messages to players
+
+	// Toggling rcon commands
+	bool ChangeRCONCommandName(std::string const &strCmd, std::string const &strNewCmd);
+	bool GetRCONCommandName(std::string const &strCmd, std::string &strNewCmd);
+
+	// Broadcasting console messages to players
 	void AddConsolePlayer(WORD playerid, DWORD color);
 	void RemoveConsolePlayer(WORD playerid); 
 	bool IsConsolePlayer(WORD playerid, DWORD &color);
@@ -103,7 +106,10 @@ public:
 	WORD GetNPCCount();
 
 	void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
-	void RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
+	bool RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
+
+	char* GetNPCCommandLine(WORD npcid);
+	int FindNPCProcessID(WORD npcid);
 
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;
@@ -112,16 +118,28 @@ public:
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
 
+	bool m_bPickupProtection : 1;
+	bool m_bDeathProtection : 1;
+	bool m_bDialogProtection : 1;
+	bool m_bUseCustomSpawn : 1;
+	bool m_bIncreaseRakNetInternalPlayers : 1;
+	int m_iRakNetInternalSleepTime;
+	int m_iAttachObjectDelay;
+	bool m_bStorePlayerObjectsMaterial : 1;
+
 private:
-	eSAMPVersion m_Version;
+
+	SAMPVersion m_Version;
 	int m_iTicks;
 	int m_iTickRate;
 	bool m_bInitialized = 0;
 	bool m_bNightVisionFix : 1;
 	bool m_bOnServerMessage : 1;
+
 	DWORD m_dwAFKAccuracy;
 
 	std::set<std::string> m_BannedIPs;
+	std::vector<std::string> m_RCONCommands;
 	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
 	std::set<char> m_vecValidNameCharacters;
 };

@@ -33,12 +33,39 @@
 #ifndef YSF_CPLAYERDATA_H
 #define YSF_CPLAYERDATA_H
 
-//#include "CServer.h"
 #include "Structs.h"
 #include <bitset>
+#include <chrono>
 
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
+
+using default_clock = std::chrono::steady_clock;
+
+class CPlayerObjectAttachAddon
+{
+public:
+/*
+	CPlayerObjectAttachAddon::CPlayerObjectAttachAddon() :
+		: wObjectID(INVALID_OBJECT_ID), wAttachPlayerID(INVALID_PLAYER_ID)
+	{
+
+	}
+	CPlayerObjectAttachAddon::CPlayerObjectAttachAddon(WORD &objectid, WORD &attachplayer, CVector &vecoffset, CVector &vecrot) 
+		: wObjectID(objectid), wAttachPlayerID(attachplayer), vecOffset(vecoffset), vecRot(vecrot)
+	{
+		
+	}
+*/
+	WORD wObjectID = INVALID_OBJECT_ID;
+	WORD wAttachPlayerID = INVALID_PLAYER_ID;
+	CVector vecOffset;
+	CVector vecRot;
+	default_clock::time_point creation_timepoint;
+	bool bCreated = false;
+	bool bAttached = false;
+	//std::unordered_map<BYTE, std::string> strMaterialText;
+};
 
 class CPlayerData
 {
@@ -54,7 +81,7 @@ public:
 	int GetPlayerSkinForPlayer(WORD skinplayerid);
 	inline void ResetPlayerSkin(WORD playerid) { m_iSkins[playerid] = -1; }
 
-	bool SetPlayerNameForPlayer(WORD nameplayerid, char *name);
+	bool SetPlayerNameForPlayer(WORD nameplayerid, const char *name);
 	const char *GetPlayerNameForPlayer(WORD nameplayerid);
 	inline void ResetPlayerName(WORD playerid) { m_szNames[playerid][0] = NULL; }
 
@@ -69,15 +96,8 @@ public:
 
 	void Process(void);
 
-	struct sObj
-	{
-		WORD wObjectID;
-		WORD wAttachPlayerID;
-		CVector vecOffset;
-		CVector vecRot;
-	} stObj[MAX_OBJECTS];
-
 	WORD wPlayerID;
+	int iNPCProcessID;
 	WORD wSurfingInfo;
 	WORD wDialogID;
 
@@ -96,6 +116,18 @@ public:
 	std::bitset<MAX_PLAYERS> bCustomQuat;
 	CVector *vecCustomPos[MAX_PLAYERS];
 	float fCustomQuat[MAX_PLAYERS][4];
+
+	CPlayerObjectAttachAddon* GetObjectAddon(WORD objectid);
+	CPlayerObjectAttachAddon const* FindObjectAddon(WORD objectid);
+
+	void DeleteObjectAddon(WORD objectid);
+
+	// Containers to store attached offset of AttachPlayerObjectToPlayer
+	std::unordered_map<WORD, CPlayerObjectAttachAddon*> m_PlayerObjectsAddon;
+	std::set<WORD> m_PlayerObjectsAttachQueue;
+
+	// Fix for GetPlayerObjectMaterial/MaterialText - i keep this outside from containers above
+	std::unordered_map<WORD, std::unordered_map<BYTE, std::string>> m_PlayerObjectMaterialText;
 
 	// Gangzones
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];

@@ -35,6 +35,7 @@
 
 #include <typeinfo>
 #include <sdk/amx/amx.h>
+#include <string>
 
 #include "CSingleton.h"
 #include "CVector.h"
@@ -54,14 +55,14 @@ public:
 		MORE_PARAMETER_ALLOWED = 2,
 	};
 
-	bool Setup(size_t paramscount, std::string strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
+	bool Setup(size_t paramscount, std::string &&strNativeName, Flags flags, AMX* amx, cell* params, size_t start = 1);
 	cell HandleError();
 
 	template<typename T> void Add(T a);
-	template<typename T, typename... Args> void Add(T a, Args... args);
+	template<typename T, typename... Args> void Add(T a, Args &&...args);
 
 	template<typename T> void Read(T a);
-	template<typename T, typename... Args> void Read(T a, Args... args);
+	template<typename T, typename... Args> void Read(T a, Args &&...args);
 
 	inline void Skip() { m_pos++; }
 	
@@ -117,7 +118,7 @@ template <class templateType> inline void CScriptParams::AddInternal(templateTyp
 	cell *address;
 	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
 	{
-		if (typeid(var) == typeid(float) || typeid(var) == typeid(double))
+		if (typeid(var).hash_code() == typeid(float).hash_code() || typeid(var).hash_code() == typeid(double).hash_code())
 			*address = amx_ftoc(var);
 		else
 			*address = static_cast<cell>(var);
@@ -152,7 +153,7 @@ template <> inline void CScriptParams::AddInternal(char* szString)
 
 	m_pos += 2;
 }
-template <> inline void CScriptParams::AddInternal(std::string &str)
+template <> inline void CScriptParams::AddInternal(std::string str)
 {
 	set_amxstring(m_AMX, m_params[m_pos], str.c_str(), m_params[m_pos + 1]);
 
@@ -168,10 +169,10 @@ void inline CScriptParams::Add(T a)
 }
 
 template<typename T, typename... Args>
-void inline CScriptParams::Add(T a, Args... args)
+void inline CScriptParams::Add(T a, Args &&...args)
 {
 	AddInternal(a);
-	Add(args...);
+	Add(std::forward<Args>(args)...);
 }
 
 //----------------------------------------------------
@@ -195,17 +196,24 @@ template <> inline void CScriptParams::ReadInternal(CVector* vec)
 	vec->fZ = amx_ctof(m_params[m_pos++]);
 }
 // Strings
-template <> inline void CScriptParams::ReadInternal(char *result)
+template <> inline void CScriptParams::ReadInternal(std::string *result)
 {
 	// FUCK amx_StrParam
 	cell *amx_cstr;
 	int amx_length;
+	
 	amx_GetAddr(m_AMX, m_params[m_pos++], &amx_cstr);
 	amx_StrLen(amx_cstr, &amx_length);
-	if (amx_length > 0)
+	char* temp = new char[amx_length + 1];
+
+	if (amx_length > 0 && temp != nullptr)
 	{
-		amx_GetString((char*)(result), amx_cstr, sizeof(*(result)) > 1, amx_length + 1);
+		amx_GetString(temp, amx_cstr, 0, amx_length + 1);
+		result->append(temp);
 	}
+	
+	delete[] temp;
+	temp = nullptr;
 }
 
 
@@ -218,9 +226,9 @@ void inline CScriptParams::Read(T a)
 }
 
 template<typename T, typename... Args>
-void inline CScriptParams::Read(T a, Args... args)
+void inline CScriptParams::Read(T a, Args &&...args)
 {
 	ReadInternal(a);
-	Read(args...);
+	Read(std::forward<Args>(args)...);
 }
 #endif

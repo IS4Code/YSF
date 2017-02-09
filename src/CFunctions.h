@@ -74,8 +74,8 @@ typedef ConsoleVariable_s* (THISCALL *CConsole__FindVariable_t)(void *pConsole, 
 typedef void (THISCALL *CConsole__SendRules_t)(void *pConsole, SOCKET s, char* data, const sockaddr_in* to, int tolen);
 typedef void (THISCALL *CConsole__Execute_t)(void *pConsole, char* pExecLine);
 
-typedef bool (THISCALL *CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, char *szName);
-typedef bool (THISCALL *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, char *szName);
+typedef bool (THISCALL *CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, const char *szName);
+typedef bool (THISCALL *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, const char *szName);
 
 typedef void (THISCALL *CPlayer__SpawnForWorld_t)(void *pPlayer);
 typedef DWORD (THISCALL *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
@@ -130,8 +130,8 @@ public:
 	static void		SendRules(SOCKET s, char* data, const sockaddr_in* to, int tolen);
 	static void		Execute(char* pExecLine);
 
-	static bool		LoadFilterscript(char *szName);
-	static bool		UnLoadFilterscript(char *szName);
+	static bool		LoadFilterscript(const char *szName);
+	static bool		UnLoadFilterscript(const char *szName);
 	
 	static void		SpawnPlayer(int iPlayerId);
 

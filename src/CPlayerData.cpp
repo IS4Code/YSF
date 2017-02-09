@@ -50,16 +50,8 @@ CPlayerData::CPlayerData( WORD playerid )
 		0xD8C762FF
 	};
 
-	// Null object data
-	for(int i = 0; i != MAX_OBJECTS; i++)
-	{
-		this->stObj[i].wObjectID = INVALID_OBJECT_ID;
-		this->stObj[i].wAttachPlayerID = INVALID_PLAYER_ID;
-		this->stObj[i].vecOffset = CVector(0.0f, 0.0f, 0.0f);
-		this->stObj[i].vecRot = CVector(0.0f, 0.0f, 0.0f);
-	}
-
 	wPlayerID = playerid;
+	iNPCProcessID = -1;
 	wSurfingInfo = 0;
 	wDialogID = -1;
 	
@@ -113,6 +105,13 @@ CPlayerData::CPlayerData( WORD playerid )
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->dwNickNameColor = dwPlayerColors[playerid % 100];
 	}
+
+	// Store NPC Process ID if it's an NPC
+	if (pNetGame->pPlayerPool->bIsNPC[playerid])
+	{
+		if (CSAMPFunctions::GetPlayerIDFromIndex(playerid).binaryAddress == 0x0100007F)
+			iNPCProcessID = CServer::Get()->FindNPCProcessID(playerid);
+	}
 }
 
 CPlayerData::~CPlayerData( void )
@@ -163,7 +162,7 @@ int CPlayerData::GetPlayerSkinForPlayer(WORD skinplayerid)
 	return m_iSkins[skinplayerid];
 }
 
-bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, char *name)
+bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, const char *name)
 {
 	memcpy(&m_szNames[nameplayerid], name, MAX_PLAYER_NAME);
 	BYTE len = static_cast<BYTE>(strlen(name));
@@ -223,7 +222,7 @@ WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
 	// Loop though every global gang zone
 	if(!bPlayer)
 	{
-		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; wZone++)
+		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; ++wZone)
 		{
 			if(wClientSideGlobalZoneID[wZone] == zoneid)
 				return wZone;
@@ -231,7 +230,7 @@ WORD CPlayerData::GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer)
 	}
 	else
 	{
-		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; wZone++)
+		for(WORD wZone = 0; wZone != MAX_GANG_ZONES; ++wZone)
 		{
 			if(wClientSidePlayerZoneID[wZone] == zoneid)
 				return wZone;
@@ -246,6 +245,43 @@ bool CPlayerData::DestroyObject(WORD objectid)
 	bs.Write(objectid);
 	CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 	return 1;
+}
+
+// Return a pointer from map if exists or add it if isn't - to save memory
+CPlayerObjectAttachAddon* CPlayerData::GetObjectAddon(WORD objectid)
+{
+	CPlayerObjectAttachAddon* pAddon;
+	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
+	if (it == m_PlayerObjectsAddon.end())
+	{
+		pAddon = new CPlayerObjectAttachAddon();
+		m_PlayerObjectsAddon.emplace(objectid, pAddon);
+	}
+	else
+	{
+		pAddon = it->second;
+	}
+	return pAddon;
+}
+
+CPlayerObjectAttachAddon const* CPlayerData::FindObjectAddon(WORD objectid)
+{
+	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
+	if (it == m_PlayerObjectsAddon.end())
+		return nullptr;
+
+	return it->second;
+}
+
+void CPlayerData::DeleteObjectAddon(WORD objectid)
+{
+	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
+	if (it != m_PlayerObjectsAddon.end())
+	{
+		SAFE_DELETE(it->second);
+		m_PlayerObjectsAttachQueue.erase(it->first);
+		m_PlayerObjectsAddon.erase(it);
+	}
 }
 
 void CPlayerData::Process(void)
@@ -270,32 +306,44 @@ void CPlayerData::Process(void)
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 	}
-
-	if((dwTickCount - dwCreateAttachedObj > 3000) && dwCreateAttachedObj != 0)
+	
+	if (!m_PlayerObjectsAttachQueue.empty())
 	{
-		//logprintf("wPlayerID: %d, stObj[i].wAttachPlayerID: %d - %d", wPlayerID, stObj[dwObjectID].wAttachPlayerID, dwObjectID);
+		for (std::set<WORD>::iterator o = m_PlayerObjectsAttachQueue.begin(); o != m_PlayerObjectsAttachQueue.end(); )
+		{
+			auto it = m_PlayerObjectsAddon.find(*(o));
+			if (it != m_PlayerObjectsAddon.end() && it->second->bCreated)
+			{
+				default_clock::duration passed_time = default_clock::now() - it->second->creation_timepoint;
+				logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
+				if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
+				{
+					RakNet::BitStream bs;
+					bs.Write((WORD)it->first); // wObjectID
+					bs.Write((WORD)it->second->wAttachPlayerID); // wAttachPlayerID
+					bs.Write((char*)&it->second->vecOffset, sizeof(CVector));
+					bs.Write((char*)&it->second->vecRot, sizeof(CVector));
+					CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 
-		// Attach created object to player
-		RakNet::BitStream bs;
-		bs.Write(pNetGame->pObjectPool->pPlayerObjects[wPlayerID][dwObjectID]->wObjectID); // m_wObjectID
-		bs.Write(stObj[dwObjectID].wAttachPlayerID); // playerid
+					it->second->bAttached = true;
+					o = m_PlayerObjectsAttachQueue.erase(o);
 
-		bs.Write(stObj[dwObjectID].vecOffset.fX);
-		bs.Write(stObj[dwObjectID].vecOffset.fY);
-		bs.Write(stObj[dwObjectID].vecOffset.fZ);
-
-		bs.Write(stObj[dwObjectID].vecRot.fX);
-		bs.Write(stObj[dwObjectID].vecRot.fY);
-		bs.Write(stObj[dwObjectID].vecRot.fZ);
-
-		CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
-		dwCreateAttachedObj = 0;
-		dwObjectID = INVALID_OBJECT_ID;
-		bAttachedObjectCreated = true;
+					logprintf("attached and removed: %d", it->first);
+				}
+				else
+				{
+					++o;
+				}
+			}
+			else
+			{
+				logprintf("YSF: Error at looping trough attached object queue");
+			}
+		}
 	}
 
 	// Process gangzones
-	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; zoneid++)
+	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
 	{
 		// If zone id is unused client side, then continue
 		if(byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;

@@ -268,52 +268,45 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 	return result;
 }
 
-std::string Utility::convertNativeStringToString(AMX *amx, cell input)
+// Load an entry from server.cfg - Y_Less
+int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 {
-	char *string = NULL;
-	amx_StrParam(amx, input, string);
-	return string ? string : "";
-}
-
-void Utility::convertStringToNativeString(AMX *amx, cell output, cell size, char* string)
-{
-	cell *address = NULL;
-	amx_GetAddr(amx, output, &address);
-	amx_SetString(address, string, 0, 0, static_cast<size_t>(size));
-}
-
-void Utility::convertStringToNativeString(AMX *amx, cell output, cell size, std::string string)
-{
-	cell *address = NULL;
-	amx_GetAddr(amx, output, &address);
-	amx_SetString(address, string.c_str(), 0, 0, static_cast<size_t>(size));
-}
-
-void Utility::storeFloatInNative(AMX *amx, cell output, float value)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = amx_ftoc(value);
-}
-
-void Utility::storeVectorInNative(AMX *amx, cell output, CVector2D &vec)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = amx_ftoc(vec.fX);
-	amx_GetAddr(amx, output - 4, &address);
-	*address = amx_ftoc(vec.fY);
-}
-
-void Utility::storeVectorInNative(AMX *amx, cell output, CVector &vec)
-{
-	cell *address;
-	amx_GetAddr(amx, output, &address);
-	*address = amx_ftoc(vec.fX);
-	amx_GetAddr(amx, output -4, &address);
-	*address = amx_ftoc(vec.fY);
-	amx_GetAddr(amx, output - 8, &address);
-	*address = amx_ftoc(vec.fZ);
+	std::ifstream
+		f("plugins/YSF.cfg");
+	int
+		ret = 1,
+		len = strlen(name);
+	if (f.is_open())
+	{
+		char
+			line[256];
+		f.clear();
+		while (!f.eof())
+		{
+			f.getline(line, 256);
+			if (f.fail())
+			{
+				goto CFGLoad_close;
+			}
+			// Does the line START with this text?  Anything other than the
+			// first character fails.
+			if (!strncmp(line, name, len) && line[len] <= ' ')
+			{
+				while (line[++len] <= ' ')
+				{
+					if (line[len] == '\0') goto CFGLoad_close;
+				}
+				// Skipped leading spaces, save the value.
+				if (dest) strncpy(dest, line + len, dlen);
+				ret = atoi(line + len);
+				goto CFGLoad_close;
+			}
+		}
+	CFGLoad_close:
+		// Yes, I used a label!  I needed to escape from a double loop.
+		f.close();
+	}
+	return ret;
 }
 
 const char *GetPlayerName(int playerid)

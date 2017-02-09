@@ -32,7 +32,20 @@
 
 #include "main.h"
 
-void CServer::Initialize(eSAMPVersion version)
+#ifdef _WIN32
+#include <tlhelp32.h>
+#include <winternl.h>
+
+#include <comdef.h>
+#include <Wbemidl.h>
+#pragma comment(lib, "wbemuuid.lib")
+#else
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+#endif
+
+void CServer::Initialize(SAMPVersion version)
 {
 	m_bInitialized = true;
 	m_iTicks = 0;
@@ -40,6 +53,15 @@ void CServer::Initialize(eSAMPVersion version)
 	m_bNightVisionFix = true;
 	m_bOnServerMessage = false;
 	m_dwAFKAccuracy = 1500;
+
+	m_bPickupProtection = static_cast<int>(Utility::CFGLoad("PickupProtection") != 0);
+	m_bDeathProtection = static_cast<int>(Utility::CFGLoad("DeathProtection") != 0);
+	m_bDialogProtection = static_cast<int>(Utility::CFGLoad("DialogProtection") != 0);
+	m_bUseCustomSpawn = static_cast<int>(Utility::CFGLoad("UseCustomSpawn") != 0);
+	m_bIncreaseRakNetInternalPlayers = static_cast<int>(Utility::CFGLoad("IncreaseRakNetInternalPlayers") != 0);
+	m_iRakNetInternalSleepTime = Utility::CFGLoad("RakNetInternalSleepTime");
+	m_iAttachObjectDelay = Utility::CFGLoad("AttachObjectDelay");
+	m_bStorePlayerObjectsMaterial = static_cast<int>(Utility::CFGLoad("StorePlayerObjectsMaterial") != 0);
 
 #ifndef _WIN32
 	LoadTickCount();
@@ -57,24 +79,32 @@ void CServer::Initialize(eSAMPVersion version)
 	InstallPreHooks();
 
 	// Initialize default valid name characters
-	for(BYTE i = '0'; i <= '9'; i++)
+	for(BYTE i = '0'; i <= '9'; ++i)
 	{
 		m_vecValidNameCharacters.insert(i);
 	}
-	for(BYTE i = 'A'; i <= 'Z'; i++)
+	for(BYTE i = 'A'; i <= 'Z'; ++i)
 	{
 		m_vecValidNameCharacters.insert(i);
 	}
-	for(BYTE i = 'a'; i <= 'z'; i++)
+	for(BYTE i = 'a'; i <= 'z'; ++i)
 	{
 		m_vecValidNameCharacters.insert(i);
 	}
 	m_vecValidNameCharacters.insert({ ']', '[', '_', '$', '=', '(', ')', '@', '.' });
+
+	// Create mirror from SAMP server's internal array of console commands
+	ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+	do
+	{
+		m_RCONCommands.push_back(std::string(cmds->szName));
+		cmds++;
+	} while (cmds->szName[0] && !cmds->dwFlags);
 }
 
 CServer::~CServer()
 {
-	for(int i = 0; i != MAX_PLAYERS; i++)
+	for(int i = 0; i != MAX_PLAYERS; ++i)
 		RemovePlayer(i);
 
 	SAFE_DELETE(pGangZonePool);
@@ -107,7 +137,7 @@ void CServer::Process()
 	if(++m_iTicks >= m_iTickRate)
 	{
 		m_iTicks = 0;
-		for(WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
+		for(WORD playerid = 0; playerid != MAX_PLAYERS; ++playerid)
 		{
 			if(!IsPlayerConnected(playerid)) continue;
 			
@@ -124,58 +154,37 @@ void CServer::Process()
 bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 {
 	//logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
-	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(playerid);
-	PlayerID forplayerId = CSAMPFunctions::GetPlayerIDFromIndex(forplayerid);
-	
-	// For security..
-	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
-		return 0;
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
 
+	RakNet::BitStream bs;
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(WORD i = 0; i != MAX_OBJECTS; i++)
+	for (auto o : pPlayerData[forplayerid]->m_PlayerObjectsAddon)
 	{
-		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && !pPlayerData[forplayerid]->bAttachedObjectCreated)
+		if (o.second->wAttachPlayerID == playerid && !o.second->bCreated)
 		{
-			//logprintf("should work");
-			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
-			{
-				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamIn> - m_pPlayerObjects = 0");
-				return 0;
+			// If object isn't present in waiting queue then add it
+			if (pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.find(o.first) == pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.end())
+			{				
+				bs.Reset();
+				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->wObjectID); // m_wObjectID
+				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->iModel);  // iModel
+				bs.Write((char*)&o.second->vecOffset, sizeof(CVector));
+				bs.Write((char*)&o.second->vecRot, sizeof(CVector));
+				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->fDrawDistance);
+				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->bNoCameraCol);
+				bs.Write((WORD)-1); // wAttachedVehicleID
+				bs.Write((WORD)-1); // wAttachedObjectID
+				bs.Write((BYTE)0); // dwMaterialCount
+				CSAMPFunctions::RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
+
+				o.second->bCreated = true;
+				o.second->creation_timepoint = default_clock::now();
+				pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.insert(o.first);
+
+				//logprintf("add to waiting queue streamin");
 			}
-
-			//logprintf("attach objects i: %d, forplayerid: %d", i, forplayerid);
-			// First create the object for the player. We don't remove it from the pools, so we need to send RPC for the client to create object
-			RakNet::BitStream bs;
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->wObjectID); // m_wObjectID
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->iModel);  // iModel
-
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fX);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fY);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecOffset.fZ);
-
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fX);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fY);
-			bs.Write(pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->fDrawDistance);
-			bs.Write(pObjectPool->pPlayerObjects[forplayerid][i]->bNoCameraCol); 
-			bs.Write((WORD)-1); // wAttachedVehicleID
-			bs.Write((WORD)-1); // wAttachedObjectID
-			bs.Write((BYTE)0); // dwMaterialCount
-
-			CSAMPFunctions::RPC(&RPC_CreateObject, &bs, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, forplayerId, 0, 0);
-			
-			pPlayerData[forplayerid]->dwCreateAttachedObj = GetTickCount();
-			pPlayerData[forplayerid]->dwObjectID = i;
-			pPlayerData[forplayerid]->bAttachedObjectCreated = true;
-			/*
-			logprintf("join, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
-				pPlayerData[forplayerid]->stObj[i].wAttachPlayerID,
-				pPlayerData[forplayerid]->stObj[i].vecOffset.fX, pPlayerData[forplayerid]->stObj[i].vecOffset.fY, pPlayerData[forplayerid]->stObj[i].vecOffset.fZ,
-				pPlayerData[forplayerid]->stObj[i].vecRot.fX, pPlayerData[forplayerid]->stObj[i].vecRot.fY, pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-			*/
 		}
 	}
 	return 1;
@@ -184,39 +193,31 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 {
 	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
-	PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(playerid);
-	PlayerID forplayerId = CSAMPFunctions::GetPlayerIDFromIndex(forplayerid);
-	
-	if (playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || forplayerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress)
-		return 0;
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
 		return 0;
 
-	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for(WORD i = 0; i != MAX_OBJECTS; i++)
+	for (auto o : pPlayerData[forplayerid]->m_PlayerObjectsAddon)
 	{
-		if(pPlayerData[forplayerid]->stObj[i].wAttachPlayerID == playerid && pPlayerData[forplayerid]->bAttachedObjectCreated)
+		if (o.second->wAttachPlayerID == playerid)
 		{
-			if(!pObjectPool->pPlayerObjects[forplayerid][i]) 
-			{
-				logprintf("YSF ASSERTATION FAILED <OnPlayerStreamOut> - m_pPlayerObjects = 0");
-				return 0;
-			}
+			//logprintf("object found: %d - %d", forplayerid, playerid);
 
-			//logprintf("remove objects i: %d, forplayerid: %d", i, forplayerid);
-			if(pPlayerData[playerid]->bAttachedObjectCreated)
+			// If object isn't present in waiting queue then destroy it
+			if (pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.find(o.first) != pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.end())
+				pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.erase(o.first);
+
+			if (o.second->bCreated)
 			{
-				pPlayerData[playerid]->DestroyObject(i);
+				pPlayerData[playerid]->DestroyObject(o.first);
+				o.second->bCreated = false;
+				//logprintf("destroy streamout");
 			}
-			pPlayerData[playerid]->dwCreateAttachedObj = 0;
-			pPlayerData[forplayerid]->bAttachedObjectCreated = false;
-			/*
-			logprintf("leave, modelid: %d, %d, %f, %f, %f, %f, %f, %f", pObjectPool->pPlayerObjects[forplayerid][i]->iModel,
-				pPlayerData[forplayerid]->stObj[i].wAttachPlayerID,
-				pPlayerData[forplayerid]->stObj[i].vecOffset.fX, pPlayerData[forplayerid]->stObj[i].vecOffset.fY, pPlayerData[forplayerid]->stObj[i].vecOffset.fZ,
-				pPlayerData[forplayerid]->stObj[i].vecRot.fX, pPlayerData[forplayerid]->stObj[i].vecRot.fY, pPlayerData[forplayerid]->stObj[i].vecRot.fZ);
-			*/
+			else
+			{
+				//logprintf("isn't created streamout");
+			}
+			o.second->bAttached = false;
 		}
 	}
 	return 1;
@@ -225,27 +226,15 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 void CServer::AllowNickNameCharacter(char character, bool enable)
 {
 	if (enable)
-	{
-		auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
-		if (it == m_vecValidNameCharacters.end())
-		{
-			m_vecValidNameCharacters.insert(character);
-		}
-	}
+		m_vecValidNameCharacters.insert(character);
 	else
-	{
-		auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
-		if (it != m_vecValidNameCharacters.end())
-		{
-			m_vecValidNameCharacters.erase(it);
-		}
-	}
+		m_vecValidNameCharacters.erase(character);
+
 }
 
 bool CServer::IsNickNameCharacterAllowed(char character)
 {
-	auto it = std::find(m_vecValidNameCharacters.begin(), m_vecValidNameCharacters.end(), character);
-	return (it != m_vecValidNameCharacters.end());
+	return m_vecValidNameCharacters.find(character) != m_vecValidNameCharacters.end();
 }
 
 bool CServer::IsValidNick(char *szName)
@@ -264,19 +253,64 @@ bool CServer::IsValidNick(char *szName)
 	return true;
 }
 
+// Toggling rcon commands
+bool CServer::ChangeRCONCommandName(std::string const &strCmd, std::string const &strNewCmd)
+{
+	auto it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
+	if (it != m_RCONCommands.end())
+	{
+		if (strCmd == strNewCmd)
+			return 0;
+
+		auto pos = std::distance(m_RCONCommands.begin(), it);
+
+		// Find command in array by it's position in vector
+		ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+		do
+		{
+			cmds++;
+		} while (cmds->szName[0] && !cmds->dwFlags && --pos != 0);
+
+		// Change RCON command in samp server's internal array
+		memcpy(cmds->szName, strNewCmd.c_str(), sizeof(cmds->szName));
+		return 1;
+	}
+	return 0;
+}
+
+bool CServer::GetRCONCommandName(std::string const &strCmd, std::string &strNewCmd)
+{
+	auto it = std::find(m_RCONCommands.begin(), m_RCONCommands.end(), strCmd);
+	if (it != m_RCONCommands.end())
+	{
+		auto pos = std::distance(m_RCONCommands.begin(), it);
+
+		// Find command in array by it's position in vector
+		ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+		do
+		{
+			cmds++;
+		} while (cmds->szName[0] && !cmds->dwFlags && --pos != 0);
+
+		// Get changed RCON command
+		strNewCmd.append(cmds->szName);
+		return 1;
+	}
+	return 0;
+}
+
+// Broadcasting console messages to players
 void CServer::AddConsolePlayer(WORD playerid, DWORD color)
 {
-	auto it = m_ConsoleMessagePlayers.find(playerid);
-	if (it == m_ConsoleMessagePlayers.end())
+	if (m_ConsoleMessagePlayers.find(playerid) == m_ConsoleMessagePlayers.end())
 	{
-		m_ConsoleMessagePlayers.insert(std::make_pair(playerid, color));
+		m_ConsoleMessagePlayers.emplace(playerid, color);
 	}
 }
 
 void CServer::RemoveConsolePlayer(WORD playerid)
 {
-	auto it = m_ConsoleMessagePlayers.find(playerid);
-	if (it != m_ConsoleMessagePlayers.end())
+	if (m_ConsoleMessagePlayers.find(playerid) != m_ConsoleMessagePlayers.end())
 	{
 		m_ConsoleMessagePlayers.erase(playerid);
 	}
@@ -297,7 +331,7 @@ void CServer::ProcessConsoleMessages(const char* str)
 {
 	if (!m_ConsoleMessagePlayers.empty())
 	{
-		size_t len = strlen(str);
+		const size_t len = strlen(str);
 		RakNet::BitStream bsParams;
 		for (auto x : m_ConsoleMessagePlayers)
 		{
@@ -332,7 +366,7 @@ WORD CServer::GetMaxPlayers()
 {
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		if (pPlayerPool->bIsNPC[i])
 			count++;
 	return static_cast<WORD>(CSAMPFunctions::GetIntVariable("maxplayers")) - count;
@@ -342,7 +376,7 @@ WORD CServer::GetPlayerCount()
 {
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		if (IsPlayerConnected(i) && !pPlayerPool->bIsNPC[i] && !pPlayerData[i]->bHidden)
 			count++;
 	return count;
@@ -352,7 +386,7 @@ WORD CServer::GetNPCCount()
 {
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		if (pPlayerPool->bIsPlayerConnected[i] && pPlayerPool->bIsNPC[i])
 			count++;
 	return count;
@@ -379,10 +413,61 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		{
 			if (!pPlayerData[playerid]->wDisabledKeysLR && !pPlayerData[playerid]->wDisabledKeysUD && !pPlayerData[playerid]->wDisabledKeys
 				&& !pPlayerData[toplayerid]->bCustomPos[playerid] && !pPlayerData[toplayerid]->bCustomQuat[playerid]) break;
+			
+			const int owerwrite_offset = bsSync->GetReadOffset(); // skip p->vehicleSyncData.wVehicleId
+			//bsSync->SetReadOffset(owerwrite_offset);
 
-			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
-			WORD keys = 0;
+			WORD wKeysLR, wKeysUD, wKeys;
+			CVector vecPos;
+			float fQuat[4];
 
+			bsSync->Read(wKeysLR);
+			bsSync->Read(wKeysUD);
+			bsSync->Read(wKeys);
+			bsSync->Read(vecPos);
+			bsSync->Read(fQuat);
+
+			wKeysLR &= ~pPlayerData[playerid]->wDisabledKeysLR;
+			wKeysUD &= ~pPlayerData[playerid]->wDisabledKeysUD;
+			wKeys &= ~pPlayerData[playerid]->wDisabledKeys;
+
+			bsSync->SetWriteOffset(owerwrite_offset);
+			
+			// LEFT/RIGHT KEYS
+			if(wKeysLR)
+				bsSync->Write(wKeysLR);
+			else
+				bsSync->Write(false);
+			
+			// UP/DOWN KEYS
+			if (wKeysUD)
+				bsSync->Write(wKeysUD);
+			else
+				bsSync->Write(false);
+
+			// Keys
+			if (wKeys)
+				bsSync->Write(wKeys);
+			else
+				bsSync->Write(false);
+			
+			// Position
+			if (pPlayerData[toplayerid]->bCustomPos[playerid])
+				bsSync->Write(*pPlayerData[toplayerid]->vecCustomPos[playerid]);
+			else
+				bsSync->Write((char*)&vecPos, sizeof(CVector));
+
+			// Rotation (in quaternion)
+			if (pPlayerData[toplayerid]->bCustomQuat[playerid])
+				bsSync->WriteNormQuat(pPlayerData[toplayerid]->fCustomQuat[playerid][0], pPlayerData[toplayerid]->fCustomQuat[playerid][1], pPlayerData[toplayerid]->fCustomQuat[playerid][2], pPlayerData[toplayerid]->fCustomQuat[playerid][3]);
+			else
+				bsSync->WriteNormQuat(fQuat[0], fQuat[1], fQuat[2], fQuat[3]);
+			
+			// restore default offsets
+			bsSync->SetReadOffset(read_offset);
+			bsSync->SetWriteOffset(write_offset);
+
+			/*
 			bsSync->Reset();
 			bsSync->Write((BYTE)ID_PLAYER_SYNC);
 			bsSync->Write(playerid);
@@ -484,6 +569,7 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write((int)p->syncData.dwAnimationData);
 			}
 			else bsSync->Write(false);
+			*/
 			break;
 		}
 		case ID_VEHICLE_SYNC:
@@ -507,7 +593,7 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write(wKeysUD);
 			bsSync->Write(wKeys);
 
-			// set default offsets
+			// restore default offsets
 			bsSync->SetReadOffset(read_offset);
 			bsSync->SetWriteOffset(write_offset);
 
@@ -604,10 +690,26 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 
 }
 
-void CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
+bool CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 {
 	switch (uniqueID)
 	{
+		case RPC_ScmEvent:
+		{
+			bsSync->ResetReadPointer();
+			WORD issuerid;
+			bsSync->Read<WORD>(issuerid);
+			int data[4];
+			bsSync->Read<int>(data[0]);
+			bsSync->Read<int>(data[1]);
+			bsSync->Read<int>(data[2]);
+			bsSync->Read<int>(data[3]);
+			
+			if (!CCallbackManager::OnOutcomeScmEvent(playerid, issuerid, data[0], data[1], data[2], data[3])) 
+				return 0;
+			
+			break;
+		}
 		case RPC_InitGame:
 		{
 			bool usecjwalk = static_cast<int>(pNetGame->bUseCJWalk) != 0;
@@ -672,4 +774,218 @@ void CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			break;
 		}
 	}
+	return 1;
+}
+
+char* CServer::GetNPCCommandLine(WORD npcid)
+{
+	if (!pPlayerData[npcid]) return NULL;
+	int pid = pPlayerData[npcid]->iNPCProcessID;
+	char *line = NULL;
+
+#ifdef _WIN32
+	HRESULT hr = 0;
+	IWbemLocator         *WbemLocator = NULL;
+	IWbemServices        *WbemServices = NULL;
+	IEnumWbemClassObject *EnumWbem = NULL;
+
+	hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
+	hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&WbemLocator);
+	hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", NULL, NULL, NULL, 0, NULL, NULL, &WbemServices);
+
+	std::ostringstream query;
+	query << "SELECT CommandLine FROM Win32_Process WHERE ProcessId=" << pid;
+	hr = WbemServices->ExecQuery(L"WQL", bstr_t(query.str().c_str()), WBEM_FLAG_FORWARD_ONLY, NULL, &EnumWbem);
+
+	if (EnumWbem == NULL) return 0;
+
+	IWbemClassObject *result = NULL;
+	ULONG returnedCount = 0;
+
+	while ((hr = EnumWbem->Next(WBEM_INFINITE, 1, &result, &returnedCount)) == S_OK)
+	{
+		VARIANT CommandLine;
+		hr = result->Get(L"CommandLine", 0, &CommandLine, 0, 0);
+
+		line = _com_util::ConvertBSTRToString(CommandLine.bstrVal);
+
+		VariantClear(&CommandLine);
+		result->Release();
+
+		break;
+	}
+
+	EnumWbem->Release();
+	WbemServices->Release();
+	WbemLocator->Release();
+
+	CoUninitialize();
+#else
+	char fname[32];
+	sprintf(fname, "/proc/%d/cmdline", pid);
+
+	FILE *fcmd = fopen(fname, "r");
+	if (fcmd != NULL)
+	{
+		size_t size = 128;
+		line = (char*)malloc(size);
+		size_t total = 0, read;
+		while ((read = fread(line + total, 1, size - total, fcmd)) >= size - total)
+		{
+			total += read;
+			size *= 2;
+			line = (char*)realloc(line, size);
+		}
+		fclose(fcmd);
+		total += read;
+		for (unsigned int i = 0; i < total - 1; i++)
+		{
+			if (!line[i]) line[i] = ' ';
+		}
+	}
+#endif
+
+	return line;
+}
+
+int CServer::FindNPCProcessID(WORD npcid)
+{
+	char *name = pNetGame->pPlayerPool->szName[npcid];
+#ifdef _WIN32
+	DWORD cpid = GetCurrentProcessId();
+
+	HRESULT hr = 0;
+	IWbemLocator         *WbemLocator = NULL;
+	IWbemServices        *WbemServices = NULL;
+	IEnumWbemClassObject *EnumWbem = NULL;
+
+	hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
+	hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&WbemLocator);
+	hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", NULL, NULL, NULL, 0, NULL, NULL, &WbemServices);
+
+	std::ostringstream query;
+	query << "SELECT ProcessId, CommandLine FROM Win32_Process WHERE ParentProcessId=" << cpid;
+	hr = WbemServices->ExecQuery(L"WQL", bstr_t(query.str().c_str()), WBEM_FLAG_FORWARD_ONLY, NULL, &EnumWbem);
+
+
+	if (EnumWbem == NULL) return 0;
+
+	IWbemClassObject *result = NULL;
+	ULONG returnedCount = 0;
+
+	DWORD pid = 0;
+	while ((hr = EnumWbem->Next(WBEM_INFINITE, 1, &result, &returnedCount)) == S_OK)
+	{
+		VARIANT ProcessId, CommandLine;
+		hr = result->Get(L"ProcessId", 0, &ProcessId, 0, 0);
+		hr = result->Get(L"CommandLine", 0, &CommandLine, 0, 0);
+
+		char *line = _com_util::ConvertBSTRToString(CommandLine.bstrVal);
+
+		char *iter = line;
+
+		bool found = false;
+		while (*iter)
+		{
+			if (*iter == ' ')
+			{
+				if (*++iter == '-' && *++iter == 'n' && *++iter == ' ')
+				{
+					if (!strncmp(++iter, name, strlen(name)))
+					{
+						pid = ProcessId.uintVal;
+						found = true;
+						break;
+					}
+				}
+			}
+			else {
+				iter++;
+			}
+		}
+
+		free(line);
+		VariantClear(&ProcessId);
+		VariantClear(&CommandLine);
+		result->Release();
+
+		if (found) break;
+	}
+
+	EnumWbem->Release();
+	WbemServices->Release();
+	WbemLocator->Release();
+
+	CoUninitialize();
+
+	return pid;
+#else
+	pid_t pid, cpid = getpid();
+
+	DIR *dp = opendir("/proc/");
+	if (dp != NULL)
+	{
+		struct dirent *ep;
+
+		char line[1024], fname[32];
+		while (ep = readdir(dp))
+		{
+			if (sscanf(ep->d_name, "%d", &pid) == 1)
+			{
+				sprintf(fname, "/proc/%d/stat", pid);
+
+				FILE *fstat = fopen(fname, "r");
+				if (fstat != NULL)
+				{
+					fread(line, 1, sizeof(line), fstat);
+					fclose(fstat);
+
+					int gpid;
+					if (sscanf(line, "%*d (samp-npc) %*c %*d %d", &gpid) == 1)
+					{
+						if (gpid == cpid)
+						{
+							sprintf(fname, "/proc/%d/cmdline", pid);
+
+							FILE *fcmd = fopen(fname, "r");
+							if (fcmd != NULL)
+							{
+								size_t total = fread(line, 1, sizeof(line), fcmd);
+								fclose(fcmd);
+
+								char *iter = line;
+								char *end = line + total;
+
+								bool found = false;
+								while (iter < end)
+								{
+									if (*iter == '\0')
+									{
+										if (*++iter == '-' && *++iter == 'n' && *++iter == '\0')
+										{
+											if (!strncmp(++iter, name, strlen(name)))
+											{
+												found = true;
+												break;
+											}
+										}
+									}
+									else {
+										iter++;
+									}
+								}
+								if (found) break;
+							}
+						}
+					}
+				}
+			}
+			pid = 0;
+		}
+		closedir(dp);
+	}
+	return pid;
+#endif
 }

@@ -226,6 +226,7 @@ typedef struct _MATRIX4X4
 	CVector pos;
 	float  pad_p;
 } MATRIX4X4, *PMATRIX4X4;
+static_assert(sizeof(_MATRIX4X4) == 64, "Invalid _MATRIX4X4 size");
 
 struct ConsoleVariable_s
 {
@@ -234,6 +235,15 @@ struct ConsoleVariable_s
 	void*			VarPtr;
 	VARCHANGEFUNC	VarChangeFunc;
 };
+static_assert(sizeof(ConsoleVariable_s) == 16, "Invalid ConsoleVariable_s size");
+
+struct ConsoleCommand_s
+{
+	char			szName[255];
+	DWORD			dwFlags;
+	void			(*fptrFunc)();
+};
+static_assert(sizeof(ConsoleCommand_s) == 263, "Invalid ConsoleCommand_s size");
 
 /* -------------------------------------------------------- */
 // CPlayer
@@ -669,7 +679,7 @@ struct CVehicle
     DWORD			vehOccupiedTick;	// 257 - 261
     DWORD			vehRespawnTick;		// 261 - 265
 	BYTE			byteSirenEnabled;	// 265 - 266
-	BYTE			byteNewSirenState;	// 266 - 267
+	BYTE			byteNewSirenState;	// 266 - 267 : passed to OnVehicleSirenStateChange
 };
 static_assert(sizeof(CVehicle) == 267, "Invalid CVehicle size");
 
@@ -828,8 +838,8 @@ struct CSAMPGangZonePool
 
 struct CActorAnim // 140
 {
-	char			szAnimLib[64]; // 0 - 64
-	char			szAnimName[64]; // 64 - 128
+	char			szAnimLib[64 + 1]; // 0 - 64
+	char			szAnimName[64 + 1]; // 64 - 128
 	float			fDelta;		// 128 - 132
 	BYTE			byteLoop;		// 132 - 133
 	BYTE			byteLockX;			// 133 - 134
@@ -837,28 +847,27 @@ struct CActorAnim // 140
 	BYTE			byteFreeze;		// 135 - 136
 	int				iTime;				//  136 - 140
 };
-static_assert(sizeof(CActorAnim) == 140, "Invalid CActorAnim size");
+static_assert(sizeof(CActorAnim) == 142, "Invalid CActorAnim size");
 
 struct CActor
 {
-	BYTE			pad0;				// 0
-	int				iSkinID;			// 1 - 5
-	CVector			vecSpawnPos;	// 5 - 17
-	float			fSpawnAngle;		// 17 - 21
-	DWORD			pad4;				// 21 - 25
-	DWORD			pad5;				// 25 - 29
-	BYTE			byteLoopAnim;		// 29 - 30
+	BYTE			pad0;				
+	int				iSkinID;			
+	CVector			vecSpawnPos;	
+	float			fSpawnAngle;		
+	DWORD			pad4;				
+	DWORD			pad5;				
+	BYTE			byteLoopAnim;		
 	CActorAnim		anim;
-	WORD			wTime;				// 170 - 171
-	float			fHealth;			// 172 - 176
-	DWORD			pad;				// 176 - 180
-	float			fAngle;			// 180 - 184
-	CVector			vecPos;			// 184 - 196
-	DWORD			pad8[3];			// 196 - 208
-	BYTE			byteInvulnerable;	// 208 - 209
-	WORD			wActorID;			// 209 - 211
+	float			fHealth;			
+	DWORD			pad;				
+	float			fAngle;			
+	CVector			vecPos;	
+	BYTE			pad8[12];			
+	BYTE			byteInvulnerable;	
+	WORD			wActorID;			
 };
-static_assert(sizeof(CActor) == 211, "Invalid CActor size");
+//static_assert(sizeof(CActor) == 211, "Invalid CActor size");
 
 struct CActorPool
 {

@@ -40,7 +40,8 @@
 		subhook_free(hookname); \
 	} \
 
-extern AMX_NATIVE 
+extern AMX_NATIVE
+	pSetPlayerWeather,
 	pDestroyObject, 
 	pDestroyPlayerObject, 
 	pTogglePlayerControllable, 
@@ -49,14 +50,12 @@ extern AMX_NATIVE
 	pSetPlayerSkin, 
 	pSetPlayerFightingStyle, 
 	pSetPlayerName, 
-	pSetVehicleToRespawn, 
 	pChangeVehicleColor, 
 	pDestroyVehicle, 
 	pAttachObjectToPlayer,
 	pShowPlayerDialog,
 	pSetPlayerObjectMaterial,
 	pSetPlayerObjectMaterialText;
-
 
 extern char gRecordingDataPath[MAX_PATH];
 

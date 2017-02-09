@@ -39,11 +39,11 @@ CScriptParams::CScriptParams()
 
 //----------------------------------------------------
 
-bool CScriptParams::Setup(size_t paramscount, std::string strNativeName, Flags flags, AMX* amx, cell* params, size_t start)
+bool CScriptParams::Setup(size_t paramscount, std::string &&strNativeName, Flags flags, AMX* amx, cell* params, size_t start)
 {
 	// Initialize variables for later use
 	m_paramscount = paramscount;
-	m_strNativeName = strNativeName;
+	m_strNativeName = std::move(strNativeName);
 	m_flags = flags;
 	m_AMX = amx;
 	m_params = params;

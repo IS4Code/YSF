@@ -34,7 +34,6 @@
 #define YSF_RPCS_H
 
 extern BYTE RPC_Gravity;
-extern BYTE RPC_Weather;
 extern BYTE RPC_CreatePickup;
 extern BYTE RPC_DestroyPickup;
 extern BYTE RPC_SetPlayerTeam;
@@ -59,6 +58,7 @@ extern BYTE RPC_ScrDisplayGameText;
 extern BYTE RPC_Chat;
 extern BYTE RPC_ClientCheck;
 extern BYTE RPC_SetPlayerColor;
+extern BYTE RPC_SetTextDrawString;
 
 extern BYTE RPC_UpdateScoresPingsIPs;
 extern BYTE RPC_PickedUpPickup;
@@ -74,6 +74,7 @@ void InitRPCs();
 enum PacketEnumeration : unsigned char
 {	
 	RPC_InitGame = 0x8B, 
+	RPC_ScmEvent = 96,
 
 	ID_TIMESTAMP = 40,
 	ID_VEHICLE_SYNC = 200,

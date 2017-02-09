@@ -51,6 +51,7 @@ subhook_t CGameMode__OnDialogResponse_hook;
 
 //----------------------------------------------------
 AMX_NATIVE
+	pSetPlayerWeather = NULL,
 	pDestroyObject = NULL,
 	pDestroyPlayerObject = NULL,
 	pTogglePlayerControllable = NULL,
@@ -59,7 +60,6 @@ AMX_NATIVE
 	pSetPlayerSkin = NULL,
 	pSetPlayerFightingStyle = NULL,
 	pSetPlayerName = NULL,
-	pSetVehicleToRespawn = NULL,
 	pChangeVehicleColor = NULL,
 	pDestroyVehicle = NULL,
 	pAttachObjectToPlayer = NULL,
@@ -83,7 +83,7 @@ void CDECL HOOK_CNetGame__SetWeather(void *thisptr, BYTE weatherid)
 {
 	subhook_remove(SetWeather_hook);
 
-	for (int i = 0; i != MAX_PLAYERS; i++)
+	for (int i = 0; i != MAX_PLAYERS; ++i)
 	{
 		if (IsPlayerConnected(i))
 			pPlayerData[i]->byteWeather = weatherid;
@@ -104,7 +104,7 @@ void CDECL HOOK_CNetGame__SetGravity(void *thisptr, float gravity)
 {
 	subhook_remove(SetGravity_hook);
 
-	for (WORD i = 0; i != MAX_PLAYERS; i++)
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		if (IsPlayerConnected(i))
 			pPlayerData[i]->fGravity = gravity;
@@ -128,13 +128,16 @@ typedef BYTE (*FUNC_amx_Register)(AMX *amx, AMX_NATIVE_INFO *nativelist, int num
 int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 {
 	// amx_Register hook for redirect natives
-	static bool g_bNativesHooked = false;
+	static bool bNativesHooked = false;
 
-	if (!g_bNativesHooked && CServer::Get()->IsInitialized())
+	if (!bNativesHooked && CServer::Get()->IsInitialized())
 	{
 		int i = 0;
 		while (nativelist[i].name)
 		{
+			if (!pSetPlayerWeather && !strcmp(nativelist[i].name, "SetPlayerWeather"))
+				pSetPlayerWeather = nativelist[i].func;
+
 			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyObject"))
 				pDestroyObject = nativelist[i].func;
 
@@ -159,9 +162,6 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			if(!pSetPlayerName && !strcmp(nativelist[i].name, "SetPlayerName"))
 				pSetPlayerName = nativelist[i].func;
 			
-			if(!pSetVehicleToRespawn && !strcmp(nativelist[i].name, "SetVehicleToRespawn"))
-				pSetVehicleToRespawn = nativelist[i].func;
-
 			if(!pChangeVehicleColor && !strcmp(nativelist[i].name, "ChangeVehicleColor"))
 				pChangeVehicleColor = nativelist[i].func;
 
@@ -183,15 +183,15 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
 			
-			while (RedirectedNatives[x].name)
+			while (redirected_native_list[x].name)
 			{
 				//logprintf("asdasd %s", RedirectedNatives[x].name);
-				if (!strcmp(nativelist[i].name, RedirectedNatives[x].name))
+				if (!strcmp(nativelist[i].name, redirected_native_list[x].name))
 				{
-					if (!g_bNativesHooked) g_bNativesHooked = true;
+					if (!bNativesHooked) bNativesHooked = true;
 				
-					//logprintf("native: %s, %s", nativelist[i].name, RedirectedNatives[x].name);
-					nativelist[i].func = RedirectedNatives[x].func;
+					//logprintf("native: %s, %s", nativelist[i].name, redirected_native_list[x].name);
+					nativelist[i].func = redirected_native_list[x].func;
 				}
 				x++;
 			}
@@ -222,7 +222,8 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
-	CServer::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
+	if (!CServer::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)))) return 1;
+
 	return CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }
 
@@ -395,8 +396,19 @@ void HOOK_logprintf(const char *msg, ...)
 			fflush(g_fLog);
 		}
 	
-		if (bRconSocketReply) 
+		if (*(WORD*)CAddress::VAR_wRCONUser != INVALID_PLAYER_ID)
+		{
+			DWORD len = strlen(buffer);
+			RakNet::BitStream bsParams;
+			bsParams.Write(0xFFFFFFFF);
+			bsParams.Write((DWORD)len);
+			bsParams.Write(buffer, len);
+			CSAMPFunctions::RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(*(WORD*)CAddress::VAR_wRCONUser), false, false);
+		}
+		else if (bRconSocketReply)
+		{
 			RconSocketReply(buffer);
+		}
 
 		CServer::Get()->ProcessConsoleMessages(buffer);
 	}
@@ -489,32 +501,55 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
-					char* szHostname = CSAMPFunctions::GetStringVariable("hostname");
-					size_t dwHostnameLen = strlen(szHostname);
-					if (dwHostnameLen > 50) dwHostnameLen = 50;
+					char *temp;
 
-					char* szGameMode = CSAMPFunctions::GetStringVariable("gamemodetext");
-					size_t dwGameModeLen = strlen(szGameMode);
-					if (dwGameModeLen > 30) dwGameModeLen = 30;
+					char szHostname[51];
+					temp = CSAMPFunctions::GetStringVariable("hostname");
+					size_t dwHostnameLen = strlen(temp);
+					if (dwHostnameLen > 50) 
+						dwHostnameLen = 50;
+					
+					memcpy(szHostname, temp, dwHostnameLen);
+					szHostname[dwHostnameLen] = 0;
 
-					char* szLanguage = CSAMPFunctions::GetStringVariable("language");
-					char* szMapName = (!szLanguage[0]) ? CSAMPFunctions::GetStringVariable("mapname") : szLanguage;
+					char szGameMode[31];
+					temp = CSAMPFunctions::GetStringVariable("gamemodetext");
+					size_t dwGameModeLen = strlen(temp);
+					if (dwGameModeLen > 30) 
+						dwGameModeLen = 30;
+					
+					memcpy(szGameMode, temp, dwGameModeLen);
+					szGameMode[dwGameModeLen] = 0;
 
-					size_t dwMapNameLen = strlen(szMapName);
-					if (dwMapNameLen > 30) dwMapNameLen = 30;
+					char szMapName[31];
+					temp = CSAMPFunctions::GetStringVariable("language");
+					if (!temp[0]) 
+						temp = CSAMPFunctions::GetStringVariable("mapname");
+					
+					size_t dwMapNameLen = strlen(temp);
+					if (dwMapNameLen > 30) 
+						dwMapNameLen = 30;
+
+					memcpy(szMapName, temp, dwMapNameLen);
+					szMapName[dwMapNameLen] = 0;
+
+					bool stringsChanged = CCallbackManager::OnServerQueryInfo(binaryAddress, szHostname, szGameMode, szMapName);
+					if (stringsChanged)
+					{
+						dwHostnameLen = strlen(szHostname);
+						dwGameModeLen = strlen(szGameMode);
+						dwMapNameLen = strlen(szMapName);
+					}
 
 					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
-//					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
-
 					WORD wMaxPlayers = CServer::Get()->GetMaxPlayers();
-
 					BYTE byteIsPassworded = CSAMPFunctions::GetStringVariable("password")[0] != 0;
 
 					size_t datalen = 28;	// Previous data = 11b
-					// IsPassworded = 1b
-					// Player count = 2b
-					// Max player count = 2b
-					// String-length bytes = 12b (3 * sizeof(DWORD))
+											// IsPassworded = 1b
+											// Player count = 2b
+											// Max player count = 2b
+											// String-length bytes = 12b (3 * sizeof(DWORD))
 					datalen += dwHostnameLen;
 					datalen += dwGameModeLen;
 					datalen += dwMapNameLen;
@@ -584,7 +619,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						BYTE byteNameLen;
 						DWORD dwScore;
 
-						for (WORD r = 0; r < MAX_PLAYERS; r++)
+						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
 							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
@@ -630,7 +665,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						BYTE byteNameLen;
 						DWORD dwScore, dwPing;
 
-						for (WORD r = 0; r < MAX_PLAYERS; r++)
+						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
 							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
 							{
@@ -887,7 +922,7 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 	int ret = -1;
 	if (IsPlayerConnected(playerid))
 	{
-		if (pPlayerData[playerid]->wDialogID != dialogid)
+		if (CServer::Get()->m_bDialogProtection && pPlayerData[playerid]->wDialogID != dialogid)
 		{
 			logprintf("YSF: Might dialog hack has been detected for player %s(%d) - which should be: %d, dialogid: %d", GetPlayerName(playerid), playerid, pPlayerData[playerid]->wDialogID, dialogid);
 			ret = 1;
@@ -957,15 +992,8 @@ void InstallPostHooks()
 {
 	CSAMPFunctions::PostInitialize();
 
-	// !!! READ !!!
-	// If "myriad 1" present in server.cfg, then the internal raknet player "pool" will start with MAX_PLAYERS - needed for SetMaxPlayers if you want to increase your slots, eg. add +30 slot for 30 bot, and you paid for 60 slots only.
-	// This isn't enabled by default, because if it's enabled, then doesn't matter which value used for maxplayers in server.cfg, 
-	// server will allow up to connect MAX_PLAYERS at same time (currently 1000). 
-	// use this only if you want to have much NPC to trick hosts to allow them insted of paying for more slots for bots.
-	if(CSAMPFunctions::GetBoolVariable("myriad"))
-	{
-		CSAMPFunctions::Start(MAX_PLAYERS, 0, 5, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
-	}
+	if (CServer::Get()->m_bIncreaseRakNetInternalPlayers)
+		CSAMPFunctions::Start(MAX_PLAYERS, 0, CServer::Get()->m_iRakNetInternalSleepTime, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
 
 	// Recreate pools
 	CServer::Get()->pGangZonePool = new CGangZonePool();

@@ -48,7 +48,7 @@ CYSFPickupPool::~CYSFPickupPool()
 void CYSFPickupPool::InitializeForPlayer(WORD playerid)
 {
 	int count = 0;
-	for (PickupMap::iterator p = m_Pickups.begin(); p != m_Pickups.end(); p++)
+	for (PickupMap::iterator p = m_Pickups.begin(); p != m_Pickups.end(); ++p)
 	{
 		pPlayerData[playerid]->ClientPlayerPickups.insert(PickupMap::value_type(count, p->second));
 		pPlayerData[playerid]->bClientPickupSlots.set(count, 1);
@@ -80,14 +80,14 @@ int CYSFPickupPool::New(int modelid, int type, CVector vecPos, int world)
 
 		//logprintf("createpickup ret: %d", slot);
 		// Send RPC for each player
-		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		for(WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
 			// Skip unconnected players
 			if(!IsPlayerConnected(i)) continue;
 
 			int freeslot = -1;
 			// Find free pickup slot
-			for(int x = 0; x != MAX_PICKUPS; x++)
+			for(int x = 0; x != MAX_PICKUPS; ++x)
 			{
 				// If pickup slot is free
 				if(!pPlayerData[i]->bClientPickupSlots[x])
@@ -130,7 +130,7 @@ int CYSFPickupPool::New(WORD playerid, int modelid, int type, CVector vecPos, in
 
 	// Find free pickup slot - client side
 	int freeslot = -1;
-	for(int x = 0; x != MAX_PICKUPS; x++)
+	for(int x = 0; x != MAX_PICKUPS; ++x)
 	{
 		// If pickup slot is free
 		if(!pPlayerData[playerid]->bClientPickupSlots[x])
@@ -169,12 +169,12 @@ void CYSFPickupPool::Destroy(int pickupid)
 	if(it != m_Pickups.end())
 	{
 		// Send RPC for each player
-		for(WORD i = 0; i != MAX_PLAYERS; i++)
+		for(WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
 			// Skip unconnected players
 			if(!IsPlayerConnected(i)) continue;
 
-			for (PickupMap::iterator p = pPlayerData[i]->ClientPlayerPickups.begin(); p != pPlayerData[i]->ClientPlayerPickups.end(); p++)
+			for (PickupMap::iterator p = pPlayerData[i]->ClientPlayerPickups.begin(); p != pPlayerData[i]->ClientPlayerPickups.end(); ++p)
 			{
 				if(p->second == it->second)
 				{
@@ -203,7 +203,7 @@ void CYSFPickupPool::Destroy(WORD playerid, int pickupid)
 	PickupMap::iterator it = pPlayerData[playerid]->PlayerPickups.find(pickupid);
 	if(it != pPlayerData[playerid]->PlayerPickups.end())
 	{
-		for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
+		for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); ++p)
 		{
 			if(p->second == it->second)
 			{
@@ -247,7 +247,7 @@ void CYSFPickupPool::HidePickup(int pickupid, WORD playerid)
 
 bool CYSFPickupPool::IsStreamed(WORD playerid, CPickup* pPickup)
 {
-	for(PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
+	for(PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); ++p)
 	{
 		if(p->second == pPickup)
 			return pPlayerData[playerid]->bClientPickupStreamedIn[p->first];
@@ -277,7 +277,7 @@ CPickup* CYSFPickupPool::FindPickup(WORD playerid, int pickupid)
 
 int CYSFPickupPool::FindPickup(CPickup *pPickup)
 {
-	for (PickupMap::iterator p = m_Pickups.begin(); p != m_Pickups.end(); p++)
+	for (PickupMap::iterator p = m_Pickups.begin(); p != m_Pickups.end(); ++p)
 	{
 		if(p->second == pPickup)
 			return p->first;
@@ -287,7 +287,7 @@ int CYSFPickupPool::FindPickup(CPickup *pPickup)
 
 int CYSFPickupPool::FindPickup(WORD playerid, CPickup *pPickup)
 {
-	for (PickupMap::iterator p = pPlayerData[playerid]->PlayerPickups.begin(); p != pPlayerData[playerid]->PlayerPickups.end(); p++)
+	for (PickupMap::iterator p = pPlayerData[playerid]->PlayerPickups.begin(); p != pPlayerData[playerid]->PlayerPickups.end(); ++p)
 	{
 		if(p->second == pPickup)
 			return p->first;
@@ -299,12 +299,12 @@ void CYSFPickupPool::Process(void)
 {
 	if (m_bStreamingEnabled)
 	{
-		for (WORD playerid = 0; playerid != MAX_PLAYERS; playerid++)
+		for (WORD playerid = 0; playerid != MAX_PLAYERS; ++playerid)
 		{
 			if (!IsPlayerConnected(playerid)) continue;
 			CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[playerid]->vecPosition;
 
-			for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); p++)
+			for (PickupMap::iterator p = pPlayerData[playerid]->ClientPlayerPickups.begin(); p != pPlayerData[playerid]->ClientPlayerPickups.end(); ++p)
 			{
 				float distance = GetDistance3D(vecPos, &p->second->vecPos);
 				if (distance < MAX_PICKUP_DISTANCE && !pPlayerData[playerid]->bClientPickupStreamedIn[p->first])
