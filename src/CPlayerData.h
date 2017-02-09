@@ -101,6 +101,9 @@ public:
 	WORD wSurfingInfo;
 	WORD wDialogID;
 
+	// Exclusive RPC broadcast
+	bool bBroadcastTo;
+
 	// Variables to store disabled keys
 	WORD wDisabledKeys;
 	WORD wDisabledKeysUD;

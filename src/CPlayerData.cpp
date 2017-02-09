@@ -55,6 +55,9 @@ CPlayerData::CPlayerData( WORD playerid )
 	wSurfingInfo = 0;
 	wDialogID = -1;
 	
+	// Exclusive RPC broadcast
+	bBroadcastTo = 0;
+
 	// Variables to store disabled keys
 	wDisabledKeys = 0;
 	wDisabledKeysUD = 0;

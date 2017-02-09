@@ -392,6 +392,20 @@ WORD CServer::GetNPCCount()
 	return count;
 }
 
+void CServer::SetExclusiveBroadcast(bool toggle) 
+{ 
+	m_bExclusiveBroadcast = toggle;
+	if (toggle) // if we just activated exclusive broadcast, exclude all players from broadcast list and let scripter readd them
+		for (WORD i = 0; i != MAX_PLAYERS; ++i)
+			if (IsPlayerConnected(i))
+				pPlayerData[i]->bBroadcastTo = 0;
+}
+
+bool CServer::GetExclusiveBroadcast(void) 
+{ 
+	return m_bExclusiveBroadcast; 
+}
+
 void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 {
 	const int read_offset = bsSync->GetReadOffset();

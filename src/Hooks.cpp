@@ -223,6 +223,15 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
 	if (!CServer::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)))) return 1;
+	
+	if (CServer::Get()->GetExclusiveBroadcast())
+	{
+		for (WORD i = 0; i != MAX_PLAYERS; ++i)
+			if (IsPlayerConnected(i) && pPlayerData[i]->bBroadcastTo)
+				CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, CSAMPFunctions::GetPlayerIDFromIndex(i), false, shiftTimestamp);
+
+		return 1;
+	}
 
 	return CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }

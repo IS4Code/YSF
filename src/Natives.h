@@ -350,6 +350,9 @@ namespace Natives
 
 	AMX_DECLARE_NATIVE(AttachPlayerObjectToObject);
 
+	AMX_DECLARE_NATIVE(SetExclusiveBroadcast);
+	AMX_DECLARE_NATIVE(BroadcastToPlayer);
+
 	AMX_DECLARE_NATIVE(SetRecordingDirectory);
 	AMX_DECLARE_NATIVE(GetRecordingDirectory);
 
