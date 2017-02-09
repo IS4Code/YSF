@@ -4421,6 +4421,30 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 	return 1;
 }
 
+// native SetExclusiveBroadcast(toggle);
+AMX_DECLARE_NATIVE(Natives::SetExclusiveBroadcast)
+{
+	CHECK_PARAMS(1, "SetExclusiveBroadcast", LOADED);
+
+	const int toggle = CScriptParams::Get()->ReadInt();
+	CServer::Get()->SetExclusiveBroadcast(!!toggle);
+	return 1;
+}
+
+// native BroadcastToPlayer(playerid, toggle=1);
+AMX_DECLARE_NATIVE(Natives::BroadcastToPlayer)
+{
+	CHECK_PARAMS(2, "BroadcastToPlayer", LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	const int toggle = CScriptParams::Get()->ReadInt();
+	
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	pPlayerData[playerid]->bBroadcastTo = !!toggle;
+	return 1;
+}
+
 // native SetRecordingDirectory(const dir[]);
 AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 {
@@ -6084,6 +6108,10 @@ AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(HasPlayerConsoleMessages) // R18 
 
 	AMX_DEFINE_NATIVE(AttachPlayerObjectToObject)
+
+	// Exclusive RPC broadcast
+	AMX_DEFINE_NATIVE(SetExclusiveBroadcast)
+	AMX_DEFINE_NATIVE(BroadcastToPlayer)
 	
 	// Recording functions
 	AMX_DEFINE_NATIVE(SetRecordingDirectory) // R17

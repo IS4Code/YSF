@@ -56,6 +56,20 @@ public OnFilterScriptInit()
 	return 1;
 }
 
+CMD:setgravityforme(playerid, params[])
+{
+    new Float:fGravity;
+    if(sscanf(params, "f", fGravity)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /SetGravityForMe <gravity>");
+    
+    SetExclusiveBroadcast(true); // every newcoming RPC will be sent only to the players specified with BroadcastToPlayer()
+    BroadcastToPlayer(playerid, true); // add "playerid" to broadcast list
+    SetGravity(fGravity); // set playerid gravity to "fGravity"
+    BroadcastToPlayer(playerid, false); // remove "playerid" from broadcast list
+    SetGravity(0.008); // this RPC won't be sent to anybody because SetExclusiveBroadcast() is still active, but broadcast list is empty
+    SetExclusiveBroadcast(false); // disable 
+    return 1;
+}
+
 CMD:serversettings(playerid, params[])
 {
 	new showplayermarkes, shownametags, stuntbonus, useplayerpedanims, bLimitchatradius, disableinteriorenterexits, nametaglos,
@@ -396,7 +410,7 @@ CMD:psyncdata(playerid, params[])
 
 	new str[64];
 	format(str, sizeof(str), "Info - YSF - {%06x}%s(%d)", GetPlayerColor(player1) >>> 8, pName(player1), player1);
-	ShowPlayerDialog(playerid, 5000, DIALOG_STYLE_MSGBOX, str, tmp, "Ok");
+	ShowPlayerDialog(playerid, 5000, DIALOG_STYLE_MSGBOX, str, tmp, "Ok", "");
 	return 1;
 }
 

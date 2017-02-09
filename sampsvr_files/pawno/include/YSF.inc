@@ -218,6 +218,10 @@ native IsBanned(const ipaddress[]);
 native SetTimeoutTime(playerid, time_ms);
 native GetLocalIP(index, localip[], len = sizeof(localip));
 
+// Exclusive RPC broadcast
+native SetExclusiveBroadcast(toggle);
+native BroadcastToPlayer(playerid, toggle=1);
+
 // Vehicle functions
 native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
 native SetVehicleSpawnInfo(vehicleid, modelid, Float:fX, Float:fY, Float:fZ, Float:fAngle, color1, color2, respawntime = -2, interior = -2);

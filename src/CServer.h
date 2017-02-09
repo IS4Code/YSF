@@ -95,6 +95,9 @@ public:
 	void inline ToggleOnServerMessage(bool toggle) { m_bOnServerMessage = toggle; }
 	bool inline IsOnServerMessageEnabled(void) { return m_bOnServerMessage; }
 
+	void SetExclusiveBroadcast(bool toggle);
+	bool GetExclusiveBroadcast(void);
+
 	void SetExtendedNetStatsEnabled(bool enable);
 	bool IsExtendedNetStatsEnabled(void);
 
@@ -135,6 +138,8 @@ private:
 	bool m_bInitialized = 0;
 	bool m_bNightVisionFix : 1;
 	bool m_bOnServerMessage : 1;
+	
+	bool m_bExclusiveBroadcast = 0;
 
 	DWORD m_dwAFKAccuracy;
 
