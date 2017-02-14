@@ -166,14 +166,12 @@ void CServer::ProcessSysExec()
 			bool called = false;
 			SysExec_t data = m_SysExecQueue.front();
 			std::vector<std::string> lines;
+			
+			data.output.erase(std::find(data.output.begin(), data.output.end(), '\r'));
 			Utility::split(data.output, '\n', lines);
 
 			for (auto &line : lines)
 			{
-				auto len = line.size();
-				if (len - 1 >= 0 && line[len] == '\r')
-					line.pop_back();
-
 				CCallbackManager::OnSystemCommandExecute(line.c_str(), data.retval, data.index, data.success);
 				called = true;
 			}
