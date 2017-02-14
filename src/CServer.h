@@ -58,6 +58,8 @@ public:
 	bool inline IsInitialized(void) { return m_bInitialized; }
 	void Process();
 
+	void ProcessSysExec();
+
 	bool AddPlayer(int playerid);
 	bool RemovePlayer(int playerid);
  
@@ -130,6 +132,16 @@ public:
 	int m_iRakNetInternalSleepTime;
 	int m_iAttachObjectDelay;
 	bool m_bStorePlayerObjectsMaterial : 1;
+
+	struct SysExec_t
+	{
+		std::string output;
+		int retval;
+		int index;
+		bool success;
+	};
+	std::queue<SysExec_t> m_SysExecQueue;
+	std::mutex m_SysExecMutex;
 
 private:
 

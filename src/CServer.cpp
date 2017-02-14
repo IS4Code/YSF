@@ -147,10 +147,36 @@ void CServer::Process()
 			// Process player
 			pPlayerData[playerid]->Process();
 		}
+		ProcessSysExec();
+
 #ifdef NEW_PICKUP_SYSTEM
 		if(CServer::Get()->pPickupPool)
 			CServer::Get()->pPickupPool->Process();
 #endif
+	}
+}
+
+void CServer::ProcessSysExec()
+{
+	std::unique_lock<std::mutex> lock(m_SysExecMutex, std::try_to_lock);
+	if (lock.owns_lock()) 
+	{
+		while (!m_SysExecQueue.empty())
+		{
+			SysExec_t data = m_SysExecQueue.front();
+			std::vector<std::string> lines;
+			Utility::split(data.output, '\n', lines);
+
+			for (auto &line : lines)
+			{
+				auto len = line.size();
+				if (len - 1 >= 0 && line[len] == '\r')
+					line.pop_back();
+
+				CCallbackManager::OnSystemCommandExecute(line.c_str(), data.retval, data.index, data.success);
+			}
+			m_SysExecQueue.pop();
+		}
 	}
 }
 

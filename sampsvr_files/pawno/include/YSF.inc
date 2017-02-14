@@ -26,7 +26,7 @@ enum E_SCM_EVENT_TYPE
 }
 
 // Execute
-native execute(const command[]);
+native execute(const command[], saveoutput=0, index=0);
 
 // File functions
 native ffind(const pattern[], filename[], len, &idx);
@@ -400,7 +400,7 @@ forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:gl
 				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
 forward OnOutcomeScmEvent(playerid, issuerid, E_SCM_EVENT_TYPE:eventid, vehicleid, arg1, arg2);
 forward OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31]);
-
+forward OnSystemCommandExecute(const line_output[], retval, index, success);
 
 //////////////////////////////////////////////////////////////
 // Fixes
