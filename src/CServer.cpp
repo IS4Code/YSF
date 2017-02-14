@@ -163,6 +163,7 @@ void CServer::ProcessSysExec()
 	{
 		while (!m_SysExecQueue.empty())
 		{
+			bool called = false;
 			SysExec_t data = m_SysExecQueue.front();
 			std::vector<std::string> lines;
 			Utility::split(data.output, '\n', lines);
@@ -174,7 +175,14 @@ void CServer::ProcessSysExec()
 					line.pop_back();
 
 				CCallbackManager::OnSystemCommandExecute(line.c_str(), data.retval, data.index, data.success);
+				called = true;
 			}
+			if (!called)
+			{
+				// we notify scripts even if executed program didn't print anything
+				CCallbackManager::OnSystemCommandExecute(data.output.c_str(), data.retval, data.index, data.success);
+			}
+
 			m_SysExecQueue.pop();
 		}
 	}
