@@ -1016,9 +1016,9 @@ CMD:exec(playerid, params[])
     return 1;
 }
 
-public OnSystemCommandExecute(const line_output[], retval, index, success)
+public OnSystemCommandExecute(const line_output[], retval, index, success, line_current, line_total)
 {
-	SendClientMessagef(index, -1, "Command output: success: %d, returned value: %d", success, retval);
+	SendClientMessagef(index, -1, "Command output: success: %d, returned value: %d, current line: %d, total lines: %d", success, retval, line_current, line_total);
 	SendClientMessagef(index, -1, "Command output: %s", line_output);
 }
 
