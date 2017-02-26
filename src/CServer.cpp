@@ -166,8 +166,7 @@ void CServer::ProcessSysExec()
 			bool called = false;
 			SysExec_t data = m_SysExecQueue.front();
 			std::vector<std::string> lines;
-			
-			data.output.erase(std::find(data.output.begin(), data.output.end(), '\r'));
+
 			Utility::split(data.output, '\n', lines);
 
 			for (auto &line : lines)
