@@ -2145,8 +2145,18 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerSpawned)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
 
-	int state = pNetGame->pPlayerPool->pPlayer[playerid]->byteState;
-	return (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED && state != PLAYER_STATE_SPAWNED && pNetGame->pPlayerPool->pPlayer[playerid]->bHasSpawnInfo);
+	BYTE state = pNetGame->pPlayerPool->pPlayer[playerid]->byteState;
+	switch (state) 
+	{
+		case PLAYER_STATE_ONFOOT: 
+		case PLAYER_STATE_DRIVER: 
+		case PLAYER_STATE_PASSENGER:			
+		case PLAYER_STATE_SPAWNED: 
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 // native IsPlayerControllable(playerid);
@@ -2571,7 +2581,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 
 	WORD attachedobjectid = INVALID_OBJECT_ID;
 	WORD attachedplayerid = INVALID_PLAYER_ID;
-	CPlayerObjectAttachAddon *pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
+	const CPlayerObjectAttachAddon *pAddon = pPlayerData[playerid]->FindObjectAddon(objectid);
 	if (pAddon)
 	{
 		attachedobjectid = pAddon->wObjectID;
@@ -2605,8 +2615,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 	}
 	else
 	{
-		CPlayerObjectAttachAddon* pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
-		if (pAddon)
+		const CPlayerObjectAttachAddon *pAddon = pPlayerData[playerid]->FindObjectAddon(objectid);
+		if (pAddon) 
 		{
 			vecOffset = pAddon->vecOffset;
 			vecOffset = pAddon->vecRot;
@@ -4332,7 +4342,9 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 	
 	// Find the space where to store data
 	CPlayerObjectAttachAddon* pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
-	
+	if (pAddon == NULL)
+		return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
+
 	// Store data
 	pAddon->wObjectID = static_cast<WORD>(objectid);
 	pAddon->wAttachPlayerID = static_cast<WORD>(attachplayerid);
@@ -4388,6 +4400,8 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 
 	// Find the space where to store data
 	CPlayerObjectAttachAddon* pAddon = pPlayerData[forplayerid]->GetObjectAddon(objectid);
+	if (pAddon == NULL)
+		return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
 
 	// Geting data
 	BYTE byteSyncRot;

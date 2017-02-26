@@ -1011,7 +1011,7 @@ void InstallPostHooks()
 	// Recreate Pickup pool
 	CServer::Get()->pPickupPool = new CYSFPickupPool();
 #endif
-	// Re-init some RPCs
+	// Re-init a few RPCs
 	InitRPCs();
 
 	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), reinterpret_cast<void*>(HOOK_logprintf), static_cast<subhook_options_t>(NULL));

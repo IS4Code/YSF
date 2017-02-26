@@ -120,6 +120,11 @@ CPlayerData::CPlayerData( WORD playerid )
 CPlayerData::~CPlayerData( void )
 {
 	CServer::Get()->RemoveConsolePlayer(wPlayerID);
+
+	for (WORD i = 0; i != MAX_OBJECTS; ++i)
+	{
+		DeleteObjectAddon(i);
+	}
 }
 
 bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
@@ -271,7 +276,7 @@ CPlayerObjectAttachAddon const* CPlayerData::FindObjectAddon(WORD objectid)
 {
 	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 	if (it == m_PlayerObjectsAddon.end())
-		return nullptr;
+		return NULL;
 
 	return it->second;
 }

@@ -271,31 +271,42 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 // Load an entry from server.cfg - Y_Less
 int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 {
-	std::ifstream
-		f("plugins/YSF.cfg");
+	//logprintf("1");
+	FILE * fileConfig = fopen("plugins/YSF.cfg", "r");
+	//logprintf("2");
+
 	int
 		ret = 1,
 		len = strlen(name);
-	if (f.is_open())
+	//logprintf("3");
+
+	if (fileConfig)
 	{
-		char
-			line[256];
-		f.clear();
-		while (!f.eof())
+		//logprintf("4");
+
+		char line[256];
+		while (!feof(fileConfig))
 		{
-			f.getline(line, 256);
-			if (f.fail())
+			//logprintf("5");
+
+			if (!fgets(line, 256, fileConfig))
 			{
 				goto CFGLoad_close;
 			}
+			//logprintf("6");
+
 			// Does the line START with this text?  Anything other than the
 			// first character fails.
 			if (!strncmp(line, name, len) && line[len] <= ' ')
 			{
+				logprintf("7");
+
 				while (line[++len] <= ' ')
 				{
 					if (line[len] == '\0') goto CFGLoad_close;
 				}
+				//logprintf("8");
+
 				// Skipped leading spaces, save the value.
 				if (dest) strncpy(dest, line + len, dlen);
 				ret = atoi(line + len);
@@ -303,9 +314,15 @@ int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 			}
 		}
 	CFGLoad_close:
+		//logprintf("9");
+
 		// Yes, I used a label!  I needed to escape from a double loop.
-		f.close();
+		fclose(fileConfig);
+		//logprintf("10");
+
 	}
+	//logprintf("11");
+
 	return ret;
 }
 

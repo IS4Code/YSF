@@ -63,6 +63,7 @@ void CServer::Initialize(SAMPVersion version)
 	m_iAttachObjectDelay = Utility::CFGLoad("AttachObjectDelay");
 	m_bStorePlayerObjectsMaterial = static_cast<int>(Utility::CFGLoad("StorePlayerObjectsMaterial") != 0);
 
+	logprintf("%d, %d, %d, %d", m_bPickupProtection, m_bDeathProtection, m_iRakNetInternalSleepTime, m_iAttachObjectDelay);
 #ifndef _WIN32
 	LoadTickCount();
 #endif
@@ -100,6 +101,7 @@ void CServer::Initialize(SAMPVersion version)
 		m_RCONCommands.push_back(std::string(cmds->szName));
 		cmds++;
 	} while (cmds->szName[0] && !cmds->dwFlags);
+	logprintf("cussess");
 }
 
 CServer::~CServer()
