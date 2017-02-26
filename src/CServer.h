@@ -125,6 +125,7 @@ public:
 	bool m_bDeathProtection : 1;
 	bool m_bDialogProtection : 1;
 	bool m_bUseCustomSpawn : 1;
+	bool m_bAllowRemoteRCONWithBannedIPs : 1;
 	bool m_bIncreaseRakNetInternalPlayers : 1;
 	int m_iRakNetInternalSleepTime;
 	int m_iAttachObjectDelay;

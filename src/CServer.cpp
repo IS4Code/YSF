@@ -58,6 +58,7 @@ void CServer::Initialize(SAMPVersion version)
 	m_bDeathProtection = static_cast<int>(Utility::CFGLoad("DeathProtection") != 0);
 	m_bDialogProtection = static_cast<int>(Utility::CFGLoad("DialogProtection") != 0);
 	m_bUseCustomSpawn = static_cast<int>(Utility::CFGLoad("UseCustomSpawn") != 0);
+	m_bAllowRemoteRCONWithBannedIPs = static_cast<int>(Utility::CFGLoad("AllowRemoteRCONWithBannedIPs") != 0);
 	m_bIncreaseRakNetInternalPlayers = static_cast<int>(Utility::CFGLoad("IncreaseRakNetInternalPlayers") != 0);
 	m_iRakNetInternalSleepTime = Utility::CFGLoad("RakNetInternalSleepTime");
 	m_iAttachObjectDelay = Utility::CFGLoad("AttachObjectDelay");
