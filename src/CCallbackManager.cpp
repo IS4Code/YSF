@@ -458,3 +458,24 @@ void CCallbackManager::OnClientCheckResponse(WORD playerid, BYTE type, DWORD arg
 		}
 	}
 }
+
+void CCallbackManager::OnSystemCommandExecute(const char *output, int retval, int index, bool success, int line_current, int line_total)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnSystemCommandExecute", &idx))
+		{
+			cell amx_addr;
+			amx_Push(iter, static_cast<cell>(line_total));
+			amx_Push(iter, static_cast<cell>(line_current));
+			amx_Push(iter, static_cast<cell>(success));
+			amx_Push(iter, static_cast<cell>(index));
+			amx_Push(iter, static_cast<cell>(retval));
+			amx_PushString(iter, &amx_addr, nullptr, output, 0, 0);
+			amx_Exec(iter, &ret, idx);
+			amx_Release(iter, amx_addr);
+		}
+	}
+}

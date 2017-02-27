@@ -66,6 +66,8 @@
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN
 	#define SLEEP(x) { Sleep(x); }
+	#define popen _popen
+	#define pclose  _pclose
 	#define OS_NAME "Windows"
 
 	#include <windows.h>
@@ -140,6 +142,9 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <queue>
+#include <thread>
+#include <mutex>
 	
 // Subhook
 #include <subhook/subhook.h>

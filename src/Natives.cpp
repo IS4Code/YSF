@@ -35,15 +35,39 @@
 
 //----------------------------------------------------
 
-// native execute(const command[]);
+// native execute(const command[], saveoutput=0, index=0);
 AMX_DECLARE_NATIVE(Natives::execute)
 {
-	CHECK_PARAMS(1, "execute", NO_FLAGS);
+	CHECK_PARAMS(3, "execute", NO_FLAGS);
 	
 	std::string command;
-	CScriptParams::Get()->Read(&command);
+	int saveoutput, index;
+	CScriptParams::Get()->Read(&command, &saveoutput, &index);
 
-	system(command.c_str());
+	auto thFunc = [](std::string command, int saveoutput, int index) 
+	{
+		FILE *pPipe;
+		char szBuffer[512];
+		
+		CServer::SysExec_t exec;
+		exec.index = index;
+		exec.output = "";
+		exec.success = false;
+	
+		if ((pPipe = popen(command.c_str(), "r")) != NULL)
+		{
+			while (saveoutput && fgets(szBuffer, sizeof(szBuffer), pPipe))
+				exec.output.append(szBuffer);
+
+			exec.retval = pclose(pPipe);
+			exec.success = true;
+		}	
+
+		std::lock_guard<std::mutex> lock(CServer::Get()->m_SysExecMutex);
+		CServer::Get()->m_SysExecQueue.push(exec);
+	};
+
+	std::thread(thFunc, command, saveoutput, index).detach();
 	return 1;
 }
 

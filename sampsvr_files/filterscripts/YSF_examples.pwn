@@ -1009,9 +1009,17 @@ CMD:isbannedip(playerid, params[])
 
 CMD:exec(playerid, params[])
 {
-    execute(params);
-    SendClientMessagef(playerid, -1, "exec: %s", params);
+	new command[128], saveoutput;
+	if(sscanf(params, "s[128]d", command, saveoutput)) return SendClientMessagef(playerid, 0xFF0000AA, "USAGE: /exec <command> <save output (0/1)>");
+    execute(command, saveoutput, playerid);
+    SendClientMessagef(playerid, -1, "Command sent: %s", command);
     return 1;
+}
+
+public OnSystemCommandExecute(const line_output[], retval, index, success, line_current, line_total)
+{
+	SendClientMessagef(index, -1, "Command output: success: %d, returned value: %d, current line: %d, total lines: %d", success, retval, line_current, line_total);
+	SendClientMessagef(index, -1, "Command output: %s", line_output);
 }
 
 CMD:localip(playerid, params[])
