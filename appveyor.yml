@@ -11,7 +11,7 @@ clone_depth: 1
 
 build:
   parallel: true
-  project: Build/YSF.sln
+  project: YSF.sln
   
 artifacts:
     - path: YSFCompiled.zip
