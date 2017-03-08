@@ -138,7 +138,7 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 			if (!pSetPlayerWeather && !strcmp(nativelist[i].name, "SetPlayerWeather"))
 				pSetPlayerWeather = nativelist[i].func;
 
-			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyObject"))
+			if(!pDestroyObject && !strcmp(nativelist[i].name, "DestroyObject"))
 				pDestroyObject = nativelist[i].func;
 
 			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyPlayerObject"))
@@ -541,7 +541,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 					memcpy(szMapName, temp, dwMapNameLen);
 					szMapName[dwMapNameLen] = 0;
-
+					/*
 					bool stringsChanged = CCallbackManager::OnServerQueryInfo(binaryAddress, szHostname, szGameMode, szMapName);
 					if (stringsChanged)
 					{
@@ -549,7 +549,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						dwGameModeLen = strlen(szGameMode);
 						dwMapNameLen = strlen(szMapName);
 					}
-
+					*/
 					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
 					WORD wMaxPlayers = CServer::Get()->GetMaxPlayers();
 					BYTE byteIsPassworded = CSAMPFunctions::GetStringVariable("password")[0] != 0;
@@ -767,7 +767,6 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						if (pConsole)
 						{
-							//logprintf("onremoterconpacket %d, %d, %s - %s", binaryAddress, port, szPassword, szCommand);
 							if (CCallbackManager::OnRemoteRCONPacket(binaryAddress, port, szPassword, true, szCommand))
 							{ 
 								bRconSocketReply = true;

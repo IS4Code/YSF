@@ -108,13 +108,14 @@ CPlayerData::CPlayerData( WORD playerid )
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->dwNickNameColor = dwPlayerColors[playerid % 100];
 	}
-
+	/*
 	// Store NPC Process ID if it's an NPC
 	if (pNetGame->pPlayerPool->bIsNPC[playerid])
 	{
 		if (CSAMPFunctions::GetPlayerIDFromIndex(playerid).binaryAddress == 0x0100007F)
 			iNPCProcessID = CServer::Get()->FindNPCProcessID(playerid);
 	}
+	*/
 }
 
 CPlayerData::~CPlayerData( void )
@@ -258,16 +259,24 @@ bool CPlayerData::DestroyObject(WORD objectid)
 // Return a pointer from map if exists or add it if isn't - to save memory
 CPlayerObjectAttachAddon* CPlayerData::GetObjectAddon(WORD objectid)
 {
-	CPlayerObjectAttachAddon* pAddon;
-	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
-	if (it == m_PlayerObjectsAddon.end())
+	CPlayerObjectAttachAddon* pAddon = NULL;
+
+	try
 	{
-		pAddon = new CPlayerObjectAttachAddon();
-		m_PlayerObjectsAddon.emplace(objectid, pAddon);
+		auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
+		if (it == m_PlayerObjectsAddon.end())
+		{
+			pAddon = new CPlayerObjectAttachAddon();
+			m_PlayerObjectsAddon.emplace(objectid, pAddon);
+		}
+		else
+		{
+			pAddon = it->second;
+		}
 	}
-	else
+	catch (...)
 	{
-		pAddon = it->second;
+		//logprintf("CPlayerData::GetObjectAddon(WORD objectid) catch");
 	}
 	return pAddon;
 }
@@ -287,8 +296,8 @@ void CPlayerData::DeleteObjectAddon(WORD objectid)
 	if (it != m_PlayerObjectsAddon.end())
 	{
 		SAFE_DELETE(it->second);
-		m_PlayerObjectsAttachQueue.erase(it->first);
 		m_PlayerObjectsAddon.erase(it);
+		m_PlayerObjectsAttachQueue.erase(it->first);
 	}
 }
 
@@ -320,27 +329,30 @@ void CPlayerData::Process(void)
 		for (std::set<WORD>::iterator o = m_PlayerObjectsAttachQueue.begin(); o != m_PlayerObjectsAttachQueue.end(); )
 		{
 			auto it = m_PlayerObjectsAddon.find(*(o));
-			if (it != m_PlayerObjectsAddon.end() && it->second->bCreated)
+			if (it != m_PlayerObjectsAddon.end() )
 			{
-				default_clock::duration passed_time = default_clock::now() - it->second->creation_timepoint;
-				//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
-				if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
+				if(it->second && it->second->bCreated)
 				{
-					RakNet::BitStream bs;
-					bs.Write((WORD)it->first); // wObjectID
-					bs.Write((WORD)it->second->wAttachPlayerID); // wAttachPlayerID
-					bs.Write((char*)&it->second->vecOffset, sizeof(CVector));
-					bs.Write((char*)&it->second->vecRot, sizeof(CVector));
-					CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
+					default_clock::duration passed_time = default_clock::now() - it->second->creation_timepoint;
+					//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
+					if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
+					{
+						RakNet::BitStream bs;
+						bs.Write((WORD)it->first); // wObjectID
+						bs.Write((WORD)it->second->wAttachPlayerID); // wAttachPlayerID
+						bs.Write((char*)&it->second->vecOffset, sizeof(CVector));
+						bs.Write((char*)&it->second->vecRot, sizeof(CVector));
+						CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
 
-					it->second->bAttached = true;
-					o = m_PlayerObjectsAttachQueue.erase(o);
+						it->second->bAttached = true;
+						o = m_PlayerObjectsAttachQueue.erase(o);
 
-					//logprintf("attached and removed: %d", it->first);
-				}
-				else
-				{
-					++o;
+						//logprintf("attached and removed: %d", it->first);
+					}
+					else
+					{
+						++o;
+					}
 				}
 			}
 			else

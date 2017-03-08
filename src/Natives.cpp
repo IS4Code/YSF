@@ -1483,18 +1483,21 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 
 	if(objectid < 0 || objectid > MAX_OBJECTS) return 0;
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 	
-	auto it = pPlayerData[playerid]->m_PlayerObjectMaterialText.find(objectid);
-	if (it != pPlayerData[playerid]->m_PlayerObjectMaterialText.end())
+	if (IsPlayerConnected(playerid))
 	{
-		pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(it);
+		auto it = pPlayerData[playerid]->m_PlayerObjectMaterialText.find(objectid);
+		if (it != pPlayerData[playerid]->m_PlayerObjectMaterialText.end())
+		{
+			pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(it);
+		}
+
+		pPlayerData[playerid]->DeleteObjectAddon(static_cast<WORD>(objectid));
 	}
 
-	if(pDestroyPlayerObject(amx, params) && IsPlayerConnected(playerid))
+
+	if(pDestroyPlayerObject(amx, params))
 	{
-		pPlayerData[playerid]->DeleteObjectAddon(static_cast<WORD>(objectid));
 		return 1;
 	}
 	return 0;

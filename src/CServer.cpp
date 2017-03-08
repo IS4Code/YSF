@@ -64,7 +64,7 @@ void CServer::Initialize(SAMPVersion version)
 	m_iAttachObjectDelay = Utility::CFGLoad("AttachObjectDelay");
 	m_bStorePlayerObjectsMaterial = static_cast<int>(Utility::CFGLoad("StorePlayerObjectsMaterial") != 0);
 
-	logprintf("%d, %d, %d, %d", m_bPickupProtection, m_bDeathProtection, m_iRakNetInternalSleepTime, m_iAttachObjectDelay);
+	//logprintf("%d, %d, %d, %d", m_bPickupProtection, m_bDeathProtection, m_iRakNetInternalSleepTime, m_iAttachObjectDelay);
 #ifndef _WIN32
 	LoadTickCount();
 #endif
@@ -102,7 +102,7 @@ void CServer::Initialize(SAMPVersion version)
 		m_RCONCommands.push_back(std::string(cmds->szName));
 		cmds++;
 	} while (cmds->szName[0] && !cmds->dwFlags);
-	logprintf("cussess");
+	//logprintf("cussess");
 }
 
 CServer::~CServer()
@@ -745,15 +745,17 @@ bool CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 	{
 		case RPC_ScmEvent:
 		{
-			bsSync->ResetReadPointer();
+			const int read_offset = bsSync->GetReadOffset();
+			
 			WORD issuerid;
-			bsSync->Read<WORD>(issuerid);
 			int data[4];
+			bsSync->Read<WORD>(issuerid);
 			bsSync->Read<int>(data[0]);
 			bsSync->Read<int>(data[1]);
 			bsSync->Read<int>(data[2]);
 			bsSync->Read<int>(data[3]);
-			
+			bsSync->SetReadOffset(read_offset);
+
 			if (!CCallbackManager::OnOutcomeScmEvent(playerid, issuerid, data[0], data[1], data[2], data[3])) 
 				return 0;
 			

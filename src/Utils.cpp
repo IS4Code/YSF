@@ -71,11 +71,14 @@ bool IsPlayerConnected(int playerid)
 	return pPlayerData[playerid] != NULL && pNetGame->pPlayerPool->pPlayer != NULL;
 }
 
-std::vector<std::string> &Utility::split(const std::string &s, char delim, std::vector<std::string> &elems) {
+std::vector<std::string> &Utility::split(const std::string &s, char delim, std::vector<std::string> &elems) 
+{
 	std::stringstream ss(s);
 	std::string item;
-	while (std::getline(ss, item, delim)) {
-		if (item.length() > 0) {
+	while (std::getline(ss, item, delim)) 
+	{
+		if (item.length() > 0) 
+		{
 			elems.push_back(item);
 		}
 	}
@@ -283,7 +286,6 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 // Load an entry from server.cfg - Y_Less
 int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 {
-	//logprintf("1");
 	FILE * fileConfig = fopen("plugins/YSF.cfg", "r");
 	//logprintf("2");
 
@@ -311,7 +313,7 @@ int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 			// first character fails.
 			if (!strncmp(line, name, len) && line[len] <= ' ')
 			{
-				logprintf("7");
+				//logprintf("7");
 
 				while (line[++len] <= ' ')
 				{
