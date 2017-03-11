@@ -58,8 +58,6 @@ public:
 	bool inline IsInitialized(void) { return m_bInitialized; }
 	void Process();
 
-	void ProcessSysExec();
-
 	bool AddPlayer(int playerid);
 	bool RemovePlayer(int playerid);
  
@@ -144,6 +142,8 @@ public:
 	std::mutex m_SysExecMutex;
 
 private:
+	void LoadConfig();
+	void ProcessSysExec();
 
 	SAMPVersion m_Version;
 	int m_iTicks;

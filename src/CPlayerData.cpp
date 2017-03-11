@@ -108,14 +108,13 @@ CPlayerData::CPlayerData( WORD playerid )
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->dwNickNameColor = dwPlayerColors[playerid % 100];
 	}
-	/*
+	
 	// Store NPC Process ID if it's an NPC
 	if (pNetGame->pPlayerPool->bIsNPC[playerid])
 	{
 		if (CSAMPFunctions::GetPlayerIDFromIndex(playerid).binaryAddress == 0x0100007F)
 			iNPCProcessID = CServer::Get()->FindNPCProcessID(playerid);
 	}
-	*/
 }
 
 CPlayerData::~CPlayerData( void )
