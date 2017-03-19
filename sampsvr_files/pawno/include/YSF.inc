@@ -170,8 +170,8 @@ native GetActorAnimation(actorid, animlib[], animlibsize = sizeof(animlib), anim
 native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
 native TogglePlayerFakePing(playerid, bool:toggle);
 native SetPlayerFakePing(playerid, ping);
-native TogglePlayerInServerQuery(playerid, bool:toggle);
-native IsPlayerToggledInServerQuery(playerid);
+native SetPlayerNameInServerQuery(playerid, const name[]);
+native GetPlayerNameInServerQuery(playerid, name[], len = sizeof(name));
 
 // Pause functions
 native IsPlayerPaused(playerid);

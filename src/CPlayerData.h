@@ -132,6 +132,9 @@ public:
 	// Fix for GetPlayerObjectMaterial/MaterialText - i keep this outside from containers above
 	std::unordered_map<WORD, std::unordered_map<BYTE, std::string>> m_PlayerObjectMaterialText;
 
+	// 
+	std::string strNameInQuery;
+
 	// Gangzones
 	CGangZone *pPlayerZone[MAX_GANG_ZONES];
 
@@ -155,7 +158,7 @@ public:
 	std::bitset<MAX_PICKUPS> bPlayerPickup;
 #endif
 	DWORD dwFakePingValue;
-	DWORD dwLastUpdateTick;
+	default_clock::time_point LastUpdateTick;
 	DWORD dwCreateAttachedObj;
 	WORD dwObjectID;
 	
@@ -165,7 +168,6 @@ public:
 	bool bFakePingToggle : 1;
 	bool bAFKState : 1;
 	bool bEverUpdated : 1; 
-	bool bHidden : 1;
 	bool bControllable : 1;
 	bool bAttachedObjectCreated : 1;
 

@@ -2303,27 +2303,32 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerFakePing)
 	return 1;
 }
 
-// native TogglePlayerInServerQuery(playerid, bool:toggle);
-AMX_DECLARE_NATIVE(Natives::TogglePlayerInServerQuery)
+// native SetPlayerNameInServerQuery(playerid, const name[]);
+AMX_DECLARE_NATIVE(Natives::SetPlayerNameInServerQuery)
 {
-	CHECK_PARAMS(2, "TogglePlayerInServerQuery", LOADED);
+	CHECK_PARAMS(2, "SetPlayerNameInServerQuery", LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
-	pPlayerData[playerid]->bHidden = !(!!params[2]);
+	std::string name;
+	CScriptParams::Get()->Read(&name);
+	if (name.length() >= MAX_PLAYER_NAME) return 0;
+
+	pPlayerData[playerid]->strNameInQuery = std::move(name);
 	return 1;
 }
 
-// native IsPlayerToggledInServerQuery(playerid);
-AMX_DECLARE_NATIVE(Natives::IsPlayerToggledInServerQuery)
+// native GetPlayerNameInServerQuery(playerid, name[], len = sizeof(name));
+AMX_DECLARE_NATIVE(Natives::GetPlayerNameInServerQuery)
 {
-	CHECK_PARAMS(1, "IsPlayerToggledInServerQuery", LOADED);
+	CHECK_PARAMS(3, "GetPlayerNameInServerQuery", LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
-	return !pPlayerData[playerid]->bHidden;
+	CScriptParams::Get()->Add(pPlayerData[playerid]->strNameInQuery);
+	return 1;
 }
 
 // native IsPlayerPaused(playerid);
@@ -2347,7 +2352,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPausedTime)
 	if(!IsPlayerConnected(playerid)) return 0;
 	if(!pPlayerData[playerid]->bAFKState) return 0;
 
-	return GetTickCount() - pPlayerData[playerid]->dwLastUpdateTick;
+	return static_cast<cell>(std::chrono::duration_cast<std::chrono::milliseconds>(default_clock::now() - pPlayerData[playerid]->LastUpdateTick).count());
 }
 
 // Objects - global
@@ -5941,10 +5946,10 @@ AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(TogglePlayerScoresPingsUpdate) // R8
 	AMX_DEFINE_NATIVE(TogglePlayerFakePing) // R8
 	AMX_DEFINE_NATIVE(SetPlayerFakePing) // R8
-	AMX_DEFINE_NATIVE(TogglePlayerInServerQuery) // R11
-	AMX_DEFINE_NATIVE(IsPlayerToggledInServerQuery) // R11
-	AMX_DEFINE_NATIVE(TogglePlayerInServerQuery) // R11
-	AMX_DEFINE_NATIVE(IsPlayerToggledInServerQuery) // R11
+	AMX_DEFINE_NATIVE(SetPlayerNameInServerQuery) // R11
+	AMX_DEFINE_NATIVE(GetPlayerNameInServerQuery) // R11
+	AMX_DEFINE_NATIVE(SetPlayerNameInServerQuery) // R11
+	AMX_DEFINE_NATIVE(GetPlayerNameInServerQuery) // R11
 
 	// AFK
 	AMX_DEFINE_NATIVE(IsPlayerPaused)

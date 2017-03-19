@@ -273,7 +273,7 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 		// AFK
 		if (IsPlayerUpdatePacket(packetId))
 		{
-			pPlayerData[playerid]->dwLastUpdateTick = GetTickCount();
+			pPlayerData[playerid]->LastUpdateTick = default_clock::now();
 			pPlayerData[playerid]->bEverUpdated = true;
 		}
 
@@ -630,9 +630,9 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
+							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->strNameInQuery.empty())
 							{
-								szName = (char*)GetPlayerName(r);
+								szName = (char*)GetPlayerName(r, true);
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);
@@ -676,11 +676,11 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->bHidden)
+							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->strNameInQuery.empty())
 							{
 								memcpy(newdata, &r, sizeof(BYTE));
 								newdata += sizeof(BYTE);
-								szName = (char*)GetPlayerName(r);
+								szName = (char*)GetPlayerName(r, true);
 								byteNameLen = (BYTE)strlen(szName);
 								memcpy(newdata, &byteNameLen, sizeof(BYTE));
 								newdata += sizeof(BYTE);

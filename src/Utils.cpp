@@ -340,12 +340,19 @@ int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 	return ret;
 }
 
-const char *GetPlayerName(int playerid)
+const char *GetPlayerName(int playerid, bool getForQuery)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;
 
-	// Get the player name pointer from memory.
-	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
+	if (getForQuery)
+	{
+		return pPlayerData[playerid]->strNameInQuery.c_str();
+	}
+	else
+	{
+		// Get the player name pointer from memory.
+		return (MAX_PLAYER_NAME + 1) * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
+	}
 }
 
 // Y_Less - original YSF
@@ -433,15 +440,15 @@ bool IsPlayerUpdatePacket(BYTE packetId)
 {
 	switch (packetId)
 	{
-	case ID_PLAYER_SYNC:
-	case ID_VEHICLE_SYNC:
-	case ID_PASSENGER_SYNC:
-	case ID_SPECTATOR_SYNC:
-	case ID_AIM_SYNC:
-	case ID_TRAILER_SYNC:
-		return true;
-	default:
-		return false;
+		case ID_PLAYER_SYNC:
+		case ID_VEHICLE_SYNC:
+		case ID_PASSENGER_SYNC:
+		case ID_SPECTATOR_SYNC:
+		case ID_AIM_SYNC:
+		case ID_TRAILER_SYNC:
+			return true;
+		default:
+			return false;
 	}
 	return false;
 }

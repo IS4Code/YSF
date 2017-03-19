@@ -206,13 +206,13 @@ CMD:fakeping(playerid, params[])
 	return 1;
 }
 
-CMD:hidefromquery(playerid, params[])
+CMD:setnameinquery(playerid, params[])
 {
-	new update;
-	if(sscanf(params, "d", update)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /hidefromquery <hide>");
+	new szName[MAX_PLAYER_NAME];
+	if(sscanf(params, "s[24]", szName)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /setnameinquery <szName>");
 
-    TogglePlayerInServerQuery(playerid, !update);
-	SendClientMessagef(playerid, -1, "TogglePlayerOnPlayerList = %d", !update);
+    SetPlayerNameInServerQuery(playerid, szName);
+	SendClientMessagef(playerid, -1, "SetPlayerNameInServerQuery = '%s'", szName);
 	return 1;
 }
 
@@ -231,7 +231,7 @@ CMD:mygrav(playerid, params[])
 	new Float:gravity;
 	if(sscanf(params, "f", gravity)) return SendClientMessage(playerid, 0xFF0000AA, "USAGE: /mygrav <Float:gravity>");
 
-    SendClientMessagef(playerid, -1, "gravity has been changed to %.3f; old has %.3f", gravity, GetPlayerGravity(playerid));
+    SendClientMessagef(playerid, -1, "gravity has been changed to %.3f; old was %.3f", gravity, GetPlayerGravity(playerid));
 	SetPlayerGravity(playerid, gravity);
 	return 1;
 }
@@ -406,7 +406,7 @@ CMD:psyncdata(playerid, params[])
 	strcatf(tmp, "race checkpoint %d: %f, %f, %f, next: %f, %f, %f, size: %f\n", IsPlayerRaceCheckpointActive(player1), fRaceCP[0], fRaceCP[1], fRaceCP[2], fRaceCP[3], fRaceCP[4], fRaceCP[5], fRaceCP[6]);
 	strcatf(tmp, "worldbounds: %.2f, %.2f, %.2f, %.2f, widescreen: %d, surfplayerobject: %d\n", fBounds[0], fBounds[1], fBounds[2], fBounds[3], IsPlayerWidescreenToggled(player1), GetPlayerSurfingPlayerObjectID(player1));
 	strcatf(tmp, "last synced - vehicle: %d, trailer: %d, pause: %d, controllable: %d, consolemessages: %d\n", GetPlayerLastSyncedVehicleID(player1), GetPlayerLastSyncedTrailerID(player1), GetPlayerPausedTime(player1), IsPlayerControllable(player1), HasPlayerConsoleMessages(player1));
-	strcatf(tmp, "disabledkeys - keys: %d, ud: %d, lr: %d, inquery: %d, current weapon: %s (%d) - slot: %d\n", keys, ud, lr, IsPlayerToggledInServerQuery(player1), weaponname, weaponid, GetWeaponSlot(weaponid));
+	strcatf(tmp, "disabledkeys - keys: %d, ud: %d, lr: %d, inquery: %d, current weapon: %s (%d) - slot: %d\n", keys, ud, lr, GetPlayerNameInServerQuery(player1), weaponname, weaponid, GetWeaponSlot(weaponid));
 
 	new str[64];
 	format(str, sizeof(str), "Info - YSF - {%06x}%s(%d)", GetPlayerColor(player1) >>> 8, pName(player1), player1);
@@ -1079,7 +1079,7 @@ public OnPlayerPickUpPlayerPickup(playerid, pickupid)
 */
 public OnPlayerPauseStateChange(playerid, pausestate)
 {
-    SendClientMessagef(playerid, 0xFFD700FF, "OnPlayerPauseStateChange(playerid = %d, pausestate = %d)", playerid, pausestate);
+    SendClientMessagef(playerid, 0xFFD700FF, "OnPlayerPauseStateChange(playerid = %d, pausestate = %d <time: %d>)", playerid, pausestate, GetPlayerPausedTime(playerid));
 	return 1;
 }
 
@@ -1088,7 +1088,6 @@ public OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const
 	printf("remote console - ip: %s, port: %d, pass: %s, command: %s", ipaddr, port, password, command);
 	return 1;
 }
-
 
 public OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
 				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire)

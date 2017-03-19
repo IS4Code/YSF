@@ -404,7 +404,7 @@ WORD CServer::GetPlayerCount()
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	for (WORD i = 0; i != MAX_PLAYERS; ++i)
-		if (IsPlayerConnected(i) && !pPlayerPool->bIsNPC[i] && !pPlayerData[i]->bHidden)
+		if (IsPlayerConnected(i) && !pPlayerPool->bIsNPC[i] && !pPlayerData[i]->strNameInQuery.empty())
 			count++;
 	return count;
 }

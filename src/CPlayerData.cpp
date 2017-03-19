@@ -74,6 +74,9 @@ CPlayerData::CPlayerData( WORD playerid )
 	// Per-player pos
 	memset(vecCustomPos, NULL, sizeof(CVector));
 
+	// Name for server query
+	strNameInQuery = GetPlayerName(playerid);
+
 	// Gangzones
 	memset(pPlayerZone, NULL, sizeof(pPlayerZone));
 	memset(byteClientSideZoneIDUsed, 0xFF, sizeof(byteClientSideZoneIDUsed));
@@ -83,7 +86,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
 
 	dwFakePingValue = 0;
-	dwLastUpdateTick = 0;
 	dwCreateAttachedObj = 0;
 	dwObjectID = INVALID_OBJECT_ID;
 	
@@ -93,7 +95,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	bFakePingToggle = false;
 	bAFKState = false;
 	bEverUpdated = false;
-	bHidden = false;
 	bControllable = true;
 	bAttachedObjectCreated = false;
 
@@ -108,7 +109,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	{
 		pNetGame->pPlayerPool->pPlayer[playerid]->dwNickNameColor = dwPlayerColors[playerid % 100];
 	}
-	
+
 	// Store NPC Process ID if it's an NPC
 	if (pNetGame->pPlayerPool->bIsNPC[playerid])
 	{
@@ -147,7 +148,6 @@ int CPlayerData::GetPlayerTeamForPlayer(WORD teamplayerid)
 	}
 	return m_iTeams[teamplayerid];
 }
-
 
 bool CPlayerData::SetPlayerSkinForPlayer(WORD skinplayerid, int skin)
 {
@@ -302,20 +302,19 @@ void CPlayerData::DeleteObjectAddon(WORD objectid)
 
 void CPlayerData::Process(void)
 {
-	// Process AFK detection
-	DWORD dwTickCount = GetTickCount();
-	
+	// Processing AFK detection	
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	if (bEverUpdated && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_NONE && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_WASTED)
 	{
-		if(bAFKState == false && dwTickCount - dwLastUpdateTick > CServer::Get()->GetAFKAccuracy())
+		default_clock::duration passed_time = default_clock::now() - LastUpdateTick;
+		if(bAFKState == false && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->GetAFKAccuracy())
 		{
 			bAFKState = true;
 
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 
-		else if(bAFKState == true && dwTickCount - dwLastUpdateTick < CServer::Get()->GetAFKAccuracy())
+		else if(bAFKState == true && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() < CServer::Get()->GetAFKAccuracy())
 		{
 			bAFKState = false;
 
@@ -323,6 +322,7 @@ void CPlayerData::Process(void)
 		}
 	}
 	
+	// Processing Attached Objects
 	if (!m_PlayerObjectsAttachQueue.empty())
 	{
 		for (std::set<WORD>::iterator o = m_PlayerObjectsAttachQueue.begin(); o != m_PlayerObjectsAttachQueue.end(); )
@@ -361,7 +361,7 @@ void CPlayerData::Process(void)
 		}
 	}
 
-	// Process gangzones
+	// Processing gangzones
 	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
 	{
 		// If zone id is unused client side, then continue
@@ -391,16 +391,15 @@ void CPlayerData::Process(void)
 
 		if(!pGangZone) continue;
 
-		// Mutatók létrehozása
-		CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[wPlayerID]->vecPosition;
-		float *fMinX = &pGangZone->fGangZone[0];
-		float *fMinY = &pGangZone->fGangZone[1];
-		float *fMaxX = &pGangZone->fGangZone[2];
-		float *fMaxY = &pGangZone->fGangZone[3];
+		const CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[wPlayerID]->vecPosition;
+		const float *fMinX = &pGangZone->fGangZone[0];
+		const float *fMinY = &pGangZone->fGangZone[1];
+		const float *fMaxX = &pGangZone->fGangZone[2];
+		const float *fMaxY = &pGangZone->fGangZone[3];
 
 		//logprintf("validzone: %d, %f, %f, %f, %f", this->wClientSideGlobalZoneID[zoneid], *fMinX, *fMinY, *fMaxX, *fMaxY);
 		
-		// Ha benne van
+		// Check for enters/exits
 		if(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY && !bInGangZone[zoneid])
 		{
 			bInGangZone[zoneid] = true;
