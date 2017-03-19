@@ -75,7 +75,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(vecCustomPos, NULL, sizeof(CVector));
 
 	// Name for server query
-	strNameInQuery = GetPlayerName(playerid);
+	strNameInQuery = (MAX_PLAYER_NAME + 1) * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
 
 	// Gangzones
 	memset(pPlayerZone, NULL, sizeof(pPlayerZone));
