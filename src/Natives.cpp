@@ -1296,28 +1296,19 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerPosForPlayer)
 	const bool forcesync = static_cast<int>(params[6]) != 0;
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(posplayerid)) return 0;
 
-	SAFE_DELETE(pPlayerData[playerid]->vecCustomPos[posplayerid]);
-
 	if(!forcesync)
 	{
-		pPlayerData[playerid]->bCustomPos[posplayerid] = false;
+		if(pPlayerData[playerid]->customPos.find(posplayerid) != pPlayerData[playerid]->customPos.end())
+		{
+			pPlayerData[playerid]->customPos.erase(posplayerid);
+		}
 		return 1;
 	}
 
 	CVector vecPos;
 	CScriptParams::Get()->Read(&vecPos);
-		
-	pPlayerData[playerid]->vecCustomPos[posplayerid] = new CVector;
-	pPlayerData[playerid]->bCustomPos[posplayerid] = true;
-
-	memcpy(pPlayerData[playerid]->vecCustomPos[posplayerid], &vecPos, sizeof(CVector));
-	/*
-	RakNet::BitStream bs;
-	bs.Write(ID_PLAYER_SYNC);
-	bs.Write((WORD)posplayerid);
-	RebuildSyncData(&bs, playerid);
-	CSAMPFunctions::Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false);
-	*/
+	
+	pPlayerData[playerid]->customPos[posplayerid] = std::make_unique<CVector>(std::move(vecPos));
 	return 1;
 }
 
@@ -1341,25 +1332,6 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 
 	CScriptParams::Get()->Read(&pPlayerData[playerid]->fCustomQuat[posplayerid][0], &pPlayerData[playerid]->fCustomQuat[posplayerid][1], &pPlayerData[playerid]->fCustomQuat[posplayerid][2], &pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
 	pPlayerData[playerid]->bCustomQuat[posplayerid] = true;
-
-	RakNet::BitStream bs;
-	bs.Write((BYTE)ID_PLAYER_SYNC);
-	bs.Write((WORD)posplayerid);
-	bs.Write((bool)0); // bHasLR
-	bs.Write((bool)0); // bHasUD
-	bs.Write(p->syncData.wKeys); // bHasUD
-	
-	if(pPlayerData[playerid]->bCustomPos[posplayerid])
-		bs.Write(*pPlayerData[playerid]->vecCustomPos[posplayerid]);
-	else 
-		bs.Write(p->vecPosition);
-
-	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][0]);
-	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][1]);
-	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][2]);
-	bs.Write(pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
-
-	CSAMPFunctions::Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false);
 	return 1;
 }
 
@@ -1486,15 +1458,15 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 	
 	if (IsPlayerConnected(playerid))
 	{
-		auto it = pPlayerData[playerid]->m_PlayerObjectMaterialText.find(objectid);
-		if (it != pPlayerData[playerid]->m_PlayerObjectMaterialText.end())
+		for(std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
 		{
-			pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(it);
+			if(o->first == objectid)
+			{
+				o = pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(o);
+			}
 		}
-
 		pPlayerData[playerid]->DeleteObjectAddon(static_cast<WORD>(objectid));
 	}
-
 
 	if(pDestroyPlayerObject(amx, params))
 	{
@@ -1596,10 +1568,12 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 			}
 			*/
 
-			auto it = pPlayerData[playerid]->m_PlayerObjectMaterialText.find(objectid);
-			if (it != pPlayerData[playerid]->m_PlayerObjectMaterialText.end())
+			for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
 			{
-				pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(it);
+				if (o->first == objectid)
+				{
+					o = pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(o);
+				}
 			}
 
 			pObject->Material[index].byteSlot = slot;
@@ -1644,7 +1618,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 			strcpy(pObject->szMaterialText[index], szText.c_str());
 			*/
 
-			pPlayerData[playerid]->m_PlayerObjectMaterialText[objectid][index] = std::move(szText);
+			WORD objid = objectid;
+			pPlayerData[playerid]->m_PlayerObjectMaterialText.emplace(objid, std::make_pair((BYTE)slot, std::move(szText)));
 			pObject->Material[index].byteSlot = slot;
 			pObject->Material[index].byteUsed = 2;
 			pObject->Material[index].byteMaterialSize = materialsize;
@@ -2613,7 +2588,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 
 	WORD attachedobjectid = INVALID_OBJECT_ID;
 	WORD attachedplayerid = INVALID_PLAYER_ID;
-	const CPlayerObjectAttachAddon *pAddon = pPlayerData[playerid]->FindObjectAddon(objectid);
+	const std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[playerid]->FindObjectAddon(objectid);
 	if (pAddon)
 	{
 		attachedobjectid = pAddon->wObjectID;
@@ -2647,7 +2622,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 	}
 	else
 	{
-		const CPlayerObjectAttachAddon *pAddon = pPlayerData[playerid]->FindObjectAddon(objectid);
+		const std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[playerid]->FindObjectAddon(objectid);
 		if (pAddon) 
 		{
 			vecOffset = pAddon->vecOffset;
@@ -2742,14 +2717,18 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 	if(i == MAX_OBJECT_MATERIAL) return 0;
 
 	std::string text;
-	try
+	for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
 	{
-		text = pPlayerData[playerid]->m_PlayerObjectMaterialText[objectid][materialindex];
+		if (o->first == objectid)
+		{
+			if(o->second.first == materialindex)
+			{
+				text = o->second.second;
+			}
+			break;
+		}
 	}
-	catch (...)
-	{
 
-	}
 	CScriptParams::Get()->Add(text, pObject->Material[i].byteMaterialSize, &pObject->Material[i].szFont[0], pObject->Material[i].byteFontSize,
 		pObject->Material[i].byteBold, pObject->Material[i].dwFontColor, pObject->Material[i].dwBackgroundColor, pObject->Material[i].byteAlignment);
 	return 1;
@@ -2843,6 +2822,142 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 	CScriptParams::Get()->Add(pObject->iModelID, pObject->iBoneiD, pObject->vecPos, pObject->vecRot, pObject->vecScale, 
 		RGBA_ABGR(pObject->dwMaterialColor1), RGBA_ABGR(pObject->dwMaterialColor2));
 	return 1;
+}
+
+// native SetPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index, modelid, bone, Float:fOffsetX = 0.0, Float : OffsetY = 0.0, Float : fOffsetZ = 0.0, Float : fRotX = 0.0, Float : fRotY = 0.0, Float : fRotZ = 0.0, Float : fScaleX = 1.0, Float : fScaleY = 1.0, Float : fScaleZ = 1.0, materialcolor1 = 0, materialcolor2 = 0);
+AMX_DECLARE_NATIVE(Natives::SetPlayerAttachedObjForPlayer)
+{
+	CHECK_PARAMS(16, "SetPlayerAttachedObjForPlayer", LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	const int attachplayerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(attachplayerid)) return 0;
+
+	const int index = CScriptParams::Get()->ReadInt();
+	if (index < 0 || index >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
+
+	CAttachedObject objData;
+	CScriptParams::Get()->Read(&objData.iModelID, &objData.iBoneiD, &objData.vecPos, &objData.vecRot, &objData.vecScale, &objData.dwMaterialColor1, &objData.dwMaterialColor2);
+	objData.dwMaterialColor1 = ABGR_RGBA(objData.dwMaterialColor1);
+	objData.dwMaterialColor2 = ABGR_RGBA(objData.dwMaterialColor2);
+
+	RakNet::BitStream bsData;
+	bsData.Write((WORD)attachplayerid);
+	bsData.Write(index);
+	bsData.Write(true);
+	bsData.Write((char*)&objData, sizeof(CAttachedObject));
+	CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[playerid]->holdingObjects.begin(); o != pPlayerData[playerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == attachplayerid)
+		{
+			if (o->second.first == index)
+			{
+				o = pPlayerData[playerid]->holdingObjects.erase(o);
+				break;
+			}
+		}
+	}
+	pPlayerData[playerid]->holdingObjects.emplace(attachplayerid, std::make_pair(index, std::make_unique<CAttachedObject>(std::move(objData))));
+	return 1;
+}
+
+// native GetPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
+AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObjForPlayer)
+{
+	CHECK_PARAMS(16, "GetPlayerAttachedObjForPlayer", LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	const int removefromplayerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(removefromplayerid)) return 0;
+
+	const int index = CScriptParams::Get()->ReadInt();
+	if (index < 0 || index >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
+
+	CAttachedObject *pObject = nullptr;
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[playerid]->holdingObjects.begin(); o != pPlayerData[playerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == removefromplayerid)
+		{
+			if (o->second.first == index)
+			{
+				pObject = o->second.second.get();
+				break;
+			}
+		}
+	}
+
+	if (!pObject) return 0;
+
+	CScriptParams::Get()->Add(pObject->iModelID, pObject->iBoneiD, pObject->vecPos, pObject->vecRot, pObject->vecScale, 
+		RGBA_ABGR(pObject->dwMaterialColor1), RGBA_ABGR(pObject->dwMaterialColor2));
+	return 1;
+}
+
+// native RemPlayerAttachedObjForPlayer(forplayerid, removefromplayerid, index);
+AMX_DECLARE_NATIVE(Natives::RemPlayerAttachedObjForPlayer)
+{
+	CHECK_PARAMS(3, "RemPlayerAttachedObjForPlayer", LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	const int removefromplayerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(removefromplayerid)) return 0;
+
+	const int index = CScriptParams::Get()->ReadInt();
+	if (index < 0 || index >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
+
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[playerid]->holdingObjects.begin(); o != pPlayerData[playerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == removefromplayerid)
+		{
+			if (o->second.first == index)
+			{
+				o = pPlayerData[playerid]->holdingObjects.erase(o);
+				break;
+			}
+		}
+	}
+
+	RakNet::BitStream bsData;
+	bsData.Write((WORD)playerid);
+	bsData.Write(index);
+	bsData.Write(false);
+	CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(removefromplayerid), false, false);
+	return 1;
+}
+
+// native IsPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index);
+AMX_DECLARE_NATIVE(Natives::IsPlayerAttachedObjForPlayer)
+{
+	CHECK_PARAMS(3, "GetPlayerAttachedObjForPlayer", LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	const int removefromplayerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(removefromplayerid)) return 0;
+
+	const int index = CScriptParams::Get()->ReadInt();
+	if (index < 0 || index >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
+
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[playerid]->holdingObjects.begin(); o != pPlayerData[playerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == removefromplayerid)
+		{
+			if (o->second.first == index)
+			{
+				return 1;
+			}
+		}
+	}
+	return 0;
 }
 
 // Vehicle functions
@@ -4373,7 +4488,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 	if(!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 	
 	// Find the space where to store data
-	CPlayerObjectAttachAddon* pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
+	std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
 	if (pAddon == NULL)
 		return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
 
@@ -4431,7 +4546,7 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 	if(!pObjectPool->pPlayerObjects[forplayerid][objectid] || !pObjectPool->pPlayerObjects[forplayerid][attachtoid]) return 0; // Check if object is exist
 
 	// Find the space where to store data
-	CPlayerObjectAttachAddon* pAddon = pPlayerData[forplayerid]->GetObjectAddon(objectid);
+	std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[forplayerid]->GetObjectAddon(objectid);
 	if (pAddon == NULL)
 		return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
 
@@ -5984,7 +6099,11 @@ AMX_NATIVE_INFO native_list[] =
 
 	// special - for attached objects
 	AMX_DEFINE_NATIVE(GetPlayerAttachedObject) // R3
-	
+	AMX_DEFINE_NATIVE(SetPlayerAttachedObjForPlayer) // R19-2
+	AMX_DEFINE_NATIVE(GetPlayerAttachedObjForPlayer) // R19-2
+	AMX_DEFINE_NATIVE(RemPlayerAttachedObjForPlayer) // R19-2
+	AMX_DEFINE_NATIVE(IsPlayerAttachedObjForPlayer) // R19-2
+
 	// Vehicle functions
 	AMX_DEFINE_NATIVE(GetVehicleSpawnInfo)
 	AMX_DEFINE_NATIVE(SetVehicleSpawnInfo) // R16

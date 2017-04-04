@@ -63,6 +63,7 @@ BYTE RPC_Chat = 0x65;
 BYTE RPC_ClientCheck = 103;
 BYTE RPC_SetPlayerColor  = 72;
 BYTE RPC_SetTextDrawString = 0x69;
+BYTE RPC_SetPlayerAttachedObject = 0x71;
 
 BYTE RPC_UpdateScoresPingsIPs = 0x9B;
 BYTE RPC_PickedUpPickup = 0x83;

@@ -214,6 +214,8 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			}
 		}
 	}
+
+	pPlayerData[forplayerid]->unprocessedStreamedPlayer.emplace(playerid, default_clock::now());
 	return 1;
 }
 
@@ -245,6 +247,21 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 				//logprintf("isn't created streamout");
 			}
 			o.second->bAttached = false;
+		}
+	}
+
+	pPlayerData[forplayerid]->unprocessedStreamedPlayer.erase(playerid);
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[forplayerid]->holdingObjects.begin(); o != pPlayerData[forplayerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == playerid)
+		{
+			logprintf("holding object stream out %d - %d", playerid, forplayerid);
+			CAttachedObject *objData = o->second.second.get();
+			RakNet::BitStream bsData;
+			bsData.Write((WORD)playerid);
+			bsData.Write((int)o->second.first);
+			bsData.Write(false);
+			CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), false, false);
 		}
 	}
 	return 1;
@@ -453,7 +470,7 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		case ID_PLAYER_SYNC:
 		{
 			if (!pPlayerData[playerid]->wDisabledKeysLR && !pPlayerData[playerid]->wDisabledKeysUD && !pPlayerData[playerid]->wDisabledKeys
-				&& !pPlayerData[toplayerid]->bCustomPos[playerid] && !pPlayerData[toplayerid]->bCustomQuat[playerid]) break;
+				&& pPlayerData[toplayerid]->customPos.find(playerid) == pPlayerData[toplayerid]->customPos.end() && !pPlayerData[toplayerid]->bCustomQuat[playerid]) break;
 			
 			const int owerwrite_offset = bsSync->GetReadOffset(); // skip p->vehicleSyncData.wVehicleId
 			//bsSync->SetReadOffset(owerwrite_offset);
@@ -493,8 +510,8 @@ void CServer::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write(false);
 			
 			// Position
-			if (pPlayerData[toplayerid]->bCustomPos[playerid])
-				bsSync->Write(*pPlayerData[toplayerid]->vecCustomPos[playerid]);
+			if (pPlayerData[toplayerid]->customPos.find(playerid) != pPlayerData[toplayerid]->customPos.end())
+				bsSync->Write((char*)pPlayerData[toplayerid]->customPos[playerid].get(), sizeof(CVector));
 			else
 				bsSync->Write((char*)&vecPos, sizeof(CVector));
 

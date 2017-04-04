@@ -36,6 +36,7 @@
 #include "Structs.h"
 #include <bitset>
 #include <chrono>
+#include <memory>
 
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
@@ -83,7 +84,7 @@ public:
 
 	bool SetPlayerNameForPlayer(WORD nameplayerid, const char *name);
 	const char *GetPlayerNameForPlayer(WORD nameplayerid);
-	inline void ResetPlayerName(WORD playerid) { m_szNames[playerid][0] = NULL; }
+	inline void ResetPlayerName(WORD playerid) { m_PlayerNames.erase(playerid); }
 
 	bool SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style);
 	int GetPlayerFightingStyleForPlayer(WORD styleplayerid);
@@ -113,24 +114,27 @@ public:
 	float fGravity;
 	BYTE byteWeather;
 	float fBounds[4];
-
+	
 	// Per-player pos
-	std::bitset<MAX_PLAYERS> bCustomPos;
 	std::bitset<MAX_PLAYERS> bCustomQuat;
-	CVector *vecCustomPos[MAX_PLAYERS];
+	std::unordered_map <WORD, std::unique_ptr<CVector>> customPos; 
 	float fCustomQuat[MAX_PLAYERS][4];
 
-	CPlayerObjectAttachAddon* GetObjectAddon(WORD objectid);
-	CPlayerObjectAttachAddon const* FindObjectAddon(WORD objectid);
+	std::shared_ptr<CPlayerObjectAttachAddon> GetObjectAddon(WORD objectid);
+	std::shared_ptr<CPlayerObjectAttachAddon> const FindObjectAddon(WORD objectid);
 
 	void DeleteObjectAddon(WORD objectid);
 
 	// Containers to store attached offset of AttachPlayerObjectToPlayer
-	std::unordered_map<WORD, CPlayerObjectAttachAddon*> m_PlayerObjectsAddon;
+	std::unordered_map<WORD, std::shared_ptr<CPlayerObjectAttachAddon>> m_PlayerObjectsAddon;
 	std::set<WORD> m_PlayerObjectsAttachQueue;
 
 	// Fix for GetPlayerObjectMaterial/MaterialText - i keep this outside from containers above
-	std::unordered_map<WORD, std::unordered_map<BYTE, std::string>> m_PlayerObjectMaterialText;
+	std::multimap<WORD, std::pair<BYTE, std::string>> m_PlayerObjectMaterialText;
+
+	// Per-player attached objects (aka holding objects)
+	std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>> holdingObjects;
+	std::unordered_map<WORD, default_clock::time_point> unprocessedStreamedPlayer;
 
 	// 
 	std::string strNameInQuery;
@@ -159,8 +163,6 @@ public:
 #endif
 	DWORD dwFakePingValue;
 	default_clock::time_point LastUpdateTick;
-	DWORD dwCreateAttachedObj;
-	WORD dwObjectID;
 	
 	bool bObjectsRemoved : 1;
 	bool bWidescreen : 1;
@@ -175,7 +177,7 @@ private:
 	int m_iTeams[MAX_PLAYERS];
 	int m_iSkins[MAX_PLAYERS];
 	int m_iFightingStyles[MAX_PLAYERS];
-	char m_szNames[MAX_PLAYERS][MAX_PLAYER_NAME];
+	std::unordered_map<WORD, std::string> m_PlayerNames;
 };
 
 #endif

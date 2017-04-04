@@ -71,9 +71,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	fBounds[2] = 20000.0f;
 	fBounds[3] = -20000.0f;
 
-	// Per-player pos
-	memset(vecCustomPos, NULL, sizeof(CVector));
-
 	// Name for server query
 	strNameInQuery = (MAX_PLAYER_NAME + 1) * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
 
@@ -86,8 +83,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
 
 	dwFakePingValue = 0;
-	dwCreateAttachedObj = 0;
-	dwObjectID = INVALID_OBJECT_ID;
 	
 	bObjectsRemoved = false;
 	bWidescreen = false;
@@ -102,7 +97,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	memset(m_iTeams, -1, sizeof(m_iSkins));
 	memset(m_iSkins, -1, sizeof(m_iSkins));
 	memset(m_iFightingStyles, -1, sizeof(m_iFightingStyles));
-	memset(m_szNames, NULL, sizeof(m_szNames));
 
 	// Fix for GetPlayerColor
 	if (pNetGame->pPlayerPool->pPlayer[playerid])
@@ -125,6 +119,27 @@ CPlayerData::~CPlayerData( void )
 	for (WORD i = 0; i != MAX_OBJECTS; ++i)
 	{
 		DeleteObjectAddon(i);
+	}
+
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
+	{
+		if (IsPlayerConnected(i))
+		{
+			if (i == wPlayerID) continue;
+			for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[i]->holdingObjects.begin(); o != pPlayerData[i]->holdingObjects.end(); ++o)
+			{
+				if (o->first == wPlayerID)
+				{
+					o = holdingObjects.erase(o);
+				}
+			}
+
+			std::unordered_map<WORD, default_clock::time_point>::iterator p = pPlayerData[i]->unprocessedStreamedPlayer.find(wPlayerID);
+			if (p != unprocessedStreamedPlayer.end())
+			{
+				unprocessedStreamedPlayer.erase(i);
+			}
+		}
 	}
 }
 
@@ -172,7 +187,7 @@ int CPlayerData::GetPlayerSkinForPlayer(WORD skinplayerid)
 
 bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, const char *name)
 {
-	memcpy(&m_szNames[nameplayerid], name, MAX_PLAYER_NAME);
+	m_PlayerNames[nameplayerid] = std::string(name);
 	BYTE len = static_cast<BYTE>(strlen(name));
 
 	RakNet::BitStream bs;
@@ -187,11 +202,12 @@ bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, const char *name)
 
 const char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
 {
-	if (!m_szNames[nameplayerid][0])
+	auto n = m_PlayerNames.find(nameplayerid);
+	if (n == m_PlayerNames.end())
 	{
 		return GetPlayerName(nameplayerid);
 	}
-	return &m_szNames[nameplayerid][0];
+	return n->second.c_str();
 }
 
 bool CPlayerData::SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style)
@@ -256,16 +272,16 @@ bool CPlayerData::DestroyObject(WORD objectid)
 }
 
 // Return a pointer from map if exists or add it if isn't - to save memory
-CPlayerObjectAttachAddon* CPlayerData::GetObjectAddon(WORD objectid)
+std::shared_ptr<CPlayerObjectAttachAddon> CPlayerData::GetObjectAddon(WORD objectid)
 {
-	CPlayerObjectAttachAddon* pAddon = NULL;
+	std::shared_ptr<CPlayerObjectAttachAddon> pAddon;
 
 	try
 	{
 		auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 		if (it == m_PlayerObjectsAddon.end())
 		{
-			pAddon = new CPlayerObjectAttachAddon();
+			pAddon = std::make_shared<CPlayerObjectAttachAddon>();
 			m_PlayerObjectsAddon.emplace(objectid, pAddon);
 		}
 		else
@@ -280,7 +296,7 @@ CPlayerObjectAttachAddon* CPlayerData::GetObjectAddon(WORD objectid)
 	return pAddon;
 }
 
-CPlayerObjectAttachAddon const* CPlayerData::FindObjectAddon(WORD objectid)
+std::shared_ptr<CPlayerObjectAttachAddon> const CPlayerData::FindObjectAddon(WORD objectid)
 {
 	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 	if (it == m_PlayerObjectsAddon.end())
@@ -294,7 +310,6 @@ void CPlayerData::DeleteObjectAddon(WORD objectid)
 	auto it = m_PlayerObjectsAddon.find(static_cast<WORD>(objectid));
 	if (it != m_PlayerObjectsAddon.end())
 	{
-		SAFE_DELETE(it->second);
 		m_PlayerObjectsAddon.erase(it);
 		m_PlayerObjectsAttachQueue.erase(it->first);
 	}
@@ -357,6 +372,41 @@ void CPlayerData::Process(void)
 			else
 			{
 				//logprintf("YSF: Error at looping trough attached object queue");
+			}
+		}
+	}
+	
+	if (!unprocessedStreamedPlayer.empty())
+	{
+		for (std::unordered_map<WORD, default_clock::time_point>::iterator p = unprocessedStreamedPlayer.begin(); p != unprocessedStreamedPlayer.end(); ++p)
+		{
+			default_clock::duration passed_time = default_clock::now() - p->second;
+			//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
+			if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
+			{
+				p = unprocessedStreamedPlayer.erase(p);
+
+				for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = holdingObjects.begin(); o != holdingObjects.end(); ++o)
+				{
+					if (o->first == p->first)
+					{
+						CAttachedObject *objData = o->second.second.get();
+						logprintf("holding object stream in %d - %d - %d, %f - slot: %d", p->first, wPlayerID, objData->iModelID, objData->vecScale.fX, o->second.first);
+
+						RakNet::BitStream bsData;
+						bsData.Write((WORD)p->first);
+						bsData.Write((int)o->second.first);
+						bsData.Write(false);
+						CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), false, false);
+
+						bsData.Reset();
+						bsData.Write((WORD)p->first);
+						bsData.Write((int)o->second.first);
+						bsData.Write(true);
+						bsData.Write((char*)&objData, sizeof(CAttachedObject));
+						CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), false, false);
+					}
+				}
 			}
 		}
 	}

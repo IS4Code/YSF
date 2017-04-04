@@ -204,8 +204,14 @@ native GetPlayerSurfingPlayerObjectID(playerid);
 native GetPlayerCameraTargetPlayerObj(playerid);
 native GetObjectType(playerid, objectid);
 
-// special - for attached objects
+// Get function for GetPlayerAttachedObject
 native GetPlayerAttachedObject(playerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fSacleX, &Float:fScaleY, &Float:fScaleZ, &materialcolor1, &materialcolor2);
+
+// Per-player attached (aka holding) objects
+native SetPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index, modelid, bone, Float:fOffsetX = 0.0, Float:OffsetY = 0.0, Float:fOffsetZ = 0.0, Float:fRotX = 0.0, Float:fRotY = 0.0, Float:fRotZ = 0.0, Float:fScaleX = 1.0, Float:fScaleY = 1.0, Float:fScaleZ = 1.0, materialcolor1 = 0, materialcolor2 = 0);
+native GetPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fSacleX, &Float:fScaleY, &Float:fScaleZ, &materialcolor1, &materialcolor2);
+native RemPlayerAttachedObjForPlayer(forplayerid, removefromplayerid, index);
+native IsPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index);
 
 //n_ative AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ);
 native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);

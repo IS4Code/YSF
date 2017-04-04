@@ -59,6 +59,7 @@ extern BYTE RPC_Chat;
 extern BYTE RPC_ClientCheck;
 extern BYTE RPC_SetPlayerColor;
 extern BYTE RPC_SetTextDrawString;
+extern BYTE RPC_SetPlayerAttachedObject;
 
 extern BYTE RPC_UpdateScoresPingsIPs;
 extern BYTE RPC_PickedUpPickup;
