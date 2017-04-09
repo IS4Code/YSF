@@ -43,7 +43,7 @@ bool CScriptParams::Setup(size_t paramscount, std::string &&strNativeName, Flags
 {
 	// Initialize variables for later use
 	m_paramscount = paramscount;
-	m_strNativeName = std::move(strNativeName);
+	m_strNativeName = std::move(strNativeName.substr(9)); // Removing "Natives::" tag from the begining of the function
 	m_flags = flags;
 	m_AMX = amx;
 	m_params = params;

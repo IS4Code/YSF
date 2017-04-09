@@ -38,7 +38,7 @@
 // native execute(const command[], saveoutput=0, index=0);
 AMX_DECLARE_NATIVE(Natives::execute)
 {
-	CHECK_PARAMS(3, "execute", NO_FLAGS);
+	CHECK_PARAMS(3, NO_FLAGS);
 	
 	std::string command;
 	int saveoutput, index;
@@ -76,7 +76,7 @@ AMX_DECLARE_NATIVE(Natives::execute)
 	AMX_DECLARE_NATIVE(Natives::ffind)
 	{
 		// Find a file, idx determines which one of a number of matches to use
-		CHECK_PARAMS(4, "ffind", NO_FLAGS);
+		CHECK_PARAMS(4, NO_FLAGS);
 		cell
 			*cptr;
 		char
@@ -129,7 +129,7 @@ AMX_DECLARE_NATIVE(Natives::execute)
 	{
 		// Find a directory, idx determines which one of a number of matches to use
 		// Identical to ffind in all but 1 line
-		CHECK_PARAMS(4, "dfind", NO_FLAGS);
+		CHECK_PARAMS(4, NO_FLAGS);
 		cell
 			*cptr;
 		char
@@ -181,7 +181,7 @@ AMX_DECLARE_NATIVE(Natives::execute)
 	AMX_DECLARE_NATIVE(Natives::ffind)
 	{
 		// Find a file, idx determines which one of a number of matches to use
-		CHECK_PARAMS(4, "dfind", NO_FLAGS);
+		CHECK_PARAMS(4, NO_FLAGS);
 		cell
 			*cptr;
 		char
@@ -283,7 +283,7 @@ AMX_DECLARE_NATIVE(Natives::execute)
 	AMX_DECLARE_NATIVE(Natives::dfind)
 	{
 		// Find a file, idx determines which one of a number of matches to use
-		CHECK_PARAMS(4, "ffind", NO_FLAGS);
+		CHECK_PARAMS(4, NO_FLAGS);
 		cell
 			*cptr;
 		char
@@ -386,7 +386,7 @@ AMX_DECLARE_NATIVE(Natives::execute)
 AMX_DECLARE_NATIVE(Natives::dcreate)
 {
 	// Creates a directory
-	CHECK_PARAMS(1, "dcreate", NO_FLAGS);
+	CHECK_PARAMS(1, NO_FLAGS);
 	char
 		*szSearch;
 	// Get the search pattern
@@ -413,7 +413,7 @@ AMX_DECLARE_NATIVE(Natives::dcreate)
 AMX_DECLARE_NATIVE(Natives::frename)
 {
 	// Creates a directory
-	CHECK_PARAMS(2, "frename", NO_FLAGS);
+	CHECK_PARAMS(2, NO_FLAGS);
 	char
 		*szOld,
 		*szNew;
@@ -438,7 +438,7 @@ AMX_DECLARE_NATIVE(Natives::frename)
 AMX_DECLARE_NATIVE(Natives::drename)
 {
 	// Creates a directory
-	CHECK_PARAMS(2, "drename", NO_FLAGS);
+	CHECK_PARAMS(2, NO_FLAGS);
 	char
 		*szOld,
 		*szNew;
@@ -476,7 +476,7 @@ AMX_DECLARE_NATIVE(Natives::drename)
 // native SetModeRestartTime(Float:time);
 AMX_DECLARE_NATIVE(Natives::SetModeRestartTime)
 {
-	CHECK_PARAMS(1, "SetModeRestartTime", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	if (!CAddress::VAR_pRestartWaitTime) return 0;
 
 	*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
@@ -496,7 +496,7 @@ AMX_DECLARE_NATIVE(Natives::GetModeRestartTime)
 // native SetMaxPlayers(maxplayers);
 AMX_DECLARE_NATIVE(Natives::SetMaxPlayers)
 {
-	CHECK_PARAMS(1, "SetMaxPlayers", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int maxplayers = CScriptParams::Get()->ReadInt();
 	if(maxplayers < 1 || maxplayers > MAX_PLAYERS) return 0;
@@ -508,7 +508,7 @@ AMX_DECLARE_NATIVE(Natives::SetMaxPlayers)
 // native SetMaxNPCs(maxnpcs);
 AMX_DECLARE_NATIVE(Natives::SetMaxNPCs)
 {
-	CHECK_PARAMS(1, "SetMaxNPCs", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int maxnpcs = CScriptParams::Get()->ReadInt();
 	if(maxnpcs < 0 || maxnpcs > MAX_PLAYERS) return 0;
@@ -520,7 +520,7 @@ AMX_DECLARE_NATIVE(Natives::SetMaxNPCs)
 // native GetSyncBounds(&Float:hmin, &Float:hmax, &Float:vmin, &Float:vmax);
 AMX_DECLARE_NATIVE(Natives::GetSyncBounds)
 {
-	CHECK_PARAMS(4, "GetSyncBounds", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	float fBounds[4];
 	for (BYTE i = 0; i != 4; ++i)
@@ -533,7 +533,7 @@ AMX_DECLARE_NATIVE(Natives::GetSyncBounds)
 // native SetSyncBounds(Float:hmin, Float:hmax, Float:vmin, Float:vmax);
 AMX_DECLARE_NATIVE(Natives::SetSyncBounds)
 {
-	CHECK_PARAMS(4, "SetSyncBounds", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	for (BYTE i = 0; i != 4; ++i)
 		*(float*)CAddress::VAR_pPosSyncBounds[i] = CScriptParams::Get()->ReadFloat();
@@ -543,7 +543,7 @@ AMX_DECLARE_NATIVE(Natives::SetSyncBounds)
 // native SetPlayerAdmin(playerid, bool:admin);
 AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
 {
-	CHECK_PARAMS(2, "SetPlayerAdmin", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -555,7 +555,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
 // native LoadFilterScript(scriptname[]);
 AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 {
-	CHECK_PARAMS(1, "LoadFilterScript", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -569,7 +569,7 @@ AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 // UnLoadFilterScript(scriptname[]);
 AMX_DECLARE_NATIVE(Natives::UnLoadFilterScript)
 {
-	CHECK_PARAMS(1, "UnLoadFilterScript", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -591,7 +591,7 @@ AMX_DECLARE_NATIVE(Natives::GetFilterScriptCount)
 // native GetFilterScriptName(id, name[], len = sizeof(name));
 AMX_DECLARE_NATIVE(Natives::GetFilterScriptName)
 {
-	CHECK_PARAMS(3, "GetFilterScriptName", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_FILTER_SCRIPTS) return 0;
@@ -603,7 +603,7 @@ AMX_DECLARE_NATIVE(Natives::GetFilterScriptName)
 // native AddServerRule(name[], value[], flags = CON_VARFLAG_RULE);
 AMX_DECLARE_NATIVE(Natives::AddServerRule)
 {
-	CHECK_PARAMS(3, "AddServerRule", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	std::string name, value;
 	CScriptParams::Get()->Read(&name, &value);
@@ -623,7 +623,7 @@ AMX_DECLARE_NATIVE(Natives::AddServerRule)
 // native SetServerRule(name[], value[]);
 AMX_DECLARE_NATIVE(Natives::SetServerRule)
 {
-	CHECK_PARAMS(2, "SetServerRule", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	std::string name, value;
 	CScriptParams::Get()->Read(&name, &value);
@@ -642,7 +642,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRule)
 // native SetServerRuleInt(name[], value);
 AMX_DECLARE_NATIVE(Natives::SetServerRuleInt)
 {
-	CHECK_PARAMS(2, "SetServerRuleInt", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -662,7 +662,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleInt)
 // native IsValidServerRule(name[]);
 AMX_DECLARE_NATIVE(Natives::IsValidServerRule)
 {
-	CHECK_PARAMS(1, "IsValidServerRule", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -677,7 +677,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidServerRule)
 // native RemoveServerRule(name[]);
 AMX_DECLARE_NATIVE(Natives::RemoveServerRule)
 {
-	CHECK_PARAMS(1, "RemoveServerRule", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -692,7 +692,7 @@ AMX_DECLARE_NATIVE(Natives::RemoveServerRule)
 // native SetServerRuleFlags(name[], flags);
 AMX_DECLARE_NATIVE(Natives::SetServerRuleFlags)
 {
-	CHECK_PARAMS(2, "SetServerRuleFlags", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -707,7 +707,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleFlags)
 // native GetServerRuleFlags(name[]);
 AMX_DECLARE_NATIVE(Natives::GetServerRuleFlags)
 {
-	CHECK_PARAMS(1, "GetServerRuleFlags", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -724,7 +724,7 @@ AMX_DECLARE_NATIVE(Natives::GetServerRuleFlags)
 //		&limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
 AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 {
-	CHECK_PARAMS(14, "GetServerSettings", LOADED);
+	CHECK_PARAMS(14, LOADED);
 
 	CScriptParams::Get()->Add(
 		  pNetGame->bShowPlayerMarkers
@@ -748,7 +748,7 @@ AMX_DECLARE_NATIVE(Natives::GetServerSettings)
 // native GetNPCCommandLine(npcid, npcscript[], length = sizeof(npcscript));
 AMX_DECLARE_NATIVE(Natives::GetNPCCommandLine)
 {
-	CHECK_PARAMS(3, "GetNPCCommandLine", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int npcid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(npcid)) return 0;
@@ -763,7 +763,7 @@ AMX_DECLARE_NATIVE(Natives::GetNPCCommandLine)
 // native GetRCONCommandName(const cmdname[], changedname[]);
 AMX_DECLARE_NATIVE(Natives::ChangeRCONCommandName)
 {
-	CHECK_PARAMS(2, "ChangeRCONCommandName", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	std::string name, newname;
 	CScriptParams::Get()->Read(&name, &newname);
@@ -774,7 +774,7 @@ AMX_DECLARE_NATIVE(Natives::ChangeRCONCommandName)
 // native GetRCONCommandName(const cmdname[], changedname[], len = sizeof(changedname));
 AMX_DECLARE_NATIVE(Natives::GetRCONCommandName)
 {
-	CHECK_PARAMS(3, "GetRCONCommandName", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -931,7 +931,7 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 // native EnableConsoleMSGsForPlayer(playerid, color);
 AMX_DECLARE_NATIVE(Natives::EnableConsoleMSGsForPlayer)
 {
-	CHECK_PARAMS(2, "ToggleConsoleMessagesForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	int playerid, color;
 	CScriptParams::Get()->Read(&playerid, &color);
@@ -944,7 +944,7 @@ AMX_DECLARE_NATIVE(Natives::EnableConsoleMSGsForPlayer)
 // native DisableConsoleMSGsForPlayer(playerid);
 AMX_DECLARE_NATIVE(Natives::DisableConsoleMSGsForPlayer)
 {
-	CHECK_PARAMS(1, "DisableConsoleMSGsForPlayer", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -956,7 +956,7 @@ AMX_DECLARE_NATIVE(Natives::DisableConsoleMSGsForPlayer)
 // native HasPlayerConsoleMessages(playerid, &color = 0);
 AMX_DECLARE_NATIVE(Natives::HasPlayerConsoleMessages)
 {
-	CHECK_PARAMS(2, "DisableConsoleMSGsForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -970,7 +970,7 @@ AMX_DECLARE_NATIVE(Natives::HasPlayerConsoleMessages)
 // native IsValidNickName(name[]);
 AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 {
-	CHECK_PARAMS(1, "IsValidNickName", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
 	CScriptParams::Get()->Read(&name);
@@ -980,7 +980,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 // native AllowNickNameCharacter(character, bool:allow);
 AMX_DECLARE_NATIVE(Natives::AllowNickNameCharacter)
 {
-	CHECK_PARAMS(2, "AllowNickNameCharacter", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const char character = static_cast<const char>(params[1]);
 
@@ -994,7 +994,7 @@ AMX_DECLARE_NATIVE(Natives::AllowNickNameCharacter)
 // native IsNickNameCharacterAllowed(character);
 AMX_DECLARE_NATIVE(Natives::IsNickNameCharacterAllowed)
 {
-	CHECK_PARAMS(1, "IsNickNameCharacterAllowed", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	return CServer::Get()->IsNickNameCharacterAllowed(static_cast<char>(params[1]));
 }
@@ -1024,7 +1024,7 @@ AMX_DECLARE_NATIVE(Natives::RemoveLastClass)
 // native GetPlayerClass(classid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
 AMX_DECLARE_NATIVE(Natives::GetPlayerClass)
 {
-	CHECK_PARAMS(13, "GetPlayerClass", LOADED);
+	CHECK_PARAMS(13, LOADED);
 
 	const int classid = CScriptParams::Get()->ReadInt();
 	if(classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
@@ -1041,7 +1041,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerClass)
 // native EditPlayerClass(classid, teamid, modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:z_angle, weapon1, weapon1_ammo, weapon2, weapon2_ammo, weapon3, weapon3_ammo);
 AMX_DECLARE_NATIVE(Natives::EditPlayerClass)
 {
-	CHECK_PARAMS(13, "EditPlayerClass", LOADED);
+	CHECK_PARAMS(13, LOADED);
 
 	const int classid = CScriptParams::Get()->ReadInt();
 	if (classid < 0 || classid > pNetGame->iSpawnsAvailable) return 0;
@@ -1075,7 +1075,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GetGravity)
 // native SetPlayerGravity(playerid, Float:gravity);
 AMX_DECLARE_NATIVE(Natives::SetPlayerGravity)
 {
-	CHECK_PARAMS(2, "SetPlayerGravity", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1092,7 +1092,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerGravity)
 // native Float:GetPlayerGravity(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerGravity)
 {
-	CHECK_PARAMS(1, "GetPlayerGravity", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1103,7 +1103,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerGravity)
 // native SetPlayerTeamForPlayer(playerid, teamplayerid, teamid);
 AMX_DECLARE_NATIVE(Natives::SetPlayerTeamForPlayer)
 {
-	CHECK_PARAMS(3, "SetPlayerTeamForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int teamplayerid = CScriptParams::Get()->ReadInt();
@@ -1119,7 +1119,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerTeamForPlayer)
 // native GetPlayerTeamForPlayer(playerid, teamplayerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerTeamForPlayer)
 {
-	CHECK_PARAMS(2, "GetPlayerTeamForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int teamplayerid = CScriptParams::Get()->ReadInt();
@@ -1131,7 +1131,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerTeamForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerTeam)
 {
-	CHECK_PARAMS(2, "SetPlayerTeam", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerTeam(amx, params))
@@ -1149,7 +1149,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerTeam)
 // native SetPlayerSkinForPlayer(playerid, skinplayerid, skin);
 AMX_DECLARE_NATIVE(Natives::SetPlayerSkinForPlayer)
 {
-	CHECK_PARAMS(3, "SetPlayerSkinForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int skinplayerid = CScriptParams::Get()->ReadInt();
@@ -1165,7 +1165,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerSkinForPlayer)
 // native GetPlayerSkinForPlayer(playerid, skinplayerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSkinForPlayer)
 {
-	CHECK_PARAMS(2, "GetPlayerSkinForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int skinplayerid = CScriptParams::Get()->ReadInt();
@@ -1177,7 +1177,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSkinForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 {
-	CHECK_PARAMS(2, "SetPlayerSkin", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerSkin(amx, params))
@@ -1195,7 +1195,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 // native SetPlayerNameForPlayer(playerid, nameplayerid, playername[]);
 AMX_DECLARE_NATIVE(Natives::SetPlayerNameForPlayer)
 {
-	CHECK_PARAMS(3, "SetPlayerNameForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int nameplayerid = CScriptParams::Get()->ReadInt();
@@ -1212,7 +1212,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerNameForPlayer)
 // native GetPlayerNameForPlayer(playerid, nameplayerid, playername[], size = sizeof(playername));
 AMX_DECLARE_NATIVE(Natives::GetPlayerNameForPlayer)
 {
-	CHECK_PARAMS(4, "GetPlayerNameForPlayer", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int nameplayerid = CScriptParams::Get()->ReadInt();
@@ -1225,7 +1225,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerNameForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 {
-	CHECK_PARAMS(2, "SetPlayerName", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int ret = pSetPlayerName(amx, params);
@@ -1244,7 +1244,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 // native SetPlayerFightStyleForPlayer(playerid, styleplayerid, style);
 AMX_DECLARE_NATIVE(Natives::SetPlayerFightStyleForPlayer)
 {
-	CHECK_PARAMS(3, "SetPlayerFightStyleForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int styleplayerid = CScriptParams::Get()->ReadInt();
@@ -1259,7 +1259,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerFightStyleForPlayer)
 // native GetPlayerFightStyleForPlayer(playerid, skinplayerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerFightStyleForPlayer)
 {
-	CHECK_PARAMS(2, "GetPlayerFightStyleForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int styleplayerid = CScriptParams::Get()->ReadInt();
@@ -1271,7 +1271,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerFightStyleForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 {
-	CHECK_PARAMS(2, "SetPlayerFightingStyle", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerFightingStyle(amx, params))
@@ -1289,7 +1289,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 // native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Float:fZ, bool:forcesync = true);
 AMX_DECLARE_NATIVE(Natives::SetPlayerPosForPlayer)
 {
-	CHECK_PARAMS(6, "SetPlayerPosForPlayer", LOADED);
+	CHECK_PARAMS(6, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int posplayerid = CScriptParams::Get()->ReadInt();
@@ -1315,7 +1315,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerPosForPlayer)
 // native SetPlayerRotationQuatForPlayer(playerid, quatplayerid, Float:w, Float:x, Float:y, Float:z, bool:forcesync = true);
 AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 {
-	CHECK_PARAMS(7, "SetPlayerRotationQuatForPlayer", LOADED);
+	CHECK_PARAMS(7, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int posplayerid = CScriptParams::Get()->ReadInt();
@@ -1338,7 +1338,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 // native ApplyAnimationForPlayer(playerid, animplayerid, animlib[], animname[], Float:fDelta, loop, lockx, locky, freeze, time);
 AMX_DECLARE_NATIVE(Natives::ApplyAnimationForPlayer)
 {
-	CHECK_PARAMS(10, "ApplyAnimationForPlayer", LOADED);
+	CHECK_PARAMS(10, LOADED);
 	
 	RakNet::BitStream bsSend;
 	char *szAnimLib;
@@ -1387,7 +1387,7 @@ AMX_DECLARE_NATIVE(Natives::ApplyAnimationForPlayer)
 // native SetPlayerWeather(playerid, weatherid);
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWeather)
 {
-	CHECK_PARAMS(2, "SetPlayerWeather", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	
@@ -1402,7 +1402,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWeather)
 // native GetPlayerWeather(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerWeather)
 {
-	CHECK_PARAMS(1, "GetPlayerWeather", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1413,7 +1413,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerWeather)
 // native SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWorldBounds)
 {
-	CHECK_PARAMS(5, "SetPlayerWorldBounds", LOADED);
+	CHECK_PARAMS(5, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(pSetPlayerWorldBounds(amx, params) && IsPlayerConnected(playerid))
@@ -1430,7 +1430,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWorldBounds)
 // native DestroyObject(objectid)
 AMX_DECLARE_NATIVE(Natives::YSF_DestroyObject)
 {
-	CHECK_PARAMS(1, "DestroyObject", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 
@@ -1448,7 +1448,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyObject)
 // native DestroyPlayerObject(playerid, objectid)
 AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 {
-	CHECK_PARAMS(2, "DestroyPlayerObject", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -1478,7 +1478,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 // native TogglePlayerControllable(playerid, bool:toggle)
 AMX_DECLARE_NATIVE(Natives::YSF_TogglePlayerControllable)
 {
-	CHECK_PARAMS(2, "TogglePlayerControllable", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const bool toggle = CScriptParams::Get()->ReadBool();
@@ -1494,7 +1494,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_TogglePlayerControllable)
 // native ChangeVehicleColor(vehicleid, color1, color2)
 AMX_DECLARE_NATIVE(Natives::YSF_ChangeVehicleColor)
 {
-	CHECK_PARAMS(3, "ChangeVehicleColor", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(pChangeVehicleColor(amx, params))
@@ -1508,7 +1508,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_ChangeVehicleColor)
 // native DestroyVehicle(vehicleid);
 AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 {
-	CHECK_PARAMS(1, "DestroyVehicle", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(pDestroyVehicle(amx, params))
@@ -1527,7 +1527,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 // native ShowPlayerDialog(playerid, dialogid, style, caption[], info[], button1[], button2[]);
 AMX_DECLARE_NATIVE(Natives::YSF_ShowPlayerDialog)
 {
-	CHECK_PARAMS(7, "ShowPlayerDialog", LOADED);
+	CHECK_PARAMS(7, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int dialogid = CScriptParams::Get()->ReadInt();
@@ -1543,7 +1543,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_ShowPlayerDialog)
 // native SetPlayerObjectMaterial(playerid, objectid, materialindex, modelid, txdname[], texturename[], materialcolor=0);
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 {
-	CHECK_PARAMS(7, "SetPlayerObjectMaterial", LOADED);
+	CHECK_PARAMS(7, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 
@@ -1593,7 +1593,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 // native SetPlayerObjectMaterialText(playerid, objectid, text[], materialindex = 0, materialsize = OBJECT_MATERIAL_SIZE_256x128, fontface[] = "Arial", fontsize = 24, bold = 1, fontcolor = 0xFFFFFFFF, backcolor = 0, textalignment = 0);
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 {
-	CHECK_PARAMS(11, "SetPlayerObjectMaterialText", LOADED);
+	CHECK_PARAMS(11, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 
@@ -1639,7 +1639,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 // native TogglePlayerWidescreen(playerid, bool:set);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerWidescreen)
 {
-	CHECK_PARAMS(2, "TogglePlayerWidescreen", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1656,7 +1656,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerWidescreen)
 // native IsPlayerWidescreenToggled(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerWidescreenToggled)
 {
-	CHECK_PARAMS(1, "IsPlayerWideScreen", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1667,7 +1667,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerWidescreenToggled)
 // native GetSpawnInfo(playerid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
 AMX_DECLARE_NATIVE(Natives::GetSpawnInfo)
 {
-	CHECK_PARAMS(13, "GetSpawnInfo", LOADED);
+	CHECK_PARAMS(13, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1683,7 +1683,7 @@ AMX_DECLARE_NATIVE(Natives::GetSpawnInfo)
 // native GetPlayerSkillLevel(playerid, skill);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSkillLevel)
 {
-	CHECK_PARAMS(2, "GetPlayerSkillLevel", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int skillid = CScriptParams::Get()->ReadInt();
@@ -1697,7 +1697,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSkillLevel)
 // native IsPlayerCheckpointActive(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerCheckpointActive)
 {
-	CHECK_PARAMS(1, "IsPlayerCheckpointActive", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -1708,7 +1708,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerCheckpointActive)
 // native GetPlayerCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fSize);
 AMX_DECLARE_NATIVE(Natives::GetPlayerCheckpoint)
 {
-	CHECK_PARAMS(5, "GetPlayerCheckpoint", LOADED);
+	CHECK_PARAMS(5, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -1721,7 +1721,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerCheckpoint)
 // native IsPlayerRaceCheckpointActive(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerRaceCheckpointActive)
 {
-	CHECK_PARAMS(1, "IsPlayerRaceCheckpointActive", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -1732,7 +1732,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerRaceCheckpointActive)
 // native GetPlayerRaceCheckpoint(playerid, &Float:fX, &Float:fY, &Float:fZ, &Float:fNextX, &Float:fNextY, &fNextZ, &Float:fSize);
 AMX_DECLARE_NATIVE(Natives::GetPlayerRaceCheckpoint)
 {
-	CHECK_PARAMS(8, "GetPlayerRaceCheckpoint", LOADED);
+	CHECK_PARAMS(8, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1745,7 +1745,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerRaceCheckpoint)
 // native GetPlayerWorldBounds(playerid, &Float:x_max, &Float:x_min, &Float:y_max, &Float:y_min);
 AMX_DECLARE_NATIVE(Natives::GetPlayerWorldBounds)
 {
-	CHECK_PARAMS(5, "GetPlayerWorldBounds", LOADED);
+	CHECK_PARAMS(5, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1757,7 +1757,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerWorldBounds)
 // native IsPlayerInModShop(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerInModShop)
 {
-	CHECK_PARAMS(1, "IsPlayerInModShop", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1768,7 +1768,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInModShop)
 // native GetPlayerSirenState(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSirenState)
 {
-	CHECK_PARAMS(1, "GetPlayerSirenState", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1781,7 +1781,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSirenState)
 // native GetPlayerLandingGearState(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerLandingGearState)
 {
-	CHECK_PARAMS(1, "GetPlayerLandingGearState", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1794,7 +1794,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLandingGearState)
 // native GetPlayerHydraReactorAngle(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerHydraReactorAngle)
 {
-	CHECK_PARAMS(1, "GetPlayerHydraReactorAngle", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1807,7 +1807,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerHydraReactorAngle)
 // native Float:GetPlayerTrainSpeed(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerTrainSpeed)
 {
-	CHECK_PARAMS(1, "GetPlayerTrainSpeed", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1820,7 +1820,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerTrainSpeed)
 // native Float:GetPlayerZAim(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerZAim)
 {
-	CHECK_PARAMS(1, "GetPlayerZAim", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1831,7 +1831,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerZAim)
 // native GetPlayerSurfingOffsets(playerid, &Float:fOffsetX, &Float:fOffsetY, &Float:fOffsetZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingOffsets)
 {
-	CHECK_PARAMS(4, "GetPlayerSurfingOffsets", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1843,7 +1843,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingOffsets)
 // native GetPlayerRotationQuat(playerid, &Float:w, &Float:x, &Float:y, &Float:z);
 AMX_DECLARE_NATIVE(Natives::GetPlayerRotationQuat)
 {
-	CHECK_PARAMS(5, "GetPlayerRotationQuat", LOADED);
+	CHECK_PARAMS(5, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1856,7 +1856,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerRotationQuat)
 // native GetPlayerDialogID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerDialogID)
 {
-	CHECK_PARAMS(1, "GetPlayerDialogID", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1867,7 +1867,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerDialogID)
 // native GetPlayerSpectateID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateID)
 {
-	CHECK_PARAMS(1, "GetPlayerSpectateID", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1878,7 +1878,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateID)
 // native GetPlayerSpectateType(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateType)
 {
-	CHECK_PARAMS(1, "GetPlayerSpectateType", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -1889,7 +1889,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSpectateType)
 // native GetPlayerLastSyncedVehicleID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedVehicleID)
 {
-	CHECK_PARAMS(1, "GetPlayerLastSyncedVehicleID", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -1900,7 +1900,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedVehicleID)
 // native GetPlayerLastSyncedTrailerID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedTrailerID)
 {
-	CHECK_PARAMS(1, "GetPlayerLastSyncedTrailerID", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -1911,7 +1911,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerLastSyncedTrailerID)
 // native GetActorSpawnInfo(actorid, &skinid, &Float:fX, &Float:fY, &Float:fZ, &Float:fAngle);
 AMX_DECLARE_NATIVE(Natives::GetActorSpawnInfo)
 {
-	CHECK_PARAMS(6, "GetActorSpawnInfo", LOADED);
+	CHECK_PARAMS(6, LOADED);
 
 	const int actorid = CScriptParams::Get()->ReadInt();
 	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
@@ -1926,7 +1926,7 @@ AMX_DECLARE_NATIVE(Natives::GetActorSpawnInfo)
 // native GetActorSkin(actorid);
 AMX_DECLARE_NATIVE(Natives::GetActorSkin)
 {
-	CHECK_PARAMS(1, "GetActorSkin", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int actorid = CScriptParams::Get()->ReadInt();
 	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
@@ -1941,7 +1941,7 @@ AMX_DECLARE_NATIVE(Natives::GetActorSkin)
 // native GetActorAnimation(actorid, animlib[], animlibsize = sizeof(animlib), animname[], animnamesize = sizeof(animname), &Float:fDelta, &loop, &lockx, &locky, &freeze, &time)
 AMX_DECLARE_NATIVE(Natives::GetActorAnimation)
 {
-	CHECK_PARAMS(11, "GetActorAnimation", LOADED);
+	CHECK_PARAMS(11, LOADED);
 
 	const int actorid = CScriptParams::Get()->ReadInt();
 	if(actorid < 0 || actorid > MAX_PLAYERS) return 0;
@@ -1957,7 +1957,7 @@ AMX_DECLARE_NATIVE(Natives::GetActorAnimation)
 // native SendBulletData(senderid, forplayerid = -1, weaponid, hittype, hitid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ);
 AMX_DECLARE_NATIVE(Natives::SendBulletData) 
 {
-	CHECK_PARAMS(14, "SendBulletData", LOADED);
+	CHECK_PARAMS(14, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int forplayerid = CScriptParams::Get()->ReadInt();
@@ -1990,7 +1990,7 @@ AMX_DECLARE_NATIVE(Natives::SendBulletData)
 // native ShowPlayerForPlayer(forplayerid, playerid);
 AMX_DECLARE_NATIVE(Natives::ShowPlayerForPlayer)
 {
-	CHECK_PARAMS(2, "ShowPlayerForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
@@ -2009,7 +2009,7 @@ AMX_DECLARE_NATIVE(Natives::ShowPlayerForPlayer)
 // native HidePlayerForPlayer(forplayerid, playerid);
 AMX_DECLARE_NATIVE(Natives::HidePlayerForPlayer)
 {
-	CHECK_PARAMS(2, "HidePlayerForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
@@ -2028,7 +2028,7 @@ AMX_DECLARE_NATIVE(Natives::HidePlayerForPlayer)
 // native AddPlayerForPlayer(forplayerid, playerid, isnpc = 0);
 AMX_DECLARE_NATIVE(Natives::AddPlayerForPlayer)
 {
-	CHECK_PARAMS(3, "AddPlayerForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
@@ -2055,7 +2055,7 @@ AMX_DECLARE_NATIVE(Natives::AddPlayerForPlayer)
 // native RemovePlayerForPlayer(forplayerid, playerid);
 AMX_DECLARE_NATIVE(Natives::RemovePlayerForPlayer)
 {
-	CHECK_PARAMS(2, "RemovePlayerForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
@@ -2075,7 +2075,7 @@ AMX_DECLARE_NATIVE(Natives::RemovePlayerForPlayer)
 // native SetPlayerChatBubbleForPlayer(forplayerid, playerid, text[], color, Float:drawdistance, expiretime);
 AMX_DECLARE_NATIVE(Natives::SetPlayerChatBubbleForPlayer)
 {
-	CHECK_PARAMS(6, "SetPlayerChatBubbleForPlayer", LOADED);
+	CHECK_PARAMS(6, LOADED);
 
 	const int forplayerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(forplayerid)) return 0;
@@ -2108,7 +2108,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerChatBubbleForPlayer)
 // native ResetPlayerMarkerForPlayer(playerid, resetplayerid)
 AMX_DECLARE_NATIVE(Natives::ResetPlayerMarkerForPlayer)
 {
-	CHECK_PARAMS(2, "ResetPlayerMarkerForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int resetplayerid = CScriptParams::Get()->ReadInt();
@@ -2122,7 +2122,7 @@ AMX_DECLARE_NATIVE(Natives::ResetPlayerMarkerForPlayer)
 // native SetPlayerVersion(playerid, version[];
 AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 {
-	CHECK_PARAMS(2, "SetPlayerVersion", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2142,7 +2142,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 // native IsPlayerSpawned(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerSpawned)
 {
-	CHECK_PARAMS(1, "IsPlayerSpawned", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2164,7 +2164,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerSpawned)
 // native IsPlayerControllable(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerControllable)
 {
-	CHECK_PARAMS(1, "IsPlayerSpawned", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2175,7 +2175,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerControllable)
 // native SpawnForWorld(playerid);
 AMX_DECLARE_NATIVE(Natives::SpawnForWorld)
 {
-	CHECK_PARAMS(1, "SpawnForWorld", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -2187,7 +2187,7 @@ AMX_DECLARE_NATIVE(Natives::SpawnForWorld)
 // native BroadcastDeath(playerid);
 AMX_DECLARE_NATIVE(Natives::BroadcastDeath)
 {
-	CHECK_PARAMS(1, "BroadcastDeath", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -2201,7 +2201,7 @@ AMX_DECLARE_NATIVE(Natives::BroadcastDeath)
 // native IsPlayerCameraTargetEnabled(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerCameraTargetEnabled)
 {
-	CHECK_PARAMS(1, "IsPlayerCameraTargetEnabled", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2212,7 +2212,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerCameraTargetEnabled)
 // native SetPlayerDisabledKeysSync(playerid, keys, updown = 0, leftright = 0);
 AMX_DECLARE_NATIVE(Natives::SetPlayerDisabledKeysSync)
 {
-	CHECK_PARAMS(4, "SetPlayerDisabledKeySync", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2226,7 +2226,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerDisabledKeysSync)
 // native GetPlayerDisabledKeysSync(playerid, &keys, &updown, &leftright);
 AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 {
-	CHECK_PARAMS(4, "GetPlayerDisabledKeySync", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2239,7 +2239,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerDisabledKeysSync)
 // native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerScoresPingsUpdate)
 {
-	CHECK_PARAMS(2, "TogglePlayerScoresPingsUpdate", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const bool toggle = CScriptParams::Get()->ReadBool();
@@ -2253,7 +2253,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerScoresPingsUpdate)
 // native TogglePlayerFakePing(playerid, bool:toggle);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerFakePing)
 {
-	CHECK_PARAMS(2, "TogglePlayerFakePing", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	bool toggle = CScriptParams::Get()->ReadBool();
@@ -2267,7 +2267,7 @@ AMX_DECLARE_NATIVE(Natives::TogglePlayerFakePing)
 // native SetPlayerFakePing(playerid, ping);
 AMX_DECLARE_NATIVE(Natives::SetPlayerFakePing)
 {
-	CHECK_PARAMS(2, "SetPlayerFakePing", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	int fakeping = CScriptParams::Get()->ReadInt();
@@ -2281,7 +2281,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerFakePing)
 // native SetPlayerNameInServerQuery(playerid, const name[]);
 AMX_DECLARE_NATIVE(Natives::SetPlayerNameInServerQuery)
 {
-	CHECK_PARAMS(2, "SetPlayerNameInServerQuery", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -2297,7 +2297,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerNameInServerQuery)
 // native GetPlayerNameInServerQuery(playerid, name[], len = sizeof(name));
 AMX_DECLARE_NATIVE(Natives::GetPlayerNameInServerQuery)
 {
-	CHECK_PARAMS(3, "GetPlayerNameInServerQuery", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -2309,7 +2309,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerNameInServerQuery)
 // native IsPlayerPaused(playerid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerPaused)
 {
-	CHECK_PARAMS(1, "IsPlayerPaused", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -2320,7 +2320,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerPaused)
 // native GetPlayerPausedTime(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPausedTime)
 {
-	CHECK_PARAMS(1, "GetPlayerPausedTime", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 
@@ -2334,7 +2334,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPausedTime)
 // native Float:GetObjectDrawDistance(objectid);
 AMX_DECLARE_NATIVE(Natives::GetObjectDrawDistance)
 {
-	CHECK_PARAMS(1, "GetObjectDrawDistance", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2346,7 +2346,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectDrawDistance)
 // native Float:SetObjectMoveSpeed(objectid, Float:fSpeed);
 AMX_DECLARE_NATIVE(Natives::SetObjectMoveSpeed)
 {
-	CHECK_PARAMS(2, "SetObjectMoveSpeed", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2359,7 +2359,7 @@ AMX_DECLARE_NATIVE(Natives::SetObjectMoveSpeed)
 // native Float:GetObjectMoveSpeed(objectid);
 AMX_DECLARE_NATIVE(Natives::GetObjectMoveSpeed)
 {
-	CHECK_PARAMS(1, "GetObjectMoveSpeed", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2371,7 +2371,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMoveSpeed)
 // native GetObjectTarget(objectid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetObjectTarget)
 {
-	CHECK_PARAMS(4, "GetObjectTarget", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2385,7 +2385,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectTarget)
 // native GetObjectAttachedData(objectid, &vehicleid, &objectid, &attachedplayerid);
 AMX_DECLARE_NATIVE(Natives::GetObjectAttachedData)
 {
-	CHECK_PARAMS(4, "GetObjectAttachedData", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2400,7 +2400,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectAttachedData)
 // native GetObjectAttachedOffset(objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
 AMX_DECLARE_NATIVE(Natives::GetObjectAttachedOffset)
 {
-	CHECK_PARAMS(7, "GetObjectAttachedOffset", LOADED);
+	CHECK_PARAMS(7, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2415,7 +2415,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectAttachedOffset)
 // native IsObjectMaterialSlotUsed(objectid, materialindex); // Return values: 1 = material, 2 = material text
 AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 {
-	CHECK_PARAMS(2, "IsObjectMaterialSlotUsed", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2442,7 +2442,7 @@ AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 // native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
 AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 {
-	CHECK_PARAMS(8, "GetObjectMaterial", LOADED);
+	CHECK_PARAMS(8, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	const int materialindex = CScriptParams::Get()->ReadInt();
@@ -2470,7 +2470,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 // native GetObjectMaterialText(objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 {
-	CHECK_PARAMS(12, "GetObjectMaterialText", LOADED);
+	CHECK_PARAMS(12, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	const int materialindex = CScriptParams::Get()->ReadInt();
@@ -2499,7 +2499,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 // native IsObjectNoCameraCol(objectid);
 AMX_DECLARE_NATIVE(Natives::IsObjectNoCameraCol)
 {
-	CHECK_PARAMS(1, "IsObjectNoCameraCol", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if(objectid < 0 || objectid >= MAX_OBJECTS) return 0;
@@ -2512,7 +2512,7 @@ AMX_DECLARE_NATIVE(Natives::IsObjectNoCameraCol)
 // native Float:GetPlayerObjectDrawDistance(playerid, objectid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectDrawDistance)
 {
-	CHECK_PARAMS(2, "GetPlayerObjectDrawDistance", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2527,7 +2527,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectDrawDistance)
 // native Float:SetPlayerObjectMoveSpeed(playerid, objectid, Float:fSpeed);
 AMX_DECLARE_NATIVE(Natives::SetPlayerObjectMoveSpeed)
 {
-	CHECK_PARAMS(3, "SetPlayerObjectMoveSpeed", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2543,7 +2543,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerObjectMoveSpeed)
 // native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMoveSpeed)
 {
-	CHECK_PARAMS(2, "GetPlayerObjectMoveSpeed", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2558,7 +2558,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMoveSpeed)
 // native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectTarget)
 {
-	CHECK_PARAMS(5, "GetPlayerObjectTarget", LOADED);
+	CHECK_PARAMS(5, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2575,7 +2575,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectTarget)
 // native GetPlayerObjectAttachedData(playerid, objectid, &vehicleid, &objectid, &attachedplayerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 {
-	CHECK_PARAMS(5, "GetPlayerObjectAttachedData", LOADED);
+	CHECK_PARAMS(5, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2602,7 +2602,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedData)
 // native GetPlayerObjectAttachedOffset(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 {
-	CHECK_PARAMS(8, "GetPlayerObjectAttachedOffset", LOADED);
+	CHECK_PARAMS(8, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2637,7 +2637,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectAttachedOffset)
 // native IsPlayerObjectMaterialSlotUsed(playerid, objectid, materialindex); // Return values: 1 = material, 2 = material text
 AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 {
-	CHECK_PARAMS(3, "IsPlayerObjectMaterialSlotUsed", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2665,7 +2665,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 // native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 {
-	CHECK_PARAMS(9, "GetPlayerObjectMaterial", LOADED);
+	CHECK_PARAMS(9, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2694,7 +2694,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 // native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
 AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 {
-	CHECK_PARAMS(13, "GetPlayerObjectMaterialText", LOADED);
+	CHECK_PARAMS(13, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2737,7 +2737,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 // native IsPlayerObjectNoCameraCol(playerid, objectid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerObjectNoCameraCol)
 {
-	CHECK_PARAMS(2, "IsPlayerObjectNoCameraCol", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2752,7 +2752,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectNoCameraCol)
 // native GetPlayerSurfingPlayerObjectID(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingPlayerObjectID)
 {
-	CHECK_PARAMS(1, "GetPlayerSurfingPlayerObjectID", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
@@ -2769,7 +2769,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerSurfingPlayerObjectID)
 // native GetPlayerCameraTargetPlayerObj(playerid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerCameraTargetPlayerObj)
 {
-	CHECK_PARAMS(1, "GetPlayerCameraTargetPlayerObj", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
@@ -2789,7 +2789,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerCameraTargetPlayerObj)
 // native GetObjectType(playerid, objectid);
 AMX_DECLARE_NATIVE(Natives::GetObjectType)
 {
-	CHECK_PARAMS(2, "GetObjectType", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -2809,7 +2809,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectType)
 // native GetPlayerAttachedObject(playerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
 AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 {
-	CHECK_PARAMS(15, "GetPlayerAttachedObject", LOADED);
+	CHECK_PARAMS(15, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int slot = CScriptParams::Get()->ReadInt();
@@ -2827,7 +2827,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 // native SetPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index, modelid, bone, Float:fOffsetX = 0.0, Float : OffsetY = 0.0, Float : fOffsetZ = 0.0, Float : fRotX = 0.0, Float : fRotY = 0.0, Float : fRotZ = 0.0, Float : fScaleX = 1.0, Float : fScaleY = 1.0, Float : fScaleZ = 1.0, materialcolor1 = 0, materialcolor2 = 0);
 AMX_DECLARE_NATIVE(Natives::SetPlayerAttachedObjForPlayer)
 {
-	CHECK_PARAMS(16, "SetPlayerAttachedObjForPlayer", LOADED);
+	CHECK_PARAMS(16, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -2868,7 +2868,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerAttachedObjForPlayer)
 // native GetPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
 AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObjForPlayer)
 {
-	CHECK_PARAMS(16, "GetPlayerAttachedObjForPlayer", LOADED);
+	CHECK_PARAMS(16, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -2902,7 +2902,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObjForPlayer)
 // native RemPlayerAttachedObjForPlayer(forplayerid, removefromplayerid, index);
 AMX_DECLARE_NATIVE(Natives::RemPlayerAttachedObjForPlayer)
 {
-	CHECK_PARAMS(3, "RemPlayerAttachedObjForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -2936,7 +2936,7 @@ AMX_DECLARE_NATIVE(Natives::RemPlayerAttachedObjForPlayer)
 // native IsPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index);
 AMX_DECLARE_NATIVE(Natives::IsPlayerAttachedObjForPlayer)
 {
-	CHECK_PARAMS(3, "GetPlayerAttachedObjForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -2964,7 +2964,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerAttachedObjForPlayer)
 // native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 {
-	CHECK_PARAMS(7, "GetVehicleSpawnInfo", LOADED);
+	CHECK_PARAMS(7, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -2997,8 +2997,8 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)
 AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 {
 	if (!CAddress::FUNC_CVehicle__Respawn) return 0;
-	CHECK_PARAMS(10, "SetVehicleSpawnInfo", LOADED);
-
+	CHECK_PARAMS(10, LOADED);
+	 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
 	
@@ -3063,7 +3063,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 // native GetVehicleModelCount(modelid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleModelCount)
 {
-	CHECK_PARAMS(1, "GetVehicleModelCount", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int modelid = CScriptParams::Get()->ReadInt();
 	if(modelid < 400 || modelid > 611) return 0;
@@ -3089,7 +3089,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleModelsUsed)
 // native GetVehicleColor(vehicleid, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::GetVehicleColor)
 {
-	CHECK_PARAMS(3, "GetVehicleColor", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3108,7 +3108,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleColor)
 // native GetVehiclePaintjob(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehiclePaintjob)
 {
-	CHECK_PARAMS(1, "GetVehiclePaintjob", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3122,7 +3122,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehiclePaintjob)
 // native GetVehicleInterior(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleInterior)
 {
-	CHECK_PARAMS(1, "GetVehicleInterior", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3136,7 +3136,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleInterior)
 // native GetVehicleNumberPlate(vehicleid, plate[], len = sizeof(plate));
 AMX_DECLARE_NATIVE(Natives::GetVehicleNumberPlate)
 {
-	CHECK_PARAMS(3, "GetVehicleNumberPlate", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3160,7 +3160,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleNumberPlate)
 // native SetVehicleRespawnDelay(vehicleid, delay);
 AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnDelay)
 {
-	CHECK_PARAMS(2, "SetVehicleRespawnDelay", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3175,7 +3175,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnDelay)
 // native GetVehicleRespawnDelay(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnDelay)
 {
-	CHECK_PARAMS(1, "GetVehicleRespawnDelay", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3189,7 +3189,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnDelay)
 // native SetVehicleOccupiedTick(vehicleid, ticks);
 AMX_DECLARE_NATIVE(Natives::SetVehicleOccupiedTick)
 {
-	CHECK_PARAMS(2, "SetVehicleOccupiedTick", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3204,7 +3204,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleOccupiedTick)
 // native GetVehicleOccupiedTick(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleOccupiedTick)
 {
-	CHECK_PARAMS(1, "GetVehicleOccupiedTick", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3218,7 +3218,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleOccupiedTick)
 // native SetVehicleRespawnTick(vehicleid, ticks);
 AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnTick)
 {
-	CHECK_PARAMS(2, "SetVehicleRespawnTick", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3233,7 +3233,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleRespawnTick)
 // native GetVehicleRespawnTick(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnTick)
 {
-	CHECK_PARAMS(1, "GetVehicleRespawnTick", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3247,7 +3247,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleRespawnTick)
 // native GetVehicleLastDriver(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleLastDriver)
 {
-	CHECK_PARAMS(1, "GetVehicleLastDriver", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3261,7 +3261,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleLastDriver)
 // native GetVehicleCab(vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetVehicleCab)
 {
-	CHECK_PARAMS(1, "GetVehicleCab", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3284,7 +3284,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleCab)
 // native HasVehicleBeenOccupied(vehicleid);
 AMX_DECLARE_NATIVE(Natives::HasVehicleBeenOccupied)
 {
-	CHECK_PARAMS(1, "HasVehicleBeenOccupied", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3298,7 +3298,7 @@ AMX_DECLARE_NATIVE(Natives::HasVehicleBeenOccupied)
 // native SetVehicleBeenOccupied(vehicleid, occupied);
 AMX_DECLARE_NATIVE(Natives::SetVehicleBeenOccupied)
 {
-	CHECK_PARAMS(2, "SetVehicleBeenOccupied", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3313,7 +3313,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleBeenOccupied)
 // native IsVehicleOccupied(vehicleid);
 AMX_DECLARE_NATIVE(Natives::IsVehicleOccupied)
 {
-	CHECK_PARAMS(1, "IsVehicleOccupied", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3333,7 +3333,7 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleOccupied)
 // native IsVehicleDead(vehicleid);
 AMX_DECLARE_NATIVE(Natives::IsVehicleDead)
 {
-	CHECK_PARAMS(1, "IsVehicleDead", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3347,7 +3347,7 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleDead)
 // native SetVehicleParamsSirenState(vehicleid, sirenState);
 AMX_DECLARE_NATIVE(Natives::SetVehicleParamsSirenState)
 {
-	CHECK_PARAMS(2, "SetVehicleParamsSirenState", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3364,7 +3364,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleParamsSirenState)
 // native ToggleVehicleSirenEnabled(vehicleid, enabled);
 AMX_DECLARE_NATIVE(Natives::ToggleVehicleSirenEnabled)
 {
-	CHECK_PARAMS(2, "ToggleVehicleSirenEnabled", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3381,7 +3381,7 @@ AMX_DECLARE_NATIVE(Natives::ToggleVehicleSirenEnabled)
 // native IsVehicleSirenEnabled(vehicleid);
 AMX_DECLARE_NATIVE(Natives::IsVehicleSirenEnabled)
 {
-	CHECK_PARAMS(1, "IsVehicleSirenEnabled", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3395,7 +3395,7 @@ AMX_DECLARE_NATIVE(Natives::IsVehicleSirenEnabled)
 // native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY, &Float:rightZ, &Float:upX, &Float:upY, &Float:upZ, &Float:atX, &Float:atY, &Float:atZ);
 AMX_DECLARE_NATIVE(Natives::GetVehicleMatrix)
 {
-	CHECK_PARAMS(10, "GetVehicleMatrix", LOADED);
+	CHECK_PARAMS(10, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
 	if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -3415,7 +3415,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleMatrix)
 // native IsValidGangZone(zoneid);
 AMX_DECLARE_NATIVE(Natives::IsValidGangZone)
 {
-	CHECK_PARAMS(1, "IsValidGangZone", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -3426,7 +3426,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidGangZone)
 // native IsGangZoneVisibleForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsGangZoneVisibleForPlayer)
 {
-	CHECK_PARAMS(2, "IsGangZoneVisibleForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -3441,7 +3441,7 @@ AMX_DECLARE_NATIVE(Natives::IsGangZoneVisibleForPlayer)
 // native GangZoneGetColorForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::GangZoneGetColorForPlayer)
 {
-	CHECK_PARAMS(2, "GangZoneGetColorForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -3461,7 +3461,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetColorForPlayer)
 // native GangZoneGetFlashColorForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::GangZoneGetFlashColorForPlayer)
 {
-	CHECK_PARAMS(2, "GangZoneGetFlashColorForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -3481,7 +3481,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetFlashColorForPlayer)
 // native IsGangZoneFlashingForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsGangZoneFlashingForPlayer)
 {
-	CHECK_PARAMS(2, "IsGangZoneFlashingForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -3501,7 +3501,7 @@ AMX_DECLARE_NATIVE(Natives::IsGangZoneFlashingForPlayer)
 // native IsPlayerInGangZone(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerInGangZone)
 {
-	CHECK_PARAMS(2, "IsPlayerInGangZone", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -3521,7 +3521,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInGangZone)
 // native GangZoneGetPos(zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
 AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 {
-	CHECK_PARAMS(5, "GangZoneGetPos", LOADED);
+	CHECK_PARAMS(5, LOADED);
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -3537,7 +3537,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 // native IsValidTextDraw(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)
 {
-	CHECK_PARAMS(1, "IsValidTextDraw", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3548,7 +3548,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)
 // native IsTextDrawVisibleForPlayer(playerid, Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsTextDrawVisibleForPlayer)
 {
-	CHECK_PARAMS(2, "IsTextDrawVisibleForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(playerid < 0 || playerid >= MAX_PLAYERS) return 0;
@@ -3564,7 +3564,7 @@ AMX_DECLARE_NATIVE(Natives::IsTextDrawVisibleForPlayer)
 // native TextDrawGetString(Text:textdrawid, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 {
-	CHECK_PARAMS(3, "TextDrawGetString", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3576,7 +3576,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetString)
 // native TextDrawSetPos(Text:textdrawid, Float:fX, Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 {
-	CHECK_PARAMS(3, "TextDrawSetPos", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3591,7 +3591,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 // native TextDrawGetLetterSize(Text:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetLetterSize)
 {
-	CHECK_PARAMS(3, "TextDrawGetLetterSize", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3606,7 +3606,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetLetterSize)
 // native TextDrawGetTextSize(Text:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetTextSize)
 {
-	CHECK_PARAMS(3, "TextDrawGetTextSize", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3621,7 +3621,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetTextSize)
 // native TextDrawGetPos(Text:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPos)
 {
-	CHECK_PARAMS(3, "TextDrawGetPos", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3636,7 +3636,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPos)
 // native TextDrawGetColor(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetColor)
 {
-	CHECK_PARAMS(1, "TextDrawGetColor", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3650,7 +3650,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetColor)
 // native TextDrawGetBoxColor(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetBoxColor)
 {
-	CHECK_PARAMS(1, "TextDrawGetBoxColor", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3664,7 +3664,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetBoxColor)
 // native TextDrawGetBackgroundColor(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetBackgroundColor)
 {
-	CHECK_PARAMS(1, "TextDrawGetBackgroundColor", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3678,7 +3678,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetBackgroundColor)
 // native TextDrawGetShadow(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetShadow)
 {
-	CHECK_PARAMS(1, "TextDrawGetShadow", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3692,7 +3692,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetShadow)
 // native TextDrawGetOutline(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetOutline)
 {
-	CHECK_PARAMS(1, "TextDrawGetOutline", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3706,7 +3706,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetOutline)
 // native TextDrawGetFont(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetFont)
 {
-	CHECK_PARAMS(1, "TextDrawGetOutline", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3720,7 +3720,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetFont)
 // native TextDrawIsBox(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsBox)
 {
-	CHECK_PARAMS(1, "TextDrawIsBox", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3734,7 +3734,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsBox)
 // native TextDrawIsProportional(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsProportional)
 {
-	CHECK_PARAMS(1, "TextDrawIsProportional", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3748,7 +3748,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsProportional)
 // native TextDrawIsSelectable(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawIsSelectable)
 {
-	CHECK_PARAMS(1, "TextDrawIsSelectable", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3762,7 +3762,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawIsSelectable)
 // native TextDrawGetAlignment(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetAlignment)
 {
-	CHECK_PARAMS(1, "TextDrawGetAlignment", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3781,7 +3781,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetAlignment)
 // native TextDrawGetPreviewModel(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewModel)
 {
-	CHECK_PARAMS(1, "TextDrawGetPreviewModel", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3795,7 +3795,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewModel)
 // native TextDrawGetPreviewRot(Text:textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewRot)
 {
-	CHECK_PARAMS(5, "TextDrawGetPreviewRot", LOADED);
+	CHECK_PARAMS(5, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3810,7 +3810,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewRot)
 // native TextDrawGetPreviewVehCol(Text:textdrawid, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewVehCol)
 {
-	CHECK_PARAMS(3, "TextDrawGetPreviewVehCol", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if(textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3825,7 +3825,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawGetPreviewVehCol)
 // native TextDrawSetStringForPlayer(Text:textdrawid, playerid, const string[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::TextDrawSetStringForPlayer)
 {
-	if (CScriptParams::Get()->Setup(3, "TextDrawSetStringForPlayer", static_cast<CScriptParams::Flags>(CScriptParams::Flags::LOADED | CScriptParams::Flags::MORE_PARAMETER_ALLOWED), amx, params)) return CScriptParams::Get()->HandleError();
+	if (CScriptParams::Get()->Setup(3, __FUNCTION__, static_cast<CScriptParams::Flags>(CScriptParams::Flags::LOADED | CScriptParams::Flags::MORE_PARAMETER_ALLOWED), amx, params)) return CScriptParams::Get()->HandleError();
 
 	const int textdrawid = CScriptParams::Get()->ReadInt();
 	if (textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
@@ -3853,7 +3853,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawSetStringForPlayer)
 // native IsValidPlayerTextDraw(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayerTextDraw)
 {
-	CHECK_PARAMS(2, "IsValidPlayerTextDraw", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -3868,7 +3868,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerTextDraw)
 // native IsPlayerTextDrawVisible(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerTextDrawVisible)
 {
-	CHECK_PARAMS(2, "IsPlayerTextDrawVisible", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -3883,7 +3883,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerTextDrawVisible)
 // native PlayerTextDrawGetString(playerid, PlayerText:textdrawid, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetString)
 {
-	CHECK_PARAMS(4, "PlayerTextDrawGetString", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -3901,7 +3901,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetString)
 // native PlayerTextDrawSetPos(playerid, PlayerText:textdrawid, Float:fX, Float:fY);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawSetPos)
 {
-	CHECK_PARAMS(4, "PlayerTextDrawSetPos", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -3919,7 +3919,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawSetPos)
 // native PlayerTextDrawGetLetterSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetLetterSize)
 {
-	CHECK_PARAMS(4, "PlayerTextDrawGetLetterSize", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -3937,7 +3937,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetLetterSize)
 // native PlayerTextDrawGetTextSize(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetTextSize)
 {
-	CHECK_PARAMS(4, "PlayerTextDrawGetTextSize", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -3955,7 +3955,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetTextSize)
 // native PlayerTextDrawGetPos(playerid, PlayerText:textdrawid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPos)
 {
-	CHECK_PARAMS(4, "PlayerTextDrawGetPos", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -3973,7 +3973,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPos)
 // native PlayerTextDrawGetColor(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetColor)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawGetColor", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -3989,7 +3989,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetColor)
 // native PlayerTextDrawGetBoxColor(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBoxColor)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawGetBoxColor", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4005,7 +4005,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBoxColor)
 // native PlayerTextDrawGetBackgroundCol(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBackgroundCol)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawGetBackgroundCol", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4021,7 +4021,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetBackgroundCol)
 // native PlayerTextDrawGetShadow(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetShadow)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawGetShadow", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4037,7 +4037,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetShadow)
 // native PlayerTextDrawGetOutline(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetOutline)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawGetOutline", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4053,7 +4053,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetOutline)
 // native PlayerTextDrawGetFont(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetFont)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawGetFont", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4069,7 +4069,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetFont)
 // native PlayerTextDrawIsBox(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsBox)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawIsBox", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4085,7 +4085,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsBox)
 // native PlayerTextDrawIsProportional(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsProportional)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawIsProportional", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4101,7 +4101,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsProportional)
 // native PlayerTextDrawIsSelectable(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsSelectable)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawIsSelectable", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4117,7 +4117,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawIsSelectable)
 // native PlayerTextDrawGetAlignment(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetAlignment)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawGetAlignment", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4138,7 +4138,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetAlignment)
 // native PlayerTextDrawGetPreviewModel(playerid, PlayerText:textdrawid);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewModel)
 {
-	CHECK_PARAMS(2, "PlayerTextDrawGetPreviewModel", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4154,7 +4154,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewModel)
 // native PlayerTextDrawGetPreviewRot(playerid, PlayerText:textdrawid, &Float:fRotX, &Float:fRotY, &Float:fRotZ, &Float:fZoom);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewRot)
 {
-	CHECK_PARAMS(6, "PlayerTextDrawGetPreviewRot", LOADED);
+	CHECK_PARAMS(6, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4172,7 +4172,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewRot)
 // native PlayerTextDrawGetPreviewVehCol(playerid, PlayerText:textdrawid, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewVehCol)
 {
-	CHECK_PARAMS(4, "PlayerTextDrawGetPreviewVehCol", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int textdrawid = CScriptParams::Get()->ReadInt();
@@ -4191,7 +4191,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawGetPreviewVehCol)
 // native IsValid3DTextLabel(Text3D:id);
 AMX_DECLARE_NATIVE(Natives::IsValid3DTextLabel)
 {
-	CHECK_PARAMS(1, "IsValid3DTextLabel", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	int id = CScriptParams::Get()->ReadInt();
 	if(0 < id || id >= MAX_3DTEXT_GLOBAL) return 0;
@@ -4202,7 +4202,7 @@ AMX_DECLARE_NATIVE(Natives::IsValid3DTextLabel)
 // native Is3DTextLabelStreamedIn(playerid, Text3D:id);
 AMX_DECLARE_NATIVE(Natives::Is3DTextLabelStreamedIn)
 {
-	CHECK_PARAMS(2, "Is3DTextLabelStreamedIn", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	int id = CScriptParams::Get()->ReadInt();
@@ -4216,7 +4216,7 @@ AMX_DECLARE_NATIVE(Natives::Is3DTextLabelStreamedIn)
 // native Get3DTextLabelText(id, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelText)
 {
-	CHECK_PARAMS(3, "Get3DTextLabelText", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
@@ -4230,7 +4230,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelText)
 // native Get3DTextLabelColor(id);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelColor)
 {
-	CHECK_PARAMS(1, "Get3DTextLabelColor", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
@@ -4244,7 +4244,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelColor)
 // native Get3DTextLabelPos(id, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelPos)
 {
-	CHECK_PARAMS(4, "Get3DTextLabelPos", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
@@ -4259,7 +4259,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelPos)
 // native Float:Get3DTextLabelDrawDistance(id);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelDrawDistance)
 {
-	CHECK_PARAMS(1, "Get3DTextLabelDrawDistance", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
@@ -4273,7 +4273,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelDrawDistance)
 // native Get3DTextLabelLOS(id);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelLOS)
 {
-	CHECK_PARAMS(1, "Get3DTextLabelLOS", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
@@ -4287,7 +4287,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelLOS)
 // native Get3DTextLabelVirtualWorld(id);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelVirtualWorld)
 {
-	CHECK_PARAMS(1, "Get3DTextLabelVirtualWorld", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
@@ -4301,7 +4301,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelVirtualWorld)
 // native Get3DTextLabelAttachedData(id, &attached_playerid, &attached_vehicleid);
 AMX_DECLARE_NATIVE(Natives::Get3DTextLabelAttachedData)
 {
-	CHECK_PARAMS(3, "Get3DTextLabelAttachedData", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_3DTEXT_GLOBAL) return 0;
@@ -4316,7 +4316,7 @@ AMX_DECLARE_NATIVE(Natives::Get3DTextLabelAttachedData)
 // native IsValidPlayer3DTextLabel(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayer3DTextLabel)
 {
-	CHECK_PARAMS(2, "IsValidPlayer3DTextLabel", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -4330,7 +4330,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayer3DTextLabel)
 // native GetPlayer3DTextLabelText(playerid, PlayerText3D:id, text[], len = sizeof(text));
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelText)
 {
-	CHECK_PARAMS(4, "GetPlayer3DTextLabelText", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -4347,7 +4347,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelText)
 // native GetPlayer3DTextLabelColor(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelColor)
 {
-	CHECK_PARAMS(2, "GetPlayer3DTextLabelColor", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -4364,7 +4364,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelColor)
 // native GetPlayer3DTextLabelPos(playerid, PlayerText3D:id, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelPos)
 {
-	CHECK_PARAMS(5, "GetPlayer3DTextLabelPos", LOADED);
+	CHECK_PARAMS(5, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -4382,7 +4382,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelPos)
 // native Float:GetPlayer3DTextLabelDrawDist(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelDrawDist)
 {
-	CHECK_PARAMS(2, "GetPlayer3DTextLabelDrawDist", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -4399,7 +4399,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelDrawDist)
 // native GetPlayer3DTextLabelLOS(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelLOS)
 {
-	CHECK_PARAMS(2, "GetPlayer3DTextLabelLOS", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -4416,7 +4416,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelLOS)
 // native GetPlayer3DTextLabelVirtualW(playerid, PlayerText3D:id);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelVirtualW)
 {
-	CHECK_PARAMS(2, "GetPlayer3DTextLabelVirtualW", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -4433,7 +4433,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelVirtualW)
 // native GetPlayer3DTextLabelAttached(playerid, PlayerText3D:id, &attached_playerid, &attached_vehicleid);
 AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelAttached)
 {
-	CHECK_PARAMS(4, "GetPlayer3DTextLabelAttached", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -4451,7 +4451,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayer3DTextLabelAttached)
 // native AttachObjectToPlayer(objectid, playerid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ)
 AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 {
-	CHECK_PARAMS(8, "AttachObjectToPlayer", LOADED);
+	CHECK_PARAMS(8, LOADED);
 	
 	const int objectid = CScriptParams::Get()->ReadInt();
 	if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
@@ -4474,7 +4474,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 // native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ, onlyaddtoinstance = 0)
 AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 {
-	CHECK_PARAMS(9, "AttachObjectToPlayer", MORE_PARAMETER_ALLOWED);
+	CHECK_PARAMS(9, MORE_PARAMETER_ALLOWED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -4531,7 +4531,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 // native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
 AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 {
-	CHECK_PARAMS(10, "AttachPlayerObjectToObject", LOADED);
+	CHECK_PARAMS(10, LOADED);
 
 	const int forplayerid = CScriptParams::Get()->ReadInt();
 	const int objectid = CScriptParams::Get()->ReadInt();
@@ -4585,7 +4585,7 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 // native SetExclusiveBroadcast(toggle);
 AMX_DECLARE_NATIVE(Natives::SetExclusiveBroadcast)
 {
-	CHECK_PARAMS(1, "SetExclusiveBroadcast", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int toggle = CScriptParams::Get()->ReadInt();
 	CServer::Get()->SetExclusiveBroadcast(!!toggle);
@@ -4595,7 +4595,7 @@ AMX_DECLARE_NATIVE(Natives::SetExclusiveBroadcast)
 // native BroadcastToPlayer(playerid, toggle=1);
 AMX_DECLARE_NATIVE(Natives::BroadcastToPlayer)
 {
-	CHECK_PARAMS(2, "BroadcastToPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int toggle = CScriptParams::Get()->ReadInt();
@@ -4609,7 +4609,7 @@ AMX_DECLARE_NATIVE(Natives::BroadcastToPlayer)
 // native SetRecordingDirectory(const dir[]);
 AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 {
-	CHECK_PARAMS(1, "SetRecordingDirectory", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	std::string dir;
 	CScriptParams::Get()->Read(&dir);
@@ -4623,7 +4623,7 @@ AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 // native GetRecordingDirectory(dir[], len = sizeof(dir));
 AMX_DECLARE_NATIVE(Natives::GetRecordingDirectory)
 {
-	CHECK_PARAMS(2, "GetRecordingDirectory", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	if(!CAddress::ADDR_RecordingDirectory) return 0;
 
@@ -4771,7 +4771,7 @@ AMX_DECLARE_NATIVE(Natives::SendRconCommandf)
 // native YSF_SetTickRate(ticks);
 AMX_DECLARE_NATIVE(Natives::YSF_SetTickRate)
 {
-	CHECK_PARAMS(1, "YSF_SetTickRate", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	int rate = CScriptParams::Get()->ReadInt();
 	if(rate < -1 || rate == 0) return 0; // -1 = no update
@@ -4791,7 +4791,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GetTickRate)
 // native YSF_EnableNightVisionFix(enable);
 AMX_DECLARE_NATIVE(Natives::YSF_EnableNightVisionFix)
 {
-	CHECK_PARAMS(1, "YSF_EnableNightVisionFix", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	CServer::Get()->EnableNightVisionFix(CScriptParams::Get()->ReadBool());
 	return 1;
@@ -4808,7 +4808,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_IsNightVisionFixEnabled)
 // native YSF_ToggleOnServerMessage(toggle);
 AMX_DECLARE_NATIVE(Natives::YSF_ToggleOnServerMessage)
 {
-	CHECK_PARAMS(1, "YSF_ToggleOnServerMessage", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	CServer::Get()->ToggleOnServerMessage(CScriptParams::Get()->ReadBool());
 	return 1;
@@ -4825,7 +4825,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_IsOnServerMessageEnabled)
 // native YSF_SetExtendedNetStatsEnabled(enable);
 AMX_DECLARE_NATIVE(Natives::YSF_SetExtendedNetStatsEnabled)
 {
-	CHECK_PARAMS(1, "YSF_SetExtendedNetStatsEnabled", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	CServer::Get()->SetExtendedNetStatsEnabled(CScriptParams::Get()->ReadBool());
 	return 1;
@@ -4842,7 +4842,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_IsExtendedNetStatsEnabled)
 // native YSF_SetAFKAccuracy(time_ms);
 AMX_DECLARE_NATIVE(Natives::YSF_SetAFKAccuracy)
 {
-	CHECK_PARAMS(1, "YSF_SetAFKAccuracy", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	CServer::Get()->SetAFKAccuracy(static_cast<DWORD>(CScriptParams::Get()->ReadInt()));
 	return 1;
@@ -4858,7 +4858,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GetAFKAccuracy)
 
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneCreate)
 {
-	CHECK_PARAMS(4, "GangZoneCreate", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	float fMinX, fMinY, fMaxX, fMaxY;
 	CScriptParams::Get()->Read(&fMinX, &fMinY, &fMaxX, &fMaxY);
@@ -4878,7 +4878,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneCreate)
 
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneDestroy)
 {
-	CHECK_PARAMS(1, "GangZoneDestroy", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	CGangZonePool *pGangZonePool = CServer::Get()->pGangZonePool;
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -4891,7 +4891,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneDestroy)
 // native YSF_GangZoneShowForPlayer(playerid, zone, color);
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForPlayer)
 {
-	CHECK_PARAMS(3, "GangZoneShowForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -4906,7 +4906,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForPlayer)
 // native YSF_GangZoneHideForPlayer(playerid, zone);
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForPlayer)
 {
-	CHECK_PARAMS(2, "GangZoneHideForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -4922,7 +4922,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForPlayer)
 // native YSF_GangZoneShowForAll(zone, color);
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForAll)
 {
-	CHECK_PARAMS(2, "GangZoneShowForAll", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -4934,7 +4934,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForAll)
 // native YSF_GangZoneHideForAll(zone);
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForAll)
 {
-	CHECK_PARAMS(1, "GangZoneHideForAll", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -4945,7 +4945,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForAll)
 
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForPlayer)
 {
-	CHECK_PARAMS(3, "GangZoneFlashForPlayer", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -4960,7 +4960,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForAll)
 {
-	CHECK_PARAMS(2, "GangZoneFlashForAll", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -4971,7 +4971,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForAll)
 
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForPlayer)
 {
-	CHECK_PARAMS(2, "GangZoneStopFlashForPlayer", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -4986,7 +4986,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForPlayer)
 
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForAll)
 {
-	CHECK_PARAMS(1, "GangZoneStopFlashForAll", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -4999,7 +4999,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForAll)
 // native IsMenuDisabled(Menu:menuid);
 AMX_DECLARE_NATIVE(Natives::IsMenuDisabled)
 {
-	CHECK_PARAMS(1, "IsMenuDisabled", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
@@ -5013,7 +5013,7 @@ AMX_DECLARE_NATIVE(Natives::IsMenuDisabled)
 // native IsMenuRowDisabled(Menu:menuid, row);
 AMX_DECLARE_NATIVE(Natives::IsMenuRowDisabled)
 {
-	CHECK_PARAMS(2, "IsMenuRowDisabled", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
@@ -5030,7 +5030,7 @@ AMX_DECLARE_NATIVE(Natives::IsMenuRowDisabled)
 // native GetMenuColumns(menuid);
 AMX_DECLARE_NATIVE(Natives::GetMenuColumns)
 {
-	CHECK_PARAMS(1, "GetMenuColumns", LOADED);
+	CHECK_PARAMS(1, LOADED);
 	
 	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
@@ -5044,7 +5044,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumns)
 // native GetMenuItems(menuid, column);
 AMX_DECLARE_NATIVE(Natives::GetMenuItems)
 {
-	CHECK_PARAMS(2, "GetMenuItems", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
@@ -5061,7 +5061,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuItems)
 // native GetMenuPos(menuid, &Float:fX, &Float:fY);
 AMX_DECLARE_NATIVE(Natives::GetMenuPos)
 {
-	CHECK_PARAMS(3, "GetMenuColumns", LOADED);
+	CHECK_PARAMS(3, LOADED);
 	
 	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
@@ -5076,7 +5076,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuPos)
 // native GetMenuColumnWidth(menuid, &Float:fColumn1, &Float:fColumn2);
 AMX_DECLARE_NATIVE(Natives::GetMenuColumnWidth)
 {
-	CHECK_PARAMS(4, "GetMenuColumnWidth", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
@@ -5091,7 +5091,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumnWidth)
 // native GetMenuColumnHeader(menuid, column, header[], len = sizeof(header));
 AMX_DECLARE_NATIVE(Natives::GetMenuColumnHeader)
 {
-	CHECK_PARAMS(4, "GetMenuColumnHeader", LOADED);
+	CHECK_PARAMS(4, LOADED);
 	
 	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
@@ -5109,7 +5109,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumnHeader)
 // native GetMenuItem(menuid, column, itemid, item[], len = sizeof(item));
 AMX_DECLARE_NATIVE(Natives::GetMenuItem)
 {
-	CHECK_PARAMS(5, "GetMenuItem", LOADED);
+	CHECK_PARAMS(5,  LOADED);
 	
 	const int menuid = CScriptParams::Get()->ReadInt();
 	if(menuid < 1 || menuid >= MAX_MENUS) return 0;
@@ -5130,7 +5130,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuItem)
 // native CreatePlayerGangZone(playerid, Float:minx, Float:miny, Float:maxx, Float:maxy);
 AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 {
-	CHECK_PARAMS(5, "CreatePlayerGangZone", LOADED);
+	CHECK_PARAMS(5, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -5155,7 +5155,7 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 // native PlayerGangZoneShow(playerid, zoneid, color);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneShow)
 {
-	CHECK_PARAMS(3, "PlayerGangZoneShow", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5173,7 +5173,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneShow)
 // native PlayerGangZoneHide(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneHide)
 {
-	CHECK_PARAMS(2, "PlayerGangZoneHide", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5190,7 +5190,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneHide)
 // native PlayerGangZoneFlash(playerid, zoneid, color);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneFlash)
 {
-	CHECK_PARAMS(3, "PlayerGangZoneFlash", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5207,7 +5207,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneFlash)
 // native PlayerGangZoneStopFlash(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneStopFlash)
 {
-	CHECK_PARAMS(2, "PlayerGangZoneStopFlash", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5224,7 +5224,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneStopFlash)
 // native PlayerGangZoneDestroy(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneDestroy)
 {
-	CHECK_PARAMS(2, "PlayerGangZoneDestroy", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5238,7 +5238,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneDestroy)
 // native IsValidPlayerGangZone(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayerGangZone)
 {
-	CHECK_PARAMS(2, "IsValidPlayerGangZone", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5251,7 +5251,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerGangZone)
 // native IsPlayerInPlayerGangZone(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerInPlayerGangZone)
 {
-	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5271,7 +5271,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInPlayerGangZone)
 // native PlayerGangZoneGetPos(playerid, zoneid, &Float:fMinX, &Float:fMinY, &Float:fMaxX, &Float:fMaxY);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 {
-	CHECK_PARAMS(6, "PlayerGangZoneGetPos", LOADED);
+	CHECK_PARAMS(6, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -5294,7 +5294,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 // native IsPlayerGangZoneVisible(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneVisible)
 {
-	CHECK_PARAMS(2, "IsPlayerInPlayerGangZone", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5309,7 +5309,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneVisible)
 // native PlayerGangZoneGetColor(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetColor)
 {
-	CHECK_PARAMS(2, "PlayerGangZoneGetColor", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5329,7 +5329,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetColor)
 // native PlayerGangZoneGetFlashColor(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetFlashColor)
 {
-	CHECK_PARAMS(2, "PlayerGangZoneGetFlashColor", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5349,7 +5349,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetFlashColor)
 // native IsPlayerGangZoneFlashing(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 {
-	CHECK_PARAMS(2, "IsPlayerGangZoneFlashing", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -5371,7 +5371,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 // native IsValidPickup(pickupid);
 AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
-	CHECK_PARAMS(1, "IsValidPickup", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
@@ -5382,7 +5382,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 // native IsPickupStreamedIn(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
-	CHECK_PARAMS(2, "IsPickupStreamedIn", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -5398,7 +5398,7 @@ AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
-	CHECK_PARAMS(4, "GetPickupPos", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
@@ -5413,7 +5413,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 // native GetPickupModel(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
-	CHECK_PARAMS(1, "GetPickupModel", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
@@ -5427,7 +5427,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 // native GetPickupType(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
-	CHECK_PARAMS(1, "GetPickupType", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
@@ -5441,7 +5441,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupType)
 // native GetPickupVirtualWorld(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
-	CHECK_PARAMS(1, "GetPickupVirtualWorld", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if(id < 0 || id >= MAX_PICKUPS) return 0;
@@ -5455,7 +5455,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 // CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 AMX_DECLARE_NATIVE(Natives::CreatePlayerPickup)
 {
-	CHECK_PARAMS(7, "CreatePlayerPickup", LOADED);
+	CHECK_PARAMS(7, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if(!IsPlayerConnected(playerid)) return 0;
@@ -5466,7 +5466,7 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerPickup)
 // native DestroyPlayerPickup(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::DestroyPlayerPickup)
 {
-	CHECK_PARAMS(2, "DestroyPlayerPickup", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -5483,7 +5483,7 @@ AMX_DECLARE_NATIVE(Natives::DestroyPlayerPickup)
 // native IsValidPlayerPickup(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsValidPlayerPickup)
 {
-	CHECK_PARAMS(2, "IsValidPlayerPickup", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -5496,7 +5496,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerPickup)
 // native IsPlayerPickupStreamedIn(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsPlayerPickupStreamedIn)
 {
-	CHECK_PARAMS(2, "IsPlayerPickupStreamedIn", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -5512,7 +5512,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerPickupStreamedIn)
 // native GetPlayerPickupPos(playerid, pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupPos)
 {
-	CHECK_PARAMS(5, "GetPlayerPickupPos", LOADED);
+	CHECK_PARAMS(5, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -5530,7 +5530,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupPos)
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupModel)
 {
 	if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
-	CHECK_PARAMS(2, "GetPlayerPickupModel", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -5546,7 +5546,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupModel)
 // native GetPlayerPickupType(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupType)
 {
-	CHECK_PARAMS(2, "GetPlayerPickupType", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -5562,7 +5562,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupType)
 // native GetPlayerPickupVirtualWorld(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPlayerPickupVirtualWorld)
 {
-	CHECK_PARAMS(2, "GetPlayerPickupVirtualWorld", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int id = CScriptParams::Get()->ReadInt();
@@ -5580,7 +5580,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerPickupVirtualWorld)
 // native IsValidPickup(pickupid);
 AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 {
-	CHECK_PARAMS(1, "IsValidPickup", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
@@ -5592,7 +5592,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPickup)
 // native IsPickupStreamedIn(playerid, pickupid);
 AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 {
-	CHECK_PARAMS(2, "IsPickupStreamedIn", LOADED);
+	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int pickupid = CScriptParams::Get()->ReadInt();
@@ -5605,7 +5605,7 @@ AMX_DECLARE_NATIVE(Natives::IsPickupStreamedIn)
 // native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 {
-	CHECK_PARAMS(4, "GetPickupPos", LOADED);
+	CHECK_PARAMS(4, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
@@ -5620,7 +5620,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupPos)
 // native GetPickupModel(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 {
-	CHECK_PARAMS(1, "GetPickupModel", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
@@ -5634,7 +5634,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupModel)
 // native GetPickupType(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupType)
 {
-	CHECK_PARAMS(1, "GetPickupType", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
@@ -5648,7 +5648,7 @@ AMX_DECLARE_NATIVE(Natives::GetPickupType)
 // native GetPickupVirtualWorld(pickupid);
 AMX_DECLARE_NATIVE(Natives::GetPickupVirtualWorld)
 {
-	CHECK_PARAMS(1, "GetPickupVirtualWorld", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_PICKUPS)
@@ -5674,7 +5674,7 @@ AMX_DECLARE_NATIVE(Natives::ClearBanList)
 // native IsBanned(ipaddress[]);
 AMX_DECLARE_NATIVE(Natives::IsBanned)
 {
-	CHECK_PARAMS(1, "IsBanned", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	char *ip;
 	amx_StrParam(amx, params[1], ip);
@@ -5684,7 +5684,7 @@ AMX_DECLARE_NATIVE(Natives::IsBanned)
 // native SetTimeoutTime(playerid, time);
 AMX_DECLARE_NATIVE(Natives::SetTimeoutTime)
 {
-	CHECK_PARAMS(2, "SetTimeoutTime", LOADED);
+	CHECK_PARAMS(2, LOADED);
 	
 	const PlayerID playerId = CSAMPFunctions::GetPlayerIDFromIndex(CScriptParams::Get()->ReadInt());
 	if(playerId.binaryAddress == UNASSIGNED_PLAYER_ID.binaryAddress || !IsPlayerConnected(static_cast<int>(params[1])))
@@ -5697,7 +5697,7 @@ AMX_DECLARE_NATIVE(Natives::SetTimeoutTime)
 // native GetLocalIP(index, localip[], len = sizeof(localip));
 AMX_DECLARE_NATIVE(Natives::GetLocalIP)
 {
-	CHECK_PARAMS(3, "GetLocalIP", LOADED);
+	CHECK_PARAMS(3, LOADED);
 
 	return set_amxstring(amx, params[2], CSAMPFunctions::GetLocalIP(CScriptParams::Get()->ReadInt()), params[3]);
 }
@@ -5863,7 +5863,7 @@ AMX_DECLARE_NATIVE(Natives::GetColCount)
 // native Float:GetColSphereRadius(modelid);
 AMX_DECLARE_NATIVE(Natives::GetColSphereRadius)
 {
-	CHECK_PARAMS(1, "GetColSphereRadius", NO_FLAGS);
+	CHECK_PARAMS(1,  NO_FLAGS);
 	
 	float fRet = CModelSizes::GetColSphereRadius(CScriptParams::Get()->ReadInt());
 	return amx_ftoc(fRet);
@@ -5872,7 +5872,7 @@ AMX_DECLARE_NATIVE(Natives::GetColSphereRadius)
 // native GetColSphereOffset(modelid, &Float:fX, &Float:fY, &Float:fZ);
 AMX_DECLARE_NATIVE(Natives::GetColSphereOffset)
 {
-	CHECK_PARAMS(4, "GetColSphereOffset", NO_FLAGS);
+	CHECK_PARAMS(4, NO_FLAGS);
 
 	CVector vecOffset = CModelSizes::GetColSphereOffset(CScriptParams::Get()->ReadInt());
 	CScriptParams::Get()->Add(vecOffset);
@@ -5882,7 +5882,7 @@ AMX_DECLARE_NATIVE(Natives::GetColSphereOffset)
 // native GetWeaponSlot(weaponid);
 AMX_DECLARE_NATIVE(Natives::GetWeaponSlot)
 {
-	CHECK_PARAMS(1, "GetWeaponSlot", NO_FLAGS);
+	CHECK_PARAMS(1, NO_FLAGS);
 	
 	return Utility::GetWeaponSlot(CScriptParams::Get()->ReadInt());
 }
@@ -5890,7 +5890,7 @@ AMX_DECLARE_NATIVE(Natives::GetWeaponSlot)
 // native GetWeaponName(weaponid, weaponname[], len = sizeof(weaponname));
 AMX_DECLARE_NATIVE(Natives::FIXED_GetWeaponName)
 {
-	CHECK_PARAMS(3, "GetWeaponName", NO_FLAGS);
+	CHECK_PARAMS(3, NO_FLAGS);
 
 	return set_amxstring(amx, params[2], Utility::GetWeaponName(static_cast<BYTE>(params[1])), params[3]);
 }
@@ -5898,7 +5898,7 @@ AMX_DECLARE_NATIVE(Natives::FIXED_GetWeaponName)
 // native IsPlayerConnected(playerid);
 AMX_DECLARE_NATIVE(Natives::FIXED_IsPlayerConnected)
 {
-	CHECK_PARAMS(1, "IsPlayerConnected", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;
@@ -5910,7 +5910,7 @@ AMX_DECLARE_NATIVE(Natives::FIXED_IsPlayerConnected)
 // native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 AMX_DECLARE_NATIVE(Natives::CreatePickup)
 {
-	CHECK_PARAMS(6, "CreatePickup", LOADED);
+	CHECK_PARAMS(6, LOADED);
 
 	return CServer::Get()->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
 }
@@ -5918,7 +5918,7 @@ AMX_DECLARE_NATIVE(Natives::CreatePickup)
 // native DestroyPickup(pickupid);
 AMX_DECLARE_NATIVE(Natives::DestroyPickup)
 {
-	CHECK_PARAMS(1, "DestroyPickup", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	CServer::Get()->pPickupPool->Destroy((int)params[1]);
 	return 1;
@@ -5927,7 +5927,7 @@ AMX_DECLARE_NATIVE(Natives::DestroyPickup)
 // native SetPickupStreamingEnabled(enabled);
 AMX_DECLARE_NATIVE(Natives::SetPickupStreamingEnabled)
 {
-	CHECK_PARAMS(1, "SetPickupStreamingEnabled", LOADED);
+	CHECK_PARAMS(1, LOADED);
 
 	CServer::Get()->pPickupPool->SetStreamingEnabled(!!params[1]);
 	return 1;

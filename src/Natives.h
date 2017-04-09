@@ -44,8 +44,8 @@ typedef cell AMX_NATIVE_CALL(*AMX_Function_t)(AMX *amx, cell *params);
 #define AMX_DEFINE_NATIVE(name) \
 	{#name, Natives::name},
 
-#define CHECK_PARAMS(m, n, flag) \
-	if(CScriptParams::Get()->Setup(m, n, CScriptParams::Flags::flag, amx, params)) return CScriptParams::Get()->HandleError()
+#define CHECK_PARAMS(m, flag) \
+	if(CScriptParams::Get()->Setup(m, __FUNCTION__, CScriptParams::Flags::flag, amx, params)) return CScriptParams::Get()->HandleError()
 	
 namespace Natives
 {
