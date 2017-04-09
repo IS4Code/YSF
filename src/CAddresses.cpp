@@ -273,7 +273,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	logprintf("FUNC_CGameMode__OnDialogResponse: %X", FUNC_CGameMode__OnDialogResponse);
 */
 
-	logprintf("ARRAY_ConsoleCommands: %x", ARRAY_ConsoleCommands);
+	//logprintf("ARRAY_ConsoleCommands: %x", ARRAY_ConsoleCommands);
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
 		Unlock((void*)VAR_pRestartWaitTime, 4);

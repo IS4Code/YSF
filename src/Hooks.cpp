@@ -288,8 +288,9 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 					// Fix nightvision and infrared sync
 					if (pSyncData->byteWeapon == WEAPON_NIGHTVISION || pSyncData->byteWeapon == WEAPON_INFRARED)
 					{
-						pSyncData->wKeys &= ~4;
+						pSyncData->wKeys &= ~(KEY_FIRE | KEY_ACTION);
 						pSyncData->byteWeapon = 0;
+						pSyncData->_unk_ = 0;
 					}
 				}
 
