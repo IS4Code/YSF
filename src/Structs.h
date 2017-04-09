@@ -946,7 +946,7 @@ struct CNetGame
 	int						iGameState;				// 94 - 98
 	float					fGravity;				// 98 - 102
 	int						iDeathDropMoney;		// 102 - 106
-	BYTE					unklofasz;				// 106 - 107
+	BYTE					byteEnableZoneNames;				// 106 - 107
 	BYTE					byteMode;				// 107 - 108
 	BYTE					bLimitGlobalChatRadius;	// 108 - 109
 	BYTE					bUseCJWalk;				// 109 - 110
