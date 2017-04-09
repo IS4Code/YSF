@@ -145,8 +145,10 @@ class Hook {
     : hook_(subhook_new(src, dst, (subhook_options_t)options)) {}
 
   ~Hook() {
-    subhook_remove(hook_);
-    subhook_free(hook_);
+    if (hook_ != 0) {
+      subhook_remove(hook_);
+      subhook_free(hook_);
+    }
   }
 
   void *GetSrc() { return subhook_get_src(hook_); }
@@ -214,6 +216,15 @@ class ScopedHookInstall {
   ScopedHookInstall(Hook *hook)
     : hook_(hook)
     , installed_(hook_->Install())
+  {
+  }
+
+  ScopedHookInstall(Hook *hook,
+                    void *src,
+                    void *dst,
+                    HookOptions options = HookOptionsNone)
+    : hook_(hook)
+    , installed_(hook_->Install(src, dst, options))
   {
   }
 
