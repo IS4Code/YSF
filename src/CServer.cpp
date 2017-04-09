@@ -792,7 +792,7 @@ bool CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
 
 			bsSync->Reset();
-			bsSync->Write((bool)!!pNetGame->unklofasz);
+			bsSync->Write((bool)!!pNetGame->byteEnableZoneNames);
 			bsSync->Write((bool)usecjwalk);
 			bsSync->Write((bool)!!pNetGame->byteAllowWeapons);
 			bsSync->Write(limitglobalchat);
