@@ -289,8 +289,8 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 					if (pSyncData->byteWeapon == WEAPON_NIGHTVISION || pSyncData->byteWeapon == WEAPON_INFRARED)
 					{
 						pSyncData->wKeys &= ~(KEY_FIRE | KEY_ACTION);
-						//pSyncData->byteWeapon = 0;
-						//pSyncData->_unk_ = 0;
+						pSyncData->byteWeapon = 0;
+						pSyncData->_unk_ = 0;
 					}
 				}
 
