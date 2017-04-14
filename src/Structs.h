@@ -929,7 +929,7 @@ struct CNetGame
 	int						iCurrentGameModeIndex;	// 44
 	int						iCurrentGameModeRepeat;	// 48
 	BOOL					bFirstGameModeLoaded;	// 52
-	void					*pUnk;					// 56
+	void					*pHttpClient;					// 56
 	CScriptTimers			*pScriptTimers;			// 60
 	void					*pRak;					// 64
 	DWORD					dwSomethingTick;
@@ -962,6 +962,6 @@ struct CNetGame
 	double					dElapsedTime;			// size = 8
 #endif
 	int						iSpawnsAvailable;		// 130 - 134
-	CPlayerSpawnInfo		AvailableSpawns[300];	// 129 - 13929
+	CPlayerSpawnInfo		AvailableSpawns[319];	// 129 - 14803
 };
 #endif
