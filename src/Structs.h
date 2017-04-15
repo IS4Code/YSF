@@ -258,11 +258,7 @@ struct CAimSyncData
 	float			fZAim;					// 25 - 29
 	BYTE			byteCameraZoom : 6;		// 29
 	BYTE			byteWeaponState  : 2;	// 29
-	BYTE			unk;					// 30 - 31
-	WORD			wCameraObject;			// 31 - 33
-	WORD			wCameraVehicle;			// 33 - 35
-	WORD			wCameraPlayer;			// 35 - 37
-	WORD			wCameraActor;			// 37 - 39
+	BYTE			byteAspectRatio;					// 30 - 31
 };
 static_assert(sizeof(CAimSyncData) == 39, "Invalid CAimSyncData size");
 
@@ -486,7 +482,11 @@ static_assert(sizeof(CPlayerVar) == 48800 + 3200 + 4, "Invalid CPlayerVar size")
 
 struct CPlayer
 {
-	CAimSyncData			aimSyncData;			// 0 - 39
+	CAimSyncData			aimSyncData;			// 0 - 31
+	WORD				wCameraObject;			// 31 - 33
+	WORD				wCameraVehicle;			// 33 - 35
+	WORD				wCameraPlayer;			// 35 - 37
+	WORD				wCameraActor;			// 37 - 39
 	CVehicleSyncData		vehicleSyncData;		// 39 -
 	CPassengerSyncData		passengerSyncData;		//
 	CSyncData				syncData;				// 126 - 194

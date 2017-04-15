@@ -2777,7 +2777,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerCameraTargetPlayerObj)
 	CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 	if(!pPlayer->bCameraTarget) return INVALID_OBJECT_ID;
 
-	const int target = pNetGame->pPlayerPool->pPlayer[playerid]->aimSyncData.wCameraObject;
+	const int target = pNetGame->pPlayerPool->pPlayer[playerid]->wCameraObject;
 	if(target >= 0 && target < MAX_OBJECTS)
 	{
 		if(pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][target])
