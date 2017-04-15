@@ -353,12 +353,11 @@ static_assert(sizeof(CSpectatingSyncData) == 18, "Invalid CSpectatingSyncData si
 
 struct CTrailerSyncData
 {
-	WORD			wTrailerID;				// + 0x0000
-	CVector			vecRoll;				// + 0x0002
-	CVector			vecDirection;			// + 0x000E
-	CVector			vecPosition;			// + 0x001A
-	CVector			vecVelocity;			// + 0x0026
-	DWORD			pad;
+	WORD			wTrailerID;			// + 0x0000
+	CVector			vecPosition;			// + 0x0002
+	float			fQuaternion[4];			// + 0x000E
+	CVector			vecVelocity;			// + 0x001E
+	CVector			vecTurnVelocity;		// + 0x002A
 };
 static_assert(sizeof(CTrailerSyncData) == 54, "Invalid CTrailerSyncData size");
 
