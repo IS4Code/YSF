@@ -260,7 +260,7 @@ struct CAimSyncData
 	BYTE			byteWeaponState  : 2;	// 29
 	BYTE			byteAspectRatio;					// 30 - 31
 };
-static_assert(sizeof(CAimSyncData) == 39, "Invalid CAimSyncData size");
+static_assert(sizeof(CAimSyncData) == 31, "Invalid CAimSyncData size");
 
 struct CVehicleSyncData
 {
