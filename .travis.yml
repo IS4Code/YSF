@@ -1,11 +1,14 @@
-language: cpp
 sudo: required
 dist: trusty
-
+language: cpp
+compiler: g++
+install: export CXX="g++-6"
 addons:
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
-    - g++-multilib
-    
-script: 
-    - make YSF
+    - g++-6
+
+before_install: sudo apt-get update -qq
+script: make

@@ -71,14 +71,14 @@ void CScriptParams::DetectError()
 	
 	if (m_flags & Flags::MORE_PARAMETER_ALLOWED)
 	{
-		if (m_params[0] < (m_paramscount * 4))
+		if (m_params[0] < (m_paramscount * sizeof(cell)))
 		{
 			m_error = PARAMETER_COUNT_ISNT_ENOUGH;
 		}
 	}
 	else
 	{
-		if (m_params[0] != (m_paramscount * 4))
+		if (m_params[0] != (m_paramscount * sizeof(cell)))
 		{
 			m_error = PARAMETER_COUNT_ISNT_EQUAL;
 		}
