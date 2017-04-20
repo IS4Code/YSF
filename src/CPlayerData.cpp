@@ -378,28 +378,34 @@ void CPlayerData::Process(void)
 	
 	if (!unprocessedStreamedPlayer.empty())
 	{
-		for (std::unordered_map<WORD, default_clock::time_point>::iterator p = unprocessedStreamedPlayer.begin(); p != unprocessedStreamedPlayer.end(); ++p)
+		for (std::unordered_map<WORD, default_clock::time_point>::iterator p = unprocessedStreamedPlayer.begin(); p != unprocessedStreamedPlayer.end(); )
 		{
 			default_clock::duration passed_time = default_clock::now() - p->second;
-			//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
+			logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
 			if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
 			{
-				p = unprocessedStreamedPlayer.erase(p);
-
+				logprintf("erase ");
 				for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = holdingObjects.begin(); o != holdingObjects.end(); ++o)
 				{
+					logprintf("o->first: %d, p->first: %d", o->first, p->first);
 					if (o->first == p->first)
 					{
 						CAttachedObject *objData = o->second.second.get();
-						logprintf("holding object stream in %d - %d - %d, %f - slot: %d", p->first, wPlayerID, objData->iModelID, objData->vecScale.fX, o->second.first);
-
+						logprintf("holding object stream in %d - %d - %d, %f - slot: %d, bone: %d, modelid: %d- %f, %f, %f - %f, %f, %f - %f, %f, %f - %x, %x", 
+							p->first, wPlayerID, objData->iModelID, objData->vecScale.fX, o->second.first, objData->iBoneiD, objData->iModelID,
+							objData->vecPos.fX, objData->vecPos.fY, objData->vecPos.fZ,
+							objData->vecRot.fX, objData->vecRot.fY, objData->vecRot.fZ,
+							objData->vecScale.fX, objData->vecScale.fY, objData->vecScale.fZ,
+							objData->dwMaterialColor1, objData->dwMaterialColor2);
+						
 						RakNet::BitStream bsData;
+						/*
 						bsData.Write((WORD)p->first);
 						bsData.Write((int)o->second.first);
 						bsData.Write(false);
 						CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), false, false);
-
-						bsData.Reset();
+						*/
+						//bsData.Reset();
 						bsData.Write((WORD)p->first);
 						bsData.Write((int)o->second.first);
 						bsData.Write(true);
@@ -407,6 +413,12 @@ void CPlayerData::Process(void)
 						CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), false, false);
 					}
 				}
+
+				p = unprocessedStreamedPlayer.erase(p);
+			}
+			else
+			{
+				++p;
 			}
 		}
 	}

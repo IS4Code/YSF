@@ -215,7 +215,8 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 		}
 	}
 
-	pPlayerData[forplayerid]->unprocessedStreamedPlayer.emplace(playerid, default_clock::now());
+	logprintf("for: %d - unprocessedStreamedPlayer %d", forplayerid, playerid);
+	pPlayerData[forplayerid]->unprocessedStreamedPlayer[playerid] = default_clock::now();
 	return 1;
 }
 
