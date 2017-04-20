@@ -2130,7 +2130,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 	std::string version;
 	CScriptParams::Get()->Read(&version);
 
-	if (!version.empty() && version.length() < 28)
+	if (!version.empty() && version.length() < 20)
 	{
 		pNetGame->pPlayerPool->szVersion[playerid][0] = NULL;
 		strcpy(pNetGame->pPlayerPool->szVersion[playerid], version.c_str());
