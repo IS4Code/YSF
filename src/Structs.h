@@ -591,7 +591,8 @@ struct CPlayerPool
 	DWORD			dwDrunkLevel[MAX_PLAYERS];				// 12012 - 16012
 	DWORD			dwLastScoreUpdate[MAX_PLAYERS];			// 16012 - 20012
 	char			szSerial[MAX_PLAYERS][101];				// 20012 - 121012				
-	char			szVersion[MAX_PLAYERS][29];				// 121012 - 150012
+	char			szVersion[MAX_PLAYERS][25];				// 121012 - 146012
+	void			*pRemoteSystem[MAX_PLAYERS];				// 146012 - 150012
 	BOOL			bIsPlayerConnected[MAX_PLAYERS];		// 150012 - 154012
 	CPlayer			*pPlayer[MAX_PLAYERS];					// 154012 - 158012
 	char			szName[MAX_PLAYERS][MAX_PLAYER_NAME + 1];				// 158012 - 183012
@@ -600,8 +601,9 @@ struct CPlayerPool
 	PAD(pad0, 8000);										// 191012 - 199012
 	DWORD			dwConnectedPlayers;						// 199012 - 199016
 	DWORD			dwPlayerPoolSize;						// 199016 - 199020
+	DWORD			dwUnk;							// 199020 - 199024
 };
-static_assert(sizeof(CPlayerPool) == 199020, "Invalid CPlayerPool size");
+static_assert(sizeof(CPlayerPool) == 199024, "Invalid CPlayerPool size");
 
 /* -------------------------------------------------------- */
 // CVehicle
