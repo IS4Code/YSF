@@ -38,6 +38,7 @@
 #include <map>
 
 #include <raknet/BitStream.h>
+#include <raknet/NetworkTypes.h>
 #include <sdk/amx/amx.h>
 
 #if !defined PAD
@@ -213,6 +214,51 @@ enum CON_VARTYPE { CON_VARTYPE_FLOAT, CON_VARTYPE_INT, CON_VARTYPE_BOOL, CON_VAR
 #define CON_VARFLAG_RULE			4	// Gets sent with a RULES query responce
 
 typedef void(*VARCHANGEFUNC)();
+
+/* -------------------------------------------------------- */
+
+// RakNet Remote system
+struct PingAndClockDifferential
+{
+	unsigned short pingTime;
+	unsigned int clockDifferential;
+};
+
+struct RemoteSystemStruct
+{
+	bool isActive;
+	PlayerID playerId;  // The remote system associated with this reliability layer
+	PlayerID myExternalPlayerId;  // Your own IP, as reported by the remote system
+	BYTE gapD[1895];
+	DWORD dword774;
+	WORD word778;
+	BYTE gap77A[2];
+	DWORD dword77C;
+	DWORD dword780;
+	BYTE gap784[276];
+	DWORD dword898;
+	BYTE gap89C[16];
+	BYTE byte8AC;
+	BYTE gap8AD[1023];
+	unsigned int connectionTime;
+	enum ConnectMode
+	{
+		NO_ACTION,
+		DISCONNECT_ASAP,
+		DISCONNECT_ASAP_SILENTLY,
+		DISCONNECT_ON_NO_ACK,
+		REQUESTED_CONNECTION,
+		HANDLING_CONNECTION_REQUEST,
+		UNVERIFIED_SENDER,
+		SET_ENCRYPTION_ON_MULTIPLE_16_BYTE_PACKET,
+		CONNECTED
+	} connectMode;
+	BYTE byteAuthTableIndex; // https://github.com/kurta999/YSF/pull/64
+	BYTE byteAuthType;
+	BYTE byteIsLogon;
+};
+
+static_assert(sizeof(RemoteSystemStruct) == 3255, "Invalid RemoteSystemStruct size");
 
 /* -------------------------------------------------------- */
 typedef struct _MATRIX4X4 
@@ -582,26 +628,26 @@ static_assert(sizeof(CPlayer) == 11486, "Invalid CPlayer size");
 
 struct CPlayerPool
 {
-	DWORD			dwVirtualWorld[MAX_PLAYERS];			// 0 - 4000
-	DWORD			dwPlayersCount;							// 4000 - 4004
-	DWORD			dwlastMarkerUpdate;						// 4004 - 4008
-	float			fUpdatePlayerGameTimers;				// 4008 - 4012
-	DWORD			dwScore[MAX_PLAYERS];					// 4012 - 8012
-	DWORD			dwMoney[MAX_PLAYERS];					// 8012 - 12012
-	DWORD			dwDrunkLevel[MAX_PLAYERS];				// 12012 - 16012
-	DWORD			dwLastScoreUpdate[MAX_PLAYERS];			// 16012 - 20012
-	char			szSerial[MAX_PLAYERS][101];				// 20012 - 121012				
-	char			szVersion[MAX_PLAYERS][25];				// 121012 - 146012
-	void			*pRemoteSystem[MAX_PLAYERS];				// 146012 - 150012
-	BOOL			bIsPlayerConnected[MAX_PLAYERS];		// 150012 - 154012
-	CPlayer			*pPlayer[MAX_PLAYERS];					// 154012 - 158012
-	char			szName[MAX_PLAYERS][MAX_PLAYER_NAME + 1];				// 158012 - 183012
-	BOOL			bIsAnAdmin[MAX_PLAYERS];				// 183012 - 187012
-	BOOL			bIsNPC[MAX_PLAYERS];					// 187012 - 191012
-	PAD(pad0, 8000);										// 191012 - 199012
-	DWORD			dwConnectedPlayers;						// 199012 - 199016
-	DWORD			dwPlayerPoolSize;						// 199016 - 199020
-	DWORD			dwUnk;							// 199020 - 199024
+	DWORD					dwVirtualWorld[MAX_PLAYERS];				// 0 - 4000
+	DWORD					dwPlayersCount;								// 4000 - 4004
+	DWORD					dwlastMarkerUpdate;							// 4004 - 4008
+	float					fUpdatePlayerGameTimers;					// 4008 - 4012
+	DWORD					dwScore[MAX_PLAYERS];						// 4012 - 8012
+	DWORD					dwMoney[MAX_PLAYERS];						// 8012 - 12012
+	DWORD					dwDrunkLevel[MAX_PLAYERS];					// 12012 - 16012
+	DWORD					dwLastScoreUpdate[MAX_PLAYERS];				// 16012 - 20012
+	char					szSerial[MAX_PLAYERS][101];					// 20012 - 121012				
+	char					szVersion[MAX_PLAYERS][25];					// 121012 - 146012
+	RemoteSystemStruct		*pRemoteSystem[MAX_PLAYERS];				// 146012 - 150012
+	BOOL					bIsPlayerConnected[MAX_PLAYERS];			// 150012 - 154012
+	CPlayer					*pPlayer[MAX_PLAYERS];						// 154012 - 158012
+	char					szName[MAX_PLAYERS][MAX_PLAYER_NAME + 1];	// 158012 - 183012
+	BOOL					bIsAnAdmin[MAX_PLAYERS];					// 183012 - 187012
+	BOOL					bIsNPC[MAX_PLAYERS];						// 187012 - 191012
+	PAD(pad0, 8000);													// 191012 - 199012
+	DWORD					dwConnectedPlayers;							// 199012 - 199016
+	DWORD					dwPlayerPoolSize;							// 199016 - 199020
+	DWORD					dwUnk;										// 199020 - 199024
 };
 static_assert(sizeof(CPlayerPool) == 199024, "Invalid CPlayerPool size");
 
