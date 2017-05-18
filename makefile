@@ -23,4 +23,5 @@ YSF: clean
 	$(GPP) $(YSF) ./lib/raknet/*.cpp
 	$(GCC) $(YSF) ./lib/subhook/subhook.c
 	$(GPP) $(YSF) ./src/*.cpp
+	$(GPP) $(YSF) ./src/natives/*.cpp	
 	$(GCC) -nodefaultlibs -fshort-wchar -shared -o $(YSF_OUTFILE) *.o

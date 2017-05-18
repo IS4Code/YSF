@@ -39,7 +39,7 @@
 typedef cell AMX_NATIVE_CALL(*AMX_Function_t)(AMX *amx, cell *params);
 
 #define AMX_DECLARE_NATIVE(name) \
-	static cell AMX_NATIVE_CALL name(AMX* amx, cell* params)
+	cell AMX_NATIVE_CALL name(AMX* amx, cell* params)
 
 #define AMX_DEFINE_NATIVE(name) \
 	{#name, Natives::name},

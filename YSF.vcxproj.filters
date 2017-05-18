@@ -43,6 +43,9 @@
     <Filter Include="sampsvr_files\plugins">
       <UniqueIdentifier>{aeb8301c-bdba-45aa-b5a8-d7e732c5e2ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Natives">
+      <UniqueIdentifier>{a3551151-f85b-4415-a7ac-bb88aef9b3e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CCallbackManager.cpp">
@@ -98,6 +101,54 @@
     </ClCompile>
     <ClCompile Include="src\amxfunctions.cpp">
       <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\vehicles.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\objects.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\misc.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\gangzones.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\pickups.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\menus.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\textlabels.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\textdraws.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\actors.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\server.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\players.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\scoreboard.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\raknet.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\modelsizes.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\ysfsettings.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\fixes.cpp">
+      <Filter>src\Natives</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
