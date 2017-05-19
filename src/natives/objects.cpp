@@ -642,7 +642,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyObject)
 	if (objectid < 0 || objectid > MAX_OBJECTS) return 0;
 	if (!pNetGame->pObjectPool->pObjects[objectid]) return 0;
 
-	if (pDestroyObject(amx, params))
+	if (Natives::ORIGINAL_DestroyObject(amx, params))
 	{
 		CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
 		return 1;
@@ -673,7 +673,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyPlayerObject)
 		pPlayerData[playerid]->DeleteObjectAddon(static_cast<WORD>(objectid));
 	}
 
-	if (pDestroyPlayerObject(amx, params))
+	if (Natives::ORIGINAL_DestroyPlayerObject(amx, params))
 	{
 		return 1;
 	}
@@ -695,7 +695,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 	if (!pObject) return 0;
 
 	// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
-	pAttachObjectToPlayer(amx, params);
+	Natives::ORIGINAL_AttachObjectToPlayer(amx, params);
 
 	// Store values which should be server purpose not mine
 	CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
@@ -821,7 +821,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 
-	if (pSetPlayerObjectMaterial(amx, params) && IsPlayerConnected(playerid))
+	if (Natives::ORIGINAL_SetPlayerObjectMaterial(amx, params) && IsPlayerConnected(playerid))
 	{
 		const int objectid = CScriptParams::Get()->ReadInt();
 
@@ -871,7 +871,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 
-	if (pSetPlayerObjectMaterialText(amx, params) && IsPlayerConnected(playerid))
+	if (Natives::ORIGINAL_SetPlayerObjectMaterialText(amx, params) && IsPlayerConnected(playerid))
 	{
 		const int objectid = CScriptParams::Get()->ReadInt();
 

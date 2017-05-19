@@ -459,7 +459,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_ChangeVehicleColor)
 	CHECK_PARAMS(3, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
-	if (pChangeVehicleColor(amx, params))
+	if (Natives::ORIGINAL_ChangeVehicleColor(amx, params))
 	{
 		CServer::Get()->bChangedVehicleColor[vehicleid] = true;
 		return 1;
@@ -473,7 +473,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyVehicle)
 	CHECK_PARAMS(1, LOADED);
 
 	const int vehicleid = CScriptParams::Get()->ReadInt();
-	if (pDestroyVehicle(amx, params))
+	if (Natives::ORIGINAL_DestroyVehicle(amx, params))
 	{
 		CServer::Get()->bChangedVehicleColor[vehicleid] = false;
 		auto v = CServer::Get()->vehicleSpawnData.find(vehicleid);

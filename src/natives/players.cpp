@@ -138,7 +138,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerTeam)
 	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
-	if (pSetPlayerTeam(amx, params))
+	if (Natives::ORIGINAL_SetPlayerTeam(amx, params))
 	{
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
@@ -945,7 +945,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
-	if (pSetPlayerSkin(amx, params))
+	if (Natives::ORIGINAL_SetPlayerSkin(amx, params))
 	{
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
@@ -963,7 +963,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
-	const int ret = pSetPlayerName(amx, params);
+	const int ret = Natives::ORIGINAL_SetPlayerName(amx, params);
 
 	if (ret == 1)
 	{
@@ -982,7 +982,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 	CHECK_PARAMS(2, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
-	if (pSetPlayerFightingStyle(amx, params))
+	if (Natives::ORIGINAL_SetPlayerFightingStyle(amx, params))
 	{
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
 		{
@@ -1001,7 +1001,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWeather)
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 
-	if (pSetPlayerWeather(amx, params) && IsPlayerConnected(playerid))
+	if (Natives::ORIGINAL_SetPlayerWeather(amx, params) && IsPlayerConnected(playerid))
 	{
 		pPlayerData[playerid]->byteWeather = static_cast<BYTE>(CScriptParams::Get()->ReadInt());
 		return 1;
@@ -1015,7 +1015,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerWorldBounds)
 	CHECK_PARAMS(5, LOADED);
 
 	const int playerid = CScriptParams::Get()->ReadInt();
-	if (pSetPlayerWorldBounds(amx, params) && IsPlayerConnected(playerid))
+	if (Natives::ORIGINAL_SetPlayerWorldBounds(amx, params) && IsPlayerConnected(playerid))
 	{
 		for (BYTE i = 0; i != 4; ++i)
 		{
@@ -1034,7 +1034,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_TogglePlayerControllable)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const bool toggle = CScriptParams::Get()->ReadBool();
 
-	if (pTogglePlayerControllable(amx, params) && IsPlayerConnected(playerid))
+	if (Natives::ORIGINAL_TogglePlayerControllable(amx, params) && IsPlayerConnected(playerid))
 	{
 		pPlayerData[playerid]->bControllable = toggle;
 		return 1;
@@ -1050,7 +1050,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_ShowPlayerDialog)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int dialogid = CScriptParams::Get()->ReadInt();
 
-	if (pShowPlayerDialog(amx, params) && IsPlayerConnected(playerid))
+	if (Natives::ORIGINAL_ShowPlayerDialog(amx, params) && IsPlayerConnected(playerid))
 	{
 		pPlayerData[playerid]->wDialogID = dialogid;
 		return 1;

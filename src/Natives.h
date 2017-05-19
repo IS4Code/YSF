@@ -47,8 +47,31 @@ typedef cell AMX_NATIVE_CALL(*AMX_Function_t)(AMX *amx, cell *params);
 #define CHECK_PARAMS(m, flag) \
 	if(CScriptParams::Get()->Setup(m, __FUNCTION__, CScriptParams::Flags::flag, amx, params)) return CScriptParams::Get()->HandleError()
 	
+struct stRedirectedNatives
+{
+	const char _FAR *name PACKED;
+	AMX_NATIVE *originalfunc PACKED;
+	AMX_NATIVE func PACKED;
+};
+
 namespace Natives
 {
+	extern AMX_NATIVE ORIGINAL_AttachObjectToPlayer;
+	extern AMX_NATIVE ORIGINAL_SetPlayerWeather;
+	extern AMX_NATIVE ORIGINAL_SetPlayerWorldBounds;
+	extern AMX_NATIVE ORIGINAL_DestroyObject;
+	extern AMX_NATIVE ORIGINAL_DestroyPlayerObject;
+	extern AMX_NATIVE ORIGINAL_TogglePlayerControllable;
+	extern AMX_NATIVE ORIGINAL_ChangeVehicleColor;
+	extern AMX_NATIVE ORIGINAL_DestroyVehicle;
+	extern AMX_NATIVE ORIGINAL_ShowPlayerDialog;
+	extern AMX_NATIVE ORIGINAL_SetPlayerObjectMaterial;
+	extern AMX_NATIVE ORIGINAL_SetPlayerObjectMaterialText;
+	extern AMX_NATIVE ORIGINAL_SetPlayerTeam;
+	extern AMX_NATIVE ORIGINAL_SetPlayerSkin;
+	extern AMX_NATIVE ORIGINAL_SetPlayerName;
+	extern AMX_NATIVE ORIGINAL_SetPlayerFightingStyle;
+
 	AMX_DECLARE_NATIVE(execute); // R18
 
 	AMX_DECLARE_NATIVE(ffind);
@@ -415,5 +438,5 @@ namespace Natives
 
 int InitNatives(AMX *amx);
 
-extern AMX_NATIVE_INFO redirected_native_list[];
+extern stRedirectedNatives redirected_native_list[];
 #endif

@@ -40,23 +40,6 @@
 		subhook_free(hookname); \
 	} \
 
-extern AMX_NATIVE
-	pSetPlayerWeather,
-	pDestroyObject, 
-	pDestroyPlayerObject, 
-	pTogglePlayerControllable, 
-	pSetPlayerWorldBounds, 
-	pSetPlayerTeam, 
-	pSetPlayerSkin, 
-	pSetPlayerFightingStyle, 
-	pSetPlayerName, 
-	pChangeVehicleColor, 
-	pDestroyVehicle, 
-	pAttachObjectToPlayer,
-	pShowPlayerDialog,
-	pSetPlayerObjectMaterial,
-	pSetPlayerObjectMaterialText;
-
 extern char gRecordingDataPath[MAX_PATH];
 
 void InstallPreHooks();

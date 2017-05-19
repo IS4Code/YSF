@@ -50,24 +50,6 @@ subhook_t CGameMode__OnPlayerStreamOut_hook;
 subhook_t CGameMode__OnDialogResponse_hook;
 
 //----------------------------------------------------
-AMX_NATIVE
-	pSetPlayerWeather = NULL,
-	pDestroyObject = NULL,
-	pDestroyPlayerObject = NULL,
-	pTogglePlayerControllable = NULL,
-	pSetPlayerWorldBounds = NULL,
-	pSetPlayerTeam = NULL,
-	pSetPlayerSkin = NULL,
-	pSetPlayerFightingStyle = NULL,
-	pSetPlayerName = NULL,
-	pChangeVehicleColor = NULL,
-	pDestroyVehicle = NULL,
-	pAttachObjectToPlayer = NULL,
-	pShowPlayerDialog = NULL,
-	pSetPlayerObjectMaterial = NULL,
-	pSetPlayerObjectMaterialText = NULL;
-
-//----------------------------------------------------
 char gRecordingDataPath[MAX_PATH];
 
 ///////////////////////////////////////////////////////////////
@@ -135,51 +117,6 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		int i = 0;
 		while (nativelist[i].name)
 		{
-			if (!pSetPlayerWeather && !strcmp(nativelist[i].name, "SetPlayerWeather"))
-				pSetPlayerWeather = nativelist[i].func;
-
-			if(!pDestroyObject && !strcmp(nativelist[i].name, "DestroyObject"))
-				pDestroyObject = nativelist[i].func;
-
-			if(!pDestroyPlayerObject && !strcmp(nativelist[i].name, "DestroyPlayerObject"))
-				pDestroyPlayerObject = nativelist[i].func;
-
-			if(!pTogglePlayerControllable && !strcmp(nativelist[i].name, "TogglePlayerControllable"))
-				pTogglePlayerControllable = nativelist[i].func;
-
-			if(!pSetPlayerWorldBounds && !strcmp(nativelist[i].name, "SetPlayerWorldBounds"))
-				pSetPlayerWorldBounds = nativelist[i].func;
-			
-			if(!pSetPlayerTeam && !strcmp(nativelist[i].name, "SetPlayerTeam"))
-				pSetPlayerTeam = nativelist[i].func;
-			
-			if(!pSetPlayerSkin && !strcmp(nativelist[i].name, "SetPlayerSkin"))
-				pSetPlayerSkin = nativelist[i].func;
-			
-			if(!pSetPlayerFightingStyle && !strcmp(nativelist[i].name, "SetPlayerFightingStyle"))
-				pSetPlayerFightingStyle = nativelist[i].func;
-			
-			if(!pSetPlayerName && !strcmp(nativelist[i].name, "SetPlayerName"))
-				pSetPlayerName = nativelist[i].func;
-			
-			if(!pChangeVehicleColor && !strcmp(nativelist[i].name, "ChangeVehicleColor"))
-				pChangeVehicleColor = nativelist[i].func;
-
-			if(!pDestroyVehicle && !strcmp(nativelist[i].name, "DestroyVehicle"))
-				pDestroyVehicle = nativelist[i].func;
-
-			if(!pAttachObjectToPlayer && !strcmp(nativelist[i].name, "AttachObjectToPlayer"))
-				pAttachObjectToPlayer = nativelist[i].func;
-
-			if (!pShowPlayerDialog && !strcmp(nativelist[i].name, "ShowPlayerDialog"))
-				pShowPlayerDialog = nativelist[i].func;
-
-			if (!pSetPlayerObjectMaterial && !strcmp(nativelist[i].name, "SetPlayerObjectMaterial"))
-				pSetPlayerObjectMaterial = nativelist[i].func;
-
-			if (!pSetPlayerObjectMaterialText && !strcmp(nativelist[i].name, "SetPlayerObjectMaterialText"))
-				pSetPlayerObjectMaterialText = nativelist[i].func;
-
 			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
 			
@@ -191,6 +128,10 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 					if (!bNativesHooked) bNativesHooked = true;
 				
 					//logprintf("native: %s, %s", nativelist[i].name, redirected_native_list[x].name);
+					if(redirected_native_list[x].originalfunc != NULL)
+					{
+						*redirected_native_list[x].originalfunc = nativelist[i].func;
+					}
 					nativelist[i].func = redirected_native_list[x].func;
 				}
 				x++;

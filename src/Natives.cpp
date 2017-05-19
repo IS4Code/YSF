@@ -33,6 +33,22 @@
 #include "main.h"
 #include <memory>
 
+AMX_NATIVE Natives::ORIGINAL_AttachObjectToPlayer = NULL;
+AMX_NATIVE Natives::ORIGINAL_SetPlayerWeather = NULL;
+AMX_NATIVE Natives::ORIGINAL_SetPlayerWorldBounds = NULL;
+AMX_NATIVE Natives::ORIGINAL_DestroyObject = NULL;
+AMX_NATIVE Natives::ORIGINAL_DestroyPlayerObject = NULL;
+AMX_NATIVE Natives::ORIGINAL_TogglePlayerControllable = NULL;
+AMX_NATIVE Natives::ORIGINAL_ChangeVehicleColor = NULL;
+AMX_NATIVE Natives::ORIGINAL_DestroyVehicle = NULL;
+AMX_NATIVE Natives::ORIGINAL_ShowPlayerDialog = NULL;
+AMX_NATIVE Natives::ORIGINAL_SetPlayerObjectMaterial = NULL;
+AMX_NATIVE Natives::ORIGINAL_SetPlayerObjectMaterialText = NULL;
+AMX_NATIVE Natives::ORIGINAL_SetPlayerTeam = NULL;
+AMX_NATIVE Natives::ORIGINAL_SetPlayerSkin = NULL;
+AMX_NATIVE Natives::ORIGINAL_SetPlayerName = NULL;
+AMX_NATIVE Natives::ORIGINAL_SetPlayerFightingStyle = NULL;
+
 // And an array containing the native function-names and the functions specified with them
 AMX_NATIVE_INFO native_list[] =
 {
@@ -403,48 +419,48 @@ AMX_NATIVE_INFO native_list[] =
 	{ NULL,								NULL }
 };
 
-AMX_NATIVE_INFO redirected_native_list[] =
+stRedirectedNatives redirected_native_list[] =
 {
 	// File
-	{ "AttachObjectToPlayer",			Natives::YSF_AttachObjectToPlayer },
-	{ "AttachPlayerObjectToPlayer",		Natives::YSF_AttachPlayerObjectToPlayer },
-	{ "GetGravity",						Natives::YSF_GetGravity },
-	{ "SetPlayerWeather",				Natives::YSF_SetPlayerWeather },
-	{ "SetPlayerWorldBounds",			Natives::YSF_SetPlayerWorldBounds },
-	{ "DestroyObject",					Natives::YSF_DestroyObject },
-	{ "DestroyPlayerObject",			Natives::YSF_DestroyPlayerObject },
-	{ "TogglePlayerControllable",		Natives::YSF_TogglePlayerControllable},
-	{ "ChangeVehicleColor",				Natives::YSF_ChangeVehicleColor},
-	{ "DestroyVehicle",					Natives::YSF_DestroyVehicle},
-	{ "ShowPlayerDialog",				Natives::YSF_ShowPlayerDialog },
-	{ "SetPlayerObjectMaterial",		Natives::YSF_SetPlayerObjectMaterial },
-	{ "SetPlayerObjectMaterialText",	Natives::YSF_SetPlayerObjectMaterialText },
+	{ "AttachObjectToPlayer",			&Natives::ORIGINAL_AttachObjectToPlayer,		Natives::YSF_AttachObjectToPlayer },
+	{ "AttachPlayerObjectToPlayer",		NULL,											Natives::YSF_AttachPlayerObjectToPlayer },
+	{ "GetGravity",						NULL,											Natives::YSF_GetGravity },
+	{ "SetPlayerWeather",				&Natives::ORIGINAL_SetPlayerWeather,			Natives::YSF_SetPlayerWeather },
+	{ "SetPlayerWorldBounds",			&Natives::ORIGINAL_SetPlayerWorldBounds,		Natives::YSF_SetPlayerWorldBounds },
+	{ "DestroyObject",					&Natives::ORIGINAL_DestroyObject,				Natives::YSF_DestroyObject },
+	{ "DestroyPlayerObject",			&Natives::ORIGINAL_DestroyPlayerObject,			Natives::YSF_DestroyPlayerObject },
+	{ "TogglePlayerControllable",		&Natives::ORIGINAL_TogglePlayerControllable,	Natives::YSF_TogglePlayerControllable},
+	{ "ChangeVehicleColor",				&Natives::ORIGINAL_ChangeVehicleColor,			Natives::YSF_ChangeVehicleColor},
+	{ "DestroyVehicle",					&Natives::ORIGINAL_DestroyVehicle,				Natives::YSF_DestroyVehicle},
+	{ "ShowPlayerDialog",				&Natives::ORIGINAL_ShowPlayerDialog,			Natives::YSF_ShowPlayerDialog },
+	{ "SetPlayerObjectMaterial",		&Natives::ORIGINAL_SetPlayerObjectMaterial,		Natives::YSF_SetPlayerObjectMaterial },
+	{ "SetPlayerObjectMaterialText",	&Natives::ORIGINAL_SetPlayerObjectMaterialText,	Natives::YSF_SetPlayerObjectMaterialText },
 
-	{ "GangZoneCreate",					Natives::YSF_GangZoneCreate },
-	{ "GangZoneDestroy",				Natives::YSF_GangZoneDestroy },
-	{ "GangZoneShowForPlayer",			Natives::YSF_GangZoneShowForPlayer },
-	{ "GangZoneHideForPlayer",			Natives::YSF_GangZoneHideForPlayer },
-	{ "GangZoneShowForAll",				Natives::YSF_GangZoneShowForAll },
-	{ "GangZoneHideForAll",				Natives::YSF_GangZoneHideForAll },
+	{ "GangZoneCreate",					NULL,											Natives::YSF_GangZoneCreate },
+	{ "GangZoneDestroy",				NULL,											Natives::YSF_GangZoneDestroy },
+	{ "GangZoneShowForPlayer",			NULL,											Natives::YSF_GangZoneShowForPlayer },
+	{ "GangZoneHideForPlayer",			NULL,											Natives::YSF_GangZoneHideForPlayer },
+	{ "GangZoneShowForAll",				NULL,											Natives::YSF_GangZoneShowForAll },
+	{ "GangZoneHideForAll",				NULL,											Natives::YSF_GangZoneHideForAll },
 								
-	{ "GangZoneFlashForPlayer",			Natives::YSF_GangZoneFlashForPlayer },
-	{ "GangZoneFlashForAll",			Natives::YSF_GangZoneFlashForAll },
-	{ "GangZoneStopFlashForPlayer",		Natives::YSF_GangZoneStopFlashForPlayer },
-	{ "GangZoneStopFlashForAll",		Natives::YSF_GangZoneStopFlashForAll },
+	{ "GangZoneFlashForPlayer",			NULL,											Natives::YSF_GangZoneFlashForPlayer },
+	{ "GangZoneFlashForAll",			NULL,											Natives::YSF_GangZoneFlashForAll },
+	{ "GangZoneStopFlashForPlayer",		NULL,											Natives::YSF_GangZoneStopFlashForPlayer },
+	{ "GangZoneStopFlashForAll",		NULL,											Natives::YSF_GangZoneStopFlashForAll },
 #ifdef NEW_PICKUP_SYSTEM
-	{ "CreatePickup",					Natives::CreatePickup },
-	{ "AddStaticPickup",				Natives::CreatePickup },
-	{ "DestroyPickup",					Natives::DestroyPickup },
+	{ "CreatePickup",					NULL,											Natives::CreatePickup },
+	{ "AddStaticPickup",				NULL,											Natives::CreatePickup },
+	{ "DestroyPickup",					NULL,											Natives::DestroyPickup },
 #endif
-	{ "GetWeaponName",					Natives::FIXED_GetWeaponName },
-	{ "IsPlayerConnected",				Natives::FIXED_IsPlayerConnected },
+	{ "GetWeaponName",					NULL,											Natives::FIXED_GetWeaponName },
+	{ "IsPlayerConnected",				NULL,											Natives::FIXED_IsPlayerConnected },
 
-	{ "SetPlayerTeam",					Natives::YSF_SetPlayerTeam },
-	{ "SetPlayerSkin",					Natives::YSF_SetPlayerSkin },
-	{ "SetPlayerName",					Natives::YSF_SetPlayerName },
-	{ "SetPlayerFightingStyle",			Natives::YSF_SetPlayerFightingStyle },
+	{ "SetPlayerTeam",					&Natives::ORIGINAL_SetPlayerTeam,				Natives::YSF_SetPlayerTeam },
+	{ "SetPlayerSkin",					&Natives::ORIGINAL_SetPlayerSkin,				Natives::YSF_SetPlayerSkin },
+	{ "SetPlayerName",					&Natives::ORIGINAL_SetPlayerName,				Natives::YSF_SetPlayerName },
+	{ "SetPlayerFightingStyle",			&Natives::ORIGINAL_SetPlayerFightingStyle,		Natives::YSF_SetPlayerFightingStyle },
 
-	{ NULL,								NULL }
+	{ NULL,								NULL,									NULL }
 };
 
 int InitNatives(AMX *amx)
