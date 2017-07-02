@@ -126,6 +126,7 @@ CPlayerData::~CPlayerData( void )
 		if (IsPlayerConnected(i))
 		{
 			if (i == wPlayerID) continue;
+	
 			for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[i]->holdingObjects.begin(); o != pPlayerData[i]->holdingObjects.end(); ++o)
 			{
 				if (o->first == wPlayerID)
@@ -422,7 +423,7 @@ void CPlayerData::Process(void)
 			}
 		}
 	}
-
+	
 	// Processing gangzones
 	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
 	{

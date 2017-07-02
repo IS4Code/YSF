@@ -562,6 +562,20 @@ AMX_DECLARE_NATIVE(Natives::GetRecordingDirectory)
 	return 1;
 }
 
+// native SetRecordingDirectory(const dir[]);
+AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
+{
+	CHECK_PARAMS(1, LOADED);
+
+	std::string dir;
+	CScriptParams::Get()->Read(&dir);
+	if (!CAddress::ADDR_RecordingDirectory) return 0;
+
+	strcpy(gRecordingDataPath, dir.c_str());
+	strcat(gRecordingDataPath, "/%s.rec");
+	return 1;
+}
+
 // native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
 AMX_DECLARE_NATIVE(Natives::SendClientMessagef)
 {

@@ -87,4 +87,5 @@ enum
 	BS_FLOAT,
 	BS_STRING
 };
+
 #endif

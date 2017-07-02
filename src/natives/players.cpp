@@ -1,5 +1,6 @@
 #include "../main.h"
 #include "../Natives.h"
+#include "../linux_fix.h"
 
 // native SetPlayerAdmin(playerid, bool:admin);
 AMX_DECLARE_NATIVE(Natives::SetPlayerAdmin)
@@ -911,7 +912,7 @@ AMX_DECLARE_NATIVE(Natives::SetExclusiveBroadcast)
 	return 1;
 }
 
-// native BroadcastToPlayer(playerid, toggle=1);
+// native BroadcastToPlayer(playerid, toggle = 1);
 AMX_DECLARE_NATIVE(Natives::BroadcastToPlayer)
 {
 	CHECK_PARAMS(2, LOADED);
@@ -922,20 +923,6 @@ AMX_DECLARE_NATIVE(Natives::BroadcastToPlayer)
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	pPlayerData[playerid]->bBroadcastTo = !!toggle;
-	return 1;
-}
-
-// native SetRecordingDirectory(const dir[]);
-AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
-{
-	CHECK_PARAMS(1, LOADED);
-
-	std::string dir;
-	CScriptParams::Get()->Read(&dir);
-	if (!CAddress::ADDR_RecordingDirectory) return 0;
-
-	strcpy(gRecordingDataPath, dir.c_str());
-	strcat(gRecordingDataPath, "/%s.rec");
 	return 1;
 }
 
@@ -957,7 +944,6 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerSkin)
 	return 0;
 }
 
-
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 {
 	CHECK_PARAMS(2, LOADED);
@@ -975,7 +961,6 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerName)
 	}
 	return ret;
 }
-
 
 AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerFightingStyle)
 {

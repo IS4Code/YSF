@@ -1,5 +1,6 @@
 #include "../main.h"
 #include "../Natives.h"
+#include "../linux_fix.h"
 
 // native Float:GetObjectDrawDistance(objectid);
 AMX_DECLARE_NATIVE(Natives::GetObjectDrawDistance)
@@ -763,6 +764,8 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 // native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
 AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 {
+//	logprintf("attach");
+
 	CHECK_PARAMS(10, LOADED);
 
 	const int forplayerid = CScriptParams::Get()->ReadInt();
@@ -777,7 +780,7 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	if (!pObjectPool->pPlayerObjects[forplayerid][objectid] || !pObjectPool->pPlayerObjects[forplayerid][attachtoid]) return 0; // Check if object is exist
 
-																																// Find the space where to store data
+	// Find the space where to store data
 	std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[forplayerid]->GetObjectAddon(objectid);
 	if (pAddon == NULL)
 		return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
