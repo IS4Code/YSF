@@ -215,8 +215,8 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 		}
 	}
 
-	logprintf("for: %d - unprocessedStreamedPlayer %d", forplayerid, playerid);
-	pPlayerData[forplayerid]->unprocessedStreamedPlayer[playerid] = default_clock::now();
+	//logprintf("for: %d - unprocessedStreamedPlayer %d", forplayerid, playerid);
+	//pPlayerData[forplayerid]->unprocessedStreamedPlayer[playerid] = default_clock::now();
 	return 1;
 }
 
@@ -250,7 +250,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 			o.second->bAttached = false;
 		}
 	}
-
+	/*
 	pPlayerData[forplayerid]->unprocessedStreamedPlayer.erase(playerid);
 	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[forplayerid]->holdingObjects.begin(); o != pPlayerData[forplayerid]->holdingObjects.end(); ++o)
 	{
@@ -265,6 +265,7 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 			CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), false, false);
 		}
 	}
+	*/
 	return 1;
 }
 

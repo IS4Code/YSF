@@ -382,10 +382,10 @@ void CPlayerData::Process(void)
 		for (std::unordered_map<WORD, default_clock::time_point>::iterator p = unprocessedStreamedPlayer.begin(); p != unprocessedStreamedPlayer.end(); )
 		{
 			default_clock::duration passed_time = default_clock::now() - p->second;
-			logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
+			//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
 			if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
 			{
-				logprintf("erase ");
+				//logprintf("erase ");
 				for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = holdingObjects.begin(); o != holdingObjects.end(); ++o)
 				{
 					logprintf("o->first: %d, p->first: %d", o->first, p->first);
