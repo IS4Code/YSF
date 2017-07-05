@@ -132,11 +132,7 @@ public:
 	// Fix for GetPlayerObjectMaterial/MaterialText - i keep this outside from containers above
 	std::multimap<WORD, std::pair<BYTE, std::string>> m_PlayerObjectMaterialText;
 
-	// Per-player attached objects (aka holding objects)
-	std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>> holdingObjects;
-	std::unordered_map<WORD, default_clock::time_point> unprocessedStreamedPlayer;
-
-	// 
+	// Other
 	std::string strNameInQuery;
 
 	// Gangzones

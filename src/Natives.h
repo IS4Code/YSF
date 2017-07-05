@@ -213,10 +213,6 @@ namespace Natives
 	AMX_DECLARE_NATIVE(GetObjectType); // R12
 
 	AMX_DECLARE_NATIVE(GetPlayerAttachedObject); // R3
-	AMX_DECLARE_NATIVE(SetPlayerAttachedObjForPlayer); // R19-2
-	AMX_DECLARE_NATIVE(GetPlayerAttachedObjForPlayer); // R19-2
-	AMX_DECLARE_NATIVE(RemPlayerAttachedObjForPlayer); // R19-2
-	AMX_DECLARE_NATIVE(IsPlayerAttachedObjForPlayer); // R19-2
 
 	AMX_DECLARE_NATIVE(GetVehicleSpawnInfo);
 	AMX_DECLARE_NATIVE(GetVehicleColor);

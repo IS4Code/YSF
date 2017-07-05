@@ -598,8 +598,8 @@ CMD:attachobjforplayer(playerid, params[])
 	if(!(0 <= slot <= MAX_PLAYER_ATTACHED_OBJECTS)) return SendClientMessage(playerid, 0xFF0000AA, "ERROR: Invalid slot id! 0 - " #MAX_PLAYER_ATTACHED_OBJECTS "");
 
 	new modelid = 1224, bone = 2, Float:offset[3], Float:rotation[3], Float:scale[3], material1, material2;
-	SetPlayerAttachedObjForPlayer(playerid, forplayerid, slot, modelid, bone, offset[0], offset[1], offset[2], rotation[0], rotation[1], rotation[2], scale[0], scale[1], scale[2], material1, material2);
-	GetPlayerAttachedObjForPlayer(forplayerid, playerid, slot, modelid, bone, offset[0], offset[1], offset[2], rotation[0], rotation[1], rotation[2], scale[0], scale[1], scale[2], material1, material2);
+	//SetPlayerAttachedObjForPlayer(playerid, forplayerid, slot, modelid, bone, offset[0], offset[1], offset[2], rotation[0], rotation[1], rotation[2], scale[0], scale[1], scale[2], material1, material2);
+	//GetPlayerAttachedObjForPlayer(forplayerid, playerid, slot, modelid, bone, offset[0], offset[1], offset[2], rotation[0], rotation[1], rotation[2], scale[0], scale[1], scale[2], material1, material2);
 
 	SendClientMessagef(playerid, -1, "forplayerid: %d, modelid: %d, bone: %d", forplayerid, modelid, bone);
 	SendClientMessagef(playerid, -1, "offset: %.4f, %.4f, %.4f, {33FF33}rotation: %.4f, %.4f, %.4f", offset[0], offset[1], offset[2], rotation[0], rotation[1], rotation[2]);
