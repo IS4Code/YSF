@@ -120,6 +120,28 @@ CPlayerData::~CPlayerData( void )
 	{
 		DeleteObjectAddon(i);
 	}
+
+	for (WORD i = 0; i != MAX_PLAYERS; ++i)
+	{
+		if (IsPlayerConnected(i))
+		{
+			if (i == wPlayerID) continue;
+
+			for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[i]->holdingObjects.begin(); o != pPlayerData[i]->holdingObjects.end(); ++o)
+			{
+				if (o->first == wPlayerID)
+				{
+					o = holdingObjects.erase(o);
+				}
+			}
+
+			std::unordered_map<WORD, default_clock::time_point>::iterator p = pPlayerData[i]->unprocessedStreamedPlayer.find(wPlayerID);
+			if (p != unprocessedStreamedPlayer.end())
+			{
+				unprocessedStreamedPlayer.erase(i);
+			}
+		}
+	}
 }
 
 bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
@@ -355,6 +377,53 @@ void CPlayerData::Process(void)
 		}
 	}
 	
+	if (!unprocessedStreamedPlayer.empty())
+	{
+		for (std::unordered_map<WORD, default_clock::time_point>::iterator p = unprocessedStreamedPlayer.begin(); p != unprocessedStreamedPlayer.end(); )
+		{
+			default_clock::duration passed_time = default_clock::now() - p->second;
+			//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
+			if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
+			{
+				//logprintf("erase ");
+				for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = holdingObjects.begin(); o != holdingObjects.end(); ++o)
+				{
+					logprintf("o->first: %d, p->first: %d", o->first, p->first);
+					if (o->first == p->first)
+					{
+						CAttachedObject *objData = o->second.second.get();
+						logprintf("holding object stream in %d - %d - %d, %f - slot: %d, bone: %d, modelid: %d- %f, %f, %f - %f, %f, %f - %f, %f, %f - %x, %x",
+							p->first, wPlayerID, objData->iModelID, objData->vecScale.fX, o->second.first, objData->iBoneiD, objData->iModelID,
+							objData->vecPos.fX, objData->vecPos.fY, objData->vecPos.fZ,
+							objData->vecRot.fX, objData->vecRot.fY, objData->vecRot.fZ,
+							objData->vecScale.fX, objData->vecScale.fY, objData->vecScale.fZ,
+							objData->dwMaterialColor1, objData->dwMaterialColor2);
+
+						RakNet::BitStream bsData;
+						/*
+						bsData.Write((WORD)p->first);
+						bsData.Write((int)o->second.first);
+						bsData.Write(false);
+						CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, SYSTEM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), false, false);
+						*/
+						//bsData.Reset();
+						bsData.Write((WORD)p->first);
+						bsData.Write((int)o->second.first);
+						bsData.Write(true);
+						bsData.Write((char*)&objData, sizeof(CAttachedObject));
+						CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), false, false);
+					}
+				}
+
+				p = unprocessedStreamedPlayer.erase(p);
+			}
+			else
+			{
+				++p;
+			}
+		}
+	}
+
 	// Processing gangzones
 	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
 	{

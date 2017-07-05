@@ -214,6 +214,10 @@ AMX_NATIVE_INFO native_list[] =
 
 	// special - for attached objects
 	AMX_DEFINE_NATIVE(GetPlayerAttachedObject) // R3
+	AMX_DEFINE_NATIVE(SetPlayerAttachedObjForPlayer) // R19-2
+	AMX_DEFINE_NATIVE(GetPlayerAttachedObjForPlayer) // R19-2
+	AMX_DEFINE_NATIVE(RemPlayerAttachedObjForPlayer) // R19-2
+	AMX_DEFINE_NATIVE(IsPlayerAttachedObjForPlayer) // R19-2
 
 	// Vehicle functions
 	AMX_DEFINE_NATIVE(GetVehicleSpawnInfo)

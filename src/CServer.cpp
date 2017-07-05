@@ -214,6 +214,8 @@ bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 			}
 		}
 	}
+	//logprintf("for: %d - unprocessedStreamedPlayer %d", forplayerid, playerid);
+	//pPlayerData[forplayerid]->unprocessedStreamedPlayer[playerid] = default_clock::now();
 	return 1;
 }
 
@@ -245,6 +247,21 @@ bool CServer::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 				//logprintf("isn't created streamout");
 			}
 			o.second->bAttached = false;
+		}
+	}
+
+	pPlayerData[forplayerid]->unprocessedStreamedPlayer.erase(playerid);
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[forplayerid]->holdingObjects.begin(); o != pPlayerData[forplayerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == playerid)
+		{
+			logprintf("holding object stream out %d - %d", playerid, forplayerid);
+			CAttachedObject *objData = o->second.second.get();
+			RakNet::BitStream bsData;
+			bsData.Write((WORD)playerid);
+			bsData.Write((int)o->second.first);
+			bsData.Write(false);
+			CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), false, false);
 		}
 	}
 	return 1;

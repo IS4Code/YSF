@@ -495,6 +495,142 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObject)
 	return 1;
 }
 
+// native SetPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index, modelid, bone, Float:fOffsetX = 0.0, Float : OffsetY = 0.0, Float : fOffsetZ = 0.0, Float : fRotX = 0.0, Float : fRotY = 0.0, Float : fRotZ = 0.0, Float : fScaleX = 1.0, Float : fScaleY = 1.0, Float : fScaleZ = 1.0, materialcolor1 = 0, materialcolor2 = 0);
+AMX_DECLARE_NATIVE(Natives::SetPlayerAttachedObjForPlayer)
+{
+	CHECK_PARAMS(16, LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	const int attachplayerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(attachplayerid)) return 0;
+
+	const int index = CScriptParams::Get()->ReadInt();
+	if (index < 0 || index >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
+
+	CAttachedObject objData;
+	CScriptParams::Get()->Read(&objData.iModelID, &objData.iBoneiD, &objData.vecPos, &objData.vecRot, &objData.vecScale, &objData.dwMaterialColor1, &objData.dwMaterialColor2);
+	objData.dwMaterialColor1 = ABGR_RGBA(objData.dwMaterialColor1);
+	objData.dwMaterialColor2 = ABGR_RGBA(objData.dwMaterialColor2);
+
+	RakNet::BitStream bsData;
+	bsData.Write((WORD)attachplayerid);
+	bsData.Write(index);
+	bsData.Write(true);
+	bsData.Write((char*)&objData, sizeof(CAttachedObject));
+	CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[playerid]->holdingObjects.begin(); o != pPlayerData[playerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == attachplayerid)
+		{
+			if (o->second.first == index)
+			{
+				o = pPlayerData[playerid]->holdingObjects.erase(o);
+				break;
+			}
+		}
+	}
+	pPlayerData[playerid]->holdingObjects.emplace(attachplayerid, std::make_pair(index, std::make_unique<CAttachedObject>(std::move(objData))));
+	return 1;
+}
+
+// native GetPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
+AMX_DECLARE_NATIVE(Natives::GetPlayerAttachedObjForPlayer)
+{
+	CHECK_PARAMS(16, LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	const int removefromplayerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(removefromplayerid)) return 0;
+
+	const int index = CScriptParams::Get()->ReadInt();
+	if (index < 0 || index >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
+
+	CAttachedObject *pObject = nullptr;
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[playerid]->holdingObjects.begin(); o != pPlayerData[playerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == removefromplayerid)
+		{
+			if (o->second.first == index)
+			{
+				pObject = o->second.second.get();
+				break;
+			}
+		}
+	}
+
+	if (!pObject) return 0;
+
+	CScriptParams::Get()->Add(pObject->iModelID, pObject->iBoneiD, pObject->vecPos, pObject->vecRot, pObject->vecScale,
+		RGBA_ABGR(pObject->dwMaterialColor1), RGBA_ABGR(pObject->dwMaterialColor2));
+	return 1;
+}
+
+// native RemPlayerAttachedObjForPlayer(forplayerid, removefromplayerid, index);
+AMX_DECLARE_NATIVE(Natives::RemPlayerAttachedObjForPlayer)
+{
+	CHECK_PARAMS(3, LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	const int removefromplayerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(removefromplayerid)) return 0;
+
+	const int index = CScriptParams::Get()->ReadInt();
+	if (index < 0 || index >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
+
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[playerid]->holdingObjects.begin(); o != pPlayerData[playerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == removefromplayerid)
+		{
+			if (o->second.first == index)
+			{
+				o = pPlayerData[playerid]->holdingObjects.erase(o);
+				break;
+			}
+		}
+	}
+
+	RakNet::BitStream bsData;
+	bsData.Write((WORD)playerid);
+	bsData.Write(index);
+	bsData.Write(false);
+	CSAMPFunctions::RPC(&RPC_SetPlayerAttachedObject, &bsData, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(removefromplayerid), false, false);
+	return 1;
+}
+
+// native IsPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index);
+AMX_DECLARE_NATIVE(Natives::IsPlayerAttachedObjForPlayer)
+{
+	CHECK_PARAMS(3, LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	const int removefromplayerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(removefromplayerid)) return 0;
+
+	const int index = CScriptParams::Get()->ReadInt();
+	if (index < 0 || index >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
+
+	for (std::multimap<WORD, std::pair<WORD, std::unique_ptr<CAttachedObject>>>::iterator o = pPlayerData[playerid]->holdingObjects.begin(); o != pPlayerData[playerid]->holdingObjects.end(); ++o)
+	{
+		if (o->first == removefromplayerid)
+		{
+			if (o->second.first == index)
+			{
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
 /* --------------------------- HOOKS --------------------------- */
 
 // native DestroyObject(objectid)
