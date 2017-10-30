@@ -127,7 +127,7 @@ void InitRPCs()
 
 			if (pNetGame->iGameState != GAMESTATE_RUNNING) return;
 
-			WORD playerid = playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
+			WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
 			if (!IsPlayerConnected(playerid)) return;
 			CPlayer	*pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 
