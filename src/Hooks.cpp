@@ -117,17 +117,17 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 		int i = 0;
 		while (nativelist[i].name)
 		{
-			//logprintf("native %s", nativelist[i].name);
 			int x = 0;
-			
 			while (redirected_native_list[x].name)
 			{
-				//logprintf("asdasd %s", RedirectedNatives[x].name);
 				if (!strcmp(nativelist[i].name, redirected_native_list[x].name))
 				{
 					if (!bNativesHooked) bNativesHooked = true;
 				
-					//logprintf("native: %s, %s", nativelist[i].name, redirected_native_list[x].name);
+					// Skip redirecting gangzone functions when per-player gangzones are disabled
+					if ((nativelist[i].name[0] == 'g' && nativelist[i].name[1] == 'a') && !CServer::Get()->m_bUsePerPlayerGangZones)
+						continue;
+
 					if(redirected_native_list[x].originalfunc != NULL)
 					{
 						*redirected_native_list[x].originalfunc = nativelist[i].func;
@@ -946,7 +946,11 @@ void InstallPostHooks()
 		CSAMPFunctions::Start(MAX_PLAYERS, 0, CServer::Get()->m_iRakNetInternalSleepTime, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
 
 	// Recreate pools
-	CServer::Get()->pGangZonePool = new CGangZonePool();
+
+	if (CServer::Get()->m_bUsePerPlayerGangZones)
+	{
+		CServer::Get()->pGangZonePool = new CGangZonePool();
+	}
 
 #ifdef NEW_PICKUP_SYSTEM
 	// Recreate Pickup pool

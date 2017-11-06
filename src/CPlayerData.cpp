@@ -355,71 +355,74 @@ void CPlayerData::Process(void)
 		}
 	}
 	
-	// Processing gangzones
-	for(WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
+	if (CServer::Get()->m_bUsePerPlayerGangZones)
 	{
-		// If zone id is unused client side, then continue
-		if(byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;
-
-		CGangZone *pGangZone = NULL;
-		if(byteClientSideZoneIDUsed[zoneid] == 0)
+		// Processing gangzones
+		for (WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
 		{
-			if(wClientSideGlobalZoneID[zoneid] == 0xFFFF)
+			// If zone id is unused client side, then continue
+			if (byteClientSideZoneIDUsed[zoneid] == 0xFF) continue;
+
+			CGangZone *pGangZone = NULL;
+			if (byteClientSideZoneIDUsed[zoneid] == 0)
 			{
-				logprintf("pPlayer->wClientSideGlobalZoneID[%d] = 0xFFFF", zoneid);
-				return;
+				if (wClientSideGlobalZoneID[zoneid] == 0xFFFF)
+				{
+					logprintf("pPlayer->wClientSideGlobalZoneID[%d] = 0xFFFF", zoneid);
+					return;
+				}
+
+				pGangZone = CServer::Get()->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
 			}
-					
-			pGangZone = CServer::Get()->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
-		}
-		else
-		{
-			if(wClientSidePlayerZoneID[zoneid] == 0xFFFF)
+			else
 			{
-				logprintf("pPlayer->wClientSidePlayerZoneID[%d] = 0xFFFF", zoneid);
-				return;
+				if (wClientSidePlayerZoneID[zoneid] == 0xFFFF)
+				{
+					logprintf("pPlayer->wClientSidePlayerZoneID[%d] = 0xFFFF", zoneid);
+					return;
+				}
+
+				pGangZone = pPlayerZone[wClientSidePlayerZoneID[zoneid]];
 			}
 
-			pGangZone = pPlayerZone[wClientSidePlayerZoneID[zoneid]];
-		}
+			if (!pGangZone) continue;
 
-		if(!pGangZone) continue;
+			const CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[wPlayerID]->vecPosition;
+			const float *fMinX = &pGangZone->fGangZone[0];
+			const float *fMinY = &pGangZone->fGangZone[1];
+			const float *fMaxX = &pGangZone->fGangZone[2];
+			const float *fMaxY = &pGangZone->fGangZone[3];
 
-		const CVector *vecPos = &pNetGame->pPlayerPool->pPlayer[wPlayerID]->vecPosition;
-		const float *fMinX = &pGangZone->fGangZone[0];
-		const float *fMinY = &pGangZone->fGangZone[1];
-		const float *fMaxX = &pGangZone->fGangZone[2];
-		const float *fMaxY = &pGangZone->fGangZone[3];
+			//logprintf("validzone: %d, %f, %f, %f, %f", this->wClientSideGlobalZoneID[zoneid], *fMinX, *fMinY, *fMaxX, *fMaxY);
 
-		//logprintf("validzone: %d, %f, %f, %f, %f", this->wClientSideGlobalZoneID[zoneid], *fMinX, *fMinY, *fMaxX, *fMaxY);
-		
-		// Check for enters/exits
-		if(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY && !bInGangZone[zoneid])
-		{
-			bInGangZone[zoneid] = true;
-			//logprintf("enterzone: %d", zoneid);
-					
-			if(byteClientSideZoneIDUsed[zoneid] == 0)
+			// Check for enters/exits
+			if (vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY && !bInGangZone[zoneid])
 			{
-				CCallbackManager::OnPlayerEnterGangZone(wPlayerID, wClientSideGlobalZoneID[zoneid]);
+				bInGangZone[zoneid] = true;
+				//logprintf("enterzone: %d", zoneid);
+
+				if (byteClientSideZoneIDUsed[zoneid] == 0)
+				{
+					CCallbackManager::OnPlayerEnterGangZone(wPlayerID, wClientSideGlobalZoneID[zoneid]);
+				}
+				else if (byteClientSideZoneIDUsed[zoneid] == 1)
+				{
+					CCallbackManager::OnPlayerEnterPlayerGangZone(wPlayerID, wClientSidePlayerZoneID[zoneid]);
+				}
 			}
-			else if(byteClientSideZoneIDUsed[zoneid] == 1)
+			else if (!(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY) && bInGangZone[zoneid])
 			{
-				CCallbackManager::OnPlayerEnterPlayerGangZone(wPlayerID, wClientSidePlayerZoneID[zoneid]);
-			}
-		}
-		else if(!(vecPos->fX >= *fMinX && vecPos->fX <= *fMaxX && vecPos->fY >= *fMinY && vecPos->fY <= *fMaxY) && bInGangZone[zoneid])
-		{
-			bInGangZone[zoneid] = false;
-			//logprintf("leavezone: %d", zoneid);
-					
-			if(byteClientSideZoneIDUsed[zoneid] == 0)
-			{
-				CCallbackManager::OnPlayerLeaveGangZone(wPlayerID, wClientSideGlobalZoneID[zoneid]);
-			}
-			else if(byteClientSideZoneIDUsed[zoneid] == 1)
-			{
-				CCallbackManager::OnPlayerLeavePlayerGangZone(wPlayerID, wClientSidePlayerZoneID[zoneid]);
+				bInGangZone[zoneid] = false;
+				//logprintf("leavezone: %d", zoneid);
+
+				if (byteClientSideZoneIDUsed[zoneid] == 0)
+				{
+					CCallbackManager::OnPlayerLeaveGangZone(wPlayerID, wClientSideGlobalZoneID[zoneid]);
+				}
+				else if (byteClientSideZoneIDUsed[zoneid] == 1)
+				{
+					CCallbackManager::OnPlayerLeavePlayerGangZone(wPlayerID, wClientSidePlayerZoneID[zoneid]);
+				}
 			}
 		}
 	}

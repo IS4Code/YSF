@@ -77,7 +77,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 	{
 		spawn.iRespawnTime = respawntime;
 	}
-
+	
 	int interior = CScriptParams::Get()->ReadInt();
 	if (interior != -2)
 	{

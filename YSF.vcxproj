@@ -128,7 +128,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <ImportLibrary>bin\win32\Debug\YSF.lib</ImportLibrary>
       <ModuleDefinitionFile>YSF.def</ModuleDefinitionFile>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>

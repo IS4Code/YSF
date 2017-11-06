@@ -1,6 +1,13 @@
 #include "../main.h"
 #include "../Natives.h"
 
+#define CHECK_PER_PLAYER_ZONES_STATE \
+	if (!CServer::Get()->m_bUsePerPlayerGangZones) \
+	{ \
+		logprintf("YSF: Per player gangzones are disabled, you aren't allowed to use " __FUNCTION__ " function!"); \
+		return 0; \
+	} \
+
 // native IsValidGangZone(zoneid);
 AMX_DECLARE_NATIVE(Natives::IsValidGangZone)
 {
@@ -9,13 +16,15 @@ AMX_DECLARE_NATIVE(Natives::IsValidGangZone)
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-	return CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid));
+	cell ret = CServer::Get()->m_bUsePerPlayerGangZones ? CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)) : pNetGame->pGangZonePool->bSlotState[static_cast<WORD>(zoneid)] != 0;
+	return ret;
 }
 
 // native IsGangZoneVisibleForPlayer(playerid, zoneid);
 AMX_DECLARE_NATIVE(Natives::IsGangZoneVisibleForPlayer)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -31,6 +40,7 @@ AMX_DECLARE_NATIVE(Natives::IsGangZoneVisibleForPlayer)
 AMX_DECLARE_NATIVE(Natives::GangZoneGetColorForPlayer)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -51,6 +61,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetColorForPlayer)
 AMX_DECLARE_NATIVE(Natives::GangZoneGetFlashColorForPlayer)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -71,6 +82,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetFlashColorForPlayer)
 AMX_DECLARE_NATIVE(Natives::IsGangZoneFlashingForPlayer)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -91,6 +103,7 @@ AMX_DECLARE_NATIVE(Natives::IsGangZoneFlashingForPlayer)
 AMX_DECLARE_NATIVE(Natives::IsPlayerInGangZone)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -111,6 +124,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInGangZone)
 AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 {
 	CHECK_PARAMS(5, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -127,6 +141,7 @@ AMX_DECLARE_NATIVE(Natives::GangZoneGetPos)
 AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 {
 	CHECK_PARAMS(5, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -152,6 +167,7 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneShow)
 {
 	CHECK_PARAMS(3, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -170,6 +186,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneShow)
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneHide)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -187,6 +204,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneHide)
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneFlash)
 {
 	CHECK_PARAMS(3, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -204,6 +222,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneFlash)
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneStopFlash)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -221,6 +240,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneStopFlash)
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneDestroy)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -235,6 +255,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneDestroy)
 AMX_DECLARE_NATIVE(Natives::IsValidPlayerGangZone)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -248,6 +269,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidPlayerGangZone)
 AMX_DECLARE_NATIVE(Natives::IsPlayerInPlayerGangZone)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -268,6 +290,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerInPlayerGangZone)
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 {
 	CHECK_PARAMS(6, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
@@ -291,6 +314,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetPos)
 AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneVisible)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -306,6 +330,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneVisible)
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetColor)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -326,6 +351,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetColor)
 AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetFlashColor)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -346,6 +372,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerGangZoneGetFlashColor)
 AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -367,6 +394,7 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerGangZoneFlashing)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneCreate)
 {
 	CHECK_PARAMS(4, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	float fMinX, fMinY, fMaxX, fMaxY;
 	CScriptParams::Get()->Read(&fMinX, &fMinY, &fMaxX, &fMaxY);
@@ -387,6 +415,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneCreate)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneDestroy)
 {
 	CHECK_PARAMS(1, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	CGangZonePool *pGangZonePool = CServer::Get()->pGangZonePool;
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -400,6 +429,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneDestroy)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForPlayer)
 {
 	CHECK_PARAMS(3, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -415,6 +445,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForPlayer)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForPlayer)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -431,6 +462,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForPlayer)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForAll)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -443,6 +475,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneShowForAll)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForAll)
 {
 	CHECK_PARAMS(1, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -454,6 +487,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneHideForAll)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForPlayer)
 {
 	CHECK_PARAMS(3, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -469,6 +503,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForPlayer)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForAll)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -480,6 +515,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneFlashForAll)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForPlayer)
 {
 	CHECK_PARAMS(2, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int playerid = CScriptParams::Get()->ReadInt();
 	const int zoneid = CScriptParams::Get()->ReadInt();
@@ -495,6 +531,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForPlayer)
 AMX_DECLARE_NATIVE(Natives::YSF_GangZoneStopFlashForAll)
 {
 	CHECK_PARAMS(1, LOADED);
+	CHECK_PER_PLAYER_ZONES_STATE
 
 	const int zoneid = CScriptParams::Get()->ReadInt();
 	if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;

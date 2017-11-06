@@ -971,7 +971,7 @@ struct CNetGame
 	CMenuPool				*pMenuPool;				// 24
 	CTextDrawPool			*pTextDrawPool;			// 28
 	C3DTextPool				*p3DTextPool;			// 32
-	CGangZonePool			*pGangZonePool;			// 36 
+	CSAMPGangZonePool		*pGangZonePool;			// 36 
 	CActorPool				*pActorPool;			// 40 
 	int						iCurrentGameModeIndex;	// 44
 	int						iCurrentGameModeRepeat;	// 48

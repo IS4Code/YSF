@@ -102,7 +102,10 @@ CServer::~CServer()
 	for(int i = 0; i != MAX_PLAYERS; ++i)
 		RemovePlayer(i);
 
-	SAFE_DELETE(pGangZonePool);
+	if(CServer::Get()->m_bUsePerPlayerGangZones)
+	{
+		SAFE_DELETE(pGangZonePool);
+	}
 }
 
 bool CServer::AddPlayer(int playerid)
@@ -1053,6 +1056,9 @@ void CServer::LoadConfig()
 		fprintf(fileConfig, "# Use redirected YSF's own RPC for spawning\n");
 		fprintf(fileConfig, "UseCustomSpawn 0\n");
 		fprintf(fileConfig, "\n");
+		fprintf(fileConfig, "# Set it to 1 when you want to use per player gangzones\n");
+		fprintf(fileConfig, "UsePerPlayerGangZones 0\n");
+		fprintf(fileConfig, "\n");
 		fprintf(fileConfig, "# Allowing remote RCON connections with banned IPs (its very good to enable when you need to unban yourself)\n");
 		fprintf(fileConfig, "AllowRemoteRCONWithBannedIPs 0\n");
 		fprintf(fileConfig, "\n");
@@ -1081,6 +1087,7 @@ void CServer::LoadConfig()
 	m_bDeathProtection = static_cast<int>(Utility::CFGLoad("DeathProtection") != 0);
 	m_bDialogProtection = static_cast<int>(Utility::CFGLoad("DialogProtection") != 0);
 	m_bUseCustomSpawn = static_cast<int>(Utility::CFGLoad("UseCustomSpawn") != 0);
+	m_bUsePerPlayerGangZones = static_cast<int>(Utility::CFGLoad("UsePerPlayerGangZones") != 0);
 	m_bAllowRemoteRCONWithBannedIPs = static_cast<int>(Utility::CFGLoad("AllowRemoteRCONWithBannedIPs") != 0);
 	m_bIncreaseRakNetInternalPlayers = static_cast<int>(Utility::CFGLoad("IncreaseRakNetInternalPlayers") != 0);
 	m_iRakNetInternalSleepTime = Utility::CFGLoad("RakNetInternalSleepTime");
