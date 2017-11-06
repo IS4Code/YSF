@@ -350,6 +350,7 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 	if ((params[0] / sizeof(cell) - (param_offset - 1)) != num_params)
 	{
 		logprintf("parameter count does not match format specifier length %d - %d", num_params, (params[0] / sizeof(cell) - (param_offset - 1)));
+		delete[] format;
 		return 0;
 	}
 

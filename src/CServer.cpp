@@ -835,11 +835,11 @@ char* CServer::GetNPCCommandLine(WORD npcid)
 	hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
 	hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&WbemLocator);
-	hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", NULL, NULL, NULL, 0, NULL, NULL, &WbemServices);
+	hr = WbemLocator->ConnectServer(SysAllocString(L"ROOT\\CIMV2"), NULL, NULL, NULL, 0, NULL, NULL, &WbemServices);
 
 	std::ostringstream query;
 	query << "SELECT CommandLine FROM Win32_Process WHERE ProcessId=" << pid;
-	hr = WbemServices->ExecQuery(L"WQL", bstr_t(query.str().c_str()), WBEM_FLAG_FORWARD_ONLY, NULL, &EnumWbem);
+	hr = WbemServices->ExecQuery(SysAllocString(L"WQL"), bstr_t(query.str().c_str()), WBEM_FLAG_FORWARD_ONLY, NULL, &EnumWbem);
 
 	if (EnumWbem == NULL) return 0;
 
@@ -906,11 +906,11 @@ int CServer::FindNPCProcessID(WORD npcid)
 	hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
 	hr = CoCreateInstance(CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&WbemLocator);
-	hr = WbemLocator->ConnectServer(L"ROOT\\CIMV2", NULL, NULL, NULL, 0, NULL, NULL, &WbemServices);
+	hr = WbemLocator->ConnectServer(SysAllocString(L"ROOT\\CIMV2"), NULL, NULL, NULL, 0, NULL, NULL, &WbemServices);
 
 	std::ostringstream query;
 	query << "SELECT ProcessId, CommandLine FROM Win32_Process WHERE ParentProcessId=" << cpid;
-	hr = WbemServices->ExecQuery(L"WQL", bstr_t(query.str().c_str()), WBEM_FLAG_FORWARD_ONLY, NULL, &EnumWbem);
+	hr = WbemServices->ExecQuery(SysAllocString(L"WQL"), bstr_t(query.str().c_str()), WBEM_FLAG_FORWARD_ONLY, NULL, &EnumWbem);
 
 
 	if (EnumWbem == NULL) return 0;
