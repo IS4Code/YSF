@@ -4,7 +4,7 @@
 #define CHECK_PER_PLAYER_ZONES_STATE \
 	if (!CServer::Get()->m_bUsePerPlayerGangZones) \
 	{ \
-		logprintf("YSF: Per player gangzones are disabled, you aren't allowed to use " __FUNCTION__ " function!"); \
+		logprintf("YSF: Per player gangzones are disabled, you aren't allowed to use \"%s\" function!", __FUNCTION__); \
 		return 0; \
 	} \
 
