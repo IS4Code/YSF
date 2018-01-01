@@ -142,7 +142,9 @@ void CServer::Process()
 			// Process player
 			pPlayerData[playerid]->Process();
 		}
+#ifdef _WIN32
 		ProcessSysExec();
+#endif
 
 #ifdef NEW_PICKUP_SYSTEM
 		if(CServer::Get()->pPickupPool)
@@ -150,7 +152,7 @@ void CServer::Process()
 #endif
 	}
 }
-
+#ifdef _WIN32
 void CServer::ProcessSysExec()
 {
 	std::unique_lock<std::mutex> lock(m_SysExecMutex, std::try_to_lock);
@@ -180,6 +182,7 @@ void CServer::ProcessSysExec()
 		}
 	}
 }
+#endif
 
 bool CServer::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 {

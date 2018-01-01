@@ -131,7 +131,7 @@ public:
 	int m_iRakNetInternalSleepTime;
 	int m_iAttachObjectDelay;
 	bool m_bStorePlayerObjectsMaterial : 1;
-
+#ifdef _WIN32
 	struct SysExec_t
 	{
 		std::string output;
@@ -141,11 +141,12 @@ public:
 	};
 	std::queue<SysExec_t> m_SysExecQueue;
 	std::mutex m_SysExecMutex;
-
+#endif
 private:
 	void LoadConfig();
+#ifdef _WIN32
 	void ProcessSysExec();
-
+#endif
 	SAMPVersion m_Version;
 	int m_iTicks;
 	int m_iTickRate;

@@ -1,6 +1,7 @@
 #include <memory>
 
 #ifndef _WIN32
+
 namespace std
 {
     template<typename T, typename... Args>

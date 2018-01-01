@@ -143,9 +143,11 @@
 #include <iostream>
 #include <sstream>
 #include <queue>
+#ifdef _WIN32
 #include <thread>
 #include <mutex>
-	
+#endif
+
 // Subhook
 #include <subhook/subhook.h>
 

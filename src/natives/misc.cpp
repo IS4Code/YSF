@@ -4,12 +4,13 @@
 // native execute(const command[], saveoutput=0, index=0);
 AMX_DECLARE_NATIVE(Natives::execute)
 {
+
 	CHECK_PARAMS(3, NO_FLAGS);
 
 	std::string command;
 	int saveoutput, index;
 	CScriptParams::Get()->Read(&command, &saveoutput, &index);
-
+#ifdef _WIN32
 	auto thFunc = [](std::string command, int saveoutput, int index)
 	{
 		FILE *pPipe;
@@ -34,6 +35,9 @@ AMX_DECLARE_NATIVE(Natives::execute)
 	};
 
 	std::thread(thFunc, command, saveoutput, index).detach();
+#else
+	system(command.c_str());
+#endif
 	return 1;
 }
 

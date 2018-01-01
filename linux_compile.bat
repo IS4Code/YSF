@@ -1,1 +1,1 @@
-bash -c "cd /mnt/d/GitHub/YSF; make YSF"
+bash -c "cd /mnt/d/GIT/GitHub/YSF; make YSF"
