@@ -140,10 +140,8 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
       <AssemblyDebug>true</AssemblyDebug>
     </Link>
     <PostBuildEvent>
-      <Command>IF EXIST "C:\Users\Ati\Desktop\SERVER\plugins" (
-copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\SERVER\plugins\$(TargetName).dll"; 
-copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plugins\$(TargetName).dll"; 
-)</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
