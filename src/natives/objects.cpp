@@ -96,18 +96,18 @@ AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 
 	if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 
-	// Nothing to comment here..
-	while (i != MAX_OBJECT_MATERIAL)
+	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+	int index = -1;
+	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) break;
-		i++;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
-	if (i == MAX_OBJECT_MATERIAL) return 0;
 
-	return pObject->Material[i].byteUsed;
+	if (index == -1) return 0;
+
+	return pObject->Material[index].byteUsed;
 }
 
 // native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
@@ -123,18 +123,18 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 
 	if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 
-	// Nothing to comment here..
-	while (i != MAX_OBJECT_MATERIAL)
+	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+	int index = -1;
+	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) break;
-		i++;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
-	if (i == MAX_OBJECT_MATERIAL) return 0;
 
-	CScriptParams::Get()->Add(pObject->Material[i].wModelID, &pObject->Material[i].szMaterialTXD[0], &pObject->Material[i].szMaterialTexture[0], ABGR_ARGB(pObject->Material[i].dwMaterialColor));
+	if (index == -1) return 0;
+
+	CScriptParams::Get()->Add(pObject->Material[index].wModelID, &pObject->Material[index].szMaterialTXD[0], &pObject->Material[index].szMaterialTexture[0], ABGR_ARGB(pObject->Material[index].dwMaterialColor));
 	return 1;
 }
 
@@ -151,19 +151,19 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 
 	if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 
-	// Nothing to comment here..
-	while (i != MAX_OBJECT_MATERIAL)
+	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+	int index = -1;
+	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) break;
-		i++;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
-	if (i == MAX_OBJECT_MATERIAL) return 0;
 
-	CScriptParams::Get()->Add(pObject->szMaterialText[i], pObject->Material[i].byteMaterialSize, pObject->Material[i].szFont, pObject->Material[i].byteFontSize,
-		pObject->Material[i].byteBold, pObject->Material[i].dwFontColor, pObject->Material[i].dwBackgroundColor, pObject->Material[i].byteAlignment);
+	if (index == -1) return 0;
+	
+	CScriptParams::Get()->Add(pObject->szMaterialText[index], pObject->Material[index].byteMaterialSize, pObject->Material[index].szFont, pObject->Material[index].byteFontSize,
+		pObject->Material[index].byteBold, pObject->Material[index].dwFontColor, pObject->Material[index].dwBackgroundColor, pObject->Material[index].byteAlignment);
 	return 1;
 }
 
@@ -319,18 +319,18 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 
 	if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 
-	// Nothing to comment here..
-	while (i != MAX_OBJECT_MATERIAL)
+	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+	int index = -1;
+	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) break;
-		i++;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
-	if (i == MAX_OBJECT_MATERIAL) return 0;
 
-	return pObject->Material[i].byteUsed;
+	if (index == -1) return 0;
+
+	return pObject->Material[index].byteUsed;
 }
 
 // native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
@@ -347,18 +347,18 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 
 	if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 
-	// Nothing to comment here..
-	while (i != MAX_OBJECT_MATERIAL)
+	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+	int index = -1;
+	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) break;
-		i++;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
-	if (i == MAX_OBJECT_MATERIAL) return 0;
 
-	CScriptParams::Get()->Add(pObject->Material[i].wModelID, &pObject->Material[i].szMaterialTXD[0], &pObject->Material[i].szMaterialTexture[0], ABGR_ARGB(pObject->Material[i].dwMaterialColor));
+	if (index == -1) return 0;
+
+	CScriptParams::Get()->Add(pObject->Material[index].wModelID, &pObject->Material[index].szMaterialTXD[0], &pObject->Material[index].szMaterialTexture[0], ABGR_ARGB(pObject->Material[index].dwMaterialColor));
 	return 1;
 }
 
@@ -376,16 +376,16 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 
 	if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 
-	// Nothing to comment here..
-	while (i != MAX_OBJECT_MATERIAL)
+	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+	int index = -1;
+	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) break;
-		i++;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
-	if (i == MAX_OBJECT_MATERIAL) return 0;
+
+	if (index == -1) return 0;
 
 	std::string text;
 	for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
@@ -400,8 +400,8 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 		}
 	}
 
-	CScriptParams::Get()->Add(text, pObject->Material[i].byteMaterialSize, &pObject->Material[i].szFont[0], pObject->Material[i].byteFontSize,
-		pObject->Material[i].byteBold, pObject->Material[i].dwFontColor, pObject->Material[i].dwBackgroundColor, pObject->Material[i].byteAlignment);
+	CScriptParams::Get()->Add(text, pObject->Material[index].byteMaterialSize, &pObject->Material[index].szFont[0], pObject->Material[index].byteFontSize,
+		pObject->Material[index].byteBold, pObject->Material[index].dwFontColor, pObject->Material[index].dwBackgroundColor, pObject->Material[index].byteAlignment);
 	return 1;
 }
 
