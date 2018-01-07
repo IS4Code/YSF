@@ -96,18 +96,18 @@ AMX_DECLARE_NATIVE(Natives::IsObjectMaterialSlotUsed)
 
 	if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 
-	// Nothing to comment here..
-	while (i != MAX_OBJECT_MATERIAL)
+	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+	int index = -1;
+	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) break;
-		i++;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
-	if (i == MAX_OBJECT_MATERIAL) return 0;
 
-	return pObject->Material[i].byteUsed;
+	if (index == -1) return 0;
+
+	return pObject->Material[index].byteUsed;
 }
 
 // native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
@@ -129,7 +129,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 	int index = -1;
 	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) index = i;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
 
 	if (index == -1) return 0;
@@ -157,7 +157,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterialText)
 	int index = -1;
 	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) index = i;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
 
 	if (index == -1) return 0;
@@ -319,18 +319,18 @@ AMX_DECLARE_NATIVE(Natives::IsPlayerObjectMaterialSlotUsed)
 
 	if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
-	int i = 0;
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 
-	// Nothing to comment here..
-	while (i != MAX_OBJECT_MATERIAL)
+	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+	int index = -1;
+	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) break;
-		i++;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
-	if (i == MAX_OBJECT_MATERIAL) return 0;
 
-	return pObject->Material[i].byteUsed;
+	if (index == -1) return 0;
+
+	return pObject->Material[index].byteUsed;
 }
 
 // native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
@@ -350,10 +350,10 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 
 	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
-	int index;
+	int index = -1;
 	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) index = i;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
 
 	if (index == -1) return 0;
@@ -379,10 +379,10 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 	CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 
 	// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
-	int index;
+	int index = -1;
 	for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 	{
-		if (pObject->Material[i].byteSlot == materialindex) index = i;
+		if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
 	}
 
 	if (index == -1) return 0;
