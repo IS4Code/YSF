@@ -57,13 +57,23 @@ void CCallbackManager::OnPlayerEnterGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if(!amx_FindPublic(*iter, "OnPlayerEnterGangZone", &idx))
+		if(!amx_FindPublic(iter, "OnPlayerEnterGangZone", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(zoneid));
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(zoneid));
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -74,13 +84,23 @@ void CCallbackManager::OnPlayerLeaveGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if(!amx_FindPublic(*iter, "OnPlayerLeaveGangZone", &idx))
+		if(!amx_FindPublic(iter, "OnPlayerLeaveGangZone", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(zoneid));
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(zoneid));
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -91,13 +111,23 @@ void CCallbackManager::OnPlayerEnterPlayerGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if(!amx_FindPublic(*iter, "OnPlayerEnterPlayerGangZone", &idx))
+		if(!amx_FindPublic(iter, "OnPlayerEnterPlayerGangZone", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(zoneid));
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(zoneid));
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -108,13 +138,23 @@ void CCallbackManager::OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if(!amx_FindPublic(*iter, "OnPlayerLeavePlayerGangZone", &idx))
+		if(!amx_FindPublic(iter, "OnPlayerLeavePlayerGangZone", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(zoneid));
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(zoneid));
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -125,13 +165,23 @@ void CCallbackManager::OnPlayerPauseStateChange(WORD playerid, bool pausestate)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if(!amx_FindPublic(*iter, "OnPlayerPauseStateChange", &idx))
+		if(!amx_FindPublic(iter, "OnPlayerPauseStateChange", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(pausestate));
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(pausestate));
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -142,14 +192,25 @@ void CCallbackManager::OnPlayerDeath(WORD playerid, WORD killerid, BYTE reason)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if (!amx_FindPublic(*iter, "OnPlayerDeath", &idx))
+		if (!amx_FindPublic(iter, "OnPlayerDeath", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(reason));
 			amx_Push(*iter, static_cast<cell>(killerid));
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(reason));
+			amx_Push(iter, static_cast<cell>(killerid));
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -160,12 +221,21 @@ void CCallbackManager::OnPlayerSpawn(WORD playerid)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if (!amx_FindPublic(*iter, "OnPlayerSpawn", &idx))
+		if (!amx_FindPublic(iter, "OnPlayerSpawn", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -176,13 +246,23 @@ void CCallbackManager::OnPlayerPickedUpPickup(WORD playerid, WORD pickupid)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if(!amx_FindPublic(*iter, "OnPlayerPickUpPickup", &idx))
+		if(!amx_FindPublic(iter, "OnPlayerPickUpPickup", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(pickupid));
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(pickupid));
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -193,13 +273,23 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if(!amx_FindPublic(*iter, "OnPlayerPickUpPlayerPickup", &idx))
+		if(!amx_FindPublic(iter, "OnPlayerPickUpPlayerPickup", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(pickupid));
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(pickupid));
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return;
 		}
@@ -226,14 +316,24 @@ bool CCallbackManager::OnServerMessage(const char* message)
 
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if (!amx_FindPublic(*iter, "OnServerMessage", &idx))
+		if (!amx_FindPublic(iter, "OnServerMessage", &idx))
 		{
 			cell amx_addr;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_PushString(*iter, &amx_addr, NULL, msg, 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
+=======
+			amx_PushString(iter, &amx_addr, nullptr, msg, 0, 0);
+			amx_Exec(iter, &ret, idx);
+			amx_Release(iter, amx_addr);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return 0;
 		}
@@ -250,11 +350,16 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if(!amx_FindPublic(*iter, "OnRemoteRCONPacket", &idx))
+		if(!amx_FindPublic(iter, "OnRemoteRCONPacket", &idx))
 		{
 			cell amx_addr;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_PushString(*iter, &amx_addr, NULL, command, 0, 0);
 			amx_Push(*iter, static_cast<cell>(success));
 			amx_PushString(*iter, &amx_addr, NULL, password, 0, 0);
@@ -262,6 +367,15 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 			amx_PushString(*iter, &amx_addr, NULL, inet_ntoa(in), 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
+=======
+			amx_PushString(iter, &amx_addr, nullptr, command, 0, 0);
+			amx_Push(iter, static_cast<cell>(success));
+			amx_PushString(iter, &amx_addr, nullptr, password, 0, 0);
+			amx_Push(iter, static_cast<cell>(port));
+			amx_PushString(iter, &amx_addr, nullptr, inet_ntoa(in), 0, 0);
+			amx_Exec(iter, &ret, idx);
+			amx_Release(iter, amx_addr);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return 0;
 		}
@@ -273,12 +387,21 @@ void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if (!amx_FindPublic(*iter, "OnPlayerStatsAndWeaponsUpdate", &idx))
+		if (!amx_FindPublic(iter, "OnPlayerStatsAndWeaponsUpdate", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 		}
 	}
 }
@@ -287,12 +410,21 @@ void CCallbackManager::OnVehicleSpawn(WORD vehicleid)
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if (!amx_FindPublic(*iter, "OnVehicleSpawn", &idx))
+		if (!amx_FindPublic(iter, "OnVehicleSpawn", &idx))
 		{
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, vehicleid);
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, vehicleid);
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 		}
 	}
 }
@@ -304,45 +436,58 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 	int idx = -1;
 	cell ret = 1;
 	DWORD dwTemp;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
+=======
+	for (auto iter : m_setAMX)
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 	{
-		if (!amx_FindPublic(*iter, "OnPlayerClientGameInit", &idx))
+		if (!amx_FindPublic(iter, "OnPlayerClientGameInit", &idx))
 		{
 			cell amx_addr, amx_addr_last, *phys_ptr, *temp_ptr;
 
 			dwTemp = *vehiclefriendlyfire;
-			amx_PushArray(*iter, &amx_addr, &phys_ptr, reinterpret_cast<cell*>(&dwTemp), 1);							// 0
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(lacgompmode), 1);					// 1
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(weapon_rate), 1);					// 2
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(incar_rate), 1);					// 3
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(onfoot_rate), 1);					// 4
+			amx_PushArray(iter, &amx_addr, &phys_ptr, reinterpret_cast<cell*>(&dwTemp), 1);							// 0
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(lacgompmode), 1);					// 1
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(weapon_rate), 1);					// 2
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(incar_rate), 1);					// 3
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(onfoot_rate), 1);					// 4
 			dwTemp = *showplayermarkers;
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 5
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 5
 			dwTemp = *shownametags;
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 6
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(spawnsavailable), 1);				// 7
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 6
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(spawnsavailable), 1);				// 7
 			dwTemp = *manualvehengineandlights;
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 8
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 8
 			dwTemp = *nametaglos;
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 9
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 9
 			dwTemp = *disableenterexits;
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 10
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(nametagdistance)), 1);		// 11
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(globalchatradius)), 1);	// 12
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 10
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(nametagdistance)), 1);		// 11
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(amx_ftoc(globalchatradius)), 1);	// 12
 			dwTemp = *limitglobalchat;
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 13
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 13
 			dwTemp = *usecjwalk;
-			amx_PushArray(*iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 14
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(&dwTemp), 1);						// 14
 		
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Push(*iter, static_cast<cell>(playerid));
 			amx_Exec(*iter, &ret, idx);
+=======
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 			/*
 			for(int i = 0; i != ((amx_addr_last - amx_addr) / 4); ++i)
 			{
-				amx_Release(*iter, amx_addr + (i * 4));
+				amx_Release(iter, amx_addr + (i * 4));
 			}
 			*/
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_Release(*iter, amx_addr);
+=======
+			amx_Release(iter, amx_addr);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			*vehiclefriendlyfire = static_cast<int>(phys_ptr[0]) != 0;
 			*lacgompmode = static_cast<int>(phys_ptr[1]);
@@ -367,6 +512,7 @@ bool CCallbackManager::OnOutcomeScmEvent(WORD playerid, WORD issuerid, int event
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
 	{
 		if (!amx_FindPublic(*iter, "OnOutcomeScmEvent", &idx))
@@ -379,6 +525,20 @@ bool CCallbackManager::OnOutcomeScmEvent(WORD playerid, WORD issuerid, int event
 			amx_Push(*iter, static_cast<cell>(playerid));
 
 			amx_Exec(*iter, &ret, idx);
+=======
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnOutcomeScmEvent", &idx))
+		{
+			amx_Push(iter, static_cast<cell>(arg2));
+			amx_Push(iter, static_cast<cell>(arg1));
+			amx_Push(iter, static_cast<cell>(vehicleid));
+			amx_Push(iter, static_cast<cell>(eventid));
+			amx_Push(iter, static_cast<cell>(issuerid));
+			amx_Push(iter, static_cast<cell>(playerid));
+
+			amx_Exec(iter, &ret, idx);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			if (!ret) return false;
 		}
@@ -393,9 +553,15 @@ bool CCallbackManager::OnServerQueryInfo(unsigned int binaryAddress, char(&hostn
 
 	int idx = -1;
 	cell ret = 0;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
 	{
 		if (!amx_FindPublic(*iter, "OnServerQueryInfo", &idx))
+=======
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnServerQueryInfo", &idx))
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 		{
 			cell amx_addr, amx_addr_last;
 
@@ -413,12 +579,21 @@ bool CCallbackManager::OnServerQueryInfo(unsigned int binaryAddress, char(&hostn
 				hostnameCells[i] = hostname[i];
 			
 			cell *outputHostname, *outputGameMode, *outputLanguage;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 			amx_PushArray(*iter, &amx_addr, &outputLanguage, languageCells, sizeof(language));
 			amx_PushArray(*iter, &amx_addr_last, &outputGameMode, gameModeCells, sizeof(gameMode));
 			amx_PushArray(*iter, &amx_addr_last, &outputHostname, hostnameCells, sizeof(hostname));
 			amx_PushString(*iter, &amx_addr_last, NULL, inet_ntoa(in), 0, 0);
 			amx_Exec(*iter, &ret, idx);
 			amx_Release(*iter, amx_addr);
+=======
+			amx_PushArray(iter, &amx_addr, &outputLanguage, languageCells, sizeof(language));
+			amx_PushArray(iter, &amx_addr_last, &outputGameMode, gameModeCells, sizeof(gameMode));
+			amx_PushArray(iter, &amx_addr_last, &outputHostname, hostnameCells, sizeof(hostname));
+			amx_PushString(iter, &amx_addr_last, nullptr, inet_ntoa(in), 0, 0);
+			amx_Exec(iter, &ret, idx);
+			amx_Release(iter, amx_addr);
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 
 			// If returned value isn't 0, then write changes back
 			if (ret)
@@ -444,6 +619,7 @@ void CCallbackManager::OnClientCheckResponse(WORD playerid, BYTE type, DWORD arg
 {
 	int idx = -1;
 	cell ret = 1;
+<<<<<<< HEAD:src/src/CCallbackManager.cpp
 	for (std::set<AMX*>::iterator iter = m_setAMX.begin(); iter != m_setAMX.end(); ++iter)
 	{
 		if (!amx_FindPublic(*iter, "OnClientCheckResponse", &idx)) 
@@ -457,4 +633,40 @@ void CCallbackManager::OnClientCheckResponse(WORD playerid, BYTE type, DWORD arg
 			if (ret) break;
 		}
 	}
+=======
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnClientCheckResponse", &idx)) 
+		{
+			amx_Push(iter, static_cast<cell>(response));
+			amx_Push(iter, static_cast<cell>(arg));
+			amx_Push(iter, static_cast<cell>(type));
+			amx_Push(iter, static_cast<cell>(playerid));
+
+			amx_Exec(iter, &ret, idx);
+			if (ret) break;
+		}
+	}
+}
+
+void CCallbackManager::OnSystemCommandExecute(const char *output, int retval, int index, bool success, int line_current, int line_total)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnSystemCommandExecute", &idx))
+		{
+			cell amx_addr;
+			amx_Push(iter, static_cast<cell>(line_total));
+			amx_Push(iter, static_cast<cell>(line_current));
+			amx_Push(iter, static_cast<cell>(success));
+			amx_Push(iter, static_cast<cell>(index));
+			amx_Push(iter, static_cast<cell>(retval));
+			amx_PushString(iter, &amx_addr, nullptr, output, 0, 0);
+			amx_Exec(iter, &ret, idx);
+			amx_Release(iter, amx_addr);
+		}
+	}
+>>>>>>> FETCH_HEAD:src/CCallbackManager.cpp
 }

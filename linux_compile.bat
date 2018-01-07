@@ -1,0 +1,1 @@
+bash -c "cd /mnt/d/GIT/GitHub/YSF; make YSF"

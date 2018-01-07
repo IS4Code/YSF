@@ -12,6 +12,10 @@
 *.db
 *.opendb
 *.amx
+<<<<<<< HEAD:src/.gitignore
+=======
+rus.txt
+>>>>>>> FETCH_HEAD:.gitignore
 
 # Build results
 [Dd]ebug/

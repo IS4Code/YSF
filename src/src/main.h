@@ -57,7 +57,11 @@
 // ------------
 
 #define PROJECT_NAME		"YSF"
+<<<<<<< HEAD:src/src/main.h
 #define PROJECT_VERSION		"R19"
+=======
+#define PROJECT_VERSION		"R19-2"
+>>>>>>> FETCH_HEAD:src/main.h
 
 // ------------
 // OS SPECIFICS
@@ -66,6 +70,8 @@
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN
 	#define SLEEP(x) { Sleep(x); }
+	#define popen _popen
+	#define pclose  _pclose
 	#define OS_NAME "Windows"
 
 	#include <windows.h>
@@ -134,12 +140,25 @@
 #include <stdarg.h>
 
 // STL
+<<<<<<< HEAD:src/src/main.h
+=======
+#include <unordered_map>
+>>>>>>> FETCH_HEAD:src/main.h
 #include <string>
 #include <vector>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+<<<<<<< HEAD:src/src/main.h
 	
+=======
+#include <queue>
+#ifdef _WIN32
+#include <thread>
+#include <mutex>
+#endif
+
+>>>>>>> FETCH_HEAD:src/main.h
 // Subhook
 #include <subhook/subhook.h>
 

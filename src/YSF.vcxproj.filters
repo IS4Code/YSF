@@ -43,6 +43,12 @@
     <Filter Include="sampsvr_files\plugins">
       <UniqueIdentifier>{aeb8301c-bdba-45aa-b5a8-d7e732c5e2ed}</UniqueIdentifier>
     </Filter>
+<<<<<<< HEAD:src/YSF.vcxproj.filters
+=======
+    <Filter Include="src\Natives">
+      <UniqueIdentifier>{a3551151-f85b-4415-a7ac-bb88aef9b3e7}</UniqueIdentifier>
+    </Filter>
+>>>>>>> FETCH_HEAD:YSF.vcxproj.filters
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CCallbackManager.cpp">
@@ -79,6 +85,7 @@
       <Filter>src\Pools</Filter>
     </ClCompile>
     <ClCompile Include="src\Hooks.cpp">
+<<<<<<< HEAD:src/YSF.vcxproj.filters
       <Filter>src\Hooks</Filter>
     </ClCompile>
     <ClCompile Include="src\Utils.cpp">
@@ -99,6 +106,75 @@
     </ClCompile>
     <ClCompile Include="src\CScriptParams.cpp">
       <Filter>src</Filter>
+=======
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CScriptParams.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CAddresses.cpp">
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CFunctions.cpp">
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Natives.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\amxfunctions.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\vehicles.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\objects.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\misc.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\gangzones.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\pickups.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\menus.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\textlabels.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\textdraws.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\actors.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\server.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\players.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\scoreboard.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\raknet.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\modelsizes.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\ysfsettings.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\fixes.cpp">
+      <Filter>src\Natives</Filter>
+>>>>>>> FETCH_HEAD:YSF.vcxproj.filters
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +217,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\CVector.h">
       <Filter>src\Utils</Filter>
+<<<<<<< HEAD:src/YSF.vcxproj.filters
     </ClInclude>
     <ClInclude Include="src\Utils.h">
       <Filter>src\Utils</Filter>
@@ -166,10 +243,66 @@
     </ClInclude>
     <ClInclude Include="src\CVector2D.h">
       <Filter>src</Filter>
+=======
+    </ClInclude>
+    <ClInclude Include="src\CSingleton.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CVector2D.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\plugin.h">
+      <Filter>lib\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\plugincommon.h">
+      <Filter>lib\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\amx.h">
+      <Filter>lib\sdk\amx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\getch.h">
+      <Filter>lib\sdk\amx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\sclinux.h">
+      <Filter>lib\sdk\amx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\raknet\NetworkTypes.h">
+      <Filter>lib\raknet</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CScriptParams.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CAddresses.h">
+      <Filter>src\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CFunctions.h">
+      <Filter>src\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Natives.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\amxfunctions.h">
+      <Filter>src\Utils</Filter>
+>>>>>>> FETCH_HEAD:YSF.vcxproj.filters
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="YSF.def" />
+    <None Include="sampsvr_files\filterscripts\YSF_examples.pwn">
+      <Filter>sampsvr_files\filterscripts</Filter>
+    </None>
+    <None Include="sampsvr_files\filterscripts\YSF_tests.pwn">
+      <Filter>sampsvr_files\filterscripts</Filter>
+    </None>
+    <None Include="sampsvr_files\pawno\include\YSF.inc">
+      <Filter>sampsvr_files\pawno\include</Filter>
+    </None>
+    <None Include="sampsvr_files\plugins\YSF.cfg">
+      <Filter>sampsvr_files\plugins</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="YSF.rc" />

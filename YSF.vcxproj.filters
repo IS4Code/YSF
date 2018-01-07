@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lib">
+      <UniqueIdentifier>{3C8C880B-A895-887C-3111-9F7C9D19947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdk">
+      <UniqueIdentifier>{cf2fd8c7-4b12-4411-bef1-d247294dc722}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\subhook">
+      <UniqueIdentifier>{6d8ef65d-493d-4e62-9d9e-e1bc12c71109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\raknet">
+      <UniqueIdentifier>{b0131f12-1adf-47e7-80d6-9f9cf545694b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Pools">
+      <UniqueIdentifier>{851fbdac-9464-4006-8405-be291cd681d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Hooks">
+      <UniqueIdentifier>{8b47fa9b-b09f-4a2b-b153-fb1c290c91bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Utils">
+      <UniqueIdentifier>{4a52d11b-07f9-4599-aabb-5e197bc0265a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\sdk\amx">
+      <UniqueIdentifier>{da3c76af-a563-4c2c-a802-c4a6575e3eea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files">
+      <UniqueIdentifier>{05c23c30-bbf6-4112-b0b6-aec3b538fec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\filterscripts">
+      <UniqueIdentifier>{a794a953-d45d-4e55-846f-178c807cb34f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\pawno">
+      <UniqueIdentifier>{d9cdb9cf-d8e4-4c11-a08c-4ec426dcd9b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\pawno\include">
+      <UniqueIdentifier>{e4e46ef4-946d-4591-9e7f-c224d647e8c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sampsvr_files\plugins">
+      <UniqueIdentifier>{aeb8301c-bdba-45aa-b5a8-d7e732c5e2ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Natives">
+      <UniqueIdentifier>{a3551151-f85b-4415-a7ac-bb88aef9b3e7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\CCallbackManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CModelSizes.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CPlayerData.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CServer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RPCs.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\sdk\amxplugin.cpp">
+      <Filter>lib\sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\subhook\subhook.c">
+      <Filter>lib\subhook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\raknet\BitStream.cpp">
+      <Filter>lib\raknet</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CPickupPool.cpp">
+      <Filter>src\Pools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CGangZonePool.cpp">
+      <Filter>src\Pools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hooks.cpp">
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CScriptParams.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CAddresses.cpp">
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CFunctions.cpp">
+      <Filter>src\Hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Natives.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\amxfunctions.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\vehicles.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\objects.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\misc.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\gangzones.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\pickups.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\menus.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\textlabels.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\textdraws.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\actors.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\server.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\players.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\scoreboard.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\raknet.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\modelsizes.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\ysfsettings.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natives\fixes.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\CCallbackManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CModelSizes.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CPlayerData.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CServer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\main.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RPCs.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Structs.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\subhook\subhook.h">
+      <Filter>lib\subhook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\raknet\BitStream.h">
+      <Filter>lib\raknet</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CPickupPool.h">
+      <Filter>src\Pools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CGangZonePool.h">
+      <Filter>src\Pools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hooks.h">
+      <Filter>src\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\CVector.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CSingleton.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CVector2D.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\plugin.h">
+      <Filter>lib\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\plugincommon.h">
+      <Filter>lib\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\amx.h">
+      <Filter>lib\sdk\amx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\getch.h">
+      <Filter>lib\sdk\amx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\sdk\amx\sclinux.h">
+      <Filter>lib\sdk\amx</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\raknet\NetworkTypes.h">
+      <Filter>lib\raknet</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CScriptParams.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CAddresses.h">
+      <Filter>src\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CFunctions.h">
+      <Filter>src\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Natives.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\amxfunctions.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="YSF.def" />
+    <None Include="sampsvr_files\filterscripts\YSF_examples.pwn">
+      <Filter>sampsvr_files\filterscripts</Filter>
+    </None>
+    <None Include="sampsvr_files\filterscripts\YSF_tests.pwn">
+      <Filter>sampsvr_files\filterscripts</Filter>
+    </None>
+    <None Include="sampsvr_files\pawno\include\YSF.inc">
+      <Filter>sampsvr_files\pawno\include</Filter>
+    </None>
+    <None Include="sampsvr_files\plugins\YSF.cfg">
+      <Filter>sampsvr_files\plugins</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="YSF.rc" />
+  </ItemGroup>
+</Project>

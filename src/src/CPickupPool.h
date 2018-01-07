@@ -65,7 +65,11 @@ public:
 	ePickupType type;
 };
 
+<<<<<<< HEAD:src/src/CPickupPool.h
 typedef std::map<int, CPickup*> PickupMap;
+=======
+typedef std::unordered_map<int, CPickup*> PickupMap;
+>>>>>>> FETCH_HEAD:src/CPickupPool.h
 
 class CYSFPickupPool
 {

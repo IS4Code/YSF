@@ -72,6 +72,24 @@ bool IsPlayerConnected(int playerid)
 	return pPlayerData[playerid] != NULL && pNetGame->pPlayerPool->pPlayer != NULL;
 }
 
+<<<<<<< HEAD:src/src/Utils.cpp
+=======
+std::vector<std::string> &Utility::split(const std::string &s, char delim, std::vector<std::string> &elems) 
+{
+	std::stringstream ss(s);
+	std::string item;
+	while (std::getline(ss, item, delim)) 
+	{
+		if (item.length() > 0) 
+		{
+			elems.push_back(item);
+		}
+	}
+	return elems;
+}
+
+
+>>>>>>> FETCH_HEAD:src/Utils.cpp
 const char* Utility::GetWeaponName(BYTE weaponid)
 {
 	switch (weaponid)
@@ -272,6 +290,7 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 // Load an entry from server.cfg - Y_Less
 int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 {
+<<<<<<< HEAD:src/src/Utils.cpp
 	std::ifstream
 		f("plugins/YSF.cfg");
 	int
@@ -289,14 +308,49 @@ int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 			{
 				goto CFGLoad_close;
 			}
+=======
+	FILE * fileConfig = fopen("plugins/YSF.cfg", "r");
+	//logprintf("2");
+
+	int
+		ret = 1,
+		len = strlen(name);
+	//logprintf("3");
+
+	if (fileConfig)
+	{
+		//logprintf("4");
+
+		char line[256];
+		while (!feof(fileConfig))
+		{
+			//logprintf("5");
+
+			if (!fgets(line, 256, fileConfig))
+			{
+				goto CFGLoad_close;
+			}
+			//logprintf("6");
+
+>>>>>>> FETCH_HEAD:src/Utils.cpp
 			// Does the line START with this text?  Anything other than the
 			// first character fails.
 			if (!strncmp(line, name, len) && line[len] <= ' ')
 			{
+<<<<<<< HEAD:src/src/Utils.cpp
+=======
+				//logprintf("7");
+
+>>>>>>> FETCH_HEAD:src/Utils.cpp
 				while (line[++len] <= ' ')
 				{
 					if (line[len] == '\0') goto CFGLoad_close;
 				}
+<<<<<<< HEAD:src/src/Utils.cpp
+=======
+				//logprintf("8");
+
+>>>>>>> FETCH_HEAD:src/Utils.cpp
 				// Skipped leading spaces, save the value.
 				if (dest) strncpy(dest, line + len, dlen);
 				ret = atoi(line + len);
@@ -304,6 +358,7 @@ int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
 			}
 		}
 	CFGLoad_close:
+<<<<<<< HEAD:src/src/Utils.cpp
 		// Yes, I used a label!  I needed to escape from a double loop.
 		f.close();
 	}
@@ -316,6 +371,33 @@ const char *GetPlayerName(int playerid)
 
 	// Get the player name pointer from memory.
 	return 25 * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
+=======
+		//logprintf("9");
+
+		// Yes, I used a label!  I needed to escape from a double loop.
+		fclose(fileConfig);
+		//logprintf("10");
+
+	}
+	//logprintf("11");
+
+	return ret;
+}
+
+const char *GetPlayerName(int playerid, bool getForQuery)
+{
+	if (!IsPlayerConnected(playerid)) return NULL;
+
+	if (getForQuery)
+	{
+		return pPlayerData[playerid]->strNameInQuery.c_str();
+	}
+	else
+	{
+		// Get the player name pointer from memory.
+		return (MAX_PLAYER_NAME + 1) * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
+	}
+>>>>>>> FETCH_HEAD:src/Utils.cpp
 }
 
 // Y_Less - original YSF
@@ -403,15 +485,15 @@ bool IsPlayerUpdatePacket(BYTE packetId)
 {
 	switch (packetId)
 	{
-	case ID_PLAYER_SYNC:
-	case ID_VEHICLE_SYNC:
-	case ID_PASSENGER_SYNC:
-	case ID_SPECTATOR_SYNC:
-	case ID_AIM_SYNC:
-	case ID_TRAILER_SYNC:
-		return true;
-	default:
-		return false;
+		case ID_PLAYER_SYNC:
+		case ID_VEHICLE_SYNC:
+		case ID_PASSENGER_SYNC:
+		case ID_SPECTATOR_SYNC:
+		case ID_AIM_SYNC:
+		case ID_TRAILER_SYNC:
+			return true;
+		default:
+			return false;
 	}
 	return false;
 }

@@ -5,7 +5,11 @@
 # make YSF
 #
 
+<<<<<<< HEAD:src/makefile
 GPP = g++ -m32 -Ilib -fno-stack-protector
+=======
+GPP = g++ -m32 -std=c++11 -Ilib -fno-stack-protector
+>>>>>>> FETCH_HEAD:makefile
 GCC = gcc -m32 -Ilib -fno-stack-protector
 YSF_OUTFILE = "./YSF.so"
 
@@ -23,4 +27,5 @@ YSF: clean
 	$(GPP) $(YSF) ./lib/raknet/*.cpp
 	$(GCC) $(YSF) ./lib/subhook/subhook.c
 	$(GPP) $(YSF) ./src/*.cpp
+	$(GPP) $(YSF) ./src/natives/*.cpp	
 	$(GCC) -nodefaultlibs -fshort-wchar -shared -o $(YSF_OUTFILE) *.o
