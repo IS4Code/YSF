@@ -71,9 +71,6 @@ CPlayerData::CPlayerData( WORD playerid )
 	fBounds[2] = 20000.0f;
 	fBounds[3] = -20000.0f;
 
-	// Name for server query
-	strNameInQuery = (MAX_PLAYER_NAME + 1) * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
-
 	// Gangzones
 	memset(pPlayerZone, NULL, sizeof(pPlayerZone));
 	memset(byteClientSideZoneIDUsed, 0xFF, sizeof(byteClientSideZoneIDUsed));
@@ -92,6 +89,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	bEverUpdated = false;
 	bControllable = true;
 	bAttachedObjectCreated = false;
+	bCustomNameInQuery = false;
 
 	// Private
 	memset(m_iTeams, -1, sizeof(m_iSkins));

@@ -133,6 +133,7 @@ public:
 	std::multimap<WORD, std::pair<BYTE, std::string>> m_PlayerObjectMaterialText;
 
 	// Other
+	bool bCustomNameInQuery;
 	std::string strNameInQuery;
 
 	// Gangzones

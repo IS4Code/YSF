@@ -178,8 +178,7 @@ AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerFakePing) // R8
 	AMX_DEFINE_NATIVE(SetPlayerNameInServerQuery) // R11
 	AMX_DEFINE_NATIVE(GetPlayerNameInServerQuery) // R11
-	AMX_DEFINE_NATIVE(SetPlayerNameInServerQuery) // R11
-	AMX_DEFINE_NATIVE(GetPlayerNameInServerQuery) // R11
+	AMX_DEFINE_NATIVE(ResetPlayerNameInServerQuery)
 
 	// AFK
 	AMX_DEFINE_NATIVE(IsPlayerPaused)
