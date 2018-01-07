@@ -344,14 +344,14 @@ const char *GetPlayerName(int playerid, bool getForQuery)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;
 
-	if (getForQuery)
+	if (getForQuery && pPlayerData[playerid]->bCustomNameInQuery)
 	{
 		return pPlayerData[playerid]->strNameInQuery.c_str();
 	}
 	else
 	{
 		// Get the player name pointer from memory.
-		return (MAX_PLAYER_NAME + 1) * playerid + (char*)pNetGame->pPlayerPool + 0x2693C;
+		return pNetGame->pPlayerPool->szName[playerid];
 	}
 }
 

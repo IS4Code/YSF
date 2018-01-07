@@ -55,6 +55,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerNameInServerQuery)
 	CScriptParams::Get()->Read(&name);
 	if (name.length() >= MAX_PLAYER_NAME) return 0;
 
+	pPlayerData[playerid]->bCustomNameInQuery = true;
 	pPlayerData[playerid]->strNameInQuery = std::move(name);
 	return 1;
 }
@@ -67,6 +68,24 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerNameInServerQuery)
 	const int playerid = CScriptParams::Get()->ReadInt();
 	if (!IsPlayerConnected(playerid)) return 0;
 
-	CScriptParams::Get()->Add(pPlayerData[playerid]->strNameInQuery);
+	if (pPlayerData[playerid]->bCustomNameInQuery)
+	{
+		CScriptParams::Get()->Add(pPlayerData[playerid]->strNameInQuery);
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+// native native ResetPlayerNameInServerQuery(playerid);
+AMX_DECLARE_NATIVE(Natives::ResetPlayerNameInServerQuery)
+{
+	CHECK_PARAMS(1, LOADED);
+
+	const int playerid = CScriptParams::Get()->ReadInt();
+	if (!IsPlayerConnected(playerid)) return 0;
+
+	pPlayerData[playerid]->bCustomNameInQuery = false;
+	pPlayerData[playerid]->strNameInQuery.clear();
 	return 1;
 }
