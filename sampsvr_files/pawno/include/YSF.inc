@@ -124,7 +124,7 @@ native ApplyAnimationForPlayer(playerid, animplayerid, const animlib[], const an
 native GetPlayerWeather(playerid);
 native TogglePlayerWidescreen(playerid, bool:set);
 native IsPlayerWidescreenToggled(playerid);
-native GetSpawnInfo(playerid, teamid, &modelid = 0, &Float:spawn_x = 0.0, &Float:spawn_y = 0.0, &Float:spawn_z = 0.0, &Float:z_angle = 0.0, &weapon1 = 0, &weapon1_ammo = 0, &weapon2 = 0, &weapon2_ammo = 0, &weapon3 = 0, &weapon3_ammo = 0);
+native GetSpawnInfo(playerid, &teamid, &modelid = 0, &Float:spawn_x = 0.0, &Float:spawn_y = 0.0, &Float:spawn_z = 0.0, &Float:z_angle = 0.0, &weapon1 = 0, &weapon1_ammo = 0, &weapon2 = 0, &weapon2_ammo = 0, &weapon3 = 0, &weapon3_ammo = 0);
 native GetPlayerSkillLevel(playerid, skill);
 native IsPlayerCheckpointActive(playerid);
 native GetPlayerCheckpoint(playerid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fSize = 0.0);
