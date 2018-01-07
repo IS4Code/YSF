@@ -39,11 +39,18 @@ CScriptParams::CScriptParams()
 
 //----------------------------------------------------
 
+std::string g_NativesPrefix("Natives::");
+
 bool CScriptParams::Setup(size_t paramscount, std::string &&strNativeName, Flags flags, AMX* amx, cell* params, size_t start)
 {
 	// Initialize variables for later use
 	m_paramscount = paramscount;
-	m_strNativeName = std::move(strNativeName.substr(9)); // Removing "Natives::" tag from the begining of the function
+	if (strNativeName.length() >= g_NativesPrefix.length() && std::equal(g_NativesPrefix.begin(), g_NativesPrefix.end(), strNativeName.begin())) // Removing "Natives::" tag from the begining of the function
+	{
+		m_strNativeName = std::move(strNativeName.substr(9));
+	} else {
+		m_strNativeName = std::move(strNativeName);
+	}
 	m_flags = flags;
 	m_AMX = amx;
 	m_params = params;
