@@ -572,7 +572,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->strNameInQuery.empty())
+							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && (!pPlayerData[r]->bCustomNameInQuery || !pPlayerData[r]->strNameInQuery.empty()))
 							{
 								szName = (char*)GetPlayerName(r, true);
 								byteNameLen = (BYTE)strlen(szName);
@@ -618,7 +618,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pPlayerData[r]->strNameInQuery.empty())
+							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && (!pPlayerData[r]->bCustomNameInQuery || !pPlayerData[r]->strNameInQuery.empty()))
 							{
 								memcpy(newdata, &r, sizeof(BYTE));
 								newdata += sizeof(BYTE);

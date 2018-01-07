@@ -172,6 +172,7 @@ native TogglePlayerFakePing(playerid, bool:toggle);
 native SetPlayerFakePing(playerid, ping);
 native SetPlayerNameInServerQuery(playerid, const name[]);
 native GetPlayerNameInServerQuery(playerid, name[], len = sizeof(name));
+native ResetPlayerNameInServerQuery(playerid);
 
 // Pause functions
 native IsPlayerPaused(playerid);

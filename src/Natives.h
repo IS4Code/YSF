@@ -183,6 +183,7 @@ namespace Natives
 	AMX_DECLARE_NATIVE(SetPlayerFakePing); // R8
 	AMX_DECLARE_NATIVE(SetPlayerNameInServerQuery); // R11
 	AMX_DECLARE_NATIVE(GetPlayerNameInServerQuery); // R11
+	AMX_DECLARE_NATIVE(ResetPlayerNameInServerQuery);
 
 	AMX_DECLARE_NATIVE(IsPlayerPaused);
 	AMX_DECLARE_NATIVE(GetPlayerPausedTime);
