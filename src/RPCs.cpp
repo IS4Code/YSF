@@ -179,10 +179,13 @@ void InitRPCs()
 				if (!pKiller->byteStreamedIn[playerid] || !pPlayer->byteStreamedIn[killerid])
 					return;
 
-				if (pKiller->syncData.byteWeapon != reasonid && reasonid <= 46 && (reasonid != WEAPON_ROCKETLAUNCHER || reasonid != WEAPON_HEATSEEKER) && pKiller->byteState != PLAYER_STATE_DRIVER)// 46 = parachute
+				if (pKiller->syncData.byteWeapon != reasonid && pKiller->byteState != PLAYER_STATE_DRIVER)
 				{
-					//			logprintf("onplayerdeath error 1, synced weapon: %d, reason: %d", pKiller->syncData.byteWeapon, reasonid);
-					return;
+					if (reasonid <= 46 && (reasonid != WEAPON_ROCKETLAUNCHER && reasonid != WEAPON_HEATSEEKER))// 46 = parachute
+					{
+						//			logprintf("onplayerdeath error 1, synced weapon: %d, reason: %d", pKiller->syncData.byteWeapon, reasonid);
+						return;
+					}
 				}
 
 				if (CSAMPFunctions::GetIntVariable("chatlogging"))
