@@ -1,5 +1,8 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../Utils.h"
+#include "../CScriptParams.h"
+#include "../Structs.h"
+#include "../Globals.h"
 
 // native GetWeaponSlot(weaponid);
 AMX_DECLARE_NATIVE(Natives::GetWeaponSlot)

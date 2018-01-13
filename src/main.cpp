@@ -31,17 +31,14 @@
 */
 
 #include "main.h"
-
-//----------------------------------------------------------
-
-void **ppPluginData;
-extern void *pAMXFunctions;
-
-// Internal server pointers
-CNetGame *pNetGame = NULL;
-void *pConsole = NULL;
-void *pRakServer = NULL;
-CPlayerData *pPlayerData[MAX_PLAYERS];
+#include "CServer.h"
+#include "CScriptParams.h"
+#include "CCallbackManager.h"
+#include "CAddresses.h"
+#include "Hooks.h"
+#include "Natives.h"
+#include "Utils.h"
+#include "Globals.h"
 
 //----------------------------------------------------------
 // The Support() function indicates what possibilities this

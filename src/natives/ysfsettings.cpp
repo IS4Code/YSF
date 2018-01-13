@@ -1,5 +1,6 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
 
 // native YSF_SetTickRate(ticks);
 AMX_DECLARE_NATIVE(Natives::YSF_SetTickRate)

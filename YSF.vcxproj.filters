@@ -46,6 +46,9 @@
     <Filter Include="src\Natives">
       <UniqueIdentifier>{a3551151-f85b-4415-a7ac-bb88aef9b3e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Includes">
+      <UniqueIdentifier>{9887df33-c415-4cd1-a27f-cce2c84775eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CCallbackManager.cpp">
@@ -150,6 +153,15 @@
     <ClCompile Include="src\natives\fixes.cpp">
       <Filter>src\Natives</Filter>
     </ClCompile>
+    <ClCompile Include="src\Globals.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Memory.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\System.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">
@@ -232,6 +244,21 @@
       <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="src\amxfunctions.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Globals.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\includes\net.h">
+      <Filter>src\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Memory.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\includes\platform.h">
+      <Filter>src\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\System.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,8 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Globals.h"
+#include "../Utils.h"
 
 #ifdef NEW_PICKUP_SYSTEM
 

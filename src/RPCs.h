@@ -33,6 +33,8 @@
 #ifndef YSF_RPCS_H
 #define YSF_RPCS_H
 
+#include "includes/platform.h"
+
 extern BYTE RPC_Gravity;
 extern BYTE RPC_CreatePickup;
 extern BYTE RPC_DestroyPickup;

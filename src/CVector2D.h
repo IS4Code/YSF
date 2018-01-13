@@ -14,7 +14,7 @@
 
 #define FLOAT_EPSILON 0.0001f
 
-#include <math.h>
+#include <cmath>
 
 /**
  * CVector Structure used to store a 3D vertex.

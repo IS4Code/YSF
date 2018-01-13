@@ -30,8 +30,9 @@
 *
 */
 
-#include "main.h"
 #include <memory>
+
+#include "Natives.h"
 
 AMX_NATIVE Natives::ORIGINAL_AttachObjectToPlayer = NULL;
 AMX_NATIVE Natives::ORIGINAL_SetPlayerWeather = NULL;

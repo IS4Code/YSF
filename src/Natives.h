@@ -34,7 +34,6 @@
 #define YSF_SCRIPTING_H
 
 #include <sdk/amx/amx.h>
-#include "main.h"
 
 typedef cell AMX_NATIVE_CALL(*AMX_Function_t)(AMX *amx, cell *params);
 

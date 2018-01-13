@@ -1,5 +1,10 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../CFunctions.h"
+#include "../Globals.h"
+#include "../Utils.h"
+#include "../RPCs.h"
 #include "../linux_fix.h"
 
 // native Float:GetObjectDrawDistance(objectid);

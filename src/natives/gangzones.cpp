@@ -1,5 +1,8 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Globals.h"
+#include "../Utils.h"
 
 #define CHECK_PER_PLAYER_ZONES_STATE \
 	if (!CServer::Get()->m_bUsePerPlayerGangZones) \

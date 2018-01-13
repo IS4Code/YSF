@@ -1,5 +1,8 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Globals.h"
+#include "../Utils.h"
 
 // native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRot, &color1, &color2);
 AMX_DECLARE_NATIVE(Natives::GetVehicleSpawnInfo)

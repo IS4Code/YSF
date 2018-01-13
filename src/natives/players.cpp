@@ -1,5 +1,9 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Globals.h"
+#include "../Utils.h"
+#include "../RPCs.h"
 #include "../linux_fix.h"
 
 // native SetPlayerAdmin(playerid, bool:admin);

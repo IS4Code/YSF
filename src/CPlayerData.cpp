@@ -30,7 +30,13 @@
 *
 */
 
-#include "main.h"
+#include "CPlayerData.h"
+#include "CServer.h"
+#include "CFunctions.h"
+#include "CCallbackManager.h"
+#include "Globals.h"
+#include "Utils.h"
+#include "RPCs.h"
 
 CPlayerData::CPlayerData( WORD playerid )
 {

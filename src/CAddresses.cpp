@@ -30,7 +30,8 @@
 *
 */
 
-#include "main.h"
+#include "CAddresses.h"
+#include "Memory.h"
 
 //#define print_addresses
 #ifdef _WIN32

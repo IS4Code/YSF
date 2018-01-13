@@ -1,5 +1,6 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CModelSizes.h"
+#include "../CScriptParams.h"
 
 // native GetColCount();
 AMX_DECLARE_NATIVE(Natives::GetColCount)

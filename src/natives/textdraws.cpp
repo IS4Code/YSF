@@ -1,5 +1,10 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../CFunctions.h"
+#include "../Globals.h"
+#include "../Utils.h"
+#include "../RPCs.h"
 
 // native IsValidTextDraw(Text:textdrawid);
 AMX_DECLARE_NATIVE(Natives::IsValidTextDraw)

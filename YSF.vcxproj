@@ -158,8 +158,10 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClCompile Include="src\CPlayerData.cpp" />
     <ClCompile Include="src\CServer.cpp" />
     <ClCompile Include="src\CFunctions.cpp" />
+    <ClCompile Include="src\Globals.cpp" />
     <ClCompile Include="src\Hooks.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Memory.cpp" />
     <ClCompile Include="src\natives\actors.cpp" />
     <ClCompile Include="src\natives\fixes.cpp" />
     <ClCompile Include="src\natives\gangzones.cpp" />
@@ -178,6 +180,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClCompile Include="src\natives\ysfsettings.cpp" />
     <ClCompile Include="src\RPCs.cpp" />
     <ClCompile Include="src\Natives.cpp" />
+    <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -221,11 +224,16 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClInclude Include="src\CVector.h" />
     <ClInclude Include="src\CVector2D.h" />
     <ClInclude Include="src\CFunctions.h" />
+    <ClInclude Include="src\Globals.h" />
     <ClInclude Include="src\Hooks.h" />
+    <ClInclude Include="src\includes\net.h" />
+    <ClInclude Include="src\includes\platform.h" />
     <ClInclude Include="src\main.h" />
+    <ClInclude Include="src\Memory.h" />
     <ClInclude Include="src\RPCs.h" />
     <ClInclude Include="src\Natives.h" />
     <ClInclude Include="src\Structs.h" />
+    <ClInclude Include="src\System.h" />
     <ClInclude Include="src\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

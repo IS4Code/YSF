@@ -1,5 +1,7 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Globals.h"
 
 // native IsMenuDisabled(Menu:menuid);
 AMX_DECLARE_NATIVE(Natives::IsMenuDisabled)

@@ -1,5 +1,9 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Utils.h"
+
+#include "raknet/NetworkTypes.h"
 
 // native ClearBanList();
 AMX_DECLARE_NATIVE(Natives::ClearBanList)

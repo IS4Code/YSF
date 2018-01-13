@@ -1,5 +1,8 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Globals.h"
+#include "../Utils.h"
 
 // native TogglePlayerScoresPingsUpdate(playerid, bool:toggle);
 AMX_DECLARE_NATIVE(Natives::TogglePlayerScoresPingsUpdate)

@@ -1,5 +1,15 @@
-#include "../main.h"
+#include <stdio.h>
+
+#ifdef _WIN32
+#include <strsafe.h>
+#endif
+
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+
+#define popen _popen
+#define pclose  _pclose
 
 // native execute(const command[], saveoutput=0, index=0);
 AMX_DECLARE_NATIVE(Natives::execute)

@@ -33,13 +33,15 @@
 #ifndef YSF_CPLAYERDATA_H
 #define YSF_CPLAYERDATA_H
 
-#include "Structs.h"
 #include <bitset>
 #include <chrono>
 #include <memory>
+#include <set>
+#include <unordered_map>
 
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
+#include "Structs.h"
 
 using default_clock = std::chrono::steady_clock;
 
@@ -137,7 +139,7 @@ public:
 	std::string strNameInQuery;
 
 	// Gangzones
-	CGangZone *pPlayerZone[MAX_GANG_ZONES];
+	class CGangZone *pPlayerZone[MAX_GANG_ZONES];
 
 	// [clientsideid] = serversideid
 	BYTE byteClientSideZoneIDUsed[MAX_GANG_ZONES];

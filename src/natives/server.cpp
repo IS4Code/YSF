@@ -1,5 +1,10 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Hooks.h"
+#include "../Globals.h"
+#include "../Utils.h"
+#include "../RPCs.h"
 
 // native SetModeRestartTime(Float:time);
 AMX_DECLARE_NATIVE(Natives::SetModeRestartTime)

@@ -30,7 +30,9 @@
 *
 */
 
-#include "main.h"
+#include "CCallBackManager.h"
+#include "Globals.h"
+#include "includes/net.h"
 
 std::set<AMX *> CCallbackManager::m_setAMX;
 

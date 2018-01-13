@@ -33,8 +33,9 @@
 #ifndef YSF_CGANGZONEPOOL_H
 #define YSF_CGANGZONEPOOL_H
 
-#include "main.h"
 #include <cstddef>
+
+#include "includes/platform.h"
 
 class CGangZone
 {

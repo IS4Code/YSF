@@ -30,7 +30,12 @@
 *
 */
 
-#include "main.h"
+#include "RPCs.h"
+#include "CServer.h"
+#include "CFunctions.h"
+#include "CCallbackManager.h"
+#include "Utils.h"
+#include "Globals.h"
 
 //#define testspawn
 

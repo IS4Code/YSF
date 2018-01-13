@@ -30,7 +30,12 @@
 *
 */
 
-#include "main.h"
+#include "CGangZonePool.h"
+#include "CFunctions.h"
+#include "CCallbackManager.h"
+#include "Utils.h"
+#include "Globals.h"
+#include "RPCs.h"
 
 CGangZonePool::CGangZonePool()
 {

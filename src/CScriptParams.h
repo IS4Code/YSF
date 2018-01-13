@@ -40,6 +40,7 @@
 #include "CSingleton.h"
 #include "CVector.h"
 #include "CVector2D.h"
+#include "amxfunctions.h"
 
 class CScriptParams : public CSingleton<CScriptParams>
 {

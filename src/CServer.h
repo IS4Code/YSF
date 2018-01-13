@@ -38,14 +38,19 @@ struct Packet;
 class CGangZonePool;
 class CYSFPickupPool;
 
-#include "CSingleton.h"
-#include "CAddresses.h"
-#include "CGangZonePool.h"
-
 #include <vector>
 #include <set>
 #include <bitset>
 #include <unordered_map>
+#include <queue>
+#include <mutex>
+
+#include "raknet/NetworkTypes.h"
+#include "CFunctions.h"
+#include "CSingleton.h"
+#include "CAddresses.h"
+#include "CGangZonePool.h"
+#include "Structs.h"
 
 class CServer : public CSingleton<CServer>
 {

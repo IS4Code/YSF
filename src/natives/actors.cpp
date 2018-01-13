@@ -1,5 +1,7 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CScriptParams.h"
+#include "../Structs.h"
+#include "../Globals.h"
 
 // native GetActorSpawnInfo(actorid, &skinid, &Float:fX, &Float:fY, &Float:fZ, &Float:fAngle);
 AMX_DECLARE_NATIVE(Natives::GetActorSpawnInfo)

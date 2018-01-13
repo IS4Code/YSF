@@ -1,5 +1,8 @@
-#include "../main.h"
 #include "../Natives.h"
+#include "../CServer.h"
+#include "../CScriptParams.h"
+#include "../Utils.h"
+#include "../Globals.h"
 
 // native IsValid3DTextLabel(Text3D:id);
 AMX_DECLARE_NATIVE(Natives::IsValid3DTextLabel)

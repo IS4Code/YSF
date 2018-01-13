@@ -35,6 +35,7 @@
 
 // Thx to OrMisicL - from FCNPC
 #include <set>
+#include "includes/platform.h"
 #include "sdk/plugin.h"
 
 class CCallbackManager

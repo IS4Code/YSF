@@ -30,8 +30,15 @@
 *
 */
 
-#include "main.h"
 #include <unordered_map>
+#include "sdk/plugincommon.h"
+
+#include "CServer.h"
+#include "CFunctions.h"
+#include "CAddresses.h"
+#include "CCallbackManager.h"
+#include "Globals.h"
+#include "Memory.h"
 
 CConsole__AddStringVariable_t				CSAMPFunctions::pfn__CConsole__AddStringVariable = NULL;
 CConsole__GetStringVariable_t				CSAMPFunctions::pfn__CConsole__GetStringVariable = NULL;
@@ -53,7 +60,6 @@ CPlayerPool__HandleVehicleRespawn_t			CSAMPFunctions::pfn__CPlayerPool__HandleVe
 Packet_WeaponsUpdate_t						CSAMPFunctions::pfn__Packet_WeaponsUpdate = NULL;
 Packet_StatsUpdate_t						CSAMPFunctions::pfn__Packet_StatsUpdate = NULL;
 
-logprintf_t									logprintf = NULL;
 format_amxstring_t							CSAMPFunctions::pfn__format_amxstring = NULL;
 
 RakNet__Start_t								CSAMPFunctions::pfn__RakNet__Start = NULL;

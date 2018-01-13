@@ -33,6 +33,8 @@
 #ifndef YSF_HOOKS_H
 #define YSF_HOOKS_H
 
+#include "includes/platform.h"
+
 #define SUBHOOK_REMOVE(hookname) \
 	if(hookname) \
 	{ \

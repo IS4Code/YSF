@@ -60,6 +60,8 @@ typedef int SOCKET;
 #define CDECL
 #endif
 
+#include "Structs.h"
+
 struct Packet;
 struct ConsoleVariable_s;
 
@@ -83,7 +85,6 @@ typedef DWORD (THISCALL *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlay
 typedef int (THISCALL *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef int (THISCALL *Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
 
-typedef void(*logprintf_t)(char* format, ...);
 typedef char* (CDECL *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
 
 typedef bool (THISCALL *RakNet__Start_t)(void* ppRakServer, unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress);
@@ -201,7 +202,5 @@ public:
 	DEFINE_FUNCTION_POINTER(RakNet__RemoveFromBanList);				
 	DEFINE_FUNCTION_POINTER(RakNet__ClearBanList);					
 };
-
-extern logprintf_t logprintf;
 
 #endif

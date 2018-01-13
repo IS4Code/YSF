@@ -30,7 +30,9 @@
 *
 */
 
-#include "main.h"
+#include "CScriptParams.h"
+#include "CServer.h"
+#include "Globals.h"
 
 CScriptParams::CScriptParams()
 {

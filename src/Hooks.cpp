@@ -30,7 +30,16 @@
 *
 */
 
-#include "main.h"
+#include "Hooks.h"
+#include "CServer.h"
+#include "CFunctions.h"
+#include "CCallbackManager.h"
+#include "Memory.h"
+#include "Natives.h"
+#include "Globals.h"
+#include "Utils.h"
+#include "RPCs.h"
+#include "subhook/subhook.h"
 
 //----------------------------------------------------
 subhook_t SetWeather_hook;
