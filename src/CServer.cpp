@@ -49,10 +49,7 @@ void CServer::Initialize(SAMPVersion version)
 	
 	// Loading configurations from plugins/YSF.cfg
 	LoadConfig();
-
-#ifndef _WIN32
 	LoadTickCount();
-#endif
 
 	memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();

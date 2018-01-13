@@ -32,6 +32,7 @@
 
 #include <unordered_map>
 #include "sdk/plugincommon.h"
+#include "includes/platform.h"
 
 #include "CServer.h"
 #include "CFunctions.h"

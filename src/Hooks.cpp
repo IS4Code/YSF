@@ -30,6 +30,9 @@
 *
 */
 
+#include <stdarg.h>
+#include "includes/net.h"
+
 #include "Hooks.h"
 #include "CServer.h"
 #include "CFunctions.h"

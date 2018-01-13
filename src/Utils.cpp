@@ -37,28 +37,6 @@
 #include "Globals.h"
 #include "RPCs.h"
 
-// Linux GetTickCount
-#ifndef _WIN32
-
-#include "sys/time.h"
-timeval startTime;
-timeval currentTime;
-
-void LoadTickCount()
-{
-	// Get the starting time
-	gettimeofday(&startTime, 0);
-}
-
-int GetTickCount()
-{
-	// Get the time elapsed since the start
-	gettimeofday(&currentTime, 0);
-	return (currentTime.tv_usec - startTime.tv_usec) / 1000 + 1000 * (currentTime.tv_sec - startTime.tv_sec);
-}
-
-#endif
-
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition)
 {
 	// Get the distance between the two vectors

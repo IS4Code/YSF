@@ -2,22 +2,210 @@
 #include <sstream>
 
 #ifdef _WIN32
+#include "CServer.h"
+
 #define WINDOWS_LEAN_AND_MEAN
 #include <windows.h>
+#include <strsafe.h>
 #include <tlhelp32.h>
 #include <winternl.h>
 
 #include <comdef.h>
 #include <wbemidl.h>
 #pragma comment(lib, "wbemuuid.lib")
+
+#define popen _popen
+#define pclose  _pclose
 #else
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
+#include <fnmatch.h>
 #endif
 
 #include "System.h"
+
+bool CreateNewDirectory(const char *name)
+{
+#ifdef _WIN32
+	TCHAR szDir[MAX_PATH] = TEXT("./scriptfiles/");
+	StringCchCat(szDir, MAX_PATH, name);
+	return CreateDirectory(szDir, NULL) != 0;
+#else
+	char *szDir = (char *)alloca(strlen(name) + 15);
+	strcpy(szDir, "./scriptfiles/");
+	strcpy(szDir + 14, name);
+	return mkdir(szDir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
+#endif
+}
+
+#ifdef _WIN32
+bool FindFileOrDir(const char *szSearch, std::string &result, int count, DWORD flags)
+{
+	WIN32_FIND_DATA ffd;
+	TCHAR szDir[MAX_PATH] = TEXT("./scriptfiles/");
+	StringCchCat(szDir, MAX_PATH, szSearch);
+	// Get a serch handle
+	HANDLE hFind = FindFirstFile(szDir, &ffd);
+	if (hFind != INVALID_HANDLE_VALUE)
+	{
+		do
+		{
+			if (ffd.dwFileAttributes & flags)
+			{
+				if (!count)
+				{
+					// No files left to skip, return the data
+					result = ffd.cFileName;
+					FindClose(hFind);
+					return true;
+				}
+				count--;
+			}
+		} while (FindNextFile(hFind, &ffd) != 0);
+		FindClose(hFind);
+	}
+	return true;
+}
+#else
+bool FindFileOrDir(const char *szSearch, std::string &result, int count, bool dir)
+{
+	int end = strlen(szSearch) - 1;
+	if (end == -1)
+	{
+		return 0;
+	}
+	while (szSearch[end] != '\\' && szSearch[end] != '/')
+	{
+		if (!end)
+		{
+			break;
+		}
+		end--;
+	}
+	// Split up the information
+	// Ensure that we search in scriptfiles
+	// And separate out the filename and path
+	char *szDir = (char *)alloca(end + 16);
+	const char *szFile;
+	strcpy(szDir, "./scriptfiles/");
+	if (end)
+	{
+		szFile = &szSearch[end + 1];
+		strncpy(szDir + 14, szSearch, end);
+		strcpy(szDir + strlen(szDir), "/");
+	}
+	else
+	{
+		szFile = szSearch;
+	}
+	end = strlen(szDir);
+	DIR *dp = opendir(szDir);
+	if (dp)
+	{
+		// Loop through all files in the directory
+		struct dirent *ep;
+		while (ep = readdir(dp))
+		{
+			// Check if this file matches the pattern
+			if (!fnmatch(szFile, ep->d_name, FNM_NOESCAPE))
+			{
+				// Check if this is a directory
+				// There MUST be an easier way to do this!
+				char *full = (char *)malloc(strlen(ep->d_name) + end + 1);
+				if (!full)
+				{
+					closedir(dp);
+					return false;
+				}
+				strcpy(full, szDir);
+				strcpy(full + end, ep->d_name);
+				DIR *xp = opendir(full);
+				free(full);
+				if (dir)
+				{
+					if (!xp)
+					{
+						continue;
+					}
+					closedir(xp);
+				} else {
+					if (xp)
+					{
+						closedir(xp);
+						continue;
+					}
+				}
+				// Check if there's any left to skip
+				if (!count)
+				{
+					// No files left to skip, return the data
+					result = ep->d_name;
+					closedir(dp);
+					return true;
+				}
+				count--;
+			}
+		}
+		closedir(dp);
+	}
+	return false;
+}
+#endif
+
+bool FindFile(const char *szSearch, std::string &result, int count)
+{
+#ifdef _WIN32
+	return FindFileOrDir(szSearch, result, count, ~FILE_ATTRIBUTE_DIRECTORY);
+#else
+	return FindFileOrDir(szSearch, result, count, false);
+#endif
+}
+
+bool FindDirectory(const char *szSearch, std::string &result, int count)
+{
+#ifdef _WIN32
+	return FindFileOrDir(szSearch, result, count, FILE_ATTRIBUTE_DIRECTORY);
+#else
+	return FindFileOrDir(szSearch, result, count, true);
+#endif
+}
+
+void ExecuteCommand(const std::string &cmd, bool saveOutput, int index)
+{
+#ifdef _WIN32
+	auto thFunc = [](std::string command, int saveoutput, int index)
+	{
+		FILE *pPipe;
+		char szBuffer[512];
+
+		CServer::SysExec_t exec;
+		exec.index = index;
+		exec.output = "";
+		exec.success = false;
+
+		if ((pPipe = popen(command.c_str(), "r")) != NULL)
+		{
+			while (saveoutput && fgets(szBuffer, sizeof(szBuffer), pPipe))
+				exec.output.append(szBuffer);
+
+			exec.retval = pclose(pPipe);
+			exec.success = true;
+		}
+
+		std::lock_guard<std::mutex> lock(CServer::Get()->m_SysExecMutex);
+		CServer::Get()->m_SysExecQueue.push(exec);
+	};
+
+	std::thread(thFunc, cmd, static_cast<int>(saveOutput), index).detach();
+#else
+	system(cmd.c_str());
+#endif
+}
 
 char* GetNPCCommandLine(int processId)
 {
@@ -63,7 +251,7 @@ char* GetNPCCommandLine(int processId)
 	CoUninitialize();
 #else
 	char fname[32];
-	sprintf(fname, "/proc/%d/cmdline", pid);
+	sprintf(fname, "/proc/%d/cmdline", processId);
 
 	FILE *fcmd = fopen(fname, "r");
 	if (fcmd != NULL)

@@ -162,6 +162,9 @@
     <ClCompile Include="src\System.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\includes\platform.cpp">
+      <Filter>src\Includes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">

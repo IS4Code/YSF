@@ -43,15 +43,6 @@
 
 #include "CVector.h"
 
-// Linux
-#ifndef _WIN32
-
-#undef GetTickCount
-int GetTickCount();
-void LoadTickCount();
-
-#endif
-
 #define ARRAY_SIZE(a)	( sizeof((a)) / sizeof(*(a)) )
 #define SAFE_DELETE(p)	{ if (p) { delete (p); (p) = NULL; } }
 #define SAFE_RELEASE(p)	{ if (p) { (p)->Release(); (p) = NULL; } }

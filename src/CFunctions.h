@@ -45,15 +45,13 @@
 #define INIT_FPTR(name) \
 	pfn__ ## name = (name ## _t)(CAddress::FUNC_ ## name) 
 
-#ifdef _WIN32
-#include <winsock2.h>
+#include "includes/net.h"
 
+#ifdef _WIN32
 #define STDCALL __stdcall
 #define THISCALL __thiscall
 #define FASTCALL __fastcall
 #else
-typedef int SOCKET;
-
 #define STDCALL
 #define THISCALL
 #define FASTCALL

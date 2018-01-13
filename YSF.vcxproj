@@ -160,6 +160,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClCompile Include="src\CFunctions.cpp" />
     <ClCompile Include="src\Globals.cpp" />
     <ClCompile Include="src\Hooks.cpp" />
+    <ClCompile Include="src\includes\platform.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Memory.cpp" />
     <ClCompile Include="src\natives\actors.cpp" />
