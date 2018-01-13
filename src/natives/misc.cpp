@@ -84,7 +84,6 @@ AMX_DECLARE_NATIVE(Natives::dcreate)
 	amx_StrParam(amx, params[1], szSearch);
 	if (szSearch)
 	{
-#undef CreateDirectory
 		return static_cast<cell>(CreateNewDirectory(szSearch));
 	}
 	return 0;

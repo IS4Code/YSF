@@ -33,7 +33,7 @@
 #ifndef YSF_CScriptParams_H
 #define YSF_CScriptParams_H
 
-#include <typeinfo>
+#include <type_traits>
 #include <sdk/amx/amx.h>
 #include <string>
 
@@ -66,32 +66,66 @@ public:
 	template<typename T, typename... Args> void Read(T &a, Args &&...args);
 
 	inline void Skip() { m_pos++; }
-	
-	const int ReadInt()
+
+private:
+	template <class numType>
+	void AddInternal(numType num);
+	void AddInternal(float num);
+	void AddInternal(double num);
+	void AddInternal(CVector2D vec);
+	void AddInternal(CVector vec);
+	void AddInternal(const char *str);
+	void AddInternal(const wchar_t *str);
+	void AddInternal(const std::string &str);
+	void AddInternal(char *str)
 	{
-		int var;
-		ReadInternal(var);
-		return var;
+		AddInternal(static_cast<const char *>(str));
+	}
+	void AddInternal(wchar_t *str)
+	{
+		AddInternal(static_cast<const wchar_t *>(str));
+	}
+	void AddInternal(std::string &str)
+	{
+		AddInternal(static_cast<const std::string &>(str));
+	}
+
+	template <class numType>
+	void ReadInternal(numType &num);
+	void ReadInternal(float &num);
+	void ReadInternal(double &num);
+	void ReadInternal(CVector2D &vec);
+	void ReadInternal(CVector &vec);
+	void ReadInternal(std::string &str);
+	void ReadInternal(std::wstring &str);
+
+	inline const cell &ReadCell()
+	{
+		return m_params[m_pos++];
+	}
+
+public:
+	
+	int ReadInt()
+	{
+		return static_cast<int>(ReadCell());
 	}
 	
-	const float ReadFloat()
+	float ReadFloat()
 	{
 		float var;
 		ReadInternal(var);
 		return var;
 	}
 	
-	const bool ReadBool()
+	bool ReadBool()
 	{
-		bool var;
-		ReadInternal(var);
-		return var;
+		return static_cast<bool>(ReadCell());
 	}
-private:
-	template <class templateType> inline void AddInternal(templateType var);
-	template <class templateType> void ReadInternal(templateType &var);
 
 	void DetectError();
+
+private:
 
 	// private variables
 	int m_paramscount;
@@ -113,52 +147,22 @@ private:
 
 //----------------------------------------------------
 
-// Numbers & Floats
-template <class templateType> inline void CScriptParams::AddInternal(templateType var)
+template <class numType>
+void CScriptParams::AddInternal(numType num)
 {
+	static_assert(std::is_integral<numType>::value, "Only integral type can be converted.");
 	cell *address;
-	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
+	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
 	{
-		if (typeid(var).hash_code() == typeid(float).hash_code() || typeid(var).hash_code() == typeid(double).hash_code())
-			*address = amx_ftoc(var);
-		else
-			*address = static_cast<cell>(var);
+		*address = static_cast<cell>(num);
 	}
 }
 
-// Vectors
-template <> inline void CScriptParams::AddInternal(CVector2D vec)
+template <class numType>
+void CScriptParams::ReadInternal(numType &num)
 {
-	cell *address;
-	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
-		*address = amx_ftoc(vec.fX);
-	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
-		*address = amx_ftoc(vec.fY);
-}
-
-template <> inline void CScriptParams::AddInternal(CVector vec)
-{
-	cell *address;
-	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
-		*address = amx_ftoc(vec.fX);
-	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
-		*address = amx_ftoc(vec.fY);
-	if (amx_GetAddr(m_AMX, m_params[m_pos++], &address) == AMX_ERR_NONE)
-		*address = amx_ftoc(vec.fZ);
-}
-
-// Strings
-template <> inline void CScriptParams::AddInternal(char* szString)
-{
-	set_amxstring(m_AMX, m_params[m_pos], szString, m_params[m_pos + 1]);
-
-	m_pos += 2;
-}
-template <> inline void CScriptParams::AddInternal(std::string str)
-{
-	set_amxstring(m_AMX, m_params[m_pos], str.c_str(), m_params[m_pos + 1]);
-
-	m_pos += 2;
+	static_assert(std::is_integral<numType>::value, "Only integral type can be converted.");
+	num = static_cast<numType>(ReadCell());
 }
 
 //----------------------------------------------------
@@ -174,47 +178,6 @@ void inline CScriptParams::Add(T a, Args &&...args)
 {
 	AddInternal(a);
 	Add(std::forward<Args>(args)...);
-}
-
-//----------------------------------------------------
-
-// Numbers & Floats
-template <class templateType> void CScriptParams::ReadInternal(templateType &var)
-{
-	var = (*reinterpret_cast<const templateType*>(&static_cast<const cell&>(m_params[m_pos++])));
-}
-
-// Vectors
-template <> inline void CScriptParams::ReadInternal(CVector2D &vec)
-{
-	vec.fX = amx_ctof(m_params[m_pos++]);
-	vec.fY = amx_ctof(m_params[m_pos++]);
-}
-template <> inline void CScriptParams::ReadInternal(CVector &vec)
-{
-	vec.fX = amx_ctof(m_params[m_pos++]);
-	vec.fY = amx_ctof(m_params[m_pos++]);
-	vec.fZ = amx_ctof(m_params[m_pos++]);
-}
-
-// Strings
-template <> inline void CScriptParams::ReadInternal(std::string &result)
-{
-	// FUCK amx_StrParam
-	cell *amx_cstr;
-	int amx_length;
-	
-	amx_GetAddr(m_AMX, m_params[m_pos++], &amx_cstr);
-	amx_StrLen(amx_cstr, &amx_length);
-	char* temp = new char[amx_length + 1];
-
-	if (amx_length > 0 && temp != nullptr)
-	{
-		amx_GetString(temp, amx_cstr, 0, amx_length + 1);
-		result.append(temp);
-	}
-	
-	delete[] temp;
 }
 
 //----------------------------------------------------

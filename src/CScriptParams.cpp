@@ -41,10 +41,10 @@ CScriptParams::CScriptParams()
 
 //----------------------------------------------------
 
-std::string g_NativesPrefix("Natives::");
-
 bool CScriptParams::Setup(size_t paramscount, std::string &&strNativeName, Flags flags, AMX* amx, cell* params, size_t start)
 {
+	static std::string g_NativesPrefix("Natives::");
+
 	// Initialize variables for later use
 	m_paramscount = paramscount;
 	if (strNativeName.length() >= g_NativesPrefix.length() && std::equal(g_NativesPrefix.begin(), g_NativesPrefix.end(), strNativeName.begin())) // Removing "Natives::" tag from the begining of the function
@@ -62,7 +62,7 @@ bool CScriptParams::Setup(size_t paramscount, std::string &&strNativeName, Flags
 
 	// Checking for errors
 	DetectError();
-	return static_cast<int>(m_error != 0);
+	return m_error != 0;
 }
 
 //----------------------------------------------------
@@ -112,4 +112,129 @@ cell CScriptParams::HandleError()
 		}
 	}
 	return std::numeric_limits<int>::lowest() + (m_error - 1);
+}
+
+//----------------------------------------------------
+
+void CScriptParams::AddInternal(float num)
+{
+	cell *address;
+	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
+	{
+		*address = amx_ftoc(num);
+	}
+}
+
+void CScriptParams::AddInternal(double num)
+{
+	cell *address;
+	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
+	{
+		*address = amx_ftoc(static_cast<const float &>(num));
+	}
+}
+
+// Vectors
+void CScriptParams::AddInternal(CVector2D vec)
+{
+	cell *address;
+	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fX);
+	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fY);
+}
+
+void CScriptParams::AddInternal(CVector vec)
+{
+	cell *address;
+	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fX);
+	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fY);
+	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
+		*address = amx_ftoc(vec.fZ);
+}
+
+// Strings
+void CScriptParams::AddInternal(const char *str)
+{
+	cell addr = ReadCell();
+	int maxsize = ReadInt();
+	set_amxstring(m_AMX, addr, str, maxsize);
+}
+
+void CScriptParams::AddInternal(const wchar_t *str)
+{
+	cell addr = ReadCell();
+	int maxsize = ReadInt();
+	set_amxstring(m_AMX, addr, str, maxsize);
+}
+
+void CScriptParams::AddInternal(const std::string &str)
+{
+	cell addr = ReadCell();
+	int maxsize = ReadInt();
+	set_amxstring(m_AMX, addr, str, maxsize);
+}
+
+//----------------------------------------------------
+
+void CScriptParams::ReadInternal(float &num)
+{
+	num = amx_ctof(ReadCell());
+}
+
+void CScriptParams::ReadInternal(double &num)
+{
+	num = static_cast<double>(amx_ctof(ReadCell()));
+}
+
+// Vectors
+void CScriptParams::ReadInternal(CVector2D &vec)
+{
+	vec.fX = amx_ctof(ReadCell());
+	vec.fY = amx_ctof(ReadCell());
+}
+void CScriptParams::ReadInternal(CVector &vec)
+{
+	vec.fX = amx_ctof(ReadCell());
+	vec.fY = amx_ctof(ReadCell());
+	vec.fZ = amx_ctof(ReadCell());
+}
+
+// Strings
+void CScriptParams::ReadInternal(std::string &result)
+{
+	cell *addr;
+	int length;
+
+	amx_GetAddr(m_AMX, ReadCell(), &addr);
+	amx_StrLen(addr, &length);
+
+	if (length == 0)
+	{
+		result.clear();
+		return;
+	}
+
+	result = std::string(length, '\0');
+	amx_GetString(&result[0], addr, 0, length + 1);
+}
+
+void CScriptParams::ReadInternal(std::wstring &result)
+{
+	cell *addr;
+	int length;
+
+	amx_GetAddr(m_AMX, ReadCell(), &addr);
+	amx_StrLen(addr, &length);
+
+	if (length == 0)
+	{
+		result.clear();
+		return;
+	}
+
+	result = std::wstring(length, '\0');
+	amx_GetString(reinterpret_cast<char*>(&result[0]), addr, 1, length + 1);
 }

@@ -30,6 +30,7 @@
 *
 */
 
+#include <string>
 #include "amxfunctions.h"
 
 // From "amx.c", part of the PAWN language runtime:
@@ -89,10 +90,37 @@ cell* get_amxaddr(AMX *amx, cell amx_addr)
 
 int set_amxstring(AMX *amx, cell amx_addr, const char *source, int max)
 {
-	cell* dest = (cell *)(amx->base + (int)(((AMX_HEADER *)amx->base)->dat + amx_addr));
-	cell* start = dest;
-	while (max--&&*source)
+	cell *dest = get_amxaddr(amx, amx_addr);
+	cell *start = dest;
+	while (max-- && *source)
+	{
 		*dest++ = (cell)*source++;
+	}
+	*dest = 0;
+	return dest - start;
+}
+
+int set_amxstring(AMX *amx, cell amx_addr, const wchar_t *source, int max)
+{
+	cell *dest = get_amxaddr(amx, amx_addr);
+	cell *start = dest;
+	while (max-- && *source)
+	{
+		*dest++ = (cell)*source++;
+	}
+	*dest = 0;
+	return dest - start;
+}
+
+int set_amxstring(AMX *amx, cell amx_addr, const std::string &source, int max)
+{
+	cell *dest = get_amxaddr(amx, amx_addr);
+	cell *start = dest;
+	auto it = source.begin();
+	while (max-- && it != source.end())
+	{
+		*dest++ = *it != '\0' ? (cell)*it : 0x00FFFF00;
+	}
 	*dest = 0;
 	return dest - start;
 }
