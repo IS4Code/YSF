@@ -66,7 +66,7 @@ AMX_DECLARE_NATIVE(Natives::SetVehicleSpawnInfo)
 
 	CVehicleSpawn spawn;
 	spawn.iModelID = modelid;
-	CScriptParams::Get()->Read(&spawn.vecPos, &spawn.fRot, &spawn.iColor1, &spawn.iColor2);
+	CScriptParams::Get()->Read(spawn.vecPos, spawn.fRot, spawn.iColor1, spawn.iColor2);
 	spawn.iRespawnTime = pVehicle->customSpawn.iRespawnTime;
 	spawn.iInterior = pVehicle->customSpawn.iInterior;
 

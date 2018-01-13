@@ -147,7 +147,7 @@ AMX_DECLARE_NATIVE(Natives::CreatePlayerGangZone)
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	float fMinX, fMinY, fMaxX, fMaxY;
-	CScriptParams::Get()->Read(&fMinX, &fMinY, &fMaxX, &fMaxY);
+	CScriptParams::Get()->Read(fMinX, fMinY, fMaxX, fMaxY);
 
 	// If coordinates are wrong, then won't create bugged zone!
 	if (fMaxX <= fMinX || fMaxY <= fMinY)
@@ -397,7 +397,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_GangZoneCreate)
 	CHECK_PER_PLAYER_ZONES_STATE
 
 	float fMinX, fMinY, fMaxX, fMaxY;
-	CScriptParams::Get()->Read(&fMinX, &fMinY, &fMaxX, &fMaxY);
+	CScriptParams::Get()->Read(fMinX, fMinY, fMaxX, fMaxY);
 
 	// If coordinates are wrong, then won't create bugged zone!
 	if (fMaxX <= fMinX || fMaxY <= fMinY)

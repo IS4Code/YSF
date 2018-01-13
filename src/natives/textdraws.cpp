@@ -51,7 +51,7 @@ AMX_DECLARE_NATIVE(Natives::TextDrawSetPos)
 	if (!pNetGame->pTextDrawPool->bSlotState[textdrawid]) return 0;
 	CTextdraw *pTD = pNetGame->pTextDrawPool->TextDraw[textdrawid];
 
-	CScriptParams::Get()->Read(&pTD->vecPos);
+	CScriptParams::Get()->Read(pTD->vecPos);
 	return 1;
 }
 
@@ -379,7 +379,7 @@ AMX_DECLARE_NATIVE(Natives::PlayerTextDrawSetPos)
 
 	CTextdraw *pTD = pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->TextDraw[textdrawid];
 
-	CScriptParams::Get()->Read(&pTD->vecPos);
+	CScriptParams::Get()->Read(pTD->vecPos);
 	return 1;
 }
 

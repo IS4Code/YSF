@@ -564,7 +564,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachObjectToPlayer)
 
 	// Store values which should be server purpose not mine
 	CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
-	CScriptParams::Get()->Read(&pObject->vecAttachedOffset, &pObject->vecAttachedRotation);
+	CScriptParams::Get()->Read(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
 	return 1;
 }
 
@@ -595,7 +595,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_AttachPlayerObjectToPlayer)
 	pAddon->creation_timepoint = default_clock::now();
 
 	// Read parameters into our map pointer
-	CScriptParams::Get()->Read(&pAddon->vecOffset, &pAddon->vecRot, &bOnlyAddToInstance);
+	CScriptParams::Get()->Read(pAddon->vecOffset, pAddon->vecRot, bOnlyAddToInstance);
 
 	// If it's allowed to create object immendiately or player attach this object to herself, then create it now
 	if (!bOnlyAddToInstance || playerid == attachplayerid)
@@ -651,7 +651,7 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 
 	// Geting data
 	BYTE byteSyncRot;
-	CScriptParams::Get()->Read(&pAddon->vecOffset, &pAddon->vecRot, &byteSyncRot);
+	CScriptParams::Get()->Read(pAddon->vecOffset, pAddon->vecRot, byteSyncRot);
 
 	// Storing data
 	pAddon->wObjectID = static_cast<WORD>(attachtoid);
@@ -700,7 +700,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterial)
 			WORD modelid;
 			DWORD color;
 			std::string szTXD, szTexture;
-			CScriptParams::Get()->Read(&slot, &modelid, &szTXD, &szTexture, &color);
+			CScriptParams::Get()->Read(slot, modelid, szTXD, szTexture, color);
 			/*
 			if (pObject->szMaterialText[index])
 			{
@@ -749,7 +749,7 @@ AMX_DECLARE_NATIVE(Natives::YSF_SetPlayerObjectMaterialText)
 			std::string szText, szFontFace;
 			BYTE slot, materialsize, fontsize, bold, textalignment;
 			DWORD fontcolor, backcolor;
-			CScriptParams::Get()->Read(&szText, &slot, &materialsize, &szFontFace, &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
+			CScriptParams::Get()->Read(szText, slot, materialsize, szFontFace, fontsize, bold, fontcolor, backcolor, textalignment);
 
 			/*
 			if (pObject->szMaterialText[index])

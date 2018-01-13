@@ -9,7 +9,7 @@ AMX_DECLARE_NATIVE(Natives::execute)
 
 	std::string command;
 	int saveoutput, index;
-	CScriptParams::Get()->Read(&command, &saveoutput, &index);
+	CScriptParams::Get()->Read(command, saveoutput, index);
 #ifdef _WIN32
 	auto thFunc = [](std::string command, int saveoutput, int index)
 	{

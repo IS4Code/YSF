@@ -74,7 +74,7 @@ AMX_DECLARE_NATIVE(Natives::LoadFilterScript)
 	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 	if (!name.empty())
 	{
 		return CSAMPFunctions::LoadFilterscript(name.c_str());
@@ -88,7 +88,7 @@ AMX_DECLARE_NATIVE(Natives::UnLoadFilterScript)
 	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 	if (!name.empty())
 	{
 		return CSAMPFunctions::UnLoadFilterscript(name.c_str());
@@ -122,7 +122,7 @@ AMX_DECLARE_NATIVE(Natives::AddServerRule)
 	CHECK_PARAMS(3, LOADED);
 
 	std::string name, value;
-	CScriptParams::Get()->Read(&name, &value);
+	CScriptParams::Get()->Read(name, value);
 
 	if (!name.empty() && !value.empty())
 	{
@@ -142,7 +142,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRule)
 	CHECK_PARAMS(2, LOADED);
 
 	std::string name, value;
-	CScriptParams::Get()->Read(&name, &value);
+	CScriptParams::Get()->Read(name, value);
 	if (!name.empty() && !value.empty())
 	{
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
@@ -161,7 +161,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleInt)
 	CHECK_PARAMS(2, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 	if (!name.empty())
 	{
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
@@ -181,7 +181,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidServerRule)
 	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 	if (!name.empty())
 	{
 		ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
@@ -196,7 +196,7 @@ AMX_DECLARE_NATIVE(Natives::RemoveServerRule)
 	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 	if (!name.empty())
 	{
 		//RemoveServerRule(name.c_str());
@@ -211,7 +211,7 @@ AMX_DECLARE_NATIVE(Natives::SetServerRuleFlags)
 	CHECK_PARAMS(2, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 	if (!name.empty())
 	{
 		CSAMPFunctions::ModifyVariableFlags(const_cast<char*>(name.c_str()), (DWORD)params[2]);
@@ -226,7 +226,7 @@ AMX_DECLARE_NATIVE(Natives::GetServerRuleFlags)
 	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 
 	ConsoleVariable_s* ConVar = CSAMPFunctions::FindVariable(const_cast<char*>(name.c_str()));
 	if (ConVar != NULL)
@@ -282,7 +282,7 @@ AMX_DECLARE_NATIVE(Natives::ChangeRCONCommandName)
 	CHECK_PARAMS(2, LOADED);
 
 	std::string name, newname;
-	CScriptParams::Get()->Read(&name, &newname);
+	CScriptParams::Get()->Read(name, newname);
 
 	return CServer::Get()->ChangeRCONCommandName(name, newname);
 }
@@ -293,7 +293,7 @@ AMX_DECLARE_NATIVE(Natives::GetRCONCommandName)
 	CHECK_PARAMS(3, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 
 	std::string changedname;
 	bool ret = CServer::Get()->GetRCONCommandName(name, changedname);
@@ -308,7 +308,7 @@ AMX_DECLARE_NATIVE(Natives::CallFunctionInScript)
 	if (CScriptParams::Get()->Setup(3, "CallFunctionInScript", CScriptParams::Flags::MORE_PARAMETER_ALLOWED, amx, params)) return CScriptParams::Get()->HandleError();
 
 	std::string scriptname, function, formatparams;
-	CScriptParams::Get()->Read(&scriptname, &function, &formatparams);
+	CScriptParams::Get()->Read(scriptname, function, formatparams);
 
 	AMX* pAMX = nullptr;
 	if (scriptname == "GameMode")
@@ -450,7 +450,7 @@ AMX_DECLARE_NATIVE(Natives::IsValidNickName)
 	CHECK_PARAMS(1, LOADED);
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 	return CServer::Get()->IsValidNick(const_cast<char*>(name.c_str()));
 }
 
@@ -523,10 +523,10 @@ AMX_DECLARE_NATIVE(Natives::EditPlayerClass)
 
 	CPlayerSpawnInfo *pSpawn = &pNetGame->AvailableSpawns[classid];
 
-	CScriptParams::Get()->Read(&pSpawn->byteTeam, &pSpawn->iSkin, &pSpawn->vecPos, &pSpawn->fRotation,
-		&pSpawn->iSpawnWeapons[0], &pSpawn->iSpawnWeaponsAmmo[0],
-		&pSpawn->iSpawnWeapons[1], &pSpawn->iSpawnWeaponsAmmo[1],
-		&pSpawn->iSpawnWeapons[2], &pSpawn->iSpawnWeaponsAmmo[2]);
+	CScriptParams::Get()->Read(pSpawn->byteTeam, pSpawn->iSkin, pSpawn->vecPos, pSpawn->fRotation,
+		pSpawn->iSpawnWeapons[0], pSpawn->iSpawnWeaponsAmmo[0],
+		pSpawn->iSpawnWeapons[1], pSpawn->iSpawnWeaponsAmmo[1],
+		pSpawn->iSpawnWeapons[2], pSpawn->iSpawnWeaponsAmmo[2]);
 	return 1;
 }
 
@@ -569,7 +569,7 @@ AMX_DECLARE_NATIVE(Natives::SetRecordingDirectory)
 	CHECK_PARAMS(1, LOADED);
 
 	std::string dir;
-	CScriptParams::Get()->Read(&dir);
+	CScriptParams::Get()->Read(dir);
 	if (!CAddress::ADDR_RecordingDirectory) return 0;
 
 	strcpy(gRecordingDataPath, dir.c_str());

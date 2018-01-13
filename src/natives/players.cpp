@@ -44,7 +44,7 @@ AMX_DECLARE_NATIVE(Natives::EnableConsoleMSGsForPlayer)
 	CHECK_PARAMS(2, LOADED);
 
 	int playerid, color;
-	CScriptParams::Get()->Read(&playerid, &color);
+	CScriptParams::Get()->Read(playerid, color);
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	CServer::Get()->AddConsolePlayer(static_cast<WORD>(playerid), static_cast<DWORD>(color));
@@ -189,7 +189,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerNameForPlayer)
 	const int nameplayerid = CScriptParams::Get()->ReadInt();
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(nameplayerid)) return 0;
 
@@ -259,7 +259,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerPosForPlayer)
 	}
 
 	CVector vecPos;
-	CScriptParams::Get()->Read(&vecPos);
+	CScriptParams::Get()->Read(vecPos);
 
 	pPlayerData[playerid]->customPos[posplayerid] = std::make_unique<CVector>(std::move(vecPos));
 	return 1;
@@ -283,7 +283,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerRotationQuatForPlayer)
 
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 
-	CScriptParams::Get()->Read(&pPlayerData[playerid]->fCustomQuat[posplayerid][0], &pPlayerData[playerid]->fCustomQuat[posplayerid][1], &pPlayerData[playerid]->fCustomQuat[posplayerid][2], &pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
+	CScriptParams::Get()->Read(pPlayerData[playerid]->fCustomQuat[posplayerid][0], pPlayerData[playerid]->fCustomQuat[posplayerid][1], pPlayerData[playerid]->fCustomQuat[posplayerid][2], pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
 	pPlayerData[playerid]->bCustomQuat[posplayerid] = true;
 	return 1;
 }
@@ -636,7 +636,7 @@ AMX_DECLARE_NATIVE(Natives::SendBulletData)
 	}
 
 	CBulletSyncData bulletSync;
-	CScriptParams::Get()->Read(&bulletSync.byteWeaponID, &bulletSync.byteHitType, &bulletSync.wHitID, &bulletSync.vecHitOrigin, &bulletSync.vecHitTarget, &bulletSync.vecCenterOfHit);
+	CScriptParams::Get()->Read(bulletSync.byteWeaponID, bulletSync.byteHitType, bulletSync.wHitID, bulletSync.vecHitOrigin, bulletSync.vecHitTarget, bulletSync.vecCenterOfHit);
 
 	RakNet::BitStream bs;
 	bs.Write((BYTE)ID_BULLET_SYNC);
@@ -754,7 +754,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerChatBubbleForPlayer)
 	int color;
 	float drawdistance;
 	int expiretime;
-	CScriptParams::Get()->Read(&text, &color, &drawdistance, &expiretime);
+	CScriptParams::Get()->Read(text, color, drawdistance, expiretime);
 
 	if (!text.empty())
 	{
@@ -795,7 +795,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerVersion)
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	std::string version;
-	CScriptParams::Get()->Read(&version);
+	CScriptParams::Get()->Read(version);
 
 	if (!version.empty() && version.length() < 20)
 	{

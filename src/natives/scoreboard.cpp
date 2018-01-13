@@ -52,7 +52,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerNameInServerQuery)
 	if (!IsPlayerConnected(playerid)) return 0;
 
 	std::string name;
-	CScriptParams::Get()->Read(&name);
+	CScriptParams::Get()->Read(name);
 	if (name.length() >= MAX_PLAYER_NAME) return 0;
 
 	pPlayerData[playerid]->bCustomNameInQuery = true;
