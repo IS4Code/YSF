@@ -165,6 +165,9 @@
     <ClCompile Include="src\includes\platform.cpp">
       <Filter>src\Includes</Filter>
     </ClCompile>
+    <ClCompile Include="src\logprintf_buf.cpp">
+      <Filter>src\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">
@@ -262,6 +265,9 @@
       <Filter>src\Includes</Filter>
     </ClInclude>
     <ClInclude Include="src\System.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logprintf_buf.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
   </ItemGroup>
