@@ -30,4 +30,5 @@ YSF: clean
 	$(GCC) $(YSF) ./lib/subhook/subhook.c
 	$(GPP) $(YSF) ./src/*.cpp
 	$(GPP) $(YSF) ./src/natives/*.cpp	
+	$(GPP) $(YSF) ./src/includes/*.cpp	
 	$(LINK) -fshort-wchar -shared -o $(YSF_OUTFILE) *.o
