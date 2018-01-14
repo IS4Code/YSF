@@ -117,7 +117,7 @@ AMX_DECLARE_NATIVE(Natives::GetFilterScriptName)
 	int id = CScriptParams::Get()->ReadInt();
 	if (id < 0 || id >= MAX_FILTER_SCRIPTS) return 0;
 
-	CScriptParams::Get()->Add(&pNetGame->pFilterScriptPool->szFilterScriptName[id][0]);
+	CScriptParams::Get()->Add(pNetGame->pFilterScriptPool->szFilterScriptName[id]);
 	return 1;
 }
 
@@ -277,7 +277,7 @@ AMX_DECLARE_NATIVE(Natives::GetNPCCommandLine)
 	char *szCommandLine = CServer::Get()->GetNPCCommandLine(static_cast<WORD>(npcid));
 	if (szCommandLine == NULL) return 0;
 
-	CScriptParams::Get()->Add(&szCommandLine[0]);
+	CScriptParams::Get()->Add(szCommandLine);
 	return 1;
 }
 
@@ -564,7 +564,7 @@ AMX_DECLARE_NATIVE(Natives::GetRecordingDirectory)
 	strcpy(temp, gRecordingDataPath);
 	temp[len - 7] = 0;
 
-	CScriptParams::Get()->Add(&temp[0]);
+	CScriptParams::Get()->Add(temp);
 	return 1;
 }
 

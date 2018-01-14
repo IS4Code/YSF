@@ -109,7 +109,7 @@ AMX_DECLARE_NATIVE(Natives::GetMenuColumnHeader)
 	if (!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
 	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	CScriptParams::Get()->Add(&pMenu->szHeaders[column][0]);
+	CScriptParams::Get()->Add(pMenu->szHeaders[column]);
 	return 1;
 }
 
@@ -130,6 +130,6 @@ AMX_DECLARE_NATIVE(Natives::GetMenuItem)
 	if (!pNetGame->pMenuPool->bIsCreated[menuid]) return 0;
 	CMenu *pMenu = pNetGame->pMenuPool->pMenu[menuid];
 
-	CScriptParams::Get()->Add(&pMenu->szItems[itemid][column][0]);
+	CScriptParams::Get()->Add(pMenu->szItems[itemid][column]);
 	return 1;
 }

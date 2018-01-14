@@ -196,7 +196,7 @@ AMX_DECLARE_NATIVE(Natives::GetVehicleNumberPlate)
 	{
 		strcpy(szPlate, "XYZSR998");
 	}
-	CScriptParams::Get()->Add(&szPlate[0]);
+	CScriptParams::Get()->Add(szPlate);
 	return 1;
 }
 

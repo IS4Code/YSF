@@ -139,7 +139,7 @@ AMX_DECLARE_NATIVE(Natives::GetObjectMaterial)
 
 	if (index == -1) return 0;
 
-	CScriptParams::Get()->Add(pObject->Material[index].wModelID, &pObject->Material[index].szMaterialTXD[0], &pObject->Material[index].szMaterialTexture[0], ABGR_ARGB(pObject->Material[index].dwMaterialColor));
+	CScriptParams::Get()->Add(pObject->Material[index].wModelID, pObject->Material[index].szMaterialTXD, pObject->Material[index].szMaterialTexture, ABGR_ARGB(pObject->Material[index].dwMaterialColor));
 	return 1;
 }
 
@@ -363,7 +363,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterial)
 
 	if (index == -1) return 0;
 
-	CScriptParams::Get()->Add(pObject->Material[index].wModelID, &pObject->Material[index].szMaterialTXD[0], &pObject->Material[index].szMaterialTexture[0], ABGR_ARGB(pObject->Material[index].dwMaterialColor));
+	CScriptParams::Get()->Add(pObject->Material[index].wModelID, pObject->Material[index].szMaterialTXD, pObject->Material[index].szMaterialTexture, ABGR_ARGB(pObject->Material[index].dwMaterialColor));
 	return 1;
 }
 
@@ -405,7 +405,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerObjectMaterialText)
 		}
 	}
 
-	CScriptParams::Get()->Add(text, pObject->Material[index].byteMaterialSize, &pObject->Material[index].szFont[0], pObject->Material[index].byteFontSize,
+	CScriptParams::Get()->Add(text, pObject->Material[index].byteMaterialSize, pObject->Material[index].szFont, pObject->Material[index].byteFontSize,
 		pObject->Material[index].byteBold, pObject->Material[index].dwFontColor, pObject->Material[index].dwBackgroundColor, pObject->Material[index].byteAlignment);
 	return 1;
 }

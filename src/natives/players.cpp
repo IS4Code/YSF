@@ -211,7 +211,7 @@ AMX_DECLARE_NATIVE(Natives::GetPlayerNameForPlayer)
 
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(nameplayerid)) return 0;
 
-	CScriptParams::Get()->Add((char*)&pPlayerData[playerid]->GetPlayerNameForPlayer(static_cast<WORD>(nameplayerid))[0]);
+	CScriptParams::Get()->Add(pPlayerData[playerid]->GetPlayerNameForPlayer(static_cast<WORD>(nameplayerid)));
 	return 1;
 }
 

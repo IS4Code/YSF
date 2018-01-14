@@ -44,7 +44,7 @@ AMX_DECLARE_NATIVE(Natives::GetActorAnimation)
 	CActor *pActor = pNetGame->pActorPool->pActor[actorid];
 	if (!pActor) return 0;
 
-	CScriptParams::Get()->Add(&pActor->anim.szAnimLib[0], &pActor->anim.szAnimName[0], pActor->anim.fDelta, pActor->anim.byteLoop, pActor->anim.byteLockX,
+	CScriptParams::Get()->Add(pActor->anim.szAnimLib, pActor->anim.szAnimName, pActor->anim.fDelta, pActor->anim.byteLoop, pActor->anim.byteLockX,
 		pActor->anim.byteLockY, pActor->anim.byteFreeze, pActor->anim.iTime);
 	return 1;
 }
