@@ -39,45 +39,7 @@
 
 //#define testspawn
 
-BYTE RPC_Gravity = 0x92;
-
-BYTE RPC_CreatePickup = 95;
-BYTE RPC_DestroyPickup = 63;
-
-BYTE RPC_SetPlayerTeam = 45;
-BYTE RPC_CreateObject = 0x2C;
-
-BYTE RPC_DestroyObject = 0x2F;
-BYTE RPC_AttachObject = 0x4B;
-BYTE RPC_Widescreen = 111;
-BYTE RPC_ShowGangZone = 0x6C;
-BYTE RPC_HideGangZone = 0x78;
-BYTE RPC_FlashGangZone = 0x79;
-BYTE RPC_StopFlashGangZone = 0x55;
-BYTE RPC_RemovePlayerAttachedObject = 0x71;
-BYTE RPC_WorldPlayerAdd = 32;
-BYTE RPC_WorldPlayerRemove = 163;
-BYTE RPC_ChatBubble = 0x3B;
-BYTE RPC_SetPlayerSkin = 0x99;
-BYTE RPC_SetPlayerName = 0x0B;
-BYTE RPC_SetFightingStyle = 0x59;
-BYTE RPC_ScrApplyAnimation = 0x56;
-BYTE RPC_ClientMessage = 0x5D;
-BYTE RPC_ScrDisplayGameText = 0x49;
-BYTE RPC_Chat = 0x65;
-BYTE RPC_ClientCheck = 103;
-BYTE RPC_SetPlayerColor  = 72;
-BYTE RPC_SetTextDrawString = 0x69;
-BYTE RPC_SetPlayerAttachedObject = 0x71;
-
-BYTE RPC_UpdateScoresPingsIPs = 0x9B;
-BYTE RPC_PickedUpPickup = 0x83;
-BYTE RPC_Spawn = 0x34;
-BYTE RPC_Death = 0x35;
-BYTE RPC_DeathBroadcast = 0xA6;
-
-BYTE RPC_ServerJoin = 0x89;
-BYTE RPC_ServerQuit = 0x8A;
+BYTE RPCID::tmp;
 
 //----------------------------------------------------
 
