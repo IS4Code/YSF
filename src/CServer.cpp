@@ -759,8 +759,22 @@ bool CServer::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			bsSync->SetReadOffset(read_offset);
 
 			if (!CCallbackManager::OnOutcomeScmEvent(playerid, issuerid, data[0], data[1], data[2], data[3])) 
-				return 0;
+				return false;
 			
+			break;
+		}
+		case 0x2C: //RPC_CreateObject
+		{
+			CPlayerData *player = pPlayerData[playerid];
+			if (!player) break;
+
+			const int read_offset = bsSync->GetReadOffset();
+			WORD objectid;
+			bsSync->Read<WORD>(objectid);
+			bsSync->SetReadOffset(read_offset);
+
+			if (player->IsObjectHidden(objectid)) return false;
+
 			break;
 		}
 		case RPC_InitGame:

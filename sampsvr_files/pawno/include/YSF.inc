@@ -178,6 +178,10 @@ native ResetPlayerNameInServerQuery(playerid);
 native IsPlayerPaused(playerid);
 native GetPlayerPausedTime(playerid);
 
+// Objects
+native HideObjectForPlayer(forplayerid, objectid);
+native ShowObjectForPlayer(forplayerid, objectid);
+
 // Objects get - global
 native Float:GetObjectDrawDistance(objectid);
 native SetObjectMoveSpeed(objectid, Float:fSpeed);

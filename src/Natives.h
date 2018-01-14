@@ -372,6 +372,8 @@ namespace Natives
 	AMX_DECLARE_NATIVE(HasPlayerConsoleMessages);
 
 	AMX_DECLARE_NATIVE(AttachPlayerObjectToObject);
+	AMX_DECLARE_NATIVE(HideObjectForPlayer);
+	AMX_DECLARE_NATIVE(ShowObjectForPlayer);
 
 	AMX_DECLARE_NATIVE(SetExclusiveBroadcast);
 	AMX_DECLARE_NATIVE(BroadcastToPlayer);

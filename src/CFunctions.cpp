@@ -57,6 +57,7 @@ CFilterscripts__UnLoadFilterscript_t		CSAMPFunctions::pfn__CFilterscripts__UnLoa
 
 CPlayer__SpawnForWorld_t					CSAMPFunctions::pfn__CPlayer__SpawnForWorld = NULL;
 CPlayerPool__HandleVehicleRespawn_t			CSAMPFunctions::pfn__CPlayerPool__HandleVehicleRespawn = NULL;
+CObject__SpawnForPlayer_t					CSAMPFunctions::pfn__CObject__SpawnForPlayer = NULL;
 
 Packet_WeaponsUpdate_t						CSAMPFunctions::pfn__Packet_WeaponsUpdate = NULL;
 Packet_StatsUpdate_t						CSAMPFunctions::pfn__Packet_StatsUpdate = NULL;
@@ -97,6 +98,7 @@ void CSAMPFunctions::PreInitialize()
 
 	INIT_FPTR(CPlayer__SpawnForWorld);
 	INIT_FPTR(CPlayerPool__HandleVehicleRespawn);
+	INIT_FPTR(CObject__SpawnForPlayer);
 
 	INIT_FPTR(Packet_WeaponsUpdate);
 	INIT_FPTR(Packet_StatsUpdate);
@@ -209,6 +211,11 @@ bool CSAMPFunctions::UnLoadFilterscript(const char *szName)
 void CSAMPFunctions::SpawnPlayer(int playerid)
 {
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
+}
+
+void CSAMPFunctions::SpawnObjectForPlayer(int iObjectId, WORD wPlayerID)
+{
+	pfn__CObject__SpawnForPlayer(pNetGame->pObjectPool->pObjects[iObjectId], wPlayerID);
 }
 
 void CSAMPFunctions::Packet_WeaponsUpdate(Packet *p)

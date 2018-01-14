@@ -515,6 +515,16 @@ AMX_DECLARE_NATIVE(Natives::YSF_DestroyObject)
 	if (Natives::ORIGINAL_DestroyObject(amx, params))
 	{
 		CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
+
+		for (int i = 0; i < MAX_PLAYERS; i++)
+		{
+			CPlayerData *player = pPlayerData[i];
+			if (player)
+			{
+				player->ShowObject(objectid, false);
+			}
+		}
+
 		return 1;
 	}
 	return 0;
@@ -683,6 +693,50 @@ AMX_DECLARE_NATIVE(Natives::AttachPlayerObjectToObject)
 	bs.Write(byteSyncRot);
 
 	CSAMPFunctions::RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
+	return 1;
+}
+
+// native HideObjectForPlayer(forplayerid, objectid);
+AMX_DECLARE_NATIVE(Natives::HideObjectForPlayer)
+{
+	CHECK_PARAMS(2, LOADED);
+
+	int forplayerid = CScriptParams::Get()->ReadInt();
+	int objectid = CScriptParams::Get()->ReadInt();
+
+	if (!IsPlayerConnected(forplayerid)) return 0;
+
+	if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
+
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
+	if (!pObjectPool->bObjectSlotState[objectid]) return 0;
+
+	CObject *pObject = pObjectPool->pObjects[objectid];
+	if (!pObject) return 0;
+
+	pPlayerData[forplayerid]->HideObject(objectid, true);
+	return 1;
+}
+
+// native ShowObjectForPlayer(forplayerid, objectid);
+AMX_DECLARE_NATIVE(Natives::ShowObjectForPlayer)
+{
+	CHECK_PARAMS(2, LOADED);
+
+	int forplayerid = CScriptParams::Get()->ReadInt();
+	int objectid = CScriptParams::Get()->ReadInt();
+
+	if (!IsPlayerConnected(forplayerid)) return 0;
+
+	if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
+
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
+	if (!pObjectPool->bObjectSlotState[objectid]) return 0;
+
+	CObject *pObject = pObjectPool->pObjects[objectid];
+	if (!pObject) return 0;
+
+	pPlayerData[forplayerid]->ShowObject(objectid, true);
 	return 1;
 }
 

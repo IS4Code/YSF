@@ -79,6 +79,7 @@ typedef bool (THISCALL *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscrip
 
 typedef void (THISCALL *CPlayer__SpawnForWorld_t)(void *pPlayer);
 typedef DWORD (THISCALL *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
+typedef void (THISCALL *CObject__SpawnForPlayer_t)(void *pObject, WORD playerID);
 
 typedef int (THISCALL *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef int (THISCALL *Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
@@ -134,6 +135,8 @@ public:
 	
 	static void		SpawnPlayer(int iPlayerId);
 
+	static void		SpawnObjectForPlayer(int iObjectId, WORD wPlayerID);
+
 	static void		Packet_WeaponsUpdate(Packet *p);
 	static void		Packet_StatsUpdate(Packet *p);
 
@@ -177,6 +180,9 @@ public:
 	// Player
 	DEFINE_FUNCTION_POINTER(CPlayer__SpawnForWorld);
 	DEFINE_FUNCTION_POINTER(CPlayerPool__HandleVehicleRespawn);
+
+	// Object
+	DEFINE_FUNCTION_POINTER(CObject__SpawnForPlayer);
 
 	// Query
 	DEFINE_FUNCTION_POINTER(Packet_WeaponsUpdate);

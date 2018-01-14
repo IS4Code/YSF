@@ -118,6 +118,7 @@ public:
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
 	static DWORD			FUNC_CVehicle__Respawn;
 	static DWORD			FUNC_CPlayerPool__HandleVehicleRespawn;
+	static DWORD			FUNC_CObject__SpawnForPlayer;
 
 	static DWORD			FUNC_ProcessQueryPacket;
 	static DWORD			FUNC_Packet_WeaponsUpdate;

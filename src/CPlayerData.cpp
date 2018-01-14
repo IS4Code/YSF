@@ -254,6 +254,37 @@ bool CPlayerData::DestroyObject(WORD objectid)
 	return 1;
 }
 
+void CPlayerData::HideObject(WORD objectid, bool sync)
+{
+	if (sync)
+	{
+		RakNet::BitStream bs;
+		bs.Write(objectid);
+		CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	}
+	m_HiddenObjects.insert(objectid);
+}
+
+void CPlayerData::ShowObject(WORD objectid, bool sync)
+{
+	m_HiddenObjects.erase(objectid);
+	if (sync)
+	{
+		CSAMPFunctions::SpawnObjectForPlayer(objectid, wPlayerID);
+	}
+}
+
+bool CPlayerData::IsObjectHidden(WORD objectid)
+{
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
+	if (!pObjectPool->bObjectSlotState[objectid]) return false;
+
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
+	if (!pObject) return false;
+
+	return m_HiddenObjects.find(objectid) != m_HiddenObjects.end();
+}
+
 // Return a pointer from map if exists or add it if isn't - to save memory
 std::shared_ptr<CPlayerObjectAttachAddon> CPlayerData::GetObjectAddon(WORD objectid)
 {

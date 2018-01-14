@@ -384,6 +384,8 @@ AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(HasPlayerConsoleMessages) // R18 
 
 	AMX_DEFINE_NATIVE(AttachPlayerObjectToObject)
+	AMX_DEFINE_NATIVE(HideObjectForPlayer) // R20
+	AMX_DEFINE_NATIVE(ShowObjectForPlayer) // R20
 
 	// Exclusive RPC broadcast
 	AMX_DEFINE_NATIVE(SetExclusiveBroadcast)

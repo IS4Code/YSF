@@ -38,6 +38,7 @@
 #include <memory>
 #include <set>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
@@ -96,6 +97,9 @@ public:
 	
 	WORD GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer = false);
 	bool DestroyObject(WORD objectid);
+	void ShowObject(WORD objectid, bool sync);
+	void HideObject(WORD objectid, bool sync);
+	bool IsObjectHidden(WORD objectid);
 
 	void Process(void);
 
@@ -177,6 +181,7 @@ private:
 	int m_iSkins[MAX_PLAYERS];
 	int m_iFightingStyles[MAX_PLAYERS];
 	std::unordered_map<WORD, std::string> m_PlayerNames;
+	std::unordered_set<WORD> m_HiddenObjects;
 };
 
 #endif
