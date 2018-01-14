@@ -50,7 +50,7 @@ public:
 		return val;
 	}
 
-	constexpr BYTE* operator&() const
+	BYTE* operator&() const
 	{
 		return &(tmp = val);
 	}
