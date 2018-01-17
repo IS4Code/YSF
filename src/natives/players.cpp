@@ -94,7 +94,7 @@ AMX_DECLARE_NATIVE(Natives::SetPlayerGravity)
 
 	RakNet::BitStream bs;
 	bs.Write(pPlayerData[playerid]->fGravity);
-	CSAMPFunctions::RPC(&RPC_Gravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
+	CSAMPFunctions::RPC(&RPC_SetGravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
 	return 1;
 }
 
@@ -337,7 +337,7 @@ AMX_DECLARE_NATIVE(Natives::ApplyAnimationForPlayer)
 	bsSend.Write(opt4);
 	bsSend.Write(time);
 
-	CSAMPFunctions::RPC(&RPC_ScrApplyAnimation, &bsSend, MEDIUM_PRIORITY, UNRELIABLE, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_ApplyAnimation, &bsSend, MEDIUM_PRIORITY, UNRELIABLE, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 

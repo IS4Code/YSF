@@ -636,7 +636,7 @@ AMX_DECLARE_NATIVE(Natives::GameTextForPlayerf)
 	bsParams.Write((int)params[2]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
-	CSAMPFunctions::RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+	CSAMPFunctions::RPC(&RPC_DisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 	return 1;
 }
 
@@ -654,7 +654,7 @@ AMX_DECLARE_NATIVE(Natives::GameTextForAllf)
 	bsParams.Write((int)params[1]);
 	bsParams.Write(len);
 	bsParams.Write(szMessage, len);
-	CSAMPFunctions::RPC(&RPC_ScrDisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
+	CSAMPFunctions::RPC(&RPC_DisplayGameText, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_PLAYER_ID, true, false);
 	return 1;
 }
 
