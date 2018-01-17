@@ -545,15 +545,6 @@ namespace Natives
 		return pNetGame->pScriptTimers->dwTimerCount;
 	}
 
-	// native Float:GetGravity();
-	AMX_DECLARE_NATIVE(YSF_GetGravity)
-	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
-
-		float fGravity = pNetGame->fGravity;
-		return amx_ftoc(fGravity);
-	}
-
 	// native GetRecordingDirectory(dir[], len = sizeof(dir));
 	AMX_DECLARE_NATIVE(GetRecordingDirectory)
 	{
@@ -717,6 +708,23 @@ namespace Natives
 	}
 }
 
+namespace Original
+{
+	AMX_NATIVE GetGravity;
+}
+
+namespace Hooks
+{
+	// native Float:GetGravity();
+	AMX_DECLARE_NATIVE(GetGravity)
+	{
+		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+
+		float fGravity = pNetGame->fGravity;
+		return amx_ftoc(fGravity);
+	}
+}
+
 static AMX_NATIVE_INFO native_list[] =
 {
 	// Nick name
@@ -779,7 +787,13 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SendRconCommandf)
 };
 
-int ServerInitNatives(AMX *amx)
+static AMX_HOOK_INFO hook_list[] =
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	AMX_DEFINE_HOOK(GetGravity)
+};
+
+void ServerLoadNatives()
+{
+	RegisterNatives(native_list);
+	RegisterHooks(hook_list);
 }

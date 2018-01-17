@@ -125,7 +125,7 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx) 
 {
 	CCallbackManager::RegisterAMX(amx);
-	
+
 	if(CServer::Get()->IsInitialized())
 	{
 		static bool bFirst = false;
@@ -135,7 +135,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			InstallPostHooks();
 		}
 	}
-	return InitNatives(amx);
+	return RegisterAllNatives(amx);
 }
 
 //----------------------------------------------------------

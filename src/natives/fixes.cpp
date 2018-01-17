@@ -13,9 +13,18 @@ namespace Natives
 
 		return Utility::GetWeaponSlot(CScriptParams::Get()->ReadInt());
 	}
+}
 
+namespace Original
+{
+	AMX_NATIVE GetWeaponName;
+	AMX_NATIVE IsPlayerConnected;
+}
+
+namespace Hooks
+{
 	// native GetWeaponName(weaponid, weaponname[], len = sizeof(weaponname));
-	AMX_DECLARE_NATIVE(FIXED_GetWeaponName)
+	AMX_DECLARE_NATIVE(GetWeaponName)
 	{
 		CHECK_PARAMS(3, NO_FLAGS);
 
@@ -23,7 +32,7 @@ namespace Natives
 	}
 
 	// native IsPlayerConnected(playerid);
-	AMX_DECLARE_NATIVE(FIXED_IsPlayerConnected)
+	AMX_DECLARE_NATIVE(IsPlayerConnected)
 	{
 		CHECK_PARAMS(1, LOADED);
 
@@ -39,7 +48,14 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetWeaponSlot)
 };
 
-int FixesInitNatives(AMX *amx)
+static AMX_HOOK_INFO hook_list[] =
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	AMX_DEFINE_HOOK(GetWeaponName)
+	AMX_DEFINE_HOOK(IsPlayerConnected)
+};
+
+void FixesLoadNatives()
+{
+	RegisterNatives(native_list);
+	RegisterHooks(hook_list);
 }

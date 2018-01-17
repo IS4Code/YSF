@@ -37,8 +37,8 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetColSphereOffset)
 };
 
-int ModelSizesInitNatives(AMX *amx)
+void ModelSizesLoadNatives()
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	RegisterNatives(native_list);
 }
 

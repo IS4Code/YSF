@@ -455,16 +455,23 @@ namespace Natives
 		CScriptParams::Get()->Add(matrix->right, matrix->up, matrix->at);
 		return 1;
 	}
+}
 
-	/* --------------------------- HOOKS --------------------------- */
+namespace Original
+{
+	AMX_NATIVE ChangeVehicleColor;
+	AMX_NATIVE DestroyVehicle;
+}
 
+namespace Hooks
+{
 	// native ChangeVehicleColor(vehicleid, color1, color2)
-	AMX_DECLARE_NATIVE(YSF_ChangeVehicleColor)
+	AMX_DECLARE_NATIVE(ChangeVehicleColor)
 	{
 		CHECK_PARAMS(3, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (ORIGINAL_ChangeVehicleColor(amx, params))
+		if (Original::ChangeVehicleColor(amx, params))
 		{
 			CServer::Get()->bChangedVehicleColor[vehicleid] = true;
 			return 1;
@@ -473,12 +480,12 @@ namespace Natives
 	}
 
 	// native DestroyVehicle(vehicleid);
-	AMX_DECLARE_NATIVE(YSF_DestroyVehicle)
+	AMX_DECLARE_NATIVE(DestroyVehicle)
 	{
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (ORIGINAL_DestroyVehicle(amx, params))
+		if (Original::DestroyVehicle(amx, params))
 		{
 			CServer::Get()->bChangedVehicleColor[vehicleid] = false;
 			auto v = CServer::Get()->vehicleSpawnData.find(vehicleid);
@@ -520,7 +527,14 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetVehicleModelsUsed) // R17
 };
 
-int VehiclesInitNatives(AMX *amx)
+static AMX_HOOK_INFO hook_list[] =
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	AMX_DEFINE_HOOK(ChangeVehicleColor)
+	AMX_DEFINE_HOOK(DestroyVehicle)
+};
+
+void VehiclesLoadNatives()
+{
+	RegisterNatives(native_list);
+	RegisterHooks(hook_list);
 }

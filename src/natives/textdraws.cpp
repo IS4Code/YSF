@@ -711,7 +711,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(TextDrawSetStringForPlayer) // R19
 };
 
-int TextDrawsInitNatives(AMX *amx)
+void TextDrawsLoadNatives()
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	RegisterNatives(native_list);
 }

@@ -7,7 +7,6 @@
 namespace Natives
 {
 #ifdef NEW_PICKUP_SYSTEM
-
 	// native IsValidPickup(pickupid);
 	AMX_DECLARE_NATIVE(IsValidPickup)
 	{
@@ -215,8 +214,15 @@ namespace Natives
 		return pPickup->iWorld;
 	}
 
-#else
+	// native SetPickupStreamingEnabled(enabled);
+	AMX_DECLARE_NATIVE(SetPickupStreamingEnabled)
+	{
+		CHECK_PARAMS(1, LOADED);
 
+		CServer::Get()->pPickupPool->SetStreamingEnabled(!!params[1]);
+		return 1;
+	}
+#else
 	// native IsValidPickup(pickupid);
 	AMX_DECLARE_NATIVE(IsValidPickup)
 	{
@@ -298,13 +304,20 @@ namespace Natives
 
 		return pNetGame->pPickupPool->iWorld[id];
 	}
-
 #endif
+}
 
-	/* --------------------------- HOOKS --------------------------- */
+namespace Original
+{
+	AMX_NATIVE CreatePickup;
+	AMX_NATIVE DestroyPickup;
+	AMX_NATIVE AddStaticPickup;
+}
 
+namespace Hooks
+{
 #ifdef NEW_PICKUP_SYSTEM
-// native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
+	// native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
 	AMX_DECLARE_NATIVE(CreatePickup)
 	{
 		CHECK_PARAMS(6, LOADED);
@@ -312,21 +325,14 @@ namespace Natives
 		return CServer::Get()->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
 	}
 
+	constexpr AMX_NATIVE AddStaticPickup = CreatePickup;
+
 	// native DestroyPickup(pickupid);
 	AMX_DECLARE_NATIVE(DestroyPickup)
 	{
 		CHECK_PARAMS(1, LOADED);
 
 		CServer::Get()->pPickupPool->Destroy((int)params[1]);
-		return 1;
-	}
-
-	// native SetPickupStreamingEnabled(enabled);
-	AMX_DECLARE_NATIVE(SetPickupStreamingEnabled)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		CServer::Get()->pPickupPool->SetStreamingEnabled(!!params[1]);
 		return 1;
 	}
 #endif
@@ -351,12 +357,23 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetPlayerPickupModel) // R10
 	AMX_DEFINE_NATIVE(GetPlayerPickupType) // R10
 	AMX_DEFINE_NATIVE(GetPlayerPickupVirtualWorld) // R10
-
 	AMX_DEFINE_NATIVE(SetPickupStreamingEnabled)
 #endif
 };
 
-int PickupsInitNatives(AMX *amx)
+#ifdef NEW_PICKUP_SYSTEM
+static AMX_HOOK_INFO hook_list[] =
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	AMX_DEFINE_HOOK(CreatePickup)
+	AMX_DEFINE_HOOK(AddStaticPickup)
+	AMX_DEFINE_HOOK(DestroyPickup)
+};
+#endif
+
+void PickupsLoadNatives()
+{
+	RegisterNatives(native_list);
+#ifdef NEW_PICKUP_SYSTEM
+	RegisterHooks(hook_list);
+#endif
 }

@@ -291,7 +291,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetPlayer3DTextLabelAttached) // R9
 };
 
-int TextLabelsInitNatives(AMX *amx)
+void TextLabelsLoadNatives()
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	RegisterNatives(native_list);
 }

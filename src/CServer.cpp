@@ -36,6 +36,7 @@
 #include "Globals.h"
 #include "Utils.h"
 #include "System.h"
+#include "Natives.h"
 #include "RPCs.h"
 
 void CServer::Initialize(SAMPVersion version)
@@ -54,6 +55,8 @@ void CServer::Initialize(SAMPVersion version)
 	memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();
 	memset(&COBJECT_AttachedObjectPlayer, INVALID_PLAYER_ID, sizeof(COBJECT_AttachedObjectPlayer));
+
+	LoadNatives();
 
 	// Initialize addresses
 	CAddress::Initialize(version);

@@ -140,23 +140,6 @@ namespace Natives
 		return pPlayerData[playerid]->GetPlayerTeamForPlayer(static_cast<WORD>(teamplayerid));
 	}
 
-	AMX_DECLARE_NATIVE(YSF_SetPlayerTeam)
-	{
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		if (ORIGINAL_SetPlayerTeam(amx, params))
-		{
-			for (WORD i = 0; i != MAX_PLAYERS; ++i)
-			{
-				if (IsPlayerConnected(i))
-					pPlayerData[i]->ResetPlayerTeam(static_cast<WORD>(playerid));
-			}
-			return 1;
-		}
-		return 0;
-	}
-
 	// native SetPlayerSkinForPlayer(playerid, skinplayerid, skin);
 	AMX_DECLARE_NATIVE(SetPlayerSkinForPlayer)
 	{
@@ -931,14 +914,45 @@ namespace Natives
 		pPlayerData[playerid]->bBroadcastTo = !!toggle;
 		return 1;
 	}
+}
 
-	/* --------------------------- HOOKS --------------------------- */
-	AMX_DECLARE_NATIVE(YSF_SetPlayerSkin)
+namespace Original
+{
+	AMX_NATIVE SetPlayerTeam;
+	AMX_NATIVE SetPlayerSkin;
+	AMX_NATIVE SetPlayerName;
+	AMX_NATIVE SetPlayerWeather;
+	AMX_NATIVE SetPlayerFightingStyle;
+	AMX_NATIVE SetPlayerWorldBounds;
+	AMX_NATIVE TogglePlayerControllable;
+	AMX_NATIVE ShowPlayerDialog;
+}
+
+namespace Hooks
+{
+	AMX_DECLARE_NATIVE(SetPlayerTeam)
 	{
 		CHECK_PARAMS(2, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
-		if (ORIGINAL_SetPlayerSkin(amx, params))
+		if (Original::SetPlayerTeam(amx, params))
+		{
+			for (WORD i = 0; i != MAX_PLAYERS; ++i)
+			{
+				if (IsPlayerConnected(i))
+					pPlayerData[i]->ResetPlayerTeam(static_cast<WORD>(playerid));
+			}
+			return 1;
+		}
+		return 0;
+	}
+
+	AMX_DECLARE_NATIVE(SetPlayerSkin)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if (Original::SetPlayerSkin(amx, params))
 		{
 			for (WORD i = 0; i != MAX_PLAYERS; ++i)
 			{
@@ -950,12 +964,12 @@ namespace Natives
 		return 0;
 	}
 
-	AMX_DECLARE_NATIVE(YSF_SetPlayerName)
+	AMX_DECLARE_NATIVE(SetPlayerName)
 	{
 		CHECK_PARAMS(2, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
-		const int ret = ORIGINAL_SetPlayerName(amx, params);
+		const int ret = Original::SetPlayerName(amx, params);
 
 		if (ret == 1)
 		{
@@ -968,12 +982,12 @@ namespace Natives
 		return ret;
 	}
 
-	AMX_DECLARE_NATIVE(YSF_SetPlayerFightingStyle)
+	AMX_DECLARE_NATIVE(SetPlayerFightingStyle)
 	{
 		CHECK_PARAMS(2, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
-		if (ORIGINAL_SetPlayerFightingStyle(amx, params))
+		if (Original::SetPlayerFightingStyle(amx, params))
 		{
 			for (WORD i = 0; i != MAX_PLAYERS; ++i)
 			{
@@ -986,13 +1000,13 @@ namespace Natives
 	}
 
 	// native SetPlayerWeather(playerid, weatherid);
-	AMX_DECLARE_NATIVE(YSF_SetPlayerWeather)
+	AMX_DECLARE_NATIVE(SetPlayerWeather)
 	{
 		CHECK_PARAMS(2, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 
-		if (ORIGINAL_SetPlayerWeather(amx, params) && IsPlayerConnected(playerid))
+		if (Original::SetPlayerWeather(amx, params) && IsPlayerConnected(playerid))
 		{
 			pPlayerData[playerid]->byteWeather = static_cast<BYTE>(CScriptParams::Get()->ReadInt());
 			return 1;
@@ -1001,12 +1015,12 @@ namespace Natives
 	}
 
 	// native SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
-	AMX_DECLARE_NATIVE(YSF_SetPlayerWorldBounds)
+	AMX_DECLARE_NATIVE(SetPlayerWorldBounds)
 	{
 		CHECK_PARAMS(5, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
-		if (ORIGINAL_SetPlayerWorldBounds(amx, params) && IsPlayerConnected(playerid))
+		if (Original::SetPlayerWorldBounds(amx, params) && IsPlayerConnected(playerid))
 		{
 			for (BYTE i = 0; i != 4; ++i)
 			{
@@ -1018,14 +1032,14 @@ namespace Natives
 	}
 
 	// native TogglePlayerControllable(playerid, bool:toggle)
-	AMX_DECLARE_NATIVE(YSF_TogglePlayerControllable)
+	AMX_DECLARE_NATIVE(TogglePlayerControllable)
 	{
 		CHECK_PARAMS(2, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const bool toggle = CScriptParams::Get()->ReadBool();
 
-		if (ORIGINAL_TogglePlayerControllable(amx, params) && IsPlayerConnected(playerid))
+		if (Original::TogglePlayerControllable(amx, params) && IsPlayerConnected(playerid))
 		{
 			pPlayerData[playerid]->bControllable = toggle;
 			return 1;
@@ -1034,14 +1048,14 @@ namespace Natives
 	}
 
 	// native ShowPlayerDialog(playerid, dialogid, style, caption[], info[], button1[], button2[]);
-	AMX_DECLARE_NATIVE(YSF_ShowPlayerDialog)
+	AMX_DECLARE_NATIVE(ShowPlayerDialog)
 	{
 		CHECK_PARAMS(7, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const int dialogid = CScriptParams::Get()->ReadInt();
 
-		if (ORIGINAL_ShowPlayerDialog(amx, params) && IsPlayerConnected(playerid))
+		if (Original::ShowPlayerDialog(amx, params) && IsPlayerConnected(playerid))
 		{
 			pPlayerData[playerid]->wDialogID = dialogid;
 			return 1;
@@ -1123,7 +1137,20 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetPlayerPausedTime)
 };
 
-int PlayersInitNatives(AMX *amx)
+static AMX_HOOK_INFO hook_list[] =
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	AMX_DEFINE_HOOK(SetPlayerTeam)
+	AMX_DEFINE_HOOK(SetPlayerSkin)
+	AMX_DEFINE_HOOK(SetPlayerName)
+	AMX_DEFINE_HOOK(SetPlayerFightingStyle)
+	AMX_DEFINE_HOOK(SetPlayerWeather)
+	AMX_DEFINE_HOOK(SetPlayerWorldBounds)
+	AMX_DEFINE_HOOK(TogglePlayerControllable)
+	AMX_DEFINE_HOOK(ShowPlayerDialog)
+};
+
+void PlayersLoadNatives()
+{
+	RegisterNatives(native_list);
+	RegisterHooks(hook_list);
 }

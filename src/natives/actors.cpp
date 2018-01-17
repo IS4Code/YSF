@@ -58,7 +58,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetActorAnimation) // R17
 };
 
-int ActorsInitNatives(AMX *amx)
+void ActorsLoadNatives()
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	RegisterNatives(native_list);
 }

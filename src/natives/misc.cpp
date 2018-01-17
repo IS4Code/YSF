@@ -171,7 +171,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(drename)
 };
 
-int MiscInitNatives(AMX *amx)
+void MiscLoadNatives()
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	RegisterNatives(native_list);
 }

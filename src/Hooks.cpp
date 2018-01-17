@@ -126,32 +126,14 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 	if (!bNativesHooked && CServer::Get()->IsInitialized())
 	{
-		int i = 0;
-		while (nativelist[i].name)
+		for(int i = 0; nativelist[i].name; i++)
 		{
-			int x = 0;
-			while (redirected_native_list[x].name)
-			{
-				if (!strcmp(nativelist[i].name, redirected_native_list[x].name))
-				{
-					if (!bNativesHooked) bNativesHooked = true;
-				
-					// Skip redirecting gangzone functions when per-player gangzones are disabled
-					if ((nativelist[i].name[0] == 'g' && nativelist[i].name[1] == 'a') && !CServer::Get()->m_bUsePerPlayerGangZones)
-						continue;
+			if (ApplyHooks(nativelist[i])) bNativesHooked = true;
 
-					if(redirected_native_list[x].originalfunc != NULL)
-					{
-						*redirected_native_list[x].originalfunc = nativelist[i].func;
-					}
-					nativelist[i].func = redirected_native_list[x].func;
-				}
-				x++;
-			}
-			i++;
+			if (i == number - 1) break;
 		}
 	}
-
+	
 	return ((FUNC_amx_Register)subhook_get_trampoline(amx_Register_hook))(amx, nativelist, number);
 }
 

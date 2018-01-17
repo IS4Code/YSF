@@ -30,87 +30,76 @@
 *
 */
 
-#include <memory>
+#include <unordered_map>
+#include <string>
+#include <functional>
 
 #include "Natives.h"
 
-AMX_NATIVE Natives::ORIGINAL_AttachObjectToPlayer = NULL;
-AMX_NATIVE Natives::ORIGINAL_SetPlayerWeather = NULL;
-AMX_NATIVE Natives::ORIGINAL_SetPlayerWorldBounds = NULL;
-AMX_NATIVE Natives::ORIGINAL_DestroyObject = NULL;
-AMX_NATIVE Natives::ORIGINAL_DestroyPlayerObject = NULL;
-AMX_NATIVE Natives::ORIGINAL_TogglePlayerControllable = NULL;
-AMX_NATIVE Natives::ORIGINAL_ChangeVehicleColor = NULL;
-AMX_NATIVE Natives::ORIGINAL_DestroyVehicle = NULL;
-AMX_NATIVE Natives::ORIGINAL_ShowPlayerDialog = NULL;
-AMX_NATIVE Natives::ORIGINAL_SetPlayerObjectMaterial = NULL;
-AMX_NATIVE Natives::ORIGINAL_SetPlayerObjectMaterialText = NULL;
-AMX_NATIVE Natives::ORIGINAL_SetPlayerTeam = NULL;
-AMX_NATIVE Natives::ORIGINAL_SetPlayerSkin = NULL;
-AMX_NATIVE Natives::ORIGINAL_SetPlayerName = NULL;
-AMX_NATIVE Natives::ORIGINAL_SetPlayerFightingStyle = NULL;
+static std::unordered_multimap<std::string, std::reference_wrapper<const AMX_HOOK_INFO>> redirected_native_list;
 
-stRedirectedNatives redirected_native_list[] =
+void RegisterHooks(const AMX_HOOK_INFO *hooks_list, size_t count)
 {
-	// File
-	{ "AttachObjectToPlayer",			&Natives::ORIGINAL_AttachObjectToPlayer,		Natives::YSF_AttachObjectToPlayer },
-	{ "AttachPlayerObjectToPlayer",		NULL,											Natives::YSF_AttachPlayerObjectToPlayer },
-	{ "GetGravity",						NULL,											Natives::YSF_GetGravity },
-	{ "SetPlayerWeather",				&Natives::ORIGINAL_SetPlayerWeather,			Natives::YSF_SetPlayerWeather },
-	{ "SetPlayerWorldBounds",			&Natives::ORIGINAL_SetPlayerWorldBounds,		Natives::YSF_SetPlayerWorldBounds },
-	{ "DestroyObject",					&Natives::ORIGINAL_DestroyObject,				Natives::YSF_DestroyObject },
-	{ "DestroyPlayerObject",			&Natives::ORIGINAL_DestroyPlayerObject,			Natives::YSF_DestroyPlayerObject },
-	{ "TogglePlayerControllable",		&Natives::ORIGINAL_TogglePlayerControllable,	Natives::YSF_TogglePlayerControllable},
-	{ "ChangeVehicleColor",				&Natives::ORIGINAL_ChangeVehicleColor,			Natives::YSF_ChangeVehicleColor},
-	{ "DestroyVehicle",					&Natives::ORIGINAL_DestroyVehicle,				Natives::YSF_DestroyVehicle},
-	{ "ShowPlayerDialog",				&Natives::ORIGINAL_ShowPlayerDialog,			Natives::YSF_ShowPlayerDialog },
-	{ "SetPlayerObjectMaterial",		&Natives::ORIGINAL_SetPlayerObjectMaterial,		Natives::YSF_SetPlayerObjectMaterial },
-	{ "SetPlayerObjectMaterialText",	&Natives::ORIGINAL_SetPlayerObjectMaterialText,	Natives::YSF_SetPlayerObjectMaterialText },
+	for (size_t i = 0; i < count; i++)
+	{
+		const AMX_HOOK_INFO &hook = hooks_list[i];
+		redirected_native_list.insert(std::make_pair(std::string(hook.name), std::cref(hook)));
+	}
+}
 
-	{ "GangZoneCreate",					NULL,											Natives::YSF_GangZoneCreate },
-	{ "GangZoneDestroy",				NULL,											Natives::YSF_GangZoneDestroy },
-	{ "GangZoneShowForPlayer",			NULL,											Natives::YSF_GangZoneShowForPlayer },
-	{ "GangZoneHideForPlayer",			NULL,											Natives::YSF_GangZoneHideForPlayer },
-	{ "GangZoneShowForAll",				NULL,											Natives::YSF_GangZoneShowForAll },
-	{ "GangZoneHideForAll",				NULL,											Natives::YSF_GangZoneHideForAll },
-								
-	{ "GangZoneFlashForPlayer",			NULL,											Natives::YSF_GangZoneFlashForPlayer },
-	{ "GangZoneFlashForAll",			NULL,											Natives::YSF_GangZoneFlashForAll },
-	{ "GangZoneStopFlashForPlayer",		NULL,											Natives::YSF_GangZoneStopFlashForPlayer },
-	{ "GangZoneStopFlashForAll",		NULL,											Natives::YSF_GangZoneStopFlashForAll },
-#ifdef NEW_PICKUP_SYSTEM
-	{ "CreatePickup",					NULL,											Natives::CreatePickup },
-	{ "AddStaticPickup",				NULL,											Natives::CreatePickup },
-	{ "DestroyPickup",					NULL,											Natives::DestroyPickup },
-#endif
-	{ "GetWeaponName",					NULL,											Natives::FIXED_GetWeaponName },
-	{ "IsPlayerConnected",				NULL,											Natives::FIXED_IsPlayerConnected },
-
-	{ "SetPlayerTeam",					&Natives::ORIGINAL_SetPlayerTeam,				Natives::YSF_SetPlayerTeam },
-	{ "SetPlayerSkin",					&Natives::ORIGINAL_SetPlayerSkin,				Natives::YSF_SetPlayerSkin },
-	{ "SetPlayerName",					&Natives::ORIGINAL_SetPlayerName,				Natives::YSF_SetPlayerName },
-	{ "SetPlayerFightingStyle",			&Natives::ORIGINAL_SetPlayerFightingStyle,		Natives::YSF_SetPlayerFightingStyle },
-
-	{ NULL,								NULL,									NULL }
-};
-
-int InitNatives(AMX *amx)
+bool ApplyHooks(AMX_NATIVE_INFO &native)
 {
-	ActorsInitNatives(amx);
-	FixesInitNatives(amx);
-	GangZonesInitNatives(amx);
-	MenusInitNatives(amx);
-	MiscInitNatives(amx);
-	ModelSizesInitNatives(amx);
-	ObjectsInitNatives(amx);
-	PickupsInitNatives(amx);
-	PlayersInitNatives(amx);
-	RakNetInitNatives(amx);
-	ScoreBoardInitNatives(amx);
-	ServerInitNatives(amx);
-	TextDrawsInitNatives(amx);
-	TextLabelsInitNatives(amx);
-	VehiclesInitNatives(amx);
-	YSFSettingsInitNatives(amx);
-	return 0;
+	bool hooked = false;
+
+	auto range = redirected_native_list.equal_range(std::string(native.name));
+	while (range.first != range.second)
+	{
+		const AMX_HOOK_INFO &hook = range.first->second;
+
+		hook.originalfunc = native.func;
+		native.func = hook.func;
+		hooked = true;
+
+		range.first++;
+	}
+	return hooked;
+}
+
+static std::vector<std::pair<const AMX_NATIVE_INFO *, int>> native_list;
+
+void RegisterNatives(const AMX_NATIVE_INFO *natives_list, int count)
+{
+	native_list.push_back(std::make_pair(natives_list, count));
+}
+
+int RegisterAllNatives(AMX *amx)
+{
+	int return_code = 0;
+
+	for (const auto& pair : native_list)
+	{
+		int ret = amx_Register(amx, pair.first, pair.second);
+		if (ret != 0) return_code = ret;
+	}
+	return return_code;
+}
+
+void LoadNatives()
+{
+	ActorsLoadNatives();
+	FixesLoadNatives();
+	GangZonesLoadNatives();
+	MenusLoadNatives();
+	MiscLoadNatives();
+	ModelSizesLoadNatives();
+	ObjectsLoadNatives();
+	PickupsLoadNatives();
+	PlayersLoadNatives();
+	RakNetLoadNatives();
+	ScoreBoardLoadNatives();
+	ServerLoadNatives();
+	TextDrawsLoadNatives();
+	TextLabelsLoadNatives();
+	VehiclesLoadNatives();
+	YSFSettingsLoadNatives();
 }

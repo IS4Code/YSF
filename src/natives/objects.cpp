@@ -502,146 +502,6 @@ namespace Natives
 		return 1;
 	}
 
-	/* --------------------------- HOOKS --------------------------- */
-
-	// native DestroyObject(objectid)
-	AMX_DECLARE_NATIVE(YSF_DestroyObject)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		const int objectid = CScriptParams::Get()->ReadInt();
-
-		if (objectid < 0 || objectid > MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->pObjects[objectid]) return 0;
-
-		if (ORIGINAL_DestroyObject(amx, params))
-		{
-			CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
-
-			for (int i = 0; i < MAX_PLAYERS; i++)
-			{
-				CPlayerData *player = pPlayerData[i];
-				if (player)
-				{
-					player->ShowObject(objectid, false);
-				}
-			}
-
-			return 1;
-		}
-		return 0;
-	}
-
-	// native DestroyPlayerObject(playerid, objectid)
-	AMX_DECLARE_NATIVE(YSF_DestroyPlayerObject)
-	{
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-
-		if (objectid < 0 || objectid > MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		if (IsPlayerConnected(playerid))
-		{
-			for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
-			{
-				if (o->first == objectid)
-				{
-					o = pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(o);
-				}
-			}
-			pPlayerData[playerid]->DeleteObjectAddon(static_cast<WORD>(objectid));
-		}
-
-		if (ORIGINAL_DestroyPlayerObject(amx, params))
-		{
-			return 1;
-		}
-		return 0;
-	}
-
-	// native AttachObjectToPlayer(objectid, playerid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ)
-	AMX_DECLARE_NATIVE(YSF_AttachObjectToPlayer)
-	{
-		CHECK_PARAMS(8, LOADED);
-
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-		if (!pObject) return 0;
-
-		// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
-		ORIGINAL_AttachObjectToPlayer(amx, params);
-
-		// Store values which should be server purpose not mine
-		CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
-		CScriptParams::Get()->Read(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
-		return 1;
-	}
-
-	// native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ, onlyaddtoinstance = 0)
-	AMX_DECLARE_NATIVE(YSF_AttachPlayerObjectToPlayer)
-	{
-		CHECK_PARAMS(9, MORE_PARAMETER_ALLOWED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		const int attachplayerid = CScriptParams::Get()->ReadInt();
-		bool bOnlyAddToInstance;
-
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (!IsPlayerConnected(attachplayerid)) return 0;
-
-		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		// Find the space where to store data
-		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
-		if (pAddon == NULL)
-			return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
-
-		// Store data
-		pAddon->wObjectID = static_cast<WORD>(objectid);
-		pAddon->wAttachPlayerID = static_cast<WORD>(attachplayerid);
-		pAddon->creation_timepoint = default_clock::now();
-
-		// Read parameters into our map pointer
-		CScriptParams::Get()->Read(pAddon->vecOffset, pAddon->vecRot, bOnlyAddToInstance);
-
-		// If it's allowed to create object immendiately or player attach this object to herself, then create it now
-		if (!bOnlyAddToInstance || playerid == attachplayerid)
-		{
-			if (pNetGame->pPlayerPool->pPlayer[playerid]->byteStreamedIn[attachplayerid] || playerid == attachplayerid)
-			{
-				RakNet::BitStream bs;
-				bs.Write((WORD)objectid); // wObjectID
-				bs.Write((WORD)attachplayerid); // wPlayerid
-				bs.Write((char*)&pAddon->vecOffset, sizeof(CVector));
-				bs.Write((char*)&pAddon->vecRot, sizeof(CVector));
-				pAddon->bCreated = true;
-				pAddon->bAttached = true;
-				CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
-			}
-		}
-		else
-		{
-			// We'll attach it later to prevent crashes
-			if (pPlayerData[playerid]->m_PlayerObjectsAttachQueue.find(objectid) != pPlayerData[playerid]->m_PlayerObjectsAttachQueue.end())
-				pPlayerData[playerid]->m_PlayerObjectsAttachQueue.erase(objectid);
-
-			// This case GOTTA called only from streamer when object ALREADY created.
-			pPlayerData[playerid]->m_PlayerObjectsAttachQueue.insert(objectid);
-			pAddon->bCreated = true;
-		}
-		return 1;
-	}
-
 	// native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
 	AMX_DECLARE_NATIVE(AttachPlayerObjectToObject)
 	{
@@ -661,7 +521,7 @@ namespace Natives
 		CObjectPool *pObjectPool = pNetGame->pObjectPool;
 		if (!pObjectPool->pPlayerObjects[forplayerid][objectid] || !pObjectPool->pPlayerObjects[forplayerid][attachtoid]) return 0; // Check if object is exist
 
-		// Find the space where to store data
+																																	// Find the space where to store data
 		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[forplayerid]->GetObjectAddon(objectid);
 		if (pAddon == NULL)
 			return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
@@ -741,15 +601,166 @@ namespace Natives
 		pPlayerData[forplayerid]->ShowObject(objectid, true);
 		return 1;
 	}
+}
+
+namespace Original
+{
+	AMX_NATIVE AttachObjectToPlayer;
+	AMX_NATIVE AttachPlayerObjectToPlayer;
+	AMX_NATIVE DestroyObject;
+	AMX_NATIVE DestroyPlayerObject;
+	AMX_NATIVE SetPlayerObjectMaterial;
+	AMX_NATIVE SetPlayerObjectMaterialText;
+}
+
+namespace Hooks
+{
+	// native DestroyObject(objectid)
+	AMX_DECLARE_NATIVE(DestroyObject)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		const int objectid = CScriptParams::Get()->ReadInt();
+
+		if (objectid < 0 || objectid > MAX_OBJECTS) return 0;
+		if (!pNetGame->pObjectPool->pObjects[objectid]) return 0;
+
+		if (Original::DestroyObject(amx, params))
+		{
+			CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
+
+			for (int i = 0; i < MAX_PLAYERS; i++)
+			{
+				CPlayerData *player = pPlayerData[i];
+				if (player)
+				{
+					player->ShowObject(objectid, false);
+				}
+			}
+
+			return 1;
+		}
+		return 0;
+	}
+
+	// native DestroyPlayerObject(playerid, objectid)
+	AMX_DECLARE_NATIVE(DestroyPlayerObject)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		const int objectid = CScriptParams::Get()->ReadInt();
+
+		if (objectid < 0 || objectid > MAX_OBJECTS) return 0;
+		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
+
+		if (IsPlayerConnected(playerid))
+		{
+			for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
+			{
+				if (o->first == objectid)
+				{
+					o = pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(o);
+				}
+			}
+			pPlayerData[playerid]->DeleteObjectAddon(static_cast<WORD>(objectid));
+		}
+
+		if (Original::DestroyPlayerObject(amx, params))
+		{
+			return 1;
+		}
+		return 0;
+	}
+
+	// native AttachObjectToPlayer(objectid, playerid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ)
+	AMX_DECLARE_NATIVE(AttachObjectToPlayer)
+	{
+		CHECK_PARAMS(8, LOADED);
+
+		const int objectid = CScriptParams::Get()->ReadInt();
+		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if (!IsPlayerConnected(playerid)) return 0;
+
+		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
+		if (!pObject) return 0;
+
+		// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
+		Original::AttachObjectToPlayer(amx, params);
+
+		// Store values which should be server purpose not mine
+		CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
+		CScriptParams::Get()->Read(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
+		return 1;
+	}
+
+	// native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ, onlyaddtoinstance = 0)
+	AMX_DECLARE_NATIVE(AttachPlayerObjectToPlayer)
+	{
+		CHECK_PARAMS(9, MORE_PARAMETER_ALLOWED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		const int objectid = CScriptParams::Get()->ReadInt();
+		const int attachplayerid = CScriptParams::Get()->ReadInt();
+		bool bOnlyAddToInstance;
+
+		if (!IsPlayerConnected(playerid)) return 0;
+		if (!IsPlayerConnected(attachplayerid)) return 0;
+
+		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
+		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
+
+		// Find the space where to store data
+		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
+		if (pAddon == NULL)
+			return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
+
+		// Store data
+		pAddon->wObjectID = static_cast<WORD>(objectid);
+		pAddon->wAttachPlayerID = static_cast<WORD>(attachplayerid);
+		pAddon->creation_timepoint = default_clock::now();
+
+		// Read parameters into our map pointer
+		CScriptParams::Get()->Read(pAddon->vecOffset, pAddon->vecRot, bOnlyAddToInstance);
+
+		// If it's allowed to create object immendiately or player attach this object to herself, then create it now
+		if (!bOnlyAddToInstance || playerid == attachplayerid)
+		{
+			if (pNetGame->pPlayerPool->pPlayer[playerid]->byteStreamedIn[attachplayerid] || playerid == attachplayerid)
+			{
+				RakNet::BitStream bs;
+				bs.Write((WORD)objectid); // wObjectID
+				bs.Write((WORD)attachplayerid); // wPlayerid
+				bs.Write((char*)&pAddon->vecOffset, sizeof(CVector));
+				bs.Write((char*)&pAddon->vecRot, sizeof(CVector));
+				pAddon->bCreated = true;
+				pAddon->bAttached = true;
+				CSAMPFunctions::RPC(&RPC_AttachObject, &bs, LOW_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
+			}
+		}
+		else
+		{
+			// We'll attach it later to prevent crashes
+			if (pPlayerData[playerid]->m_PlayerObjectsAttachQueue.find(objectid) != pPlayerData[playerid]->m_PlayerObjectsAttachQueue.end())
+				pPlayerData[playerid]->m_PlayerObjectsAttachQueue.erase(objectid);
+
+			// This case GOTTA called only from streamer when object ALREADY created.
+			pPlayerData[playerid]->m_PlayerObjectsAttachQueue.insert(objectid);
+			pAddon->bCreated = true;
+		}
+		return 1;
+	}
 
 	// native SetPlayerObjectMaterial(playerid, objectid, materialindex, modelid, txdname[], texturename[], materialcolor=0);
-	AMX_DECLARE_NATIVE(YSF_SetPlayerObjectMaterial)
+	AMX_DECLARE_NATIVE(SetPlayerObjectMaterial)
 	{
 		CHECK_PARAMS(7, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 
-		if (ORIGINAL_SetPlayerObjectMaterial(amx, params) && IsPlayerConnected(playerid))
+		if (Original::SetPlayerObjectMaterial(amx, params) && IsPlayerConnected(playerid))
 		{
 			const int objectid = CScriptParams::Get()->ReadInt();
 
@@ -793,13 +804,13 @@ namespace Natives
 	}
 
 	// native SetPlayerObjectMaterialText(playerid, objectid, text[], materialindex = 0, materialsize = OBJECT_MATERIAL_SIZE_256x128, fontface[] = "Arial", fontsize = 24, bold = 1, fontcolor = 0xFFFFFFFF, backcolor = 0, textalignment = 0);
-	AMX_DECLARE_NATIVE(YSF_SetPlayerObjectMaterialText)
+	AMX_DECLARE_NATIVE(SetPlayerObjectMaterialText)
 	{
 		CHECK_PARAMS(11, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 
-		if (ORIGINAL_SetPlayerObjectMaterialText(amx, params) && IsPlayerConnected(playerid))
+		if (Original::SetPlayerObjectMaterialText(amx, params) && IsPlayerConnected(playerid))
 		{
 			const int objectid = CScriptParams::Get()->ReadInt();
 
@@ -876,7 +887,18 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetPlayerAttachedObject) // R3
 };
 
-int ObjectsInitNatives(AMX *amx)
+static AMX_HOOK_INFO hook_list[] = 
 {
-	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
+	AMX_DEFINE_HOOK(DestroyObject)
+	AMX_DEFINE_HOOK(DestroyPlayerObject)
+	AMX_DEFINE_HOOK(AttachObjectToPlayer)
+	AMX_DEFINE_HOOK(AttachPlayerObjectToPlayer)
+	AMX_DEFINE_HOOK(SetPlayerObjectMaterial)
+	AMX_DEFINE_HOOK(SetPlayerObjectMaterialText)
+};
+
+void ObjectsLoadNatives()
+{
+	RegisterNatives(native_list);
+	RegisterHooks(hook_list);
 }
