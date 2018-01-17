@@ -82,19 +82,20 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	{
 		CServer::Get()->Initialize(version);
 		
-		logprintf("\n");
-		logprintf(" ===============================\n");
-		logprintf("        " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " loaded\n");
-		logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2016 kurta999\n");
-		logprintf("    Server version: %s\n", szVersion);
-		logprintf("    Operating System: " OS_NAME "\n");
-		logprintf("    Built on: " __DATE__ " at " __TIME__ "\n");
-		logprintf(" ===============================\n");
+		logprintf("");
+		logprintf(" ===============================");
+		logprintf("        " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " loaded");
+		logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2016 kurta999");
+		logprintf("    Server version: %s", szVersion);
+		logprintf("    Operating System: " OS_NAME);
+		logprintf("    Built on: " __DATE__ " at " __TIME__);
+		logprintf(" ===============================");
+		logprintf("");
 	}
 	else
 	{
-		logprintf("Error: Unknown " OS_NAME " server version\n");
-		logprintf("Error: Big part of YSF will be unusable for you\n");
+		logprintf("Error: Unknown " OS_NAME " server version");
+		logprintf("Error: Big part of YSF will be unusable for you");
 	}
 	return true;
 }
@@ -111,10 +112,11 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 	CScriptParams::CSingleton::Destroy();
 
 	// Corrected apperance in log file
-	logprintf("\n");
-	logprintf(" ==============\n");
-	logprintf("  " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " unloaded\n");
+	logprintf("");
 	logprintf(" ==============");
+	logprintf("  " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " unloaded");
+	logprintf(" ==============");
+	logprintf("");
 }
 
 //----------------------------------------------------------
