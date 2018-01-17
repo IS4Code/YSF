@@ -4,29 +4,42 @@
 #include "../Structs.h"
 #include "../Globals.h"
 
-// native GetWeaponSlot(weaponid);
-AMX_DECLARE_NATIVE(Natives::GetWeaponSlot)
+namespace Natives
 {
-	CHECK_PARAMS(1, NO_FLAGS);
+	// native GetWeaponSlot(weaponid);
+	AMX_DECLARE_NATIVE(GetWeaponSlot)
+	{
+		CHECK_PARAMS(1, NO_FLAGS);
 
-	return Utility::GetWeaponSlot(CScriptParams::Get()->ReadInt());
+		return Utility::GetWeaponSlot(CScriptParams::Get()->ReadInt());
+	}
+
+	// native GetWeaponName(weaponid, weaponname[], len = sizeof(weaponname));
+	AMX_DECLARE_NATIVE(FIXED_GetWeaponName)
+	{
+		CHECK_PARAMS(3, NO_FLAGS);
+
+		return set_amxstring(amx, params[2], Utility::GetWeaponName(static_cast<BYTE>(params[1])), params[3]);
+	}
+
+	// native IsPlayerConnected(playerid);
+	AMX_DECLARE_NATIVE(FIXED_IsPlayerConnected)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;
+
+		return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;
+	}
 }
 
-// native GetWeaponName(weaponid, weaponname[], len = sizeof(weaponname));
-AMX_DECLARE_NATIVE(Natives::FIXED_GetWeaponName)
+static AMX_NATIVE_INFO native_list[] =
 {
-	CHECK_PARAMS(3, NO_FLAGS);
+	AMX_DEFINE_NATIVE(GetWeaponSlot)
+};
 
-	return set_amxstring(amx, params[2], Utility::GetWeaponName(static_cast<BYTE>(params[1])), params[3]);
-}
-
-// native IsPlayerConnected(playerid);
-AMX_DECLARE_NATIVE(Natives::FIXED_IsPlayerConnected)
+int FixesInitNatives(AMX *amx)
 {
-	CHECK_PARAMS(1, LOADED);
-
-	const int playerid = CScriptParams::Get()->ReadInt();
-	if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;
-
-	return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;
+	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
 }

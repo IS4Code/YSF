@@ -327,7 +327,7 @@ const char *GetPlayerName(int playerid, bool getForQuery)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;
 
-	if (getForQuery && pPlayerData[playerid]->bCustomNameInQuery)
+	if (getForQuery && pPlayerData[playerid] && pPlayerData[playerid]->bCustomNameInQuery)
 	{
 		return pPlayerData[playerid]->strNameInQuery.c_str();
 	}

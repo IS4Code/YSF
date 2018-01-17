@@ -2,27 +2,43 @@
 #include "../CModelSizes.h"
 #include "../CScriptParams.h"
 
-// native GetColCount();
-AMX_DECLARE_NATIVE(Natives::GetColCount)
+namespace Natives
 {
-	return CModelSizes::GetColCount();
+	// native GetColCount();
+	AMX_DECLARE_NATIVE(GetColCount)
+	{
+		return CModelSizes::GetColCount();
+	}
+
+	// native Float:GetColSphereRadius(modelid);
+	AMX_DECLARE_NATIVE(GetColSphereRadius)
+	{
+		CHECK_PARAMS(1, NO_FLAGS);
+
+		float fRet = CModelSizes::GetColSphereRadius(CScriptParams::Get()->ReadInt());
+		return amx_ftoc(fRet);
+	}
+
+	// native GetColSphereOffset(modelid, &Float:fX, &Float:fY, &Float:fZ);
+	AMX_DECLARE_NATIVE(GetColSphereOffset)
+	{
+		CHECK_PARAMS(4, NO_FLAGS);
+
+		CVector vecOffset = CModelSizes::GetColSphereOffset(CScriptParams::Get()->ReadInt());
+		CScriptParams::Get()->Add(vecOffset);
+		return 1;
+	}
 }
 
-// native Float:GetColSphereRadius(modelid);
-AMX_DECLARE_NATIVE(Natives::GetColSphereRadius)
+static AMX_NATIVE_INFO native_list[] =
 {
-	CHECK_PARAMS(1, NO_FLAGS);
+	AMX_DEFINE_NATIVE(GetColCount)
+	AMX_DEFINE_NATIVE(GetColSphereRadius)
+	AMX_DEFINE_NATIVE(GetColSphereOffset)
+};
 
-	float fRet = CModelSizes::GetColSphereRadius(CScriptParams::Get()->ReadInt());
-	return amx_ftoc(fRet);
+int ModelSizesInitNatives(AMX *amx)
+{
+	return amx_Register(amx, native_list, sizeof(native_list) / sizeof(*native_list));
 }
 
-// native GetColSphereOffset(modelid, &Float:fX, &Float:fY, &Float:fZ);
-AMX_DECLARE_NATIVE(Natives::GetColSphereOffset)
-{
-	CHECK_PARAMS(4, NO_FLAGS);
-
-	CVector vecOffset = CModelSizes::GetColSphereOffset(CScriptParams::Get()->ReadInt());
-	CScriptParams::Get()->Add(vecOffset);
-	return 1;
-}
