@@ -60,7 +60,7 @@ constexpr RPCID RPC_Gravity = 0x92;
 constexpr RPCID RPC_CreatePickup = 95;
 constexpr RPCID RPC_DestroyPickup = 63;
 
-constexpr RPCID RPC_SetPlayerTeam = 45;
+constexpr RPCID RPC_SetPlayerTeam = 69;
 constexpr RPCID RPC_CreateObject = 0x2C;
 
 constexpr RPCID RPC_DestroyObject = 0x2F;
