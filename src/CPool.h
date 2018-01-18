@@ -58,6 +58,7 @@ protected:
 template <class PoolType, class ObjectType, size_t MaxSize, ObjectType *(PoolType::*PoolArray)[MaxSize], class ExtraData = std::tuple<size_t>>
 class CBasicPool : public CPoolBase<ObjectType, MaxSize, ExtraData>
 {
+	typedef CPoolBase<ObjectType, MaxSize, ExtraData> Base;
 protected:
 	PoolType& pool;
 public:
@@ -91,8 +92,8 @@ protected:
 public:
 	size_t Add(ObjectType &object)
 	{
-		size_t i = EmptySlot();
-		if (i != CBasicPool::InvalidIndex)
+		size_t i = Base::EmptySlot();
+		if (i != Base::InvalidIndex)
 		{
 			Set(i, object);
 		}
@@ -102,8 +103,8 @@ public:
 	template <class... Args>
 	size_t New(Args&&... args)
 	{
-		size_t i = EmptySlot();
-		if (i != CBasicPool::InvalidIndex)
+		size_t i = Base::EmptySlot();
+		if (i != Base::InvalidIndex)
 		{
 			Set(i, new ObjectType(std::forward<Args>(args)...));
 		}
@@ -114,37 +115,39 @@ public:
 template <class PoolType, class ObjectType, size_t MaxSize, ObjectType *(PoolType::*PoolArray)[MaxSize], BOOL(PoolType::*SlotArray)[MaxSize], class ExtraData = std::tuple<size_t>>
 class CSlotPool : public CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData>
 {
+	typedef CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData> Base;
 public:
-	CSlotPool(PoolType& poolData) : CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData>(poolData)
+	CSlotPool(PoolType& poolData) : Base(poolData)
 	{
 
 	}
 
 	virtual bool IsValid(size_t index) const override
 	{
-		return (pool.*SlotArray)[index] && (pool.*PoolArray)[index] != nullptr;
+		return (Base::pool.*SlotArray)[index] && (Base::pool.*PoolArray)[index] != nullptr;
 	}
 
 protected:
 	virtual void Set(size_t index, ObjectType &object) override
 	{
-		CBasicPool::Set(index, object);
-		(pool.*SlotArray)[index] = static_cast<BOOL>(true);
+		Base::Set(index, object);
+		(Base::pool.*SlotArray)[index] = static_cast<BOOL>(true);
 	}
 };
 
 template <class PoolType, class ObjectType, size_t MaxSize, ObjectType *(PoolType::*PoolArray)[MaxSize], BOOL(PoolType::*SlotArray)[MaxSize], DWORD PoolType::*TopIndex, class ExtraData = std::tuple<size_t>>
 class CBoundedPool : public CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData>
 {
+	typedef CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData> Base;
 public:
-	CBoundedPool(PoolType& poolData) : CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData>(poolData)
+	CBoundedPool(PoolType& poolData) : Base(poolData)
 	{
 
 	}
 
 	virtual size_t Top() const override
 	{
-		return pool.*TopIndex;
+		return Base::pool.*TopIndex;
 	}
 
 protected:
@@ -153,7 +156,7 @@ protected:
 		CSlotPool::Set(index, object);
 		if (index > Top())
 		{
-			pool.*TopIndex = index;
+			Base::pool.*TopIndex = index;
 		}
 	}
 };
