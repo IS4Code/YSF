@@ -75,6 +75,10 @@ class CPlayerData
 {
 public:
 	CPlayerData(WORD playerid);
+	CPlayerData(size_t playerid) : CPlayerData(static_cast<WORD>(playerid))
+	{
+
+	}
 	~CPlayerData(void);
 
 	bool SetPlayerTeamForPlayer(WORD teamplayerid, int team);

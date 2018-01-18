@@ -168,6 +168,9 @@
     <ClCompile Include="src\logprintf_buf.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\CPool.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">
@@ -269,6 +272,9 @@
     </ClInclude>
     <ClInclude Include="src\logprintf_buf.h">
       <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CPool.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

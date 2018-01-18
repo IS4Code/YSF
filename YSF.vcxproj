@@ -150,6 +150,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClCompile Include="lib\subhook\subhook.c" />
     <ClCompile Include="src\CAddresses.cpp" />
     <ClCompile Include="src\amxfunctions.cpp" />
+    <ClCompile Include="src\CPool.cpp" />
     <ClCompile Include="src\logprintf_buf.cpp" />
     <ClCompile Include="src\CScriptParams.cpp" />
     <ClCompile Include="src\CCallbackManager.cpp" />
@@ -215,6 +216,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\CAddresses.h" />
     <ClInclude Include="src\amxfunctions.h" />
+    <ClInclude Include="src\CPool.h" />
     <ClInclude Include="src\logprintf_buf.h" />
     <ClInclude Include="src\CScriptParams.h" />
     <ClInclude Include="src\CCallbackManager.h" />
