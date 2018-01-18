@@ -3,6 +3,7 @@
 
 #include <tuple>
 #include <map>
+#include <exception>
 #include "includes/platform.h"
 
 template <class ObjectType, size_t MaxSize, class ExtraData = std::tuple<size_t>>
@@ -35,7 +36,10 @@ public:
 	virtual ObjectType &operator[](size_t index) = 0;
 	virtual ObjectType &Get(size_t index) = 0;
 	virtual bool IsValid(size_t index) const = 0;
-	virtual size_t Top() const = 0;
+	virtual size_t Top() const
+	{
+		return CPoolBase::Capacity - 1;
+	}
 
 protected:
 	virtual size_t EmptySlot() const
@@ -47,7 +51,7 @@ protected:
 				return i;
 			}
 		}
-		return InvalidIndex;
+		return CPoolBase::InvalidIndex;
 	}
 };
 
@@ -61,9 +65,6 @@ public:
 	{
 
 	}
-
-	CBasicPool(const CBasicPool&) = delete;
-	CBasicPool &operator=(const CBasicPool&) = delete;
 
 	virtual ObjectType &operator[](size_t index) override
 	{
@@ -81,11 +82,6 @@ public:
 		return (pool.*PoolArray)[index] != nullptr;
 	}
 
-	virtual size_t Top() const override
-	{
-		return Capacity - 1;
-	}
-
 protected:
 	virtual void Set(size_t index, ObjectType &object)
 	{
@@ -96,7 +92,7 @@ public:
 	size_t Add(ObjectType &object)
 	{
 		size_t i = EmptySlot();
-		if (i != InvalidIndex)
+		if (i != CBasicPool::InvalidIndex)
 		{
 			Set(i, object);
 		}
@@ -107,7 +103,7 @@ public:
 	size_t New(Args&&... args)
 	{
 		size_t i = EmptySlot();
-		if (i != InvalidIndex)
+		if (i != CBasicPool::InvalidIndex)
 		{
 			Set(i, new ObjectType(std::forward<Args>(args)...));
 		}
@@ -119,13 +115,10 @@ template <class PoolType, class ObjectType, size_t MaxSize, ObjectType *(PoolTyp
 class CSlotPool : public CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData>
 {
 public:
-	CSlotPool(PoolType& poolData) : CBasicPool(poolData)
+	CSlotPool(PoolType& poolData) : CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData>(poolData)
 	{
 
 	}
-
-	/*CSlotPool(const CSlotPool&) = delete;
-	CSlotPool &operator=(const CSlotPool&) = delete;*/
 
 	virtual bool IsValid(size_t index) const override
 	{
@@ -144,7 +137,7 @@ template <class PoolType, class ObjectType, size_t MaxSize, ObjectType *(PoolTyp
 class CBoundedPool : public CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData>
 {
 public:
-	CBoundedPool(PoolType& poolData) : CSlotPool(poolData)
+	CBoundedPool(PoolType& poolData) : CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData>(poolData)
 	{
 
 	}
