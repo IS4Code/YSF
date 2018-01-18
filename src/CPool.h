@@ -80,7 +80,7 @@ public:
 
 	virtual bool IsValid(size_t index) const override
 	{
-		return (pool.*PoolArray)[index] != nullptr;
+		return index >= 0 && index < MaxSize && (pool.*PoolArray)[index] != nullptr;
 	}
 
 protected:
@@ -124,7 +124,7 @@ public:
 
 	virtual bool IsValid(size_t index) const override
 	{
-		return (Base::pool.*SlotArray)[index] && (Base::pool.*PoolArray)[index] != nullptr;
+		return index >= 0 && index < MaxSize && (Base::pool.*SlotArray)[index] && (Base::pool.*PoolArray)[index] != nullptr;
 	}
 
 protected:

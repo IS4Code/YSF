@@ -39,7 +39,7 @@
 #include "Natives.h"
 #include "RPCs.h"
 
-CServer::CServer(SAMPVersion version)
+CServer::CServer(SAMPVersion version) : PlayerPool(*pNetGame->pPlayerPool)
 {
 	m_iTicks = 0;
 	m_iTickRate = 5;

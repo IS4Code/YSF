@@ -50,6 +50,8 @@ class CYSFPickupPool;
 #include "CSingleton.h"
 #include "CAddresses.h"
 #include "CGangZonePool.h"
+#include "CPool.h"
+#include "CPlayerData.h"
 #include "Structs.h"
 
 class CServer : public CSingleton<CServer>
@@ -106,6 +108,8 @@ public:
 
 	void inline SetAFKAccuracy(DWORD time_ms) { m_dwAFKAccuracy = time_ms; }
 	DWORD inline GetAFKAccuracy(void) { return m_dwAFKAccuracy; }
+
+	CBoundedPool<CPlayerPool, CPlayer, MAX_PLAYERS, &CPlayerPool::pPlayer, &CPlayerPool::bIsPlayerConnected, &CPlayerPool::dwPlayerPoolSize, CPlayerData> PlayerPool;
 
 	WORD GetMaxPlayers();
 	WORD GetPlayerCount();
