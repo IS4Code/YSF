@@ -78,9 +78,10 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		logprintf("Update to 0.3.7! http://sa-mp.com/download.php");
 	}
 
+	CScriptParams::Init();
 	if (version != SAMPVersion::VERSION_UNKNOWN)
 	{
-		CServer::Get()->Initialize(version);
+		CServer::Init(version);
 		
 		logprintf("");
 		logprintf(" ===============================");
@@ -108,8 +109,8 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 {
 	UninstallHooks();
 
-	CServer::CSingleton::Destroy();
-	CScriptParams::CSingleton::Destroy();
+	CServer::Destroy();
+	CScriptParams::Destroy();
 
 	// Corrected apperance in log file
 	logprintf("");
@@ -128,7 +129,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 {
 	CCallbackManager::RegisterAMX(amx);
 
-	if(CServer::Get()->IsInitialized())
+	if(CServer::IsInitialized())
 	{
 		static bool bFirst = false;
 		if(!bFirst)
@@ -153,7 +154,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
-	if(CServer::Get()->IsInitialized())
+	if(CServer::IsInitialized())
 	{
 		CServer::Get()->Process();
 	}

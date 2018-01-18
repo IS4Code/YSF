@@ -74,7 +74,7 @@ public:
 
 	virtual ObjectType &Get(size_t index) override
 	{
-		if (!IsValid(index)) throw std::exception("Invalid index accessed.");
+		if (!IsValid(index)) throw std::invalid_argument("Invalid index accessed.");
 		return *(pool.*PoolArray)[index];
 	}
 
@@ -153,7 +153,7 @@ public:
 protected:
 	virtual void Set(size_t index, ObjectType &object)
 	{
-		CSlotPool::Set(index, object);
+		Base::Set(index, object);
 		if (index > Top())
 		{
 			Base::pool.*TopIndex = index;

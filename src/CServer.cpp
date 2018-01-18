@@ -39,9 +39,8 @@
 #include "Natives.h"
 #include "RPCs.h"
 
-void CServer::Initialize(SAMPVersion version)
+CServer::CServer(SAMPVersion version)
 {
-	m_bInitialized = true;
 	m_iTicks = 0;
 	m_iTickRate = 5;
 	m_bNightVisionFix = true;

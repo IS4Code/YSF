@@ -71,7 +71,7 @@ void CScriptParams::DetectError()
 {
 	if (m_flags & Flags::LOADED)
 	{
-		if (!CServer::Get()->IsInitialized())
+		if (!CServer::IsInitialized())
 			m_error = ISNT_LOADED;
 
 		//logprintf("first check: %d", m_error);

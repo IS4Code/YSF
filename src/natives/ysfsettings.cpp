@@ -19,7 +19,7 @@ namespace Natives
 	// native YSF_GetTickRate();
 	AMX_DECLARE_NATIVE(YSF_GetTickRate)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return static_cast<cell>(CServer::Get()->GetTickRate());
 	}
@@ -36,7 +36,7 @@ namespace Natives
 	// native YSF_IsNightVisionFixEnabled();
 	AMX_DECLARE_NATIVE(YSF_IsNightVisionFixEnabled)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return static_cast<cell>(CServer::Get()->IsNightVisionFixEnabled());
 	}
@@ -53,7 +53,7 @@ namespace Natives
 	// native YSF_IsOnServerMessageEnabled();
 	AMX_DECLARE_NATIVE(YSF_IsOnServerMessageEnabled)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return static_cast<cell>(CServer::Get()->IsOnServerMessageEnabled());
 	}
@@ -70,7 +70,7 @@ namespace Natives
 	// native YSF_IsExtendedNetStatsEnabled();
 	AMX_DECLARE_NATIVE(YSF_IsExtendedNetStatsEnabled)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return static_cast<cell>(CServer::Get()->IsExtendedNetStatsEnabled());
 	}
@@ -87,7 +87,7 @@ namespace Natives
 	// native YSF_GetAFKAccuracy();
 	AMX_DECLARE_NATIVE(YSF_GetAFKAccuracy)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return static_cast<cell>(CServer::Get()->GetAFKAccuracy());
 	}

@@ -56,11 +56,9 @@ class CServer : public CSingleton<CServer>
 {
 	friend class CSingleton<CServer>;
 public:
-	CServer() = default;
+	CServer(SAMPVersion version);
 	~CServer();
 
-	void Initialize(SAMPVersion version);
-	bool inline IsInitialized(void) { return m_bInitialized; }
 	void Process();
 
 	bool AddPlayer(int playerid);
@@ -155,7 +153,6 @@ private:
 	SAMPVersion m_Version;
 	int m_iTicks;
 	int m_iTickRate;
-	bool m_bInitialized = 0;
 	bool m_bNightVisionFix : 1;
 	bool m_bOnServerMessage : 1;
 	

@@ -124,7 +124,7 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 	// amx_Register hook for redirect natives
 	static bool bNativesHooked = false;
 
-	if (!bNativesHooked && CServer::Get()->IsInitialized())
+	if (!bNativesHooked && CServer::IsInitialized())
 	{
 		for(int i = 0; nativelist[i].name; i++)
 		{

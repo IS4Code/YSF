@@ -119,7 +119,7 @@ namespace Natives
 	// native GetVehicleModelsUsed();
 	AMX_DECLARE_NATIVE(GetVehicleModelsUsed)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		BYTE byteModelsUsed = 0;
 		for (BYTE i = 0; i != 212; ++i)
