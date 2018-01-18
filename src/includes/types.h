@@ -1,6 +1,8 @@
 #ifndef YSF_TYPES_H
 #define YSF_TYPES_H
 
+#include <stddef.h>
+
 #define MAX_PATH 260
 #define NULL 0
 typedef unsigned long DWORD;

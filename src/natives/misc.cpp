@@ -1,5 +1,6 @@
 #include <string>
 
+#include "../includes/platform.h"
 #include "../System.h"
 #include "../Natives.h"
 #include "../CPlugin.h"
