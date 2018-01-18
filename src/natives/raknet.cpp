@@ -1,5 +1,5 @@
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 #include "../Utils.h"
 
@@ -10,10 +10,10 @@ namespace Natives
 	// native ClearBanList();
 	AMX_DECLARE_NATIVE(ClearBanList)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		CSAMPFunctions::ClearBanList();
-		CServer::Get()->ClearBans();
+		CPlugin::Get()->ClearBans();
 		return 1;
 	}
 
@@ -24,7 +24,7 @@ namespace Natives
 
 		char *ip;
 		amx_StrParam(amx, params[1], ip);
-		return (ip) ? CServer::Get()->IsBanned(ip) : 0;
+		return (ip) ? CPlugin::Get()->IsBanned(ip) : 0;
 	}
 
 	// native SetTimeoutTime(playerid, time);
@@ -51,7 +51,7 @@ namespace Natives
 	// native SendRPC(playerid, RPC, {Float,_}:...)
 	AMX_DECLARE_NATIVE(SendRPC)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		const bool bBroadcast = static_cast<int>(params[1]) == -1;
 		BYTE rpcid = static_cast<BYTE>(params[2]);
@@ -128,7 +128,7 @@ namespace Natives
 	// native SendData(playerid, {Float,_}:...)
 	AMX_DECLARE_NATIVE(SendData)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		const bool bBroadcast = static_cast<int>(params[1]) == -1;
 		const PlayerID playerId = bBroadcast ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(static_cast<int>(params[1]));

@@ -35,7 +35,7 @@
 #include "includes/platform.h"
 
 #include "Hooks.h"
-#include "CServer.h"
+#include "CPlugin.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
 #include "Memory.h"
@@ -114,7 +114,7 @@ void CDECL HOOK_CNetGame__SetGravity(void *thisptr, float gravity)
 // Custom name check
 bool HOOK_ContainsInvalidChars(char * szString)
 {
-	return !CServer::Get()->IsValidNick(szString);
+	return !CPlugin::Get()->IsValidNick(szString);
 }
 
 //----------------------------------------------------
@@ -125,7 +125,7 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 	// amx_Register hook for redirect natives
 	static bool bNativesHooked = false;
 
-	if (!bNativesHooked && CServer::IsInitialized())
+	if (!bNativesHooked && CPlugin::IsInitialized())
 	{
 		for(int i = 0; nativelist[i].name; i++)
 		{
@@ -150,7 +150,7 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 
 	logprintf("id: %d - playerid: %d, sendto: %d", id, playerid, CSAMPFunctions::GetIndexFromPlayerID(playerId));
 */	
-	CServer::Get()->RebuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
+	CPlugin::Get()->RebuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
 	return CSAMPFunctions::Send(parameters, priority, reliability, orderingChannel, playerId, broadcast);
 }
 
@@ -158,9 +158,9 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
-	if (!CServer::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)))) return 1;
+	if (!CPlugin::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)))) return 1;
 	
-	if (CServer::Get()->GetExclusiveBroadcast())
+	if (CPlugin::Get()->GetExclusiveBroadcast())
 	{
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
 			if (IsPlayerConnected(i) && pPlayerData[i]->bBroadcastTo)
@@ -176,19 +176,19 @@ bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::B
 
 void THISCALL CHookRakServer::AddToBanList(void* ppRakServer, const char *IP, unsigned int milliseconds)
 {
-	CServer::Get()->BanIP(IP);
+	CPlugin::Get()->BanIP(IP);
 	return CSAMPFunctions::AddToBanList(IP, milliseconds);
 }
 
 void THISCALL CHookRakServer::RemoveFromBanList(void* ppRakServer, const char *IP)
 {
-	CServer::Get()->UnbanIP(IP);
+	CPlugin::Get()->UnbanIP(IP);
 	return CSAMPFunctions::RemoveFromBanList(IP);
 }
 
 void THISCALL CHookRakServer::ClearBanList(void* ppRakServer)
 {
-	CServer::Get()->ClearBans();
+	CPlugin::Get()->ClearBans();
 	return CSAMPFunctions::ClearBanList();
 }
 
@@ -219,7 +219,7 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 			{
 				CSyncData *pSyncData = reinterpret_cast<CSyncData*>(&p->data[1]);
 
-				if(CServer::Get()->IsNightVisionFixEnabled())
+				if(CPlugin::Get()->IsNightVisionFixEnabled())
 				{
 					// Fix nightvision and infrared sync
 					if (pSyncData->byteWeapon == WEAPON_NIGHTVISION || pSyncData->byteWeapon == WEAPON_INFRARED)
@@ -309,7 +309,7 @@ void HOOK_logprintf(const char *msg, ...)
 	va_end(arguments);
 
 	bool bAllow;
-	if (CServer::Get()->IsOnServerMessageEnabled())
+	if (CPlugin::Get()->IsOnServerMessageEnabled())
 		bAllow = CCallbackManager::OnServerMessage(buffer);
 	else
 		bAllow = true;
@@ -356,7 +356,7 @@ void HOOK_logprintf(const char *msg, ...)
 			RconSocketReply(buffer);
 		}
 
-		CServer::Get()->ProcessConsoleMessages(buffer);
+		CPlugin::Get()->ProcessConsoleMessages(buffer);
 	}
 }
 
@@ -487,8 +487,8 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						dwMapNameLen = strlen(szMapName);
 					}
 					*/
-					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
-					WORD wMaxPlayers = CServer::Get()->GetMaxPlayers();
+					WORD wPlayerCount = CPlugin::Get()->GetPlayerCount();
+					WORD wMaxPlayers = CPlugin::Get()->GetMaxPlayers();
 					BYTE byteIsPassworded = CSAMPFunctions::GetStringVariable("password")[0] != 0;
 
 					size_t datalen = 28;	// Previous data = 11b
@@ -547,7 +547,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
-					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
+					WORD wPlayerCount = CPlugin::Get()->GetPlayerCount();
 					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 					char* newdata = (char*)malloc(13 + (wPlayerCount * (MAX_PLAYER_NAME + 5))); // 5 = 1b String len, and 4b Score
 					char* keep_ptr = newdata;
@@ -593,7 +593,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
-					WORD wPlayerCount = CServer::Get()->GetPlayerCount();
+					WORD wPlayerCount = CPlugin::Get()->GetPlayerCount();
 					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 					char* newdata = (char*)malloc(13 + (wPlayerCount * (MAX_PLAYER_NAME + 10))); // 9 = 1b String len, 4b Score, 4b Ping, 1b Playerid
 					char* keep_ptr = newdata;
@@ -648,7 +648,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				}
 				case 'x':	// rcon
 				{
-					if (CServer::Get()->IsBanned(inet_ntoa(in)) && !CServer::Get()->m_bAllowRemoteRCONWithBannedIPs) return 1;
+					if (CPlugin::Get()->IsBanned(inet_ntoa(in)) && !CPlugin::Get()->m_bAllowRemoteRCONWithBannedIPs) return 1;
 					
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query") || !CSAMPFunctions::GetBoolVariable("rcon")) return 1;
@@ -768,11 +768,11 @@ int CDECL HOOK_CGameMode__OnPlayerConnect(CGameMode *thisptr, cell playerid)
 	subhook_remove(CGameMode__OnPlayerConnect_hook);
 
 #ifndef NEW_PICKUP_SYSTEM
-	CServer::Get()->AddPlayer(playerid);
+	CPlugin::Get()->AddPlayer(playerid);
 #else
 	// Initialize pickups
-	if (CServer::Get()->AddPlayer(playerid))
-		CServer::Get()->pPickupPool->InitializeForPlayer(playerid);
+	if (CPlugin::Get()->AddPlayer(playerid))
+		CPlugin::Get()->pPickupPool->InitializeForPlayer(playerid);
 #endif
 
 	int ret = ((FUNC_CGameMode__OnPlayerConnect)CAddress::FUNC_CGameMode__OnPlayerConnect)(thisptr, playerid);
@@ -791,7 +791,7 @@ int CDECL HOOK_CGameMode__OnPlayerDisconnect(CGameMode *thisptr, cell playerid, 
 {
 	subhook_remove(CGameMode__OnPlayerDisconnect_hook);
 
-	CServer::Get()->RemovePlayer(playerid);
+	CPlugin::Get()->RemovePlayer(playerid);
 	
 	int ret = ((FUNC_CGameMode__OnPlayerDisconnect)CAddress::FUNC_CGameMode__OnPlayerDisconnect)(thisptr, playerid, reason);
 	subhook_install(CGameMode__OnPlayerDisconnect_hook);
@@ -828,7 +828,7 @@ int CDECL HOOK_CGameMode__OnPlayerStreamIn(CGameMode *thisptr, cell playerid, ce
 {
 	subhook_remove(CGameMode__OnPlayerStreamIn_hook);
 
-	CServer::Get()->OnPlayerStreamIn(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
+	CPlugin::Get()->OnPlayerStreamIn(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
 
 	int ret = ((FUNC_CGameMode__OnPlayerStreamIn)CAddress::FUNC_CGameMode__OnPlayerStreamIn)(thisptr, playerid, forplayerid);
 	subhook_install(CGameMode__OnPlayerStreamIn_hook);
@@ -846,7 +846,7 @@ int CDECL HOOK_CGameMode__OnPlayerStreamOut(CGameMode *thisptr, cell playerid, c
 {
 	subhook_remove(CGameMode__OnPlayerStreamOut_hook);
 
-	CServer::Get()->OnPlayerStreamOut(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
+	CPlugin::Get()->OnPlayerStreamOut(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
 	
 	int ret = ((FUNC_CGameMode__OnPlayerStreamOut)CAddress::FUNC_CGameMode__OnPlayerStreamOut)(thisptr, playerid, forplayerid);
 	subhook_install(CGameMode__OnPlayerStreamOut_hook);
@@ -867,7 +867,7 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 	int ret = -1;
 	if (IsPlayerConnected(playerid))
 	{
-		if (CServer::Get()->m_bDialogProtection && pPlayerData[playerid]->wDialogID != dialogid)
+		if (CPlugin::Get()->m_bDialogProtection && pPlayerData[playerid]->wDialogID != dialogid)
 		{
 			logprintf("YSF: Might dialog hack has been detected for player %s(%d) - which should be: %d, dialogid: %d", GetPlayerName(playerid), playerid, pPlayerData[playerid]->wDialogID, dialogid);
 			ret = 1;
@@ -937,19 +937,19 @@ void InstallPostHooks()
 {
 	CSAMPFunctions::PostInitialize();
 
-	if (CServer::Get()->m_bIncreaseRakNetInternalPlayers)
-		CSAMPFunctions::Start(MAX_PLAYERS, 0, CServer::Get()->m_iRakNetInternalSleepTime, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
+	if (CPlugin::Get()->m_bIncreaseRakNetInternalPlayers)
+		CSAMPFunctions::Start(MAX_PLAYERS, 0, CPlugin::Get()->m_iRakNetInternalSleepTime, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
 
 	// Recreate pools
 
-	if (CServer::Get()->m_bUsePerPlayerGangZones)
+	if (CPlugin::Get()->m_bUsePerPlayerGangZones)
 	{
-		CServer::Get()->pGangZonePool = new CGangZonePool();
+		CPlugin::Get()->pGangZonePool = new CGangZonePool();
 	}
 
 #ifdef NEW_PICKUP_SYSTEM
 	// Recreate Pickup pool
-	CServer::Get()->pPickupPool = new CYSFPickupPool();
+	CPlugin::Get()->pPickupPool = new CYSFPickupPool();
 #endif
 	// Re-init a few RPCs
 	InitRPCs();

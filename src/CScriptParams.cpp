@@ -31,7 +31,7 @@
 */
 
 #include "CScriptParams.h"
-#include "CServer.h"
+#include "CPlugin.h"
 #include "Globals.h"
 
 CScriptParams::CScriptParams()
@@ -71,7 +71,7 @@ void CScriptParams::DetectError()
 {
 	if (m_flags & Flags::LOADED)
 	{
-		if (!CServer::IsInitialized())
+		if (!CPlugin::IsInitialized())
 			m_error = ISNT_LOADED;
 
 		//logprintf("first check: %d", m_error);

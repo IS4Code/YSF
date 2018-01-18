@@ -1,5 +1,5 @@
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 #include "../CFunctions.h"
 #include "../Globals.h"
@@ -71,7 +71,7 @@ namespace Natives
 		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-		CScriptParams::Get()->Add(pObject->wAttachedVehicleID, pObject->wAttachedObjectID, CServer::Get()->COBJECT_AttachedObjectPlayer[objectid]);
+		CScriptParams::Get()->Add(pObject->wAttachedVehicleID, pObject->wAttachedObjectID, CPlugin::Get()->COBJECT_AttachedObjectPlayer[objectid]);
 		return 1;
 	}
 
@@ -627,7 +627,7 @@ namespace Hooks
 
 		if (Original::DestroyObject(amx, params))
 		{
-			CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
+			CPlugin::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
 
 			for (int i = 0; i < MAX_PLAYERS; i++)
 			{
@@ -691,7 +691,7 @@ namespace Hooks
 		Original::AttachObjectToPlayer(amx, params);
 
 		// Store values which should be server purpose not mine
-		CServer::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
+		CPlugin::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
 		CScriptParams::Get()->Read(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
 		return 1;
 	}
@@ -816,7 +816,7 @@ namespace Hooks
 
 			CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 			int index = pObject->dwMaterialCount;
-			if (index < MAX_OBJECT_MATERIAL && CServer::Get()->m_bStorePlayerObjectsMaterial)
+			if (index < MAX_OBJECT_MATERIAL && CPlugin::Get()->m_bStorePlayerObjectsMaterial)
 			{
 				std::string szText, szFontFace;
 				BYTE slot, materialsize, fontsize, bold, textalignment;

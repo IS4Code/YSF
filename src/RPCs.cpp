@@ -31,7 +31,7 @@
 */
 
 #include "RPCs.h"
-#include "CServer.h"
+#include "CPlugin.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
 #include "Utils.h"
@@ -86,7 +86,7 @@ void InitRPCs()
 
 	//----------------------------------------------------
 	// Spawning
-	if (CServer::Get()->m_bUseCustomSpawn)
+	if (CPlugin::Get()->m_bUseCustomSpawn)
 	{
 		RedirectRPC(RPC_Spawn, [](RPCParameters* rpcParams)
 		{
@@ -119,7 +119,7 @@ void InitRPCs()
 	
 	//----------------------------------------------------
 	// Protection against fakekill
-	if (CServer::Get()->m_bDeathProtection)
+	if (CPlugin::Get()->m_bDeathProtection)
 	{
 		RedirectRPC(RPC_Death, [](RPCParameters* rpcParams)
 		{
@@ -176,7 +176,7 @@ void InitRPCs()
 
 	//----------------------------------------------------
 	// Add distance protection to OnPlayerPickupPickup against fake pickup ids
-	if (CServer::Get()->m_bPickupProtection)
+	if (CPlugin::Get()->m_bPickupProtection)
 	{
 		RedirectRPC(RPC_PickedUpPickup, [](RPCParameters* rpcParams)
 		{
@@ -209,7 +209,7 @@ void InitRPCs()
 				if (p->second->type == GLOBAL)
 				{
 					// Find global pickup ID by player pickup pointer
-					WORD pickupid = CServer::Get()->pPickupPool->FindPickup(p->second);
+					WORD pickupid = CPlugin::Get()->pPickupPool->FindPickup(p->second);
 					if (pickupid != 0xFFFF)
 					{
 						CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);

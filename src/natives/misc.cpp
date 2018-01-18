@@ -2,7 +2,7 @@
 
 #include "../System.h"
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 
 namespace Natives

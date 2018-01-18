@@ -34,7 +34,7 @@
 #include "sdk/plugincommon.h"
 #include "includes/platform.h"
 
-#include "CServer.h"
+#include "CPlugin.h"
 #include "CFunctions.h"
 #include "CAddresses.h"
 #include "CCallbackManager.h"
@@ -344,8 +344,8 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	// logprintf("respawned vehicle: %d", pVehicle->wVehicleID);
 
 	// Check if vehicle has custom spawn
-	auto v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
-	if(v == CServer::Get()->vehicleSpawnData.end())
+	auto v = CPlugin::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
+	if(v == CPlugin::Get()->vehicleSpawnData.end())
 	{
 
 	}
@@ -361,7 +361,7 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 		pVehicle->customSpawn.iInterior = v->second.iInterior;
 
 		// logprintf("custom vehicle spawn respawned %d", pVehicle->wVehicleID);
-		CServer::Get()->vehicleSpawnData.erase(v);
+		CPlugin::Get()->vehicleSpawnData.erase(v);
 	}
 
 	pVehicle->vehModInfo.iColor1 = pVehicle->customSpawn.iColor1;

@@ -32,7 +32,7 @@
 
 #include "main.h"
 #include "includes/platform.h"
-#include "CServer.h"
+#include "CPlugin.h"
 #include "CScriptParams.h"
 #include "CCallbackManager.h"
 #include "CAddresses.h"
@@ -82,7 +82,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	CScriptParams::Init();
 	if (version != SAMPVersion::VERSION_UNKNOWN)
 	{
-		CServer::Init(version);
+		CPlugin::Init(version);
 		
 		logprintf("");
 		logprintf(" ===============================");
@@ -110,7 +110,7 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 {
 	UninstallHooks();
 
-	CServer::Destroy();
+	CPlugin::Destroy();
 	CScriptParams::Destroy();
 
 	// Corrected apperance in log file
@@ -130,7 +130,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 {
 	CCallbackManager::RegisterAMX(amx);
 
-	if(CServer::IsInitialized())
+	if(CPlugin::IsInitialized())
 	{
 		static bool bFirst = false;
 		if(!bFirst)
@@ -155,8 +155,8 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
-	if(CServer::IsInitialized())
+	if(CPlugin::IsInitialized())
 	{
-		CServer::Get()->Process();
+		CPlugin::Get()->Process();
 	}
 }

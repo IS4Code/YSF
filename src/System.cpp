@@ -2,7 +2,7 @@
 #include <sstream>
 
 #ifdef _WIN32
-#include "CServer.h"
+#include "CPlugin.h"
 
 #define WINDOWS_LEAN_AND_MEAN
 #define NOMINMAX
@@ -184,7 +184,7 @@ void ExecuteCommand(const std::string &cmd, bool saveOutput, int index)
 		FILE *pPipe;
 		char szBuffer[512];
 
-		CServer::SysExec_t exec;
+		CPlugin::SysExec_t exec;
 		exec.index = index;
 		exec.output = "";
 		exec.success = false;
@@ -198,8 +198,8 @@ void ExecuteCommand(const std::string &cmd, bool saveOutput, int index)
 			exec.success = true;
 		}
 
-		std::lock_guard<std::mutex> lock(CServer::Get()->m_SysExecMutex);
-		CServer::Get()->m_SysExecQueue.push(exec);
+		std::lock_guard<std::mutex> lock(CPlugin::Get()->m_SysExecMutex);
+		CPlugin::Get()->m_SysExecQueue.push(exec);
 	};
 
 	std::thread(thFunc, cmd, static_cast<int>(saveOutput), index).detach();

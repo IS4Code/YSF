@@ -1,5 +1,5 @@
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 
 namespace Natives
@@ -12,16 +12,16 @@ namespace Natives
 		int rate = CScriptParams::Get()->ReadInt();
 		if (rate < -1 || rate == 0) return 0; // -1 = no update
 
-		CServer::Get()->SetTickRate(rate);
+		CPlugin::Get()->SetTickRate(rate);
 		return 1;
 	}
 
 	// native YSF_GetTickRate();
 	AMX_DECLARE_NATIVE(YSF_GetTickRate)
 	{
-		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-		return static_cast<cell>(CServer::Get()->GetTickRate());
+		return static_cast<cell>(CPlugin::Get()->GetTickRate());
 	}
 
 	// native YSF_EnableNightVisionFix(enable);
@@ -29,16 +29,16 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		CServer::Get()->EnableNightVisionFix(CScriptParams::Get()->ReadBool());
+		CPlugin::Get()->EnableNightVisionFix(CScriptParams::Get()->ReadBool());
 		return 1;
 	}
 
 	// native YSF_IsNightVisionFixEnabled();
 	AMX_DECLARE_NATIVE(YSF_IsNightVisionFixEnabled)
 	{
-		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-		return static_cast<cell>(CServer::Get()->IsNightVisionFixEnabled());
+		return static_cast<cell>(CPlugin::Get()->IsNightVisionFixEnabled());
 	}
 
 	// native YSF_ToggleOnServerMessage(toggle);
@@ -46,16 +46,16 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		CServer::Get()->ToggleOnServerMessage(CScriptParams::Get()->ReadBool());
+		CPlugin::Get()->ToggleOnServerMessage(CScriptParams::Get()->ReadBool());
 		return 1;
 	}
 
 	// native YSF_IsOnServerMessageEnabled();
 	AMX_DECLARE_NATIVE(YSF_IsOnServerMessageEnabled)
 	{
-		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-		return static_cast<cell>(CServer::Get()->IsOnServerMessageEnabled());
+		return static_cast<cell>(CPlugin::Get()->IsOnServerMessageEnabled());
 	}
 
 	// native YSF_SetExtendedNetStatsEnabled(enable);
@@ -63,16 +63,16 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		CServer::Get()->SetExtendedNetStatsEnabled(CScriptParams::Get()->ReadBool());
+		CPlugin::Get()->SetExtendedNetStatsEnabled(CScriptParams::Get()->ReadBool());
 		return 1;
 	}
 
 	// native YSF_IsExtendedNetStatsEnabled();
 	AMX_DECLARE_NATIVE(YSF_IsExtendedNetStatsEnabled)
 	{
-		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-		return static_cast<cell>(CServer::Get()->IsExtendedNetStatsEnabled());
+		return static_cast<cell>(CPlugin::Get()->IsExtendedNetStatsEnabled());
 	}
 
 	// native YSF_SetAFKAccuracy(time_ms);
@@ -80,16 +80,16 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		CServer::Get()->SetAFKAccuracy(static_cast<DWORD>(CScriptParams::Get()->ReadInt()));
+		CPlugin::Get()->SetAFKAccuracy(static_cast<DWORD>(CScriptParams::Get()->ReadInt()));
 		return 1;
 	}
 
 	// native YSF_GetAFKAccuracy();
 	AMX_DECLARE_NATIVE(YSF_GetAFKAccuracy)
 	{
-		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-		return static_cast<cell>(CServer::Get()->GetAFKAccuracy());
+		return static_cast<cell>(CPlugin::Get()->GetAFKAccuracy());
 	}
 }
 

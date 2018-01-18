@@ -1,5 +1,5 @@
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 #include "../Hooks.h"
 #include "../Globals.h"
@@ -21,7 +21,7 @@ namespace Natives
 	// native Float:GetModeRestartTime();
 	AMX_DECLARE_NATIVE(GetModeRestartTime)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 		if (!CAddress::VAR_pRestartWaitTime) return 0;
 
 		float fRestartTime = *(float*)CAddress::VAR_pRestartWaitTime;
@@ -106,7 +106,7 @@ namespace Natives
 	// native GetFilterScriptCount();
 	AMX_DECLARE_NATIVE(GetFilterScriptCount)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return pNetGame->pFilterScriptPool->iFilterScriptCount;
 	}
@@ -276,7 +276,7 @@ namespace Natives
 		const int npcid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(npcid)) return 0;
 
-		char *szCommandLine = CServer::Get()->GetNPCCommandLine(static_cast<WORD>(npcid));
+		char *szCommandLine = CPlugin::Get()->GetNPCCommandLine(static_cast<WORD>(npcid));
 		if (szCommandLine == NULL) return 0;
 
 		CScriptParams::Get()->Add(szCommandLine);
@@ -291,7 +291,7 @@ namespace Natives
 		std::string name, newname;
 		CScriptParams::Get()->Read(name, newname);
 
-		return CServer::Get()->ChangeRCONCommandName(name, newname);
+		return CPlugin::Get()->ChangeRCONCommandName(name, newname);
 	}
 
 	// native GetRCONCommandName(const cmdname[], changedname[], len = sizeof(changedname));
@@ -303,7 +303,7 @@ namespace Natives
 		CScriptParams::Get()->Read(name);
 
 		std::string changedname;
-		bool ret = CServer::Get()->GetRCONCommandName(name, changedname);
+		bool ret = CPlugin::Get()->GetRCONCommandName(name, changedname);
 		CScriptParams::Get()->Add(changedname);
 		return ret;
 	}
@@ -458,7 +458,7 @@ namespace Natives
 
 		std::string name;
 		CScriptParams::Get()->Read(name);
-		return CServer::Get()->IsValidNick(const_cast<char*>(name.c_str()));
+		return CPlugin::Get()->IsValidNick(const_cast<char*>(name.c_str()));
 	}
 
 	// native AllowNickNameCharacter(character, bool:allow);
@@ -471,7 +471,7 @@ namespace Natives
 		// Enable %s is disallowed
 		if (character == '%') return 0;
 
-		CServer::Get()->AllowNickNameCharacter(character, static_cast<int>(params[2]) != 0);
+		CPlugin::Get()->AllowNickNameCharacter(character, static_cast<int>(params[2]) != 0);
 		return 1;
 	}
 
@@ -480,13 +480,13 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		return CServer::Get()->IsNickNameCharacterAllowed(static_cast<char>(params[1]));
+		return CPlugin::Get()->IsNickNameCharacterAllowed(static_cast<char>(params[1]));
 	}
 
 	// native GetAvailableClasses();
 	AMX_DECLARE_NATIVE(GetAvailableClasses)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return pNetGame->iSpawnsAvailable;
 	}
@@ -494,7 +494,7 @@ namespace Natives
 	// native RemoveLastClass();
 	AMX_DECLARE_NATIVE(RemoveLastClass)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		if (pNetGame->iSpawnsAvailable <= 0)
 			return 0;
@@ -540,7 +540,7 @@ namespace Natives
 	// native GetActiveTimers();
 	AMX_DECLARE_NATIVE(GetRunningTimers)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return pNetGame->pScriptTimers->dwTimerCount;
 	}
@@ -578,7 +578,7 @@ namespace Natives
 	// native SendClientMessagef(playerid, color, const message[], {Float,_}:...);
 	AMX_DECLARE_NATIVE(SendClientMessagef)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		const int playerid = static_cast<int>(params[1]);
 		if (!IsPlayerConnected(playerid)) return 0;
@@ -598,7 +598,7 @@ namespace Natives
 	// native SendClientMessageToAllf(color, const message[], {Float,_}:...);
 	AMX_DECLARE_NATIVE(SendClientMessageToAllf)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		int len;
 		char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 2, len);
@@ -615,7 +615,7 @@ namespace Natives
 	// native GameTextForPlayerf(playerid, displaytime, style, const message[], {Float,_}:...);
 	AMX_DECLARE_NATIVE(GameTextForPlayerf)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		const int playerid = static_cast<int>(params[1]);
 		if (!IsPlayerConnected(playerid)) return 0;
@@ -636,7 +636,7 @@ namespace Natives
 	// native GameTextForAllf(displaytime, style, const message[], {Float,_}:...);
 	AMX_DECLARE_NATIVE(GameTextForAllf)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		int len;
 		char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 3, len);
@@ -654,7 +654,7 @@ namespace Natives
 	// native SendPlayerMessageToPlayerf(playerid, senderid, const message[], {Float,_}:...);
 	AMX_DECLARE_NATIVE(SendPlayerMessageToPlayerf)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		const int playerid = static_cast<int>(params[1]);
 		if (!IsPlayerConnected(playerid)) return 0;
@@ -677,7 +677,7 @@ namespace Natives
 	// native SendPlayerMessageToAllf(senderid, const message[], {Float,_}:...);
 	AMX_DECLARE_NATIVE(SendPlayerMessageToAllf)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		int senderid = static_cast<int>(params[1]);
 		if (!IsPlayerConnected(senderid)) return 0;
@@ -697,7 +697,7 @@ namespace Natives
 	// native SendRconCommandf(command[], {Float,_}:...);
 	AMX_DECLARE_NATIVE(SendRconCommandf)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		int len;
 		char* szMessage = CSAMPFunctions::format_amxstring(amx, params, 1, len);
@@ -718,7 +718,7 @@ namespace Hooks
 	// native Float:GetGravity();
 	AMX_DECLARE_NATIVE(GetGravity)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		float fGravity = pNetGame->fGravity;
 		return amx_ftoc(fGravity);

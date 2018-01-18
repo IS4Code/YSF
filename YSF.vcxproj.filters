@@ -60,9 +60,6 @@
     <ClCompile Include="src\CPlayerData.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\CServer.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -171,6 +168,9 @@
     <ClCompile Include="src\CPool.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\CPlugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">
@@ -180,9 +180,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\CPlayerData.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CServer.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\main.h">
@@ -278,6 +275,12 @@
     </ClInclude>
     <ClInclude Include="src\includes\types.h">
       <Filter>src\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\linux_fix.h">
+      <Filter>src\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CPlugin.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
@@ -15,7 +15,7 @@ namespace Natives
 		const int id = CScriptParams::Get()->ReadInt();
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		return CServer::Get()->pPickupPool->FindPickup(id) != 0;
+		return CPlugin::Get()->pPickupPool->FindPickup(id) != 0;
 	}
 
 	// native IsPickupStreamedIn(playerid, pickupid);
@@ -28,10 +28,10 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
 		if (!pPickup) return 0;
 
-		return CServer::Get()->pPickupPool->IsStreamed(playerid, pPickup);
+		return CPlugin::Get()->pPickupPool->IsStreamed(playerid, pPickup);
 	}
 
 	// native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
@@ -42,7 +42,7 @@ namespace Natives
 		const int id = CScriptParams::Get()->ReadInt();
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
 		if (!pPickup) return 0;
 
 		CScriptParams::Get()->Add(pPickup->vecPos);
@@ -57,7 +57,7 @@ namespace Natives
 		const int id = CScriptParams::Get()->ReadInt();
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
 		if (!pPickup) return 0;
 
 		return pPickup->iModel;
@@ -71,7 +71,7 @@ namespace Natives
 		const int id = CScriptParams::Get()->ReadInt();
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
 		if (!pPickup) return 0;
 
 		return pPickup->iType;
@@ -85,7 +85,7 @@ namespace Natives
 		const int id = CScriptParams::Get()->ReadInt();
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
 		if (!pPickup) return 0;
 
 		return pPickup->iWorld;
@@ -99,7 +99,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		return CServer::Get()->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])), (int)params[7]);
+		return CPlugin::Get()->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])), (int)params[7]);
 	}
 
 	// native DestroyPlayerPickup(playerid, pickupid);
@@ -112,10 +112,10 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
 		if (!pPickup) return 0;
 
-		CServer::Get()->pPickupPool->Destroy((WORD)playerid, id);
+		CPlugin::Get()->pPickupPool->Destroy((WORD)playerid, id);
 		return 1;
 	}
 
@@ -129,7 +129,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		return CServer::Get()->pPickupPool->FindPickup(playerid, id) != 0;
+		return CPlugin::Get()->pPickupPool->FindPickup(playerid, id) != 0;
 	}
 
 	// native IsPlayerPickupStreamedIn(playerid, pickupid);
@@ -142,10 +142,10 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
 		if (!pPickup) return 0;
 
-		return CServer::Get()->pPickupPool->IsStreamed(playerid, pPickup);
+		return CPlugin::Get()->pPickupPool->IsStreamed(playerid, pPickup);
 	}
 
 	// native GetPlayerPickupPos(playerid, pickupid, &Float:fX, &Float:fY, &Float:fZ);
@@ -158,7 +158,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
 		if (!pPickup) return 0;
 
 		CScriptParams::Get()->Add(pPickup->vecPos);
@@ -168,7 +168,7 @@ namespace Natives
 	// native GetPlayerPickupModel(playerid, pickupid);
 	AMX_DECLARE_NATIVE(GetPlayerPickupModel)
 	{
-		if (!CServer::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 		CHECK_PARAMS(2, LOADED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
@@ -176,7 +176,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
 		if (!pPickup) return 0;
 
 		return pPickup->iModel;
@@ -192,7 +192,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
 		if (!pPickup) return 0;
 
 		return pPickup->iType;
@@ -208,7 +208,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (id < 0 || id >= MAX_PICKUPS) return 0;
 
-		CPickup *pPickup = CServer::Get()->pPickupPool->FindPickup(playerid, id);
+		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
 		if (!pPickup) return 0;
 
 		return pPickup->iWorld;
@@ -219,7 +219,7 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		CServer::Get()->pPickupPool->SetStreamingEnabled(!!params[1]);
+		CPlugin::Get()->pPickupPool->SetStreamingEnabled(!!params[1]);
 		return 1;
 	}
 #else
@@ -322,7 +322,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(6, LOADED);
 
-		return CServer::Get()->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
+		return CPlugin::Get()->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
 	}
 
 	constexpr AMX_NATIVE AddStaticPickup = CreatePickup;
@@ -332,7 +332,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		CServer::Get()->pPickupPool->Destroy((int)params[1]);
+		CPlugin::Get()->pPickupPool->Destroy((int)params[1]);
 		return 1;
 	}
 #endif

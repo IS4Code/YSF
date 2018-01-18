@@ -32,7 +32,7 @@
 
 #include "CPlayerData.h"
 #include "includes/platform.h"
-#include "CServer.h"
+#include "CPlugin.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
 #include "Globals.h"
@@ -113,13 +113,13 @@ CPlayerData::CPlayerData( WORD playerid )
 	if (pNetGame->pPlayerPool->bIsNPC[playerid])
 	{
 		if (CSAMPFunctions::GetPlayerIDFromIndex(playerid).binaryAddress == 0x0100007F)
-			iNPCProcessID = CServer::Get()->FindNPCProcessID(playerid);
+			iNPCProcessID = CPlugin::Get()->FindNPCProcessID(playerid);
 	}
 }
 
 CPlayerData::~CPlayerData( void )
 {
-	CServer::Get()->RemoveConsolePlayer(wPlayerID);
+	CPlugin::Get()->RemoveConsolePlayer(wPlayerID);
 
 	for (WORD i = 0; i != MAX_OBJECTS; ++i)
 	{
@@ -337,14 +337,14 @@ void CPlayerData::Process(void)
 	if (bEverUpdated && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_NONE && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_WASTED)
 	{
 		default_clock::duration passed_time = default_clock::now() - LastUpdateTick;
-		if(bAFKState == false && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->GetAFKAccuracy())
+		if(bAFKState == false && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CPlugin::Get()->GetAFKAccuracy())
 		{
 			bAFKState = true;
 
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 
-		else if(bAFKState == true && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() < CServer::Get()->GetAFKAccuracy())
+		else if(bAFKState == true && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() < CPlugin::Get()->GetAFKAccuracy())
 		{
 			bAFKState = false;
 
@@ -364,7 +364,7 @@ void CPlayerData::Process(void)
 				{
 					default_clock::duration passed_time = default_clock::now() - it->second->creation_timepoint;
 					//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
-					if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
+					if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CPlugin::Get()->m_iAttachObjectDelay)
 					{
 						RakNet::BitStream bs;
 						bs.Write((WORD)it->first); // wObjectID
@@ -391,7 +391,7 @@ void CPlayerData::Process(void)
 		}
 	}
 	
-	if (CServer::Get()->m_bUsePerPlayerGangZones)
+	if (CPlugin::Get()->m_bUsePerPlayerGangZones)
 	{
 		// Processing gangzones
 		for (WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
@@ -408,7 +408,7 @@ void CPlayerData::Process(void)
 					return;
 				}
 
-				pGangZone = CServer::Get()->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
+				pGangZone = CPlugin::Get()->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
 			}
 			else
 			{

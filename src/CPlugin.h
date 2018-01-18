@@ -30,8 +30,8 @@
 *
 */
 
-#ifndef YSF_CSERVER_H
-#define YSF_CSERVER_H
+#ifndef YSF_CPlugin_H
+#define YSF_CPlugin_H
 
 struct CNetGame;
 struct Packet;
@@ -54,12 +54,12 @@ class CYSFPickupPool;
 #include "CPlayerData.h"
 #include "Structs.h"
 
-class CServer : public CSingleton<CServer>
+class CPlugin : public CSingleton<CPlugin>
 {
-	friend class CSingleton<CServer>;
+	friend class CSingleton<CPlugin>;
 public:
-	CServer(SAMPVersion version);
-	~CServer();
+	CPlugin(SAMPVersion version);
+	~CPlugin();
 
 	void Process();
 

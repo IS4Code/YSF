@@ -1,11 +1,11 @@
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
 
 #define CHECK_PER_PLAYER_ZONES_STATE() \
-	if (!CServer::Get()->m_bUsePerPlayerGangZones) \
+	if (!CPlugin::Get()->m_bUsePerPlayerGangZones) \
 	{ \
 		logprintf("YSF: Per player gangzones are disabled, you aren't allowed to use \"%s\" function!", __FUNCTION__); \
 		return 0; \
@@ -21,7 +21,7 @@ namespace Natives
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		cell ret = CServer::Get()->m_bUsePerPlayerGangZones ? CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)) : pNetGame->pGangZonePool->bSlotState[static_cast<WORD>(zoneid)] != 0;
+		cell ret = CPlugin::Get()->m_bUsePerPlayerGangZones ? CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)) : pNetGame->pGangZonePool->bSlotState[static_cast<WORD>(zoneid)] != 0;
 		return ret;
 	}
 
@@ -36,7 +36,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 		return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid)) != 0xFF);
 	}
@@ -52,7 +52,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 		if (id != 0xFFFF)
@@ -73,7 +73,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 		if (id != 0xFFFF)
@@ -94,7 +94,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 		if (id != 0xFFFF)
@@ -115,7 +115,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
+		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
 		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 		if (id != 0xFFFF)
@@ -134,9 +134,9 @@ namespace Natives
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!CServer::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
+		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
 
-		CGangZone *pGangZone = CServer::Get()->pGangZonePool->pGangZone[zoneid];
+		CGangZone *pGangZone = CPlugin::Get()->pGangZonePool->pGangZone[zoneid];
 		CScriptParams::Get()->Add(pGangZone->fGangZone[0], pGangZone->fGangZone[1], pGangZone->fGangZone[2], pGangZone->fGangZone[3]);
 		return 1;
 	}
@@ -162,7 +162,7 @@ namespace Natives
 			return -1;
 		}
 
-		WORD ret = CServer::Get()->pGangZonePool->New(static_cast<WORD>(playerid), fMinX, fMinY, fMaxX, fMaxY);
+		WORD ret = CPlugin::Get()->pGangZonePool->New(static_cast<WORD>(playerid), fMinX, fMinY, fMaxX, fMaxY);
 		if (ret == 0xFFFF) return -1;
 
 		return ret;
@@ -183,7 +183,7 @@ namespace Natives
 
 		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-		CServer::Get()->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color), true);
+		CPlugin::Get()->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color), true);
 		return 1;
 	}
 
@@ -201,7 +201,7 @@ namespace Natives
 
 		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-		CServer::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+		CPlugin::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 		return 1;
 	}
 
@@ -219,7 +219,7 @@ namespace Natives
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-		CServer::Get()->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color), true);
+		CPlugin::Get()->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color), true);
 		return 1;
 	}
 
@@ -237,7 +237,7 @@ namespace Natives
 
 		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
 
-		CServer::Get()->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+		CPlugin::Get()->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 		return 1;
 	}
 
@@ -252,7 +252,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CServer::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+		CPlugin::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 		return 1;
 	}
 
@@ -427,7 +427,7 @@ namespace Hooks
 			return -1;
 		}
 
-		WORD ret = CServer::Get()->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
+		WORD ret = CPlugin::Get()->pGangZonePool->New(fMinX, fMinY, fMaxX, fMaxY);
 
 		return (ret == 0xFFFF) ? -1 : ret;
 	}
@@ -437,7 +437,7 @@ namespace Hooks
 		CHECK_PARAMS(1, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
 
-		CGangZonePool *pGangZonePool = CServer::Get()->pGangZonePool;
+		CGangZonePool *pGangZonePool = CPlugin::Get()->pGangZonePool;
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (!pGangZonePool || !pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
@@ -458,7 +458,7 @@ namespace Hooks
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		return CServer::Get()->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(CScriptParams::Get()->ReadInt()));
+		return CPlugin::Get()->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(CScriptParams::Get()->ReadInt()));
 	}
 
 	// native GangZoneHideForPlayer(playerid, zone);
@@ -474,7 +474,7 @@ namespace Hooks
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CServer::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), false, true);
+		CPlugin::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), false, true);
 		return 1;
 	}
 
@@ -487,7 +487,7 @@ namespace Hooks
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CServer::Get()->pGangZonePool->ShowForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
+		CPlugin::Get()->pGangZonePool->ShowForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
 		return 1;
 	}
 
@@ -500,7 +500,7 @@ namespace Hooks
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CServer::Get()->pGangZonePool->HideForAll(static_cast<WORD>(zoneid));
+		CPlugin::Get()->pGangZonePool->HideForAll(static_cast<WORD>(zoneid));
 		return 1;
 	}
 
@@ -516,7 +516,7 @@ namespace Hooks
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CServer::Get()->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(CScriptParams::Get()->ReadInt()));
+		CPlugin::Get()->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(CScriptParams::Get()->ReadInt()));
 		return 1;
 	}
 
@@ -528,7 +528,7 @@ namespace Hooks
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CServer::Get()->pGangZonePool->FlashForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
+		CPlugin::Get()->pGangZonePool->FlashForAll(static_cast<WORD>(zoneid), static_cast<DWORD>(params[2]));
 		return 1;
 	}
 
@@ -544,7 +544,7 @@ namespace Hooks
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CServer::Get()->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
+		CPlugin::Get()->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
 		return 1;
 	}
 
@@ -556,7 +556,7 @@ namespace Hooks
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CServer::Get()->pGangZonePool->StopFlashForAll(static_cast<WORD>(zoneid));
+		CPlugin::Get()->pGangZonePool->StopFlashForAll(static_cast<WORD>(zoneid));
 		return 1;
 	}
 }
@@ -605,7 +605,7 @@ static AMX_HOOK_INFO hook_list[] =
 void GangZonesLoadNatives()
 {
 	RegisterNatives(native_list);
-	if (CServer::Get()->m_bUsePerPlayerGangZones)
+	if (CPlugin::Get()->m_bUsePerPlayerGangZones)
 	{
 		RegisterHooks(hook_list);
 	}

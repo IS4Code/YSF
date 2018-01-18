@@ -1,5 +1,5 @@
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
@@ -19,8 +19,8 @@ namespace Natives
 			return 0;
 
 		CVehicleSpawn spawn;
-		auto v = CServer::Get()->vehicleSpawnData.find(vehicleid);
-		if (v == CServer::Get()->vehicleSpawnData.end())
+		auto v = CPlugin::Get()->vehicleSpawnData.find(vehicleid);
+		if (v == CPlugin::Get()->vehicleSpawnData.end())
 		{
 			spawn.vecPos = pVehicle->customSpawn.vecPos;
 			spawn.fRot = pVehicle->customSpawn.fRot;
@@ -89,7 +89,7 @@ namespace Natives
 			spawn.iInterior = interior;
 		}
 
-		CServer::Get()->vehicleSpawnData[vehicleid] = spawn;
+		CPlugin::Get()->vehicleSpawnData[vehicleid] = spawn;
 
 		// logprintf("streamedin: %d, iRespawnTime: %d, interior: %d", bStreamedIn, respawntime, interior);
 
@@ -119,7 +119,7 @@ namespace Natives
 	// native GetVehicleModelsUsed();
 	AMX_DECLARE_NATIVE(GetVehicleModelsUsed)
 	{
-		if (!CServer::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		BYTE byteModelsUsed = 0;
 		for (BYTE i = 0; i != 212; ++i)
@@ -143,8 +143,8 @@ namespace Natives
 			return 0;
 
 		CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
-		const int color1 = CServer::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor1 : pVehicle->customSpawn.iColor1;
-		const int color2 = CServer::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor2 : pVehicle->customSpawn.iColor2;
+		const int color1 = CPlugin::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor1 : pVehicle->customSpawn.iColor1;
+		const int color2 = CPlugin::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor2 : pVehicle->customSpawn.iColor2;
 
 		CScriptParams::Get()->Add(color1, color2);
 		return 1;
@@ -473,7 +473,7 @@ namespace Hooks
 		const int vehicleid = CScriptParams::Get()->ReadInt();
 		if (Original::ChangeVehicleColor(amx, params))
 		{
-			CServer::Get()->bChangedVehicleColor[vehicleid] = true;
+			CPlugin::Get()->bChangedVehicleColor[vehicleid] = true;
 			return 1;
 		}
 		return 0;
@@ -487,11 +487,11 @@ namespace Hooks
 		const int vehicleid = CScriptParams::Get()->ReadInt();
 		if (Original::DestroyVehicle(amx, params))
 		{
-			CServer::Get()->bChangedVehicleColor[vehicleid] = false;
-			auto v = CServer::Get()->vehicleSpawnData.find(vehicleid);
-			if (v != CServer::Get()->vehicleSpawnData.end())
+			CPlugin::Get()->bChangedVehicleColor[vehicleid] = false;
+			auto v = CPlugin::Get()->vehicleSpawnData.find(vehicleid);
+			if (v != CPlugin::Get()->vehicleSpawnData.end())
 			{
-				CServer::Get()->vehicleSpawnData.erase(v);
+				CPlugin::Get()->vehicleSpawnData.erase(v);
 			}
 			return 1;
 		}

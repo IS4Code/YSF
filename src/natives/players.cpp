@@ -1,5 +1,5 @@
 #include "../Natives.h"
-#include "../CServer.h"
+#include "../CPlugin.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
@@ -53,7 +53,7 @@ namespace Natives
 		CScriptParams::Get()->Read(playerid, color);
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		CServer::Get()->AddConsolePlayer(static_cast<WORD>(playerid), static_cast<DWORD>(color));
+		CPlugin::Get()->AddConsolePlayer(static_cast<WORD>(playerid), static_cast<DWORD>(color));
 		return 1;
 	}
 
@@ -65,7 +65,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		CServer::Get()->RemoveConsolePlayer(static_cast<WORD>(playerid));
+		CPlugin::Get()->RemoveConsolePlayer(static_cast<WORD>(playerid));
 		return 1;
 	}
 
@@ -78,7 +78,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 
 		DWORD color;
-		bool ret = CServer::Get()->IsConsolePlayer(static_cast<WORD>(playerid), color);
+		bool ret = CPlugin::Get()->IsConsolePlayer(static_cast<WORD>(playerid), color);
 		CScriptParams::Get()->Add(color);
 		return ret;
 	}
@@ -897,7 +897,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int toggle = CScriptParams::Get()->ReadInt();
-		CServer::Get()->SetExclusiveBroadcast(!!toggle);
+		CPlugin::Get()->SetExclusiveBroadcast(!!toggle);
 		return 1;
 	}
 
