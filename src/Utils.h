@@ -39,7 +39,7 @@
 #include <string>
 
 #include "raknet/NetworkTypes.h"
-#include "includes/platform.h"
+#include "includes/types.h"
 
 #include "CVector.h"
 

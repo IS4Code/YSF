@@ -35,7 +35,7 @@
 
 #include <cstddef>
 
-#include "includes/platform.h"
+#include "includes/types.h"
 
 class CGangZone
 {

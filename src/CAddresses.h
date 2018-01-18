@@ -68,7 +68,7 @@
 #endif
 
 #include <vector>
-#include "includes/platform.h"
+#include "includes/types.h"
 
 enum class SAMPVersion
 {

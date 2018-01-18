@@ -217,6 +217,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClInclude Include="src\CAddresses.h" />
     <ClInclude Include="src\amxfunctions.h" />
     <ClInclude Include="src\CPool.h" />
+    <ClInclude Include="src\includes\types.h" />
     <ClInclude Include="src\logprintf_buf.h" />
     <ClInclude Include="src\CScriptParams.h" />
     <ClInclude Include="src\CCallbackManager.h" />

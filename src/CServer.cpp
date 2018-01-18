@@ -38,6 +38,7 @@
 #include "System.h"
 #include "Natives.h"
 #include "RPCs.h"
+#include "includes/platform.h"
 
 CServer::CServer(SAMPVersion version) : PlayerPool(*pNetGame->pPlayerPool)
 {

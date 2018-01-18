@@ -5,6 +5,7 @@
 #include "CServer.h"
 
 #define WINDOWS_LEAN_AND_MEAN
+#define NOMINMAX
 #include <windows.h>
 #include <strsafe.h>
 #include <tlhelp32.h>

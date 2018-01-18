@@ -33,7 +33,7 @@
 #ifndef YSF_RPCS_H
 #define YSF_RPCS_H
 
-#include "includes/platform.h"
+#include "includes/types.h"
 
 class RPCID
 {

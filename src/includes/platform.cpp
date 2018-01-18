@@ -1,6 +1,5 @@
-#include "platform.h"
-
 #ifndef _WIN32
+#include "platform.h"
 
 #include "sys/time.h"
 timeval startTime;
@@ -18,5 +17,4 @@ DWORD GetTickCount()
 	gettimeofday(&currentTime, 0);
 	return (currentTime.tv_usec - startTime.tv_usec) / 1000 + 1000 * (currentTime.tv_sec - startTime.tv_sec);
 }
-
 #endif

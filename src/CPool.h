@@ -4,7 +4,7 @@
 #include <tuple>
 #include <map>
 #include <exception>
-#include "includes/platform.h"
+#include "includes/types.h"
 
 template <class ObjectType, size_t MaxSize, class ExtraData = std::tuple<size_t>>
 class CPoolBase

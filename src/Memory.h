@@ -1,7 +1,7 @@
 #ifndef YSF_MEMORY_H
 #define YSF_MEMORY_H
 
-#include "includes/platform.h"
+#include "includes/types.h"
 
 bool Unlock(void *address, size_t len);
 

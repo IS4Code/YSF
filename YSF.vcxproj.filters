@@ -276,6 +276,9 @@
     <ClInclude Include="src\CPool.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\includes\types.h">
+      <Filter>src\Includes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="YSF.def" />

@@ -1,5 +1,5 @@
-#ifndef YSF_NET_INCLUDED
-#define YSF_NET_INCLUDED
+#ifndef YSF_NET_H
+#define YSF_NET_H
 
 #ifdef _WIN32
 #include <winsock2.h>
