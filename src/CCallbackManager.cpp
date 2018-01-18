@@ -32,6 +32,7 @@
 
 #include "CCallbackManager.h"
 #include "Globals.h"
+#include "includes/platform.h"
 #include "includes/net.h"
 
 std::set<AMX *> CCallbackManager::m_setAMX;

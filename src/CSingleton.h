@@ -37,6 +37,7 @@
 
 #include <memory>
 #include <exception>
+#include "linux_fix.h"
 
 template<class T>
 class CSingleton

@@ -33,6 +33,7 @@
 #include <string>
 #include <sstream>
 
+#include "includes/platform.h"
 #include "Utils.h"
 #include "Globals.h"
 #include "RPCs.h"

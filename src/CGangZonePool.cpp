@@ -31,6 +31,7 @@
 */
 
 #include "CGangZonePool.h"
+#include "includes/platform.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
 #include "Utils.h"

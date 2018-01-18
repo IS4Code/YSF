@@ -32,6 +32,7 @@
 
 #include <stdarg.h>
 #include "includes/net.h"
+#include "includes/platform.h"
 
 #include "Hooks.h"
 #include "CServer.h"

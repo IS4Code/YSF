@@ -31,6 +31,7 @@
 */
 
 #include "CPlayerData.h"
+#include "includes/platform.h"
 #include "CServer.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
