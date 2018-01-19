@@ -161,6 +161,9 @@ native IsPlayerCameraTargetEnabled(playerid);
 native SetPlayerDisabledKeysSync(playerid, keys, updown = 0, leftright = 0);
 native GetPlayerDisabledKeysSync(playerid, &keys, &updown = 0, &leftright = 0);
 
+native GetPlayerBuildingsRemoved(playerid);
+native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius);
+
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX = 0.0, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fAngle = 0.0);
 native GetActorSkin(actorid);

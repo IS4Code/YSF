@@ -257,52 +257,6 @@ bool CPlayerData::DestroyObject(WORD objectid)
 	return 1;
 }
 
-void CPlayerData::HideObject(WORD objectid, bool sync)
-{
-	if (sync)
-	{
-		RakNet::BitStream bs;
-		bs.Write(objectid);
-		CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
-	}
-	m_HiddenObjects.insert(objectid);
-}
-
-void CPlayerData::ShowObject(WORD objectid, bool sync)
-{
-	m_HiddenObjects.erase(objectid);
-	if (sync)
-	{
-		CSAMPFunctions::SpawnObjectForPlayer(objectid, wPlayerID);
-	}
-}
-
-void CPlayerData::HideNewObjects(bool toggle)
-{
-	m_HideNewObjects = toggle;
-}
-
-bool CPlayerData::NewObjectsHidden() const
-{
-	return m_HideNewObjects;
-}
-
-bool CPlayerData::IsObjectHidden(WORD objectid) const
-{
-	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	if (!pObjectPool->bObjectSlotState[objectid]) return false;
-
-	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-	if (!pObject) return false;
-
-	if (m_HideNewObjects)
-	{
-		return true;
-	}
-
-	return m_HiddenObjects.find(objectid) != m_HiddenObjects.end();
-}
-
 // Return a pointer from map if exists or add it if isn't - to save memory
 std::shared_ptr<CPlayerObjectAttachAddon> CPlayerData::GetObjectAddon(WORD objectid)
 {
@@ -479,4 +433,76 @@ void CPlayerData::Process(void)
 			}
 		}
 	}
+}
+
+void CPlayerData::HideObject(WORD objectid, bool sync)
+{
+	if (sync)
+	{
+		RakNet::BitStream bs;
+		bs.Write(objectid);
+		CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	}
+	m_HiddenObjects.insert(objectid);
+}
+
+void CPlayerData::ShowObject(WORD objectid, bool sync)
+{
+	m_HiddenObjects.erase(objectid);
+	if (sync)
+	{
+		CSAMPFunctions::SpawnObjectForPlayer(objectid, wPlayerID);
+	}
+}
+
+void CPlayerData::HideNewObjects(bool toggle)
+{
+	m_HideNewObjects = toggle;
+}
+
+bool CPlayerData::NewObjectsHidden() const
+{
+	return m_HideNewObjects;
+}
+
+bool CPlayerData::IsObjectHidden(WORD objectid) const
+{
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
+	if (!pObjectPool->bObjectSlotState[objectid]) return false;
+
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
+	if (!pObject) return false;
+
+	if (m_HideNewObjects)
+	{
+		return true;
+	}
+
+	return m_HiddenObjects.find(objectid) != m_HiddenObjects.end();
+}
+
+void CPlayerData::SetBuildingsRemoved(int modelid, const CVector &pos, float range)
+{
+	m_RemovedBuildings.emplace_back(modelid, pos, range);
+}
+
+bool CPlayerData::GetBuildingsRemoved() const
+{
+	return !m_RemovedBuildings.empty();
+}
+
+bool CPlayerData::IsBuildingRemoved(int modelid, const CVector &pos, float range) const
+{
+	for (auto &building : m_RemovedBuildings)
+	{
+		if (modelid == -1 || building.ModelId == -1 || modelid == building.ModelId)
+		{
+			CVector d = pos - building.Position;
+			if (d.Length() <= range + building.Range)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }

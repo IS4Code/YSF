@@ -918,6 +918,34 @@ namespace Natives
 		CServer::Get()->PlayerPool.Extra(playerid).bBroadcastTo = !!toggle;
 		return 1;
 	}
+
+	// native GetPlayerBuildingsRemoved(playerid)
+	AMX_DECLARE_NATIVE(GetPlayerBuildingsRemoved)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+
+		if (!IsPlayerConnected(playerid)) return 0;
+
+		return static_cast<cell>(CServer::Get()->PlayerPool.Extra(playerid).GetBuildingsRemoved());
+	}
+
+	// native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius)
+	AMX_DECLARE_NATIVE(IsBuildingRemovedForPlayer)
+	{
+		CHECK_PARAMS(6, LOADED);
+
+		int playerid, modelid;
+		CVector pos;
+		float range;
+
+		CScriptParams::Get()->Read(playerid, modelid, pos, range);
+
+		if (!IsPlayerConnected(playerid)) return 0;
+
+		return static_cast<cell>(CServer::Get()->PlayerPool.Extra(playerid).IsBuildingRemoved(modelid, pos, range));
+	}
 }
 
 namespace Original
@@ -930,6 +958,7 @@ namespace Original
 	AMX_NATIVE SetPlayerWorldBounds;
 	AMX_NATIVE TogglePlayerControllable;
 	AMX_NATIVE ShowPlayerDialog;
+	AMX_NATIVE RemoveBuildingForPlayer;
 }
 
 namespace Hooks
@@ -1070,6 +1099,23 @@ namespace Hooks
 		}
 		return 0;
 	}
+
+	// native RemoveBuildingForPlayer(playerid, modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius)
+	AMX_DECLARE_NATIVE(RemoveBuildingForPlayer)
+	{
+		CHECK_PARAMS(6, LOADED);
+
+		int playerid, modelid;
+		CVector pos;
+		float range;
+
+		CScriptParams::Get()->Read(playerid, modelid, pos, range);
+		if (IsPlayerConnected(playerid))
+		{
+			CServer::Get()->PlayerPool.Extra(playerid).SetBuildingsRemoved(modelid, pos, range);
+		}
+		return Original::RemoveBuildingForPlayer(amx, params);
+	}
 }
 
 static AMX_NATIVE_INFO native_list[] =
@@ -1143,6 +1189,9 @@ static AMX_NATIVE_INFO native_list[] =
 	// AFK
 	AMX_DEFINE_NATIVE(IsPlayerPaused)
 	AMX_DEFINE_NATIVE(GetPlayerPausedTime)
+
+	AMX_DEFINE_NATIVE(GetPlayerBuildingsRemoved) // R20
+	AMX_DEFINE_NATIVE(IsBuildingRemovedForPlayer) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =
@@ -1155,6 +1204,7 @@ static AMX_HOOK_INFO hook_list[] =
 	AMX_DEFINE_HOOK(SetPlayerWorldBounds)
 	AMX_DEFINE_HOOK(TogglePlayerControllable)
 	AMX_DEFINE_HOOK(ShowPlayerDialog)
+	AMX_DEFINE_HOOK(RemoveBuildingForPlayer)
 };
 
 void PlayersLoadNatives()

@@ -561,7 +561,8 @@ namespace Natives
 		return 1;
 	}
 
-	// native HideObjectForPlayer(forplayerid, objectid);
+
+	// native HideObjectForPlayer(playerid, objectid);
 	AMX_DECLARE_NATIVE(HideObjectForPlayer)
 	{
 		CHECK_PARAMS(2, LOADED);
@@ -583,7 +584,7 @@ namespace Natives
 		return 1;
 	}
 
-	// native ShowObjectForPlayer(forplayerid, objectid);
+	// native ShowObjectForPlayer(playerid, objectid);
 	AMX_DECLARE_NATIVE(ShowObjectForPlayer)
 	{
 		CHECK_PARAMS(2, LOADED);
@@ -605,7 +606,7 @@ namespace Natives
 		return 1;
 	}
 
-	// native IsObjectHiddenForPlayer(forplayerid, objectid);
+	// native IsObjectHiddenForPlayer(playerid, objectid);
 	AMX_DECLARE_NATIVE(IsObjectHiddenForPlayer)
 	{
 		CHECK_PARAMS(2, LOADED);

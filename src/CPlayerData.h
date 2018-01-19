@@ -101,11 +101,6 @@ public:
 	
 	WORD GetGangZoneIDFromClientSide(WORD zoneid, bool bPlayer = false);
 	bool DestroyObject(WORD objectid);
-	void ShowObject(WORD objectid, bool sync);
-	void HideObject(WORD objectid, bool sync);
-	bool NewObjectsHidden() const;
-	void HideNewObjects(bool toggle);
-	bool IsObjectHidden(WORD objectid) const;
 
 	void Process(void);
 
@@ -184,13 +179,35 @@ public:
 	bool bControllable : 1;
 	bool bAttachedObjectCreated : 1;
 
+	void ShowObject(WORD objectid, bool sync);
+	void HideObject(WORD objectid, bool sync);
+	bool NewObjectsHidden() const;
+	void HideNewObjects(bool toggle);
+	bool IsObjectHidden(WORD objectid) const;
+	void SetBuildingsRemoved(int modelid, const CVector &pos, float range);
+	bool GetBuildingsRemoved() const;
+	bool IsBuildingRemoved(int modelid, const CVector &pos, float range) const;
+
 private:
+	struct RemovedBuilding
+	{
+		int ModelId;
+		CVector Position;
+		float Range;
+
+		RemovedBuilding(int modelid, const CVector &pos, float range) : ModelId(modelid), Position(pos), Range(range)
+		{
+
+		}
+	};
+
 	int m_iTeams[MAX_PLAYERS];
 	int m_iSkins[MAX_PLAYERS];
 	int m_iFightingStyles[MAX_PLAYERS];
 	std::unordered_map<WORD, std::string> m_PlayerNames;
 	std::unordered_set<WORD> m_HiddenObjects;
 	bool m_HideNewObjects;
+	std::vector<RemovedBuilding> m_RemovedBuildings;
 };
 
 #endif

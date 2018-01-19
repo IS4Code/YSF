@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 logprintf_buf::logprintf_buf(logprintf_buf &&o) : logfunc_(o.logfunc_), buffer(std::move(o.buffer))
 {
 
