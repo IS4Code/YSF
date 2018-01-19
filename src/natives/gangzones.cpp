@@ -1,5 +1,6 @@
 #include "../Natives.h"
 #include "../CPlugin.h"
+#include "../CServer.h"
 #include "../CConfig.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
@@ -39,7 +40,7 @@ namespace Natives
 
 		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-		return !!(pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid)) != 0xFF);
+		return !!(CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid)) != 0xFF);
 	}
 
 	// native GangZoneGetColorForPlayer(playerid, zoneid);
@@ -55,10 +56,10 @@ namespace Natives
 
 		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 		if (id != 0xFFFF)
 		{
-			return pPlayerData[playerid]->dwClientSideZoneColor[id];
+			return CServer::Get()->PlayerPool.Extra(playerid).dwClientSideZoneColor[id];
 		}
 		return 0;
 	}
@@ -76,10 +77,10 @@ namespace Natives
 
 		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 		if (id != 0xFFFF)
 		{
-			return pPlayerData[playerid]->dwClientSideZoneFlashColor[id];
+			return CServer::Get()->PlayerPool.Extra(playerid).dwClientSideZoneFlashColor[id];
 		}
 		return 0;
 	}
@@ -97,10 +98,10 @@ namespace Natives
 
 		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 		if (id != 0xFFFF)
 		{
-			return pPlayerData[playerid]->bIsGangZoneFlashing[id];
+			return CServer::Get()->PlayerPool.Extra(playerid).bIsGangZoneFlashing[id];
 		}
 		return 0;
 	}
@@ -118,10 +119,10 @@ namespace Natives
 
 		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid));
 		if (id != 0xFFFF)
 		{
-			return pPlayerData[playerid]->bInGangZone[id];
+			return CServer::Get()->PlayerPool.Extra(playerid).bInGangZone[id];
 		}
 		return 0;
 	}
@@ -182,7 +183,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
 		CPlugin::Get()->pGangZonePool->ShowForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color), true);
 		return 1;
@@ -200,7 +201,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
 		CPlugin::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 		return 1;
@@ -218,7 +219,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
 		CPlugin::Get()->pGangZonePool->FlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), static_cast<DWORD>(color), true);
 		return 1;
@@ -236,7 +237,7 @@ namespace Natives
 
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
 		CPlugin::Get()->pGangZonePool->StopFlashForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
 		return 1;
@@ -268,7 +269,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		return pPlayerData[playerid]->pPlayerZone[zoneid] != NULL;
+		return CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid] != NULL;
 	}
 
 	// native IsPlayerInPlayerGangZone(playerid, zoneid);
@@ -282,12 +283,12 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 		if (id != 0xFFFF)
 		{
-			return pPlayerData[playerid]->bInGangZone[id];
+			return CServer::Get()->PlayerPool.Extra(playerid).bInGangZone[id];
 		}
 		return 0;
 	}
@@ -304,12 +305,12 @@ namespace Natives
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 		if (id != 0xFFFF)
 		{
-			CGangZone *pGangZone = pPlayerData[playerid]->pPlayerZone[zoneid];
+			CGangZone *pGangZone = CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid];
 			CScriptParams::Get()->Add(pGangZone->fGangZone[0], pGangZone->fGangZone[1], pGangZone->fGangZone[2], pGangZone->fGangZone[3]);
 			return 1;
 		}
@@ -327,9 +328,9 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
-		return pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true) != 0xFFFF;
+		return CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true) != 0xFFFF;
 	}
 
 	// native PlayerGangZoneGetColor(playerid, zoneid);
@@ -343,12 +344,12 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 		if (id != 0xFFFF)
 		{
-			return pPlayerData[playerid]->dwClientSideZoneColor[id];
+			return CServer::Get()->PlayerPool.Extra(playerid).dwClientSideZoneColor[id];
 		}
 		return 0;
 	}
@@ -364,12 +365,12 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 		if (id != 0xFFFF)
 		{
-			return pPlayerData[playerid]->dwClientSideZoneFlashColor[id];
+			return CServer::Get()->PlayerPool.Extra(playerid).dwClientSideZoneFlashColor[id];
 		}
 		return 0;
 	}
@@ -385,12 +386,12 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		if (!pPlayerData[playerid]->pPlayerZone[zoneid]) return 0;
+		if (!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
 
-		WORD id = pPlayerData[playerid]->GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
+		WORD id = CServer::Get()->PlayerPool.Extra(playerid).GetGangZoneIDFromClientSide(static_cast<WORD>(zoneid), true);
 		if (id != 0xFFFF)
 		{
-			return pPlayerData[playerid]->bIsGangZoneFlashing[id];
+			return CServer::Get()->PlayerPool.Extra(playerid).bIsGangZoneFlashing[id];
 		}
 		return 0;
 	}

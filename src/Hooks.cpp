@@ -36,6 +36,7 @@
 
 #include "Hooks.h"
 #include "CPlugin.h"
+#include "CServer.h"
 #include "CConfig.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
@@ -79,10 +80,11 @@ void CDECL HOOK_CNetGame__SetWeather(void *thisptr, BYTE weatherid)
 {
 	subhook_remove(SetWeather_hook);
 
+	auto &pool = CServer::Get()->PlayerPool;
 	for (int i = 0; i != MAX_PLAYERS; ++i)
 	{
 		if (IsPlayerConnected(i))
-			pPlayerData[i]->byteWeather = weatherid;
+			pool.Extra(i).byteWeather = weatherid;
 	}
 
 	((FUNC_CNetGame__SetWeather)CAddress::FUNC_CNetGame__SetWeather)(thisptr, weatherid);
@@ -100,10 +102,11 @@ void CDECL HOOK_CNetGame__SetGravity(void *thisptr, float gravity)
 {
 	subhook_remove(SetGravity_hook);
 
+	auto &pool = CServer::Get()->PlayerPool;
 	for (WORD i = 0; i != MAX_PLAYERS; ++i)
 	{
 		if (IsPlayerConnected(i))
-			pPlayerData[i]->fGravity = gravity;
+			pool.Extra(i).fGravity = gravity;
 	}
 
 	((FUNC_CNetGame__SetGravity)CAddress::FUNC_CNetGame__SetGravity)(thisptr, gravity);
@@ -160,11 +163,12 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
 	if (!CPlugin::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)))) return 1;
-	
+
+	auto &pool = CServer::Get()->PlayerPool;
 	if (CPlugin::Get()->GetExclusiveBroadcast())
 	{
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
-			if (IsPlayerConnected(i) && pPlayerData[i]->bBroadcastTo)
+			if (IsPlayerConnected(i) && pool.Extra(i).bBroadcastTo)
 				CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, CSAMPFunctions::GetPlayerIDFromIndex(i), false, shiftTimestamp);
 
 		return 1;
@@ -207,11 +211,13 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 	
 	if (IsPlayerConnected(playerid))
 	{
+		auto &data = CServer::Get()->PlayerPool.Extra(playerid);
+
 		// AFK
 		if (IsPlayerUpdatePacket(packetId))
 		{
-			pPlayerData[playerid]->LastUpdateTick = default_clock::now();
-			pPlayerData[playerid]->bEverUpdated = true;
+			data.LastUpdateTick = default_clock::now();
+			data.bEverUpdated = true;
 		}
 
 		switch(packetId)
@@ -232,7 +238,7 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 				}
 
 				// Store surfing info because server reset it when player surfing on player object
-				pPlayerData[playerid]->wSurfingInfo = pSyncData->wSurfingInfo;
+				data.wSurfingInfo = pSyncData->wSurfingInfo;
 				break;
 			}
 			case ID_AIM_SYNC:
@@ -566,9 +572,10 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						BYTE byteNameLen;
 						DWORD dwScore;
 
+						auto &pool = CServer::Get()->PlayerPool;
 						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && (!pPlayerData[r]->bCustomNameInQuery || !pPlayerData[r]->strNameInQuery.empty()))
+							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pool.Extra(r).HiddenInQuery())
 							{
 								szName = (char*)GetPlayerName(r, true);
 								byteNameLen = (BYTE)strlen(szName);
@@ -612,9 +619,10 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						BYTE byteNameLen;
 						DWORD dwScore, dwPing;
 
+						auto &pool = CServer::Get()->PlayerPool;
 						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && (!pPlayerData[r]->bCustomNameInQuery || !pPlayerData[r]->strNameInQuery.empty()))
+							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pool.Extra(r).HiddenInQuery())
 							{
 								memcpy(newdata, &r, sizeof(BYTE));
 								newdata += sizeof(BYTE);
@@ -811,7 +819,7 @@ int CDECL HOOK_CGameMode__OnPlayerSpawn(CGameMode *thisptr, cell playerid)
 	subhook_remove(CGameMode__OnPlayerSpawn_hook);
 
 	if (IsPlayerConnected(playerid))
-		pPlayerData[playerid]->bControllable = true;
+		CServer::Get()->PlayerPool.Extra(playerid).bControllable = true;
 
 	int ret = ((FUNC_CGameMode__OnPlayerSpawn)CAddress::FUNC_CGameMode__OnPlayerSpawn)(thisptr, playerid);
 	subhook_install(CGameMode__OnPlayerSpawn_hook);
@@ -868,12 +876,13 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 	int ret = -1;
 	if (IsPlayerConnected(playerid))
 	{
-		if (CConfig::Get()->m_bDialogProtection && pPlayerData[playerid]->wDialogID != dialogid)
+		auto &data = CServer::Get()->PlayerPool.Extra(playerid);
+		if (CConfig::Get()->m_bDialogProtection && data.wDialogID != dialogid)
 		{
-			logprintf("YSF: Might dialog hack has been detected for player %s(%d) - which should be: %d, dialogid: %d", GetPlayerName(playerid), playerid, pPlayerData[playerid]->wDialogID, dialogid);
+			logprintf("YSF: Might dialog hack has been detected for player %s(%d) - which should be: %d, dialogid: %d", GetPlayerName(playerid), playerid, data.wDialogID, dialogid);
 			ret = 1;
 		}
-		pPlayerData[playerid]->wDialogID = -1;
+		data.wDialogID = -1;
 	}
 
 	if(ret == -1)

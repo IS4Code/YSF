@@ -1,5 +1,6 @@
 #include "../Natives.h"
 #include "../CPlugin.h"
+#include "../CServer.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
@@ -16,7 +17,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		pPlayerData[playerid]->bUpdateScoresPingsDisabled = !toggle;
+		CServer::Get()->PlayerPool.Extra(playerid).bUpdateScoresPingsDisabled = !toggle;
 		return 1;
 	}
 
@@ -30,7 +31,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		pPlayerData[playerid]->bFakePingToggle = toggle;
+		CServer::Get()->PlayerPool.Extra(playerid).bFakePingToggle = toggle;
 		return 1;
 	}
 
@@ -44,7 +45,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		pPlayerData[playerid]->dwFakePingValue = fakeping;
+		CServer::Get()->PlayerPool.Extra(playerid).dwFakePingValue = fakeping;
 		return 1;
 	}
 
@@ -60,8 +61,9 @@ namespace Natives
 		CScriptParams::Get()->Read(name);
 		if (name.length() >= MAX_PLAYER_NAME) return 0;
 
-		pPlayerData[playerid]->bCustomNameInQuery = true;
-		pPlayerData[playerid]->strNameInQuery = std::move(name);
+		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
+		data.bCustomNameInQuery = true;
+		data.strNameInQuery = std::move(name);
 		return 1;
 	}
 
@@ -73,9 +75,10 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		if (pPlayerData[playerid]->bCustomNameInQuery)
+		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
+		if (data.bCustomNameInQuery)
 		{
-			CScriptParams::Get()->Add(pPlayerData[playerid]->strNameInQuery);
+			CScriptParams::Get()->Add(data.strNameInQuery);
 			return 1;
 		}
 		else {
@@ -91,8 +94,9 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		pPlayerData[playerid]->bCustomNameInQuery = false;
-		pPlayerData[playerid]->strNameInQuery.clear();
+		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
+		data.bCustomNameInQuery = false;
+		data.strNameInQuery.clear();
 		return 1;
 	}
 }

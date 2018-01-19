@@ -61,7 +61,7 @@ public:
 
 	void Process();
 
-	bool AddPlayer(int playerid);
+	void AddPlayer(int playerid);
 	bool RemovePlayer(int playerid);
  
 	bool OnPlayerStreamIn(WORD playerid, WORD forplayerid);

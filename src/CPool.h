@@ -85,9 +85,14 @@ public:
 		return iter->second;
 	}
 
-	void RemoveExtra(size_t index)
+	/*bool HasExtra(size_t index)
 	{
-		extraData.erase(index);
+		return extraData.find(index) != extraData.end();
+	}*/
+
+	bool RemoveExtra(size_t index)
+	{
+		return extraData.erase(index) > 0;
 	}
 
 	virtual ObjectType &operator[](size_t index) = 0;

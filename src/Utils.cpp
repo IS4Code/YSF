@@ -35,6 +35,7 @@
 
 #include "includes/platform.h"
 #include "Utils.h"
+#include "CServer.h"
 #include "Globals.h"
 #include "RPCs.h"
 
@@ -52,7 +53,7 @@ bool IsPlayerConnected(int playerid)
 	if (playerid < 0 || playerid >= MAX_PLAYERS)
 		return false;
 
-	return pPlayerData[playerid] != NULL && pNetGame->pPlayerPool->pPlayer != NULL;
+	return pNetGame->pPlayerPool->pPlayer[playerid] != NULL;
 }
 
 std::vector<std::string> &Utility::split(const std::string &s, char delim, std::vector<std::string> &elems) 
@@ -328,15 +329,16 @@ const char *GetPlayerName(int playerid, bool getForQuery)
 {
 	if (!IsPlayerConnected(playerid)) return NULL;
 
-	if (getForQuery && pPlayerData[playerid] && pPlayerData[playerid]->bCustomNameInQuery)
+	if (getForQuery)
 	{
-		return pPlayerData[playerid]->strNameInQuery.c_str();
+		auto &data = CServer::Get()->PlayerPool.Extra(playerid);
+		if (data.bCustomNameInQuery)
+		{
+			return data.strNameInQuery.c_str();
+		}
 	}
-	else
-	{
-		// Get the player name pointer from memory.
-		return pNetGame->pPlayerPool->szName[playerid];
-	}
+	// Get the player name pointer from memory.
+	return pNetGame->pPlayerPool->szName[playerid];
 }
 
 // From raknet

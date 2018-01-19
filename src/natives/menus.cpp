@@ -1,5 +1,4 @@
 #include "../Natives.h"
-#include "../CPlugin.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 

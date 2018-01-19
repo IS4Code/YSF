@@ -31,6 +31,7 @@
 */
 
 #include "CPlugin.h"
+#include "CServer.h"
 #include "CConfig.h"
 #include "CCallbackManager.h"
 #include "Hooks.h"
@@ -53,7 +54,7 @@ CPlugin::CPlugin(SAMPVersion version)
 	CConfig::Init();
 	LoadTickCount();
 
-	memset(&pPlayerData, NULL, sizeof(pPlayerData));
+	//memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	bChangedVehicleColor.reset();
 	memset(&COBJECT_AttachedObjectPlayer, INVALID_PLAYER_ID, sizeof(COBJECT_AttachedObjectPlayer));
 
@@ -102,24 +103,14 @@ CPlugin::~CPlugin()
 	}
 }
 
-bool CPlugin::AddPlayer(int playerid)
+void CPlugin::AddPlayer(int playerid)
 {
-	if(!pPlayerData[playerid])
-	{
-		pPlayerData[playerid] = new CPlayerData(static_cast<WORD>(playerid));
-		return 1;
-	}
-	return 0;
+	CServer::Get()->PlayerPool.Extra(playerid);
 }
 
 bool CPlugin::RemovePlayer(int playerid)
 {
-	if(pPlayerData[playerid])
-	{
-		SAFE_DELETE(pPlayerData[playerid]);
-		return 1;
-	}
-	return 0;
+	return CServer::Get()->PlayerPool.RemoveExtra(playerid);
 }
 
 void CPlugin::Process()
@@ -129,12 +120,13 @@ void CPlugin::Process()
 	if(++m_iTicks >= m_iTickRate)
 	{
 		m_iTicks = 0;
+		auto &pool = CServer::Get()->PlayerPool;
 		for(WORD playerid = 0; playerid != MAX_PLAYERS; ++playerid)
 		{
 			if(!IsPlayerConnected(playerid)) continue;
 			
 			// Process player
-			pPlayerData[playerid]->Process();
+			pool.Extra(playerid).Process();
 		}
 #ifdef _WIN32
 		ProcessSysExec();
@@ -183,16 +175,17 @@ bool CPlugin::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 	//logprintf("join stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
-		return 0;
+		return false;
 
 	RakNet::BitStream bs;
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
-	for (auto o : pPlayerData[forplayerid]->m_PlayerObjectsAddon)
+	CPlayerData &fordata = CServer::Get()->PlayerPool.Extra(forplayerid);
+	for (auto& o : fordata.m_PlayerObjectsAddon)
 	{
 		if (o.second->wAttachPlayerID == playerid && !o.second->bCreated)
 		{
 			// If object isn't present in waiting queue then add it
-			if (pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.find(o.first) == pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.end())
+			if (fordata.m_PlayerObjectsAttachQueue.find(o.first) == fordata.m_PlayerObjectsAttachQueue.end())
 			{				
 				bs.Reset();
 				bs.Write(pObjectPool->pPlayerObjects[forplayerid][o.first]->wObjectID); // m_wObjectID
@@ -208,13 +201,13 @@ bool CPlugin::OnPlayerStreamIn(WORD playerid, WORD forplayerid)
 
 				o.second->bCreated = true;
 				o.second->creation_timepoint = default_clock::now();
-				pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.insert(o.first);
+				fordata.m_PlayerObjectsAttachQueue.insert(o.first);
 
 				//logprintf("add to waiting queue streamin");
 			}
 		}
 	}
-	return 1;
+	return true;
 }
 
 bool CPlugin::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
@@ -222,21 +215,23 @@ bool CPlugin::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 	//logprintf("leave stream zone playerid = %d, forplayerid = %d", playerid, forplayerid);
 
 	if(!IsPlayerConnected(playerid) || !IsPlayerConnected(forplayerid))
-		return 0;
+		return false;
 
-	for (auto o : pPlayerData[forplayerid]->m_PlayerObjectsAddon)
+	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
+	auto &fordata = CServer::Get()->PlayerPool.Extra(forplayerid);
+	for (auto& o : fordata.m_PlayerObjectsAddon)
 	{
 		if (o.second->wAttachPlayerID == playerid)
 		{
 			//logprintf("object found: %d - %d", forplayerid, playerid);
 
 			// If object isn't present in waiting queue then destroy it
-			if (pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.find(o.first) != pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.end())
-				pPlayerData[forplayerid]->m_PlayerObjectsAttachQueue.erase(o.first);
+			if (fordata.m_PlayerObjectsAttachQueue.find(o.first) != fordata.m_PlayerObjectsAttachQueue.end())
+				fordata.m_PlayerObjectsAttachQueue.erase(o.first);
 
 			if (o.second->bCreated)
 			{
-				pPlayerData[playerid]->DestroyObject(o.first);
+				data.DestroyObject(o.first);
 				o.second->bCreated = false;
 				//logprintf("destroy streamout");
 			}
@@ -247,7 +242,7 @@ bool CPlugin::OnPlayerStreamOut(WORD playerid, WORD forplayerid)
 			o.second->bAttached = false;
 		}
 	}
-	return 1;
+	return true;
 }
 
 void CPlugin::AllowNickNameCharacter(char character, bool enable)
@@ -403,8 +398,9 @@ WORD CPlugin::GetPlayerCount()
 {
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
+	auto &pool = CServer::Get()->PlayerPool;
 	for (WORD i = 0; i != MAX_PLAYERS; ++i)
-		if (IsPlayerConnected(i) && !pPlayerPool->bIsNPC[i] && (!pPlayerData[i]->bCustomNameInQuery || !pPlayerData[i]->strNameInQuery.empty()))
+		if (IsPlayerConnected(i) && !pPlayerPool->bIsNPC[i] && !pool.Extra(i).HiddenInQuery())
 			count++;
 	return count;
 }
@@ -423,9 +419,12 @@ void CPlugin::SetExclusiveBroadcast(bool toggle)
 { 
 	m_bExclusiveBroadcast = toggle;
 	if (toggle) // if we just activated exclusive broadcast, exclude all players from broadcast list and let scripter readd them
+	{
+		auto &pool = CServer::Get()->PlayerPool;
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
 			if (IsPlayerConnected(i))
-				pPlayerData[i]->bBroadcastTo = 0;
+				pool.Extra(i).bBroadcastTo = 0;
+	}
 }
 
 bool CPlugin::GetExclusiveBroadcast(void) 
@@ -448,12 +447,14 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(toplayerid)) return;
 
 	//logprintf("RebuildSyncData %d - %d", id, playerid);
+	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
+	auto &todata = CServer::Get()->PlayerPool.Extra(toplayerid);
 	switch (id)
 	{
 		case ID_PLAYER_SYNC:
 		{
-			if (!pPlayerData[playerid]->wDisabledKeysLR && !pPlayerData[playerid]->wDisabledKeysUD && !pPlayerData[playerid]->wDisabledKeys
-				&& pPlayerData[toplayerid]->customPos.find(playerid) == pPlayerData[toplayerid]->customPos.end() && !pPlayerData[toplayerid]->bCustomQuat[playerid]) break;
+			if (!data.wDisabledKeysLR && !data.wDisabledKeysUD && !data.wDisabledKeys
+				&& todata.customPos.find(playerid) == todata.customPos.end() && !todata.bCustomQuat[playerid]) break;
 			
 			const int owerwrite_offset = bsSync->GetReadOffset(); // skip p->vehicleSyncData.wVehicleId
 			//bsSync->SetReadOffset(owerwrite_offset);
@@ -468,9 +469,9 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Read(vecPos);
 			bsSync->Read(fQuat);
 
-			wKeysLR &= ~pPlayerData[playerid]->wDisabledKeysLR;
-			wKeysUD &= ~pPlayerData[playerid]->wDisabledKeysUD;
-			wKeys &= ~pPlayerData[playerid]->wDisabledKeys;
+			wKeysLR &= ~data.wDisabledKeysLR;
+			wKeysUD &= ~data.wDisabledKeysUD;
+			wKeys &= ~data.wDisabledKeys;
 
 			bsSync->SetWriteOffset(owerwrite_offset);
 			
@@ -493,14 +494,14 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write(false);
 			
 			// Position
-			if (pPlayerData[toplayerid]->customPos.find(playerid) != pPlayerData[toplayerid]->customPos.end())
-				bsSync->Write((char*)pPlayerData[toplayerid]->customPos[playerid].get(), sizeof(CVector));
+			if (todata.customPos.find(playerid) != todata.customPos.end())
+				bsSync->Write((char*)todata.customPos[playerid].get(), sizeof(CVector));
 			else
 				bsSync->Write((char*)&vecPos, sizeof(CVector));
 
 			// Rotation (in quaternion)
-			if (pPlayerData[toplayerid]->bCustomQuat[playerid])
-				bsSync->WriteNormQuat(pPlayerData[toplayerid]->fCustomQuat[playerid][0], pPlayerData[toplayerid]->fCustomQuat[playerid][1], pPlayerData[toplayerid]->fCustomQuat[playerid][2], pPlayerData[toplayerid]->fCustomQuat[playerid][3]);
+			if (todata.bCustomQuat[playerid])
+				bsSync->WriteNormQuat(todata.fCustomQuat[playerid][0], todata.fCustomQuat[playerid][1], todata.fCustomQuat[playerid][2], todata.fCustomQuat[playerid][3]);
 			else
 				bsSync->WriteNormQuat(fQuat[0], fQuat[1], fQuat[2], fQuat[3]);
 			
@@ -615,7 +616,7 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		}
 		case ID_VEHICLE_SYNC:
 		{
-			if (!pPlayerData[playerid]->wDisabledKeysLR && !pPlayerData[playerid]->wDisabledKeysUD && !pPlayerData[playerid]->wDisabledKeys) break;
+			if (!data.wDisabledKeysLR && !data.wDisabledKeysUD && !data.wDisabledKeys) break;
 			
 			const int owerwrite_offset = bsSync->GetReadOffset() + 16; // skip p->vehicleSyncData.wVehicleId
 			bsSync->SetReadOffset(owerwrite_offset); 
@@ -625,9 +626,9 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Read(wKeysUD);
 			bsSync->Read(wKeys);
 
-			wKeysLR &= ~pPlayerData[playerid]->wDisabledKeysLR;
-			wKeysUD &= ~pPlayerData[playerid]->wDisabledKeysUD;
-			wKeys &= ~pPlayerData[playerid]->wDisabledKeys;
+			wKeysLR &= ~data.wDisabledKeysLR;
+			wKeysUD &= ~data.wDisabledKeysUD;
+			wKeys &= ~data.wDisabledKeys;
 
 			bsSync->SetWriteOffset(owerwrite_offset);
 			bsSync->Write(wKeysLR);
@@ -733,14 +734,12 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 
 char* CPlugin::GetNPCCommandLine(WORD npcid)
 {
-	if (!pPlayerData[npcid]) return NULL;
-	int pid = pPlayerData[npcid]->iNPCProcessID;
+	int pid = CServer::Get()->PlayerPool.Extra(npcid).iNPCProcessID;
 	return ::GetNPCCommandLine(pid);
 }
 
 int CPlugin::FindNPCProcessID(WORD npcid)
 {
-	if (!pPlayerData[npcid]) return 0;
 	char *name = pNetGame->pPlayerPool->szName[npcid];
 	return ::FindNPCProcessID(name);
 }
@@ -769,15 +768,14 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 		}
 		case 0x2C: //RPC_CreateObject
 		{
-			CPlayerData *player = pPlayerData[playerid];
-			if (!player) break;
+			auto &data = CServer::Get()->PlayerPool.Extra(playerid);
 
 			const int read_offset = bsSync->GetReadOffset();
 			WORD objectid;
 			bsSync->Read<WORD>(objectid);
 			bsSync->SetReadOffset(read_offset);
 
-			if (player->IsObjectHidden(objectid)) return false;
+			if (data.IsObjectHidden(objectid)) return false;
 
 			break;
 		}

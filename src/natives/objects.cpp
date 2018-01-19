@@ -1,6 +1,7 @@
 #include "../Natives.h"
 #include "../includes/platform.h"
 #include "../CPlugin.h"
+#include "../CServer.h"
 #include "../CConfig.h"
 #include "../CScriptParams.h"
 #include "../CFunctions.h"
@@ -268,7 +269,7 @@ namespace Natives
 
 		WORD attachedobjectid = INVALID_OBJECT_ID;
 		WORD attachedplayerid = INVALID_PLAYER_ID;
-		const std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[playerid]->FindObjectAddon(objectid);
+		const std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(playerid).FindObjectAddon(objectid);
 		if (pAddon)
 		{
 			attachedobjectid = pAddon->wObjectID;
@@ -302,7 +303,7 @@ namespace Natives
 		}
 		else
 		{
-			const std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[playerid]->FindObjectAddon(objectid);
+			const std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(playerid).FindObjectAddon(objectid);
 			if (pAddon)
 			{
 				vecOffset = pAddon->vecOffset;
@@ -397,7 +398,7 @@ namespace Natives
 		if (index == -1) return 0;
 
 		std::string text;
-		for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
+		for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.begin(); o != CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.end(); ++o)
 		{
 			if (o->first == objectid)
 			{
@@ -437,7 +438,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
 
-		const int surf = pPlayerData[playerid]->wSurfingInfo - MAX_VEHICLES;
+		const int surf = CServer::Get()->PlayerPool.Extra(playerid).wSurfingInfo - MAX_VEHICLES;
 		if (surf >= 0 && surf < MAX_OBJECTS)
 		{
 			if (pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][surf])
@@ -524,7 +525,7 @@ namespace Natives
 		if (!pObjectPool->pPlayerObjects[forplayerid][objectid] || !pObjectPool->pPlayerObjects[forplayerid][attachtoid]) return 0; // Check if object is exist
 
 																																	// Find the space where to store data
-		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[forplayerid]->GetObjectAddon(objectid);
+		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(forplayerid).GetObjectAddon(objectid);
 		if (pAddon == NULL)
 			return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
 
@@ -578,7 +579,7 @@ namespace Natives
 		CObject *pObject = pObjectPool->pObjects[objectid];
 		if (!pObject) return 0;
 
-		pPlayerData[forplayerid]->HideObject(objectid, true);
+		CServer::Get()->PlayerPool.Extra(forplayerid).HideObject(objectid, true);
 		return 1;
 	}
 
@@ -600,7 +601,7 @@ namespace Natives
 		CObject *pObject = pObjectPool->pObjects[objectid];
 		if (!pObject) return 0;
 
-		pPlayerData[forplayerid]->ShowObject(objectid, true);
+		CServer::Get()->PlayerPool.Extra(forplayerid).ShowObject(objectid, true);
 		return 1;
 	}
 }
@@ -631,12 +632,12 @@ namespace Hooks
 		{
 			CPlugin::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
 
+			auto &pool = CServer::Get()->PlayerPool;
 			for (int i = 0; i < MAX_PLAYERS; i++)
 			{
-				CPlayerData *player = pPlayerData[i];
-				if (player)
+				if(pool.IsValid(i))
 				{
-					player->ShowObject(objectid, false);
+					pool.Extra(i).ShowObject(objectid, false);
 				}
 			}
 
@@ -658,14 +659,14 @@ namespace Hooks
 
 		if (IsPlayerConnected(playerid))
 		{
-			for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
+			for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.begin(); o != CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.end(); ++o)
 			{
 				if (o->first == objectid)
 				{
-					o = pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(o);
+					o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.erase(o);
 				}
 			}
-			pPlayerData[playerid]->DeleteObjectAddon(static_cast<WORD>(objectid));
+			CServer::Get()->PlayerPool.Extra(playerid).DeleteObjectAddon(static_cast<WORD>(objectid));
 		}
 
 		if (Original::DestroyPlayerObject(amx, params))
@@ -715,7 +716,7 @@ namespace Hooks
 		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
 
 		// Find the space where to store data
-		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = pPlayerData[playerid]->GetObjectAddon(objectid);
+		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(playerid).GetObjectAddon(objectid);
 		if (pAddon == NULL)
 			return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
 
@@ -745,11 +746,11 @@ namespace Hooks
 		else
 		{
 			// We'll attach it later to prevent crashes
-			if (pPlayerData[playerid]->m_PlayerObjectsAttachQueue.find(objectid) != pPlayerData[playerid]->m_PlayerObjectsAttachQueue.end())
-				pPlayerData[playerid]->m_PlayerObjectsAttachQueue.erase(objectid);
+			if (CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectsAttachQueue.find(objectid) != CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectsAttachQueue.end())
+				CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectsAttachQueue.erase(objectid);
 
 			// This case GOTTA called only from streamer when object ALREADY created.
-			pPlayerData[playerid]->m_PlayerObjectsAttachQueue.insert(objectid);
+			CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectsAttachQueue.insert(objectid);
 			pAddon->bCreated = true;
 		}
 		return 1;
@@ -783,11 +784,11 @@ namespace Hooks
 				}
 				*/
 
-				for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = pPlayerData[playerid]->m_PlayerObjectMaterialText.begin(); o != pPlayerData[playerid]->m_PlayerObjectMaterialText.end(); ++o)
+				for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.begin(); o != CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.end(); ++o)
 				{
 					if (o->first == objectid)
 					{
-						o = pPlayerData[playerid]->m_PlayerObjectMaterialText.erase(o);
+						o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.erase(o);
 					}
 				}
 
@@ -834,7 +835,7 @@ namespace Hooks
 				*/
 
 				WORD objid = objectid;
-				pPlayerData[playerid]->m_PlayerObjectMaterialText.emplace(objid, std::make_pair((BYTE)slot, std::move(szText)));
+				CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.emplace(objid, std::make_pair((BYTE)slot, std::move(szText)));
 				pObject->Material[index].byteSlot = slot;
 				pObject->Material[index].byteUsed = 2;
 				pObject->Material[index].byteMaterialSize = materialsize;

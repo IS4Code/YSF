@@ -9,4 +9,4 @@ extern void *pAMXFunctions;
 CNetGame *pNetGame = NULL;
 void *pConsole = NULL;
 void *pRakServer = NULL;
-CPlayerData *pPlayerData[MAX_PLAYERS];
+//CPlayerData *pPlayerData[MAX_PLAYERS];

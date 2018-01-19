@@ -107,6 +107,8 @@ public:
 
 	void Process(void);
 
+	bool HiddenInQuery() { return bCustomNameInQuery && strNameInQuery.empty(); }
+
 	WORD wPlayerID;
 	int iNPCProcessID;
 	WORD wSurfingInfo;

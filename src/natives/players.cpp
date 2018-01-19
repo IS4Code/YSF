@@ -1,6 +1,7 @@
 #include "../Natives.h"
 #include "../includes/platform.h"
 #include "../CPlugin.h"
+#include "../CServer.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
@@ -29,7 +30,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		return pPlayerData[playerid]->bAFKState;
+		return CServer::Get()->PlayerPool.Extra(playerid).bAFKState;
 	}
 
 	// native GetPlayerPausedTime(playerid);
@@ -40,9 +41,10 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 
 		if (!IsPlayerConnected(playerid)) return 0;
-		if (!pPlayerData[playerid]->bAFKState) return 0;
+		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
+		if (!data.bAFKState) return 0;
 
-		return static_cast<cell>(std::chrono::duration_cast<std::chrono::milliseconds>(default_clock::now() - pPlayerData[playerid]->LastUpdateTick).count());
+		return static_cast<cell>(std::chrono::duration_cast<std::chrono::milliseconds>(default_clock::now() - data.LastUpdateTick).count());
 	}
 
 	// native EnableConsoleMSGsForPlayer(playerid, color);
@@ -93,10 +95,11 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 
 		// Update stored values
-		pPlayerData[playerid]->fGravity = CScriptParams::Get()->ReadFloat();
+		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
+		data.fGravity = CScriptParams::Get()->ReadFloat();
 
 		RakNet::BitStream bs;
-		bs.Write(pPlayerData[playerid]->fGravity);
+		bs.Write(data.fGravity);
 		CSAMPFunctions::RPC(&RPC_SetGravity, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
 		return 1;
 	}
@@ -109,7 +112,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		return amx_ftoc(pPlayerData[playerid]->fGravity);
+		return amx_ftoc(CServer::Get()->PlayerPool.Extra(playerid).fGravity);
 	}
 
 	// native SetPlayerTeamForPlayer(playerid, teamplayerid, teamid);
@@ -124,7 +127,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(teamplayerid)) return 0;
 		if (team < 0 || team > NO_TEAM) return 0;
 
-		pPlayerData[playerid]->SetPlayerTeamForPlayer(static_cast<WORD>(teamplayerid), team);
+		CServer::Get()->PlayerPool.Extra(playerid).SetPlayerTeamForPlayer(static_cast<WORD>(teamplayerid), team);
 		return 1;
 	}
 
@@ -138,7 +141,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(teamplayerid)) return 0;
 
-		return pPlayerData[playerid]->GetPlayerTeamForPlayer(static_cast<WORD>(teamplayerid));
+		return CServer::Get()->PlayerPool.Extra(playerid).GetPlayerTeamForPlayer(static_cast<WORD>(teamplayerid));
 	}
 
 	// native SetPlayerSkinForPlayer(playerid, skinplayerid, skin);
@@ -153,7 +156,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(skinplayerid)) return 0;
 		if (skin < 0 || skin > 300) return 0;
 
-		pPlayerData[playerid]->SetPlayerSkinForPlayer(static_cast<WORD>(skinplayerid), skin);
+		CServer::Get()->PlayerPool.Extra(playerid).SetPlayerSkinForPlayer(static_cast<WORD>(skinplayerid), skin);
 		return 1;
 	}
 
@@ -167,7 +170,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(skinplayerid)) return 0;
 
-		return pPlayerData[playerid]->GetPlayerSkinForPlayer(static_cast<WORD>(skinplayerid));
+		return CServer::Get()->PlayerPool.Extra(playerid).GetPlayerSkinForPlayer(static_cast<WORD>(skinplayerid));
 	}
 
 	// native SetPlayerNameForPlayer(playerid, nameplayerid, playername[]);
@@ -183,7 +186,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(nameplayerid)) return 0;
 
-		pPlayerData[playerid]->SetPlayerNameForPlayer(static_cast<WORD>(nameplayerid), name.c_str());
+		CServer::Get()->PlayerPool.Extra(playerid).SetPlayerNameForPlayer(static_cast<WORD>(nameplayerid), name.c_str());
 		return 1;
 	}
 
@@ -197,7 +200,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(nameplayerid)) return 0;
 
-		CScriptParams::Get()->Add(pPlayerData[playerid]->GetPlayerNameForPlayer(static_cast<WORD>(nameplayerid)));
+		CScriptParams::Get()->Add(CServer::Get()->PlayerPool.Extra(playerid).GetPlayerNameForPlayer(static_cast<WORD>(nameplayerid)));
 		return 1;
 	}
 
@@ -212,7 +215,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(styleplayerid)) return 0;
 
-		pPlayerData[playerid]->SetPlayerFightingStyleForPlayer(static_cast<WORD>(styleplayerid), style);
+		CServer::Get()->PlayerPool.Extra(playerid).SetPlayerFightingStyleForPlayer(static_cast<WORD>(styleplayerid), style);
 		return 1;
 	}
 
@@ -226,7 +229,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(styleplayerid)) return 0;
 
-		return pPlayerData[playerid]->GetPlayerFightingStyleForPlayer(static_cast<WORD>(styleplayerid));
+		return CServer::Get()->PlayerPool.Extra(playerid).GetPlayerFightingStyleForPlayer(static_cast<WORD>(styleplayerid));
 	}
 
 	// native SetPlayerPosForPlayer(playerid, posplayerid, Float:fX, Float:fY, Float:fZ, bool:forcesync = true);
@@ -241,9 +244,9 @@ namespace Natives
 
 		if (!forcesync)
 		{
-			if (pPlayerData[playerid]->customPos.find(posplayerid) != pPlayerData[playerid]->customPos.end())
+			if (CServer::Get()->PlayerPool.Extra(playerid).customPos.find(posplayerid) != CServer::Get()->PlayerPool.Extra(playerid).customPos.end())
 			{
-				pPlayerData[playerid]->customPos.erase(posplayerid);
+				CServer::Get()->PlayerPool.Extra(playerid).customPos.erase(posplayerid);
 			}
 			return 1;
 		}
@@ -251,7 +254,7 @@ namespace Natives
 		CVector vecPos;
 		CScriptParams::Get()->Read(vecPos);
 
-		pPlayerData[playerid]->customPos[posplayerid] = std::make_unique<CVector>(std::move(vecPos));
+		CServer::Get()->PlayerPool.Extra(playerid).customPos[posplayerid] = std::make_unique<CVector>(std::move(vecPos));
 		return 1;
 	}
 
@@ -267,14 +270,14 @@ namespace Natives
 
 		if (!forcesync)
 		{
-			pPlayerData[playerid]->bCustomQuat[posplayerid] = false;
+			CServer::Get()->PlayerPool.Extra(playerid).bCustomQuat[posplayerid] = false;
 			return 1;
 		}
 
 		CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
 
-		CScriptParams::Get()->Read(pPlayerData[playerid]->fCustomQuat[posplayerid][0], pPlayerData[playerid]->fCustomQuat[posplayerid][1], pPlayerData[playerid]->fCustomQuat[posplayerid][2], pPlayerData[playerid]->fCustomQuat[posplayerid][3]);
-		pPlayerData[playerid]->bCustomQuat[posplayerid] = true;
+		CScriptParams::Get()->Read(CServer::Get()->PlayerPool.Extra(playerid).fCustomQuat[posplayerid][0], CServer::Get()->PlayerPool.Extra(playerid).fCustomQuat[posplayerid][1], CServer::Get()->PlayerPool.Extra(playerid).fCustomQuat[posplayerid][2], CServer::Get()->PlayerPool.Extra(playerid).fCustomQuat[posplayerid][3]);
+		CServer::Get()->PlayerPool.Extra(playerid).bCustomQuat[posplayerid] = true;
 		return 1;
 	}
 
@@ -335,7 +338,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		return pPlayerData[playerid]->byteWeather;
+		return CServer::Get()->PlayerPool.Extra(playerid).byteWeather;
 	}
 
 	// native TogglePlayerWidescreen(playerid, bool:set);
@@ -347,7 +350,7 @@ namespace Natives
 		if (!IsPlayerConnected(playerid)) return 0;
 
 		BYTE set = static_cast<BYTE>(CScriptParams::Get()->ReadInt()) != 0;
-		pPlayerData[playerid]->bWidescreen = !!set;
+		CServer::Get()->PlayerPool.Extra(playerid).bWidescreen = !!set;
 
 		RakNet::BitStream bs;
 		bs.Write(set);
@@ -363,7 +366,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		return pPlayerData[playerid]->bWidescreen;
+		return CServer::Get()->PlayerPool.Extra(playerid).bWidescreen;
 	}
 
 	// native GetSpawnInfo(playerid, &teamid, &modelid, &Float:spawn_x, &Float:spawn_y, &Float:spawn_z, &Float:z_angle, &weapon1, &weapon1_ammo, &weapon2, &weapon2_ammo,& weapon3, &weapon3_ammo);
@@ -452,7 +455,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		CScriptParams::Get()->Add(pPlayerData[playerid]->fBounds[0], pPlayerData[playerid]->fBounds[1], pPlayerData[playerid]->fBounds[2], pPlayerData[playerid]->fBounds[3]);
+		CScriptParams::Get()->Add(CServer::Get()->PlayerPool.Extra(playerid).fBounds[0], CServer::Get()->PlayerPool.Extra(playerid).fBounds[1], CServer::Get()->PlayerPool.Extra(playerid).fBounds[2], CServer::Get()->PlayerPool.Extra(playerid).fBounds[3]);
 		return 1;
 	}
 
@@ -772,7 +775,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(resetplayerid)) return 0;
 
-		pPlayerData[playerid]->ResetPlayerMarkerForPlayer(static_cast<WORD>(resetplayerid));
+		CServer::Get()->PlayerPool.Extra(playerid).ResetPlayerMarkerForPlayer(static_cast<WORD>(resetplayerid));
 		return 1;
 	}
 
@@ -826,7 +829,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		return pPlayerData[playerid]->bControllable;
+		return CServer::Get()->PlayerPool.Extra(playerid).bControllable;
 	}
 
 	// native SpawnForWorld(playerid);
@@ -874,9 +877,9 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		pPlayerData[playerid]->wDisabledKeys = static_cast<WORD>(CScriptParams::Get()->ReadInt());
-		pPlayerData[playerid]->wDisabledKeysUD = static_cast<WORD>(CScriptParams::Get()->ReadInt());
-		pPlayerData[playerid]->wDisabledKeysLR = static_cast<WORD>(CScriptParams::Get()->ReadInt());
+		CServer::Get()->PlayerPool.Extra(playerid).wDisabledKeys = static_cast<WORD>(CScriptParams::Get()->ReadInt());
+		CServer::Get()->PlayerPool.Extra(playerid).wDisabledKeysUD = static_cast<WORD>(CScriptParams::Get()->ReadInt());
+		CServer::Get()->PlayerPool.Extra(playerid).wDisabledKeysLR = static_cast<WORD>(CScriptParams::Get()->ReadInt());
 		return 1;
 	}
 
@@ -888,7 +891,7 @@ namespace Natives
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		CScriptParams::Get()->Add(pPlayerData[playerid]->wDisabledKeys, static_cast<short>(pPlayerData[playerid]->wDisabledKeysUD), static_cast<short>(pPlayerData[playerid]->wDisabledKeysLR));
+		CScriptParams::Get()->Add(CServer::Get()->PlayerPool.Extra(playerid).wDisabledKeys, static_cast<short>(CServer::Get()->PlayerPool.Extra(playerid).wDisabledKeysUD), static_cast<short>(CServer::Get()->PlayerPool.Extra(playerid).wDisabledKeysLR));
 		return 1;
 	}
 
@@ -912,7 +915,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		pPlayerData[playerid]->bBroadcastTo = !!toggle;
+		CServer::Get()->PlayerPool.Extra(playerid).bBroadcastTo = !!toggle;
 		return 1;
 	}
 }
@@ -938,10 +941,11 @@ namespace Hooks
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (Original::SetPlayerTeam(amx, params))
 		{
+			auto &pool = CServer::Get()->PlayerPool;
 			for (WORD i = 0; i != MAX_PLAYERS; ++i)
 			{
 				if (IsPlayerConnected(i))
-					pPlayerData[i]->ResetPlayerTeam(static_cast<WORD>(playerid));
+					pool.Extra(i).ResetPlayerTeam(static_cast<WORD>(playerid));
 			}
 			return 1;
 		}
@@ -955,10 +959,11 @@ namespace Hooks
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (Original::SetPlayerSkin(amx, params))
 		{
+			auto &pool = CServer::Get()->PlayerPool;
 			for (WORD i = 0; i != MAX_PLAYERS; ++i)
 			{
 				if (IsPlayerConnected(i))
-					pPlayerData[i]->ResetPlayerSkin(static_cast<WORD>(playerid));
+					pool.Extra(i).ResetPlayerSkin(static_cast<WORD>(playerid));
 			}
 			return 1;
 		}
@@ -974,10 +979,11 @@ namespace Hooks
 
 		if (ret == 1)
 		{
+			auto &pool = CServer::Get()->PlayerPool;
 			for (WORD i = 0; i != MAX_PLAYERS; ++i)
 			{
 				if (IsPlayerConnected(i))
-					pPlayerData[i]->ResetPlayerName(static_cast<WORD>(playerid));
+					pool.Extra(i).ResetPlayerName(static_cast<WORD>(playerid));
 			}
 		}
 		return ret;
@@ -990,10 +996,11 @@ namespace Hooks
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (Original::SetPlayerFightingStyle(amx, params))
 		{
+			auto &pool = CServer::Get()->PlayerPool;
 			for (WORD i = 0; i != MAX_PLAYERS; ++i)
 			{
 				if (IsPlayerConnected(i))
-					pPlayerData[i]->ResetPlayerFightingStyle(static_cast<WORD>(playerid));
+					pool.Extra(i).ResetPlayerFightingStyle(static_cast<WORD>(playerid));
 			}
 			return 1;
 		}
@@ -1009,7 +1016,7 @@ namespace Hooks
 
 		if (Original::SetPlayerWeather(amx, params) && IsPlayerConnected(playerid))
 		{
-			pPlayerData[playerid]->byteWeather = static_cast<BYTE>(CScriptParams::Get()->ReadInt());
+			CServer::Get()->PlayerPool.Extra(playerid).byteWeather = static_cast<BYTE>(CScriptParams::Get()->ReadInt());
 			return 1;
 		}
 		return 0;
@@ -1025,7 +1032,7 @@ namespace Hooks
 		{
 			for (BYTE i = 0; i != 4; ++i)
 			{
-				pPlayerData[playerid]->fBounds[i] = CScriptParams::Get()->ReadFloat();
+				CServer::Get()->PlayerPool.Extra(playerid).fBounds[i] = CScriptParams::Get()->ReadFloat();
 			}
 			return 1;
 		}
@@ -1042,7 +1049,7 @@ namespace Hooks
 
 		if (Original::TogglePlayerControllable(amx, params) && IsPlayerConnected(playerid))
 		{
-			pPlayerData[playerid]->bControllable = toggle;
+			CServer::Get()->PlayerPool.Extra(playerid).bControllable = toggle;
 			return 1;
 		}
 		return 0;
@@ -1058,7 +1065,7 @@ namespace Hooks
 
 		if (Original::ShowPlayerDialog(amx, params) && IsPlayerConnected(playerid))
 		{
-			pPlayerData[playerid]->wDialogID = dialogid;
+			CServer::Get()->PlayerPool.Extra(playerid).wDialogID = dialogid;
 			return 1;
 		}
 		return 0;

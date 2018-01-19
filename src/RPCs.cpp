@@ -32,6 +32,7 @@
 
 #include "RPCs.h"
 #include "CPlugin.h"
+#include "CServer.h"
 #include "CConfig.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
@@ -59,18 +60,20 @@ void InitRPCs()
 	RedirectRPC(RPC_UpdateScoresPingsIPs, [](RPCParameters* rpcParams)
 	{
 		RakNet::BitStream bsUpdate;
+		auto &pool = CServer::Get()->PlayerPool;
 		for (WORD i = 0; i < MAX_PLAYERS; ++i)
 		{
 			if (IsPlayerConnected(i))
 			{
 				bsUpdate.Write(i);
+				auto &data = pool.Extra(i);
 
-				if (!pPlayerData[i]->bUpdateScoresPingsDisabled)
+				if (!data.bUpdateScoresPingsDisabled)
 				{
 					bsUpdate.Write(pNetGame->pPlayerPool->dwScore[i]);
 
-					if (pPlayerData[i]->bFakePingToggle)
-						bsUpdate.Write(pPlayerData[i]->dwFakePingValue);
+					if (data.bFakePingToggle)
+						bsUpdate.Write(data.dwFakePingValue);
 					else
 						bsUpdate.Write(CSAMPFunctions::GetLastPing(CSAMPFunctions::GetPlayerIDFromIndex(i)));
 				}
@@ -112,7 +115,7 @@ void InitRPCs()
 			pPlayer->syncData.fQuaternion[4] = pPlayer->spawn.fRotation;
 			pPlayer->vecPosition = pPlayer->spawn.vecPos;
 			pPlayer->wVehicleId = 0;
-			pPlayerData[playerid]->bControllable = true;
+			CServer::Get()->PlayerPool.Extra(playerid).bControllable = true;
 
 			CSAMPFunctions::SpawnPlayer(playerid);
 		});

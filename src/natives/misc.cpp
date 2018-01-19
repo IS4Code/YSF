@@ -3,7 +3,6 @@
 #include "../includes/platform.h"
 #include "../System.h"
 #include "../Natives.h"
-#include "../CPlugin.h"
 #include "../CScriptParams.h"
 
 namespace Natives

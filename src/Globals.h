@@ -2,7 +2,7 @@
 #define YSF_GLOBALS_H
 
 #include "Structs.h"
-#include "CPlayerData.h"
+//#include "CPlayerData.h"
 
 typedef void(*logprintf_t)(char* format, ...);
 extern logprintf_t logprintf;
@@ -14,6 +14,6 @@ extern CNetGame *pNetGame;
 extern void *pConsole;
 extern void *pRakServer;
 
-extern class CPlayerData *pPlayerData[MAX_PLAYERS];
+//extern class CPlayerData *pPlayerData[MAX_PLAYERS];
 
 #endif
