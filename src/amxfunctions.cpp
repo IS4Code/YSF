@@ -92,7 +92,7 @@ int set_amxstring(AMX *amx, cell amx_addr, const char *source, int max)
 {
 	cell *dest = get_amxaddr(amx, amx_addr);
 	cell *start = dest;
-	while (max-- && *source)
+	while (--max && *source)
 	{
 		*dest++ = (cell)*source++;
 	}
@@ -104,7 +104,7 @@ int set_amxstring(AMX *amx, cell amx_addr, const wchar_t *source, int max)
 {
 	cell *dest = get_amxaddr(amx, amx_addr);
 	cell *start = dest;
-	while (max-- && *source)
+	while (--max && *source)
 	{
 		*dest++ = (cell)*source++;
 	}
@@ -117,9 +117,10 @@ int set_amxstring(AMX *amx, cell amx_addr, const std::string &source, int max)
 	cell *dest = get_amxaddr(amx, amx_addr);
 	cell *start = dest;
 	auto it = source.begin();
-	while (max-- && it != source.end())
+	while (--max && it != source.end())
 	{
 		*dest++ = *it != '\0' ? (cell)*it : 0x00FFFF00;
+		it++;
 	}
 	*dest = 0;
 	return dest - start;
