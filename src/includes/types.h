@@ -11,4 +11,10 @@ typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef float FLOAT;
 
+#ifdef _WIN32
+#define OVERRIDE override
+#else
+#define OVERRIDE
+#endif
+
 #endif

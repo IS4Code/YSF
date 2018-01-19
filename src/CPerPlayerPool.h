@@ -17,8 +17,8 @@ namespace aux
 		std::size_t operator()(const std::pair<T, U> &x) const
 		{
 			std::size_t hash = 0;
-			seed ^= std::hash<T>()(x.first) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-			seed ^= std::hash<U>()(x.second) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+			hash ^= std::hash<T>()(x.first) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+			hash ^= std::hash<U>()(x.second) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
 			return hash;
 		}
 	};
@@ -85,18 +85,18 @@ public:
 
 	}
 
-	virtual ObjectType(&operator[](size_t playerid))[MaxSize] override
+	virtual ObjectType(&operator[](size_t playerid))[MaxSize] OVERRIDE
 	{
 		return (pool.*PoolArray)[playerid];
 	}
 
-	virtual ObjectType &Get(size_t playerid, size_t index) override
+	virtual ObjectType &Get(size_t playerid, size_t index) OVERRIDE
 	{
 		if (!IsValid(playerid, index)) throw std::invalid_argument("Invalid index accessed.");
 		return (pool.*PoolArray)[playerid][index];
 	}
 
-	virtual bool IsValid(size_t playerid, size_t index) const override
+	virtual bool IsValid(size_t playerid, size_t index) const OVERRIDE
 	{
 		return players.IsValid(playerid) && index >= 0 && index < MaxSize && !aux::is_null((pool.*PoolArray)[playerid][index]);
 	}
@@ -112,7 +112,7 @@ public:
 
 	}
 
-	virtual bool IsValid(size_t playerid, size_t index) const override
+	virtual bool IsValid(size_t playerid, size_t index) const OVERRIDE
 	{
 		return playerid >= 0 && playerid < PlayerPoolMaxSize && index >= 0 && index < MaxSize && (Base::pool.*SlotArray)[playerid][index] && !aux::is_null((Base::pool.*PoolArray)[playerid][index]);
 	}
@@ -128,7 +128,7 @@ public:
 
 	}
 
-	virtual size_t TopIndex(size_t playerid) const override
+	virtual size_t TopIndex(size_t playerid) const OVERRIDE
 	{
 		return (Base::pool.*PoolSize)[playerid];
 	}

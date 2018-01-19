@@ -93,18 +93,18 @@ public:
 
 	}
 
-	virtual ObjectType &operator[](size_t index) override
+	virtual ObjectType &operator[](size_t index) OVERRIDE
 	{
 		return (pool.*PoolArray)[index];
 	}
 
-	virtual ObjectType &Get(size_t index) override
+	virtual ObjectType &Get(size_t index) OVERRIDE
 	{
 		if (!IsValid(index)) throw std::invalid_argument("Invalid index accessed.");
 		return (pool.*PoolArray)[index];
 	}
 
-	virtual bool IsValid(size_t index) const override
+	virtual bool IsValid(size_t index) const OVERRIDE
 	{
 		return index >= 0 && index < MaxSize && !aux::is_null((pool.*PoolArray)[index]);
 	}
@@ -120,7 +120,7 @@ public:
 
 	}
 
-	virtual bool IsValid(size_t index) const override
+	virtual bool IsValid(size_t index) const OVERRIDE
 	{
 		return index >= 0 && index < MaxSize && (Base::pool.*SlotArray)[index] && !aux::is_null((Base::pool.*PoolArray)[index]);
 	}
@@ -136,7 +136,7 @@ public:
 
 	}
 
-	virtual size_t TopIndex() const override
+	virtual size_t TopIndex() const OVERRIDE
 	{
 		return Base::pool.*PoolSize;
 	}
