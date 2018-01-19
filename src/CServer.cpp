@@ -10,7 +10,9 @@ CServer::CServer(CNetGame &netGame) :
 	MenuPool(*netGame.pMenuPool),
 	Text3DPool(*netGame.p3DTextPool),
 	TextDrawPool(*netGame.pTextDrawPool),
-	GangZonePool(*netGame.pGangZonePool)
+	GangZonePool(*netGame.pGangZonePool),
+
+	PlayerObjectPool(*netGame.pObjectPool, PlayerPool)
 {
 
 }

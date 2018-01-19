@@ -165,9 +165,6 @@
     <ClCompile Include="src\logprintf_buf.cpp">
       <Filter>src\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="src\CPool.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\CPlugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -292,6 +289,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\CConfig.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CPerPlayerPool.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
