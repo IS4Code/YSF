@@ -33,6 +33,7 @@
 #include "CPlayerData.h"
 #include "includes/platform.h"
 #include "CPlugin.h"
+#include "CConfig.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
 #include "Globals.h"
@@ -364,7 +365,7 @@ void CPlayerData::Process(void)
 				{
 					default_clock::duration passed_time = default_clock::now() - it->second->creation_timepoint;
 					//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
-					if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CPlugin::Get()->m_iAttachObjectDelay)
+					if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CConfig::Get()->m_iAttachObjectDelay)
 					{
 						RakNet::BitStream bs;
 						bs.Write((WORD)it->first); // wObjectID
@@ -391,7 +392,7 @@ void CPlayerData::Process(void)
 		}
 	}
 	
-	if (CPlugin::Get()->m_bUsePerPlayerGangZones)
+	if (CConfig::Get()->m_bUsePerPlayerGangZones)
 	{
 		// Processing gangzones
 		for (WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)

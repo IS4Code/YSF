@@ -32,6 +32,7 @@
 
 #include "RPCs.h"
 #include "CPlugin.h"
+#include "CConfig.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
 #include "Utils.h"
@@ -86,7 +87,7 @@ void InitRPCs()
 
 	//----------------------------------------------------
 	// Spawning
-	if (CPlugin::Get()->m_bUseCustomSpawn)
+	if (CConfig::Get()->m_bUseCustomSpawn)
 	{
 		RedirectRPC(RPC_Spawn, [](RPCParameters* rpcParams)
 		{
@@ -119,7 +120,7 @@ void InitRPCs()
 	
 	//----------------------------------------------------
 	// Protection against fakekill
-	if (CPlugin::Get()->m_bDeathProtection)
+	if (CConfig::Get()->m_bDeathProtection)
 	{
 		RedirectRPC(RPC_Death, [](RPCParameters* rpcParams)
 		{
@@ -176,7 +177,7 @@ void InitRPCs()
 
 	//----------------------------------------------------
 	// Add distance protection to OnPlayerPickupPickup against fake pickup ids
-	if (CPlugin::Get()->m_bPickupProtection)
+	if (CConfig::Get()->m_bPickupProtection)
 	{
 		RedirectRPC(RPC_PickedUpPickup, [](RPCParameters* rpcParams)
 		{

@@ -59,6 +59,7 @@ public:
 	template <class... Args>
 	inline static T *Init(Args&&... args)
 	{
+		if (m_Instance != nullptr) return m_Instance.get();
 		m_Instance = std::make_unique<T>(std::forward<Args>(args)...);
 		return m_Instance.get();
 	}

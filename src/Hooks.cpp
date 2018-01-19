@@ -36,6 +36,7 @@
 
 #include "Hooks.h"
 #include "CPlugin.h"
+#include "CConfig.h"
 #include "CFunctions.h"
 #include "CCallbackManager.h"
 #include "Memory.h"
@@ -648,7 +649,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				}
 				case 'x':	// rcon
 				{
-					if (CPlugin::Get()->IsBanned(inet_ntoa(in)) && !CPlugin::Get()->m_bAllowRemoteRCONWithBannedIPs) return 1;
+					if (CPlugin::Get()->IsBanned(inet_ntoa(in)) && !CConfig::Get()->m_bAllowRemoteRCONWithBannedIPs) return 1;
 					
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query") || !CSAMPFunctions::GetBoolVariable("rcon")) return 1;
@@ -867,7 +868,7 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 	int ret = -1;
 	if (IsPlayerConnected(playerid))
 	{
-		if (CPlugin::Get()->m_bDialogProtection && pPlayerData[playerid]->wDialogID != dialogid)
+		if (CConfig::Get()->m_bDialogProtection && pPlayerData[playerid]->wDialogID != dialogid)
 		{
 			logprintf("YSF: Might dialog hack has been detected for player %s(%d) - which should be: %d, dialogid: %d", GetPlayerName(playerid), playerid, pPlayerData[playerid]->wDialogID, dialogid);
 			ret = 1;
@@ -937,12 +938,12 @@ void InstallPostHooks()
 {
 	CSAMPFunctions::PostInitialize();
 
-	if (CPlugin::Get()->m_bIncreaseRakNetInternalPlayers)
-		CSAMPFunctions::Start(MAX_PLAYERS, 0, CPlugin::Get()->m_iRakNetInternalSleepTime, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
+	if (CConfig::Get()->m_bIncreaseRakNetInternalPlayers)
+		CSAMPFunctions::Start(MAX_PLAYERS, 0, CConfig::Get()->m_iRakNetInternalSleepTime, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
 
 	// Recreate pools
 
-	if (CPlugin::Get()->m_bUsePerPlayerGangZones)
+	if (CConfig::Get()->m_bUsePerPlayerGangZones)
 	{
 		CPlugin::Get()->pGangZonePool = new CGangZonePool();
 	}

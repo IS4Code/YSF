@@ -1,6 +1,7 @@
 #include "../Natives.h"
 #include "../includes/platform.h"
 #include "../CPlugin.h"
+#include "../CConfig.h"
 #include "../CScriptParams.h"
 #include "../CFunctions.h"
 #include "../Globals.h"
@@ -817,7 +818,7 @@ namespace Hooks
 
 			CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
 			int index = pObject->dwMaterialCount;
-			if (index < MAX_OBJECT_MATERIAL && CPlugin::Get()->m_bStorePlayerObjectsMaterial)
+			if (index < MAX_OBJECT_MATERIAL && CConfig::Get()->m_bStorePlayerObjectsMaterial)
 			{
 				std::string szText, szFontFace;
 				BYTE slot, materialsize, fontsize, bold, textalignment;

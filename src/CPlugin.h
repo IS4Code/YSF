@@ -30,8 +30,8 @@
 *
 */
 
-#ifndef YSF_CPlugin_H
-#define YSF_CPlugin_H
+#ifndef YSF_CPLUGIN_H
+#define YSF_CPLUGIN_H
 
 struct CNetGame;
 struct Packet;
@@ -50,8 +50,6 @@ class CYSFPickupPool;
 #include "CSingleton.h"
 #include "CAddresses.h"
 #include "CGangZonePool.h"
-#include "CPool.h"
-#include "CPlayerData.h"
 #include "Structs.h"
 
 class CPlugin : public CSingleton<CPlugin>
@@ -109,8 +107,6 @@ public:
 	void inline SetAFKAccuracy(DWORD time_ms) { m_dwAFKAccuracy = time_ms; }
 	DWORD inline GetAFKAccuracy(void) { return m_dwAFKAccuracy; }
 
-	CBoundedPool<CPlayerPool, CPlayer, MAX_PLAYERS, &CPlayerPool::pPlayer, &CPlayerPool::bIsPlayerConnected, &CPlayerPool::dwPlayerPoolSize, CPlayerData> PlayerPool;
-
 	WORD GetMaxPlayers();
 	WORD GetPlayerCount();
 	WORD GetNPCCount();
@@ -128,16 +124,6 @@ public:
 	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
 	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
 
-	bool m_bPickupProtection : 1;
-	bool m_bDeathProtection : 1;
-	bool m_bDialogProtection : 1;
-	bool m_bUseCustomSpawn : 1;
-	bool m_bUsePerPlayerGangZones : 1;
-	bool m_bAllowRemoteRCONWithBannedIPs : 1;
-	bool m_bIncreaseRakNetInternalPlayers : 1;
-	int m_iRakNetInternalSleepTime;
-	int m_iAttachObjectDelay;
-	bool m_bStorePlayerObjectsMaterial : 1;
 #ifdef _WIN32
 	struct SysExec_t
 	{
@@ -150,7 +136,6 @@ public:
 	std::mutex m_SysExecMutex;
 #endif
 private:
-	void LoadConfig();
 #ifdef _WIN32
 	void ProcessSysExec();
 #endif

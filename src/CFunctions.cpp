@@ -35,6 +35,7 @@
 #include "includes/platform.h"
 
 #include "CPlugin.h"
+#include "CServer.h"
 #include "CFunctions.h"
 #include "CAddresses.h"
 #include "CCallbackManager.h"
@@ -119,6 +120,8 @@ void CSAMPFunctions::PostInitialize()
 	// Get pRakServer
 	int (*pfn_GetRakServer)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_RAKSERVER];
 	pRakServer = (void*)pfn_GetRakServer();
+
+	CServer::Init(*pNetGame);
 
 	// Init RakServer functions & hooks
 	int *pRakServer_VTBL = ((int*)(*(void**)pRakServer));

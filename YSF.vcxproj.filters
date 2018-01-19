@@ -171,6 +171,12 @@
     <ClCompile Include="src\CPlugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\CServer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CConfig.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">
@@ -280,6 +286,12 @@
       <Filter>src\Includes</Filter>
     </ClInclude>
     <ClInclude Include="src\CPlugin.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CServer.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CConfig.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

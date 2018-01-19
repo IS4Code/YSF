@@ -1,11 +1,12 @@
 #include "../Natives.h"
 #include "../CPlugin.h"
+#include "../CConfig.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
 
 #define CHECK_PER_PLAYER_ZONES_STATE() \
-	if (!CPlugin::Get()->m_bUsePerPlayerGangZones) \
+	if (!CConfig::Get()->m_bUsePerPlayerGangZones) \
 	{ \
 		logprintf("YSF: Per player gangzones are disabled, you aren't allowed to use \"%s\" function!", __FUNCTION__); \
 		return 0; \
@@ -21,7 +22,7 @@ namespace Natives
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		cell ret = CPlugin::Get()->m_bUsePerPlayerGangZones ? CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)) : pNetGame->pGangZonePool->bSlotState[static_cast<WORD>(zoneid)] != 0;
+		cell ret = CConfig::Get()->m_bUsePerPlayerGangZones ? CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)) : pNetGame->pGangZonePool->bSlotState[static_cast<WORD>(zoneid)] != 0;
 		return ret;
 	}
 
@@ -605,7 +606,7 @@ static AMX_HOOK_INFO hook_list[] =
 void GangZonesLoadNatives()
 {
 	RegisterNatives(native_list);
-	if (CPlugin::Get()->m_bUsePerPlayerGangZones)
+	if (CConfig::Get()->m_bUsePerPlayerGangZones)
 	{
 		RegisterHooks(hook_list);
 	}
