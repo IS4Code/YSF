@@ -40,7 +40,7 @@
 #include "Utils.h"
 #include "RPCs.h"
 
-CPlayerData::CPlayerData( WORD playerid )
+CPlayerData::CPlayerData(WORD playerid) : wPlayerID(playerid)
 {
 	static DWORD dwPlayerColors[100] = 
 	{
@@ -57,53 +57,6 @@ CPlayerData::CPlayerData( WORD playerid )
 		0x10C9C5FF,0x70524DFF,0x0BE472FF,0x8A2CD7FF,0x6152C2FF,0xCF72A9FF,0xE59338FF,0xEEDC2DFF,0xD8C762FF,
 		0xD8C762FF
 	};
-
-	wPlayerID = playerid;
-	iNPCProcessID = -1;
-	wSurfingInfo = 0;
-	wDialogID = -1;
-	
-	// Exclusive RPC broadcast
-	bBroadcastTo = 0;
-
-	// Variables to store disabled keys
-	wDisabledKeys = 0;
-	wDisabledKeysUD = 0;
-	wDisabledKeysLR = 0;
-
-	// Per-player things
-	fGravity = pNetGame->fGravity;
-	byteWeather = pNetGame->byteWeather;
-	fBounds[0] = 20000.0f;
-	fBounds[1] = -20000.0f;
-	fBounds[2] = 20000.0f;
-	fBounds[3] = -20000.0f;
-
-	// Gangzones
-	memset(pPlayerZone, NULL, sizeof(pPlayerZone));
-	memset(byteClientSideZoneIDUsed, 0xFF, sizeof(byteClientSideZoneIDUsed));
-	memset(wClientSideGlobalZoneID, 0xFFFF, sizeof(wClientSideGlobalZoneID));
-	memset(wClientSidePlayerZoneID, 0xFFFF, sizeof(wClientSidePlayerZoneID));
-	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
-	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
-
-	dwFakePingValue = 0;
-	
-	bObjectsRemoved = false;
-	bWidescreen = false;
-	bUpdateScoresPingsDisabled = false;
-	bFakePingToggle = false;
-	bAFKState = false;
-	bEverUpdated = false;
-	bControllable = true;
-	bAttachedObjectCreated = false;
-	bCustomNameInQuery = false;
-	m_HideNewObjects = false;
-
-	// Private
-	memset(m_iTeams, -1, sizeof(m_iSkins));
-	memset(m_iSkins, -1, sizeof(m_iSkins));
-	memset(m_iFightingStyles, -1, sizeof(m_iFightingStyles));
 
 	// Fix for GetPlayerColor
 	if (pNetGame->pPlayerPool->pPlayer[playerid])
@@ -131,7 +84,7 @@ CPlayerData::~CPlayerData( void )
 
 bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
 {
-	m_iTeams[teamplayerid] = team;
+	m_iTeams[teamplayerid] = team + 1;
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)teamplayerid);
@@ -143,16 +96,16 @@ bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
 int CPlayerData::GetPlayerTeamForPlayer(WORD teamplayerid)
 {
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[teamplayerid];
-	if (m_iTeams[teamplayerid] == -1)
+	if (m_iTeams[teamplayerid] == 0)
 	{
 		return p->spawn.byteTeam;
 	}
-	return m_iTeams[teamplayerid];
+	return m_iTeams[teamplayerid] - 1;
 }
 
 bool CPlayerData::SetPlayerSkinForPlayer(WORD skinplayerid, int skin)
 {
-	m_iSkins[skinplayerid] = skin;
+	m_iSkins[skinplayerid] = skin + 1;
 
 	RakNet::BitStream bs;
 	bs.Write((int)skinplayerid);
@@ -164,11 +117,11 @@ bool CPlayerData::SetPlayerSkinForPlayer(WORD skinplayerid, int skin)
 int CPlayerData::GetPlayerSkinForPlayer(WORD skinplayerid)
 {
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[skinplayerid];
-	if (m_iSkins[skinplayerid] == -1)
+	if (m_iSkins[skinplayerid] == 0)
 	{
 		return p->spawn.iSkin;
 	}
-	return m_iSkins[skinplayerid];
+	return m_iSkins[skinplayerid] - 1;
 }
 
 bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, const char *name)
@@ -198,7 +151,7 @@ const char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
 
 bool CPlayerData::SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style)
 {
-	m_iFightingStyles[styleplayerid] = style;
+	m_iFightingStyles[styleplayerid] = style + 1;
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)styleplayerid);
@@ -210,11 +163,11 @@ bool CPlayerData::SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style)
 int CPlayerData::GetPlayerFightingStyleForPlayer(WORD styleplayerid)
 {
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[styleplayerid];
-	if (m_iFightingStyles[styleplayerid] == -1)
+	if (m_iFightingStyles[styleplayerid] == 0)
 	{
 		return p->byteFightingStyle;
 	}
-	return m_iFightingStyles[styleplayerid];
+	return m_iFightingStyles[styleplayerid] - 1;
 }
 
 void CPlayerData::ResetPlayerMarkerForPlayer(WORD resetplayerid)
