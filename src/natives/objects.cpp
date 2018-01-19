@@ -604,6 +604,54 @@ namespace Natives
 		CServer::Get()->PlayerPool.Extra(forplayerid).ShowObject(objectid, true);
 		return 1;
 	}
+
+	// native IsObjectHiddenForPlayer(forplayerid, objectid);
+	AMX_DECLARE_NATIVE(IsObjectHiddenForPlayer)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int forplayerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+
+		if (!IsPlayerConnected(forplayerid)) return 0;
+
+		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
+
+		CObjectPool *pObjectPool = pNetGame->pObjectPool;
+		if (!pObjectPool->bObjectSlotState[objectid]) return 0;
+
+		CObject *pObject = pObjectPool->pObjects[objectid];
+		if (!pObject) return 0;
+
+		CServer::Get()->PlayerPool.Extra(forplayerid).IsObjectHidden(objectid);
+		return 1;
+	}
+
+	// native HideNewObjectsForPlayer(playerid, bool:toggle);
+	AMX_DECLARE_NATIVE(HideNewObjectsForPlayer)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		bool toggle = CScriptParams::Get()->ReadBool();
+
+		if (!IsPlayerConnected(playerid)) return 0;
+
+		CServer::Get()->PlayerPool.Extra(playerid).HideNewObjects(toggle);
+		return 1;
+	}
+
+	// native NewObjectsHiddenForPlayer(playerid);
+	AMX_DECLARE_NATIVE(NewObjectsHiddenForPlayer)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+
+		if (!IsPlayerConnected(playerid)) return 0;
+
+		return static_cast<cell>(CServer::Get()->PlayerPool.Extra(playerid).NewObjectsHidden());
+	}
 }
 
 namespace Original
@@ -856,8 +904,6 @@ namespace Hooks
 static AMX_NATIVE_INFO native_list[] =
 {
 	AMX_DEFINE_NATIVE(AttachPlayerObjectToObject)
-	AMX_DEFINE_NATIVE(HideObjectForPlayer) // R20
-	AMX_DEFINE_NATIVE(ShowObjectForPlayer) // R20
 
 	// Objects get - global
 	AMX_DEFINE_NATIVE(GetObjectDrawDistance)
@@ -888,6 +934,12 @@ static AMX_NATIVE_INFO native_list[] =
 
 	// special - for attached objects
 	AMX_DEFINE_NATIVE(GetPlayerAttachedObject) // R3
+
+	AMX_DEFINE_NATIVE(HideObjectForPlayer) // R20
+	AMX_DEFINE_NATIVE(ShowObjectForPlayer) // R20
+	AMX_DEFINE_NATIVE(IsObjectHiddenForPlayer) //R20
+	AMX_DEFINE_NATIVE(HideNewObjectsForPlayer) //R20
+	AMX_DEFINE_NATIVE(NewObjectsHiddenForPlayer) //R20
 };
 
 static AMX_HOOK_INFO hook_list[] = 

@@ -98,6 +98,7 @@ CPlayerData::CPlayerData( WORD playerid )
 	bControllable = true;
 	bAttachedObjectCreated = false;
 	bCustomNameInQuery = false;
+	m_HideNewObjects = false;
 
 	// Private
 	memset(m_iTeams, -1, sizeof(m_iSkins));
@@ -276,13 +277,28 @@ void CPlayerData::ShowObject(WORD objectid, bool sync)
 	}
 }
 
-bool CPlayerData::IsObjectHidden(WORD objectid)
+void CPlayerData::HideNewObjects(bool toggle)
+{
+	m_HideNewObjects = toggle;
+}
+
+bool CPlayerData::NewObjectsHidden() const
+{
+	return m_HideNewObjects;
+}
+
+bool CPlayerData::IsObjectHidden(WORD objectid) const
 {
 	CObjectPool *pObjectPool = pNetGame->pObjectPool;
 	if (!pObjectPool->bObjectSlotState[objectid]) return false;
 
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	if (!pObject) return false;
+
+	if (m_HideNewObjects)
+	{
+		return true;
+	}
 
 	return m_HiddenObjects.find(objectid) != m_HiddenObjects.end();
 }

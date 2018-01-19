@@ -179,8 +179,11 @@ native IsPlayerPaused(playerid);
 native GetPlayerPausedTime(playerid);
 
 // Objects
-native HideObjectForPlayer(forplayerid, objectid);
-native ShowObjectForPlayer(forplayerid, objectid);
+native HideObjectForPlayer(playerid, objectid);
+native ShowObjectForPlayer(playerid, objectid);
+native HideNewObjectsForPlayer(playerid, bool:toggle);
+native IsObjectHiddenForPlayer(playerid, objectid);
+native NewObjectsHiddenForPlayer(playerid);
 
 // Objects get - global
 native Float:GetObjectDrawDistance(objectid);

@@ -103,7 +103,9 @@ public:
 	bool DestroyObject(WORD objectid);
 	void ShowObject(WORD objectid, bool sync);
 	void HideObject(WORD objectid, bool sync);
-	bool IsObjectHidden(WORD objectid);
+	bool NewObjectsHidden() const;
+	void HideNewObjects(bool toggle);
+	bool IsObjectHidden(WORD objectid) const;
 
 	void Process(void);
 
@@ -188,6 +190,7 @@ private:
 	int m_iFightingStyles[MAX_PLAYERS];
 	std::unordered_map<WORD, std::string> m_PlayerNames;
 	std::unordered_set<WORD> m_HiddenObjects;
+	bool m_HideNewObjects;
 };
 
 #endif
