@@ -74,7 +74,7 @@ namespace Natives
 		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
 		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-		CScriptParams::Get()->Add(pObject->wAttachedVehicleID, pObject->wAttachedObjectID, CPlugin::Get()->COBJECT_AttachedObjectPlayer[objectid]);
+		CScriptParams::Get()->Add(pObject->wAttachedVehicleID, pObject->wAttachedObjectID, CServer::Get()->ObjectPool.Extra(objectid).attachedToPlayer);
 		return 1;
 	}
 
@@ -679,7 +679,7 @@ namespace Hooks
 
 		if (Original::DestroyObject(amx, params))
 		{
-			CPlugin::Get()->COBJECT_AttachedObjectPlayer[objectid] = INVALID_PLAYER_ID;
+			CServer::Get()->ObjectPool.RemoveExtra(objectid);
 
 			auto &pool = CServer::Get()->PlayerPool;
 			for (int i = 0; i < MAX_PLAYERS; i++)
@@ -743,7 +743,7 @@ namespace Hooks
 		Original::AttachObjectToPlayer(amx, params);
 
 		// Store values which should be server purpose not mine
-		CPlugin::Get()->COBJECT_AttachedObjectPlayer[objectid] = static_cast<WORD>(playerid);
+		CServer::Get()->ObjectPool.Extra(objectid).attachedToPlayer = static_cast<WORD>(playerid);
 		CScriptParams::Get()->Read(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
 		return 1;
 	}

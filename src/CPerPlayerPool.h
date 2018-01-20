@@ -4,6 +4,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <exception>
+#include <type_traits>
 #include "includes/types.h"
 #include "CPool.h"
 #include "CPlayerData.h"
@@ -69,6 +70,17 @@ public:
 	bool RemoveExtra(size_t playerid, size_t index)
 	{
 		return extraData.erase(std::make_pair(playerid, index)) > 0;
+	}
+
+	template <class Function>
+	typename std::result_of<Function(ExtraData &)>::type MapExtra(size_t playerid, size_t index, Function func)
+	{
+		auto iter = extraData.find(std::make_pair(playerid, index));
+		if (iter == extraData.end())
+		{
+			return std::result_of<Function(ExtraData &)>::type();
+		}
+		return func(iter->second);
 	}
 };
 

@@ -151,8 +151,10 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClCompile Include="src\CAddresses.cpp" />
     <ClCompile Include="src\amxfunctions.cpp" />
     <ClCompile Include="src\CConfig.cpp" />
+    <ClCompile Include="src\CObjectData.cpp" />
     <ClCompile Include="src\CPlugin.cpp" />
     <ClCompile Include="src\CServer.cpp" />
+    <ClCompile Include="src\CVehicleData.cpp" />
     <ClCompile Include="src\logprintf_buf.cpp" />
     <ClCompile Include="src\CScriptParams.cpp" />
     <ClCompile Include="src\CCallbackManager.cpp" />
@@ -218,10 +220,12 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClInclude Include="src\CAddresses.h" />
     <ClInclude Include="src\amxfunctions.h" />
     <ClInclude Include="src\CConfig.h" />
+    <ClInclude Include="src\CObjectData.h" />
     <ClInclude Include="src\CPerPlayerPool.h" />
     <ClInclude Include="src\CPlugin.h" />
     <ClInclude Include="src\CPool.h" />
     <ClInclude Include="src\CServer.h" />
+    <ClInclude Include="src\CVehicleData.h" />
     <ClInclude Include="src\includes\types.h" />
     <ClInclude Include="src\linux_fix.h" />
     <ClInclude Include="src\logprintf_buf.h" />

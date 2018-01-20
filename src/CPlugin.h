@@ -120,10 +120,6 @@ public:
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;
 
-	std::unordered_map<int, CVehicleSpawn> vehicleSpawnData;
-	std::bitset<MAX_VEHICLES> bChangedVehicleColor;
-	WORD COBJECT_AttachedObjectPlayer[MAX_OBJECTS];
-
 #ifdef _WIN32
 	struct SysExec_t
 	{

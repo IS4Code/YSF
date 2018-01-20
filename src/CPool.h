@@ -4,6 +4,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <exception>
+#include <type_traits>
 #include "includes/types.h"
 
 namespace aux
@@ -78,6 +79,17 @@ public:
 	bool RemoveExtra(size_t index)
 	{
 		return extraData.erase(index) > 0;
+	}
+
+	template <class Function>
+	typename std::result_of<Function(ExtraData &)>::type MapExtra(size_t index, Function func)
+	{
+		auto iter = extraData.find(index);
+		if (iter == extraData.end())
+		{
+			return std::result_of<Function(ExtraData &)>::type();
+		}
+		return func(iter->second);
 	}
 };
 

@@ -347,25 +347,24 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	// logprintf("respawned vehicle: %d", pVehicle->wVehicleID);
 
 	// Check if vehicle has custom spawn
-	auto v = CPlugin::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
-	if(v == CPlugin::Get()->vehicleSpawnData.end())
-	{
-
-	}
-	// If yes, then re-create the vehicle at different location
-	else 
-	{			
-		pVehicle->customSpawn.iModelID = v->second.iModelID;
-		pVehicle->customSpawn.vecPos = v->second.vecPos;
-		pVehicle->customSpawn.fRot = v->second.fRot;
-		pVehicle->customSpawn.iColor1 = v->second.iColor1;
-		pVehicle->customSpawn.iColor2 = v->second.iColor2;
-		pVehicle->customSpawn.iRespawnTime = v->second.iRespawnTime;
-		pVehicle->customSpawn.iInterior = v->second.iInterior;
-
-		// logprintf("custom vehicle spawn respawned %d", pVehicle->wVehicleID);
-		CPlugin::Get()->vehicleSpawnData.erase(v);
-	}
+	CServer::Get()->VehiclePool.MapExtra(
+		pVehicle->wVehicleID, [pVehicle](CVehicleData &data)
+		{
+			// If yes, then re-create the vehicle at different location
+			if (data.customSpawnData)
+			{
+				pVehicle->customSpawn.iModelID = data.spawnData.iModelID;
+				pVehicle->customSpawn.vecPos = data.spawnData.vecPos;
+				pVehicle->customSpawn.fRot = data.spawnData.fRot;
+				pVehicle->customSpawn.iColor1 = data.spawnData.iColor1;
+				pVehicle->customSpawn.iColor2 = data.spawnData.iColor2;
+				pVehicle->customSpawn.iRespawnTime = data.spawnData.iRespawnTime;
+				pVehicle->customSpawn.iInterior = data.spawnData.iInterior;
+				// logprintf("custom vehicle spawn respawned %d", pVehicle->wVehicleID);
+				data.customSpawnData = false;
+			}
+		}
+	);
 
 	pVehicle->vehModInfo.iColor1 = pVehicle->customSpawn.iColor1;
 	pVehicle->vehModInfo.iColor2 = pVehicle->customSpawn.iColor2;

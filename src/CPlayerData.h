@@ -79,7 +79,7 @@ public:
 	{
 
 	}
-	~CPlayerData(void);
+	~CPlayerData();
 
 	WORD wPlayerID;
 

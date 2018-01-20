@@ -55,9 +55,7 @@ CPlugin::CPlugin(SAMPVersion version)
 	LoadTickCount();
 
 	//memset(&pPlayerData, NULL, sizeof(pPlayerData));
-	bChangedVehicleColor.reset();
-	memset(&COBJECT_AttachedObjectPlayer, INVALID_PLAYER_ID, sizeof(COBJECT_AttachedObjectPlayer));
-
+	
 	LoadNatives();
 
 	// Initialize addresses

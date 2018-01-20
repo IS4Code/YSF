@@ -49,15 +49,15 @@
     <Filter Include="src\Includes">
       <UniqueIdentifier>{9887df33-c415-4cd1-a27f-cce2c84775eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Data">
+      <UniqueIdentifier>{12777ec9-8551-4823-a140-be8591128f59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CCallbackManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\CModelSizes.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CPlayerData.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -174,15 +174,21 @@
     <ClCompile Include="src\CConfig.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\CPlayerData.cpp">
+      <Filter>src\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CVehicleData.cpp">
+      <Filter>src\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CObjectData.cpp">
+      <Filter>src\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\CModelSizes.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CPlayerData.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\main.h">
@@ -293,6 +299,15 @@
     </ClInclude>
     <ClInclude Include="src\CPerPlayerPool.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CPlayerData.h">
+      <Filter>src\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CVehicleData.h">
+      <Filter>src\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CObjectData.h">
+      <Filter>src\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

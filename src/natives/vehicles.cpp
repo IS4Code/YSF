@@ -1,6 +1,7 @@
 #include "../Natives.h"
 #include "../includes/platform.h"
 #include "../CPlugin.h"
+#include "../CServer.h"
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
@@ -20,20 +21,27 @@ namespace Natives
 			return 0;
 
 		CVehicleSpawn spawn;
-		auto v = CPlugin::Get()->vehicleSpawnData.find(vehicleid);
-		if (v == CPlugin::Get()->vehicleSpawnData.end())
+		bool custom = CServer::Get()->VehiclePool.MapExtra
+		(
+			vehicleid, [&spawn](CVehicleData &data)
+			{
+				if (data.customSpawnData)
+				{
+					spawn.vecPos = data.spawnData.vecPos;
+					spawn.fRot = data.spawnData.fRot;
+					spawn.iColor1 = data.spawnData.iColor1;
+					spawn.iColor2 = data.spawnData.iColor2;
+					return true;
+				}
+				return false;
+			}
+		);
+		if (!custom)
 		{
 			spawn.vecPos = pVehicle->customSpawn.vecPos;
 			spawn.fRot = pVehicle->customSpawn.fRot;
 			spawn.iColor1 = pVehicle->customSpawn.iColor1;
 			spawn.iColor2 = pVehicle->customSpawn.iColor2;
-		}
-		else
-		{
-			spawn.vecPos = v->second.vecPos;
-			spawn.fRot = v->second.fRot;
-			spawn.iColor1 = v->second.iColor1;
-			spawn.iColor2 = v->second.iColor2;
 		}
 		CScriptParams::Get()->Add(spawn.vecPos, spawn.fRot, spawn.iColor1, spawn.iColor2);
 		return 1;
@@ -90,7 +98,9 @@ namespace Natives
 			spawn.iInterior = interior;
 		}
 
-		CPlugin::Get()->vehicleSpawnData[vehicleid] = spawn;
+		CVehicleData &data = CServer::Get()->VehiclePool.Extra(vehicleid);
+		data.customSpawnData = true;
+		data.spawnData = spawn;
 
 		// logprintf("streamedin: %d, iRespawnTime: %d, interior: %d", bStreamedIn, respawntime, interior);
 
@@ -144,8 +154,11 @@ namespace Natives
 			return 0;
 
 		CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
-		const int color1 = CPlugin::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor1 : pVehicle->customSpawn.iColor1;
-		const int color2 = CPlugin::Get()->bChangedVehicleColor[vehicleid] ? pVehicle->vehModInfo.iColor2 : pVehicle->customSpawn.iColor2;
+		
+		bool changed = CServer::Get()->VehiclePool.MapExtra(vehicleid, [](CVehicleData &data) {return data.bChangedVehicleColor; });
+		
+		int color1 = changed ? pVehicle->vehModInfo.iColor1 : pVehicle->customSpawn.iColor1;
+		int color2 = changed ? pVehicle->vehModInfo.iColor2 : pVehicle->customSpawn.iColor2;
 
 		CScriptParams::Get()->Add(color1, color2);
 		return 1;
@@ -474,7 +487,7 @@ namespace Hooks
 		const int vehicleid = CScriptParams::Get()->ReadInt();
 		if (Original::ChangeVehicleColor(amx, params))
 		{
-			CPlugin::Get()->bChangedVehicleColor[vehicleid] = true;
+			CServer::Get()->VehiclePool.Extra(vehicleid).bChangedVehicleColor = true;
 			return 1;
 		}
 		return 0;
@@ -488,12 +501,7 @@ namespace Hooks
 		const int vehicleid = CScriptParams::Get()->ReadInt();
 		if (Original::DestroyVehicle(amx, params))
 		{
-			CPlugin::Get()->bChangedVehicleColor[vehicleid] = false;
-			auto v = CPlugin::Get()->vehicleSpawnData.find(vehicleid);
-			if (v != CPlugin::Get()->vehicleSpawnData.end())
-			{
-				CPlugin::Get()->vehicleSpawnData.erase(v);
-			}
+			CServer::Get()->VehiclePool.RemoveExtra(vehicleid);
 			return 1;
 		}
 		return 0;
