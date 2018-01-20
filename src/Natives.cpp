@@ -37,14 +37,15 @@
 
 #include "Natives.h"
 
-static std::unordered_multimap<std::string, std::reference_wrapper<const AMX_HOOK_INFO>> redirected_native_list;
+static std::unordered_multimap<std::string, const AMX_HOOK_INFO *> redirected_native_list;
 
 void RegisterHooks(const AMX_HOOK_INFO *hooks_list, size_t count)
 {
 	for (size_t i = 0; i < count; i++)
 	{
-		const AMX_HOOK_INFO &hook = hooks_list[i];
-		redirected_native_list.insert(std::make_pair(std::string(hook.name), std::cref(hook)));
+		const AMX_HOOK_INFO *hook = &hooks_list[i];
+		std::string name(hook->name);
+		redirected_native_list.emplace(name, hook);
 	}
 }
 
@@ -55,7 +56,7 @@ bool ApplyHooks(AMX_NATIVE_INFO &native)
 	auto range = redirected_native_list.equal_range(std::string(native.name));
 	while (range.first != range.second)
 	{
-		const AMX_HOOK_INFO &hook = range.first->second;
+		const AMX_HOOK_INFO &hook = *range.first->second;
 
 		hook.originalfunc = native.func;
 		native.func = hook.func;
