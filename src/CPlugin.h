@@ -74,10 +74,10 @@ public:
 	bool IsValidNick(char *szName);
 
 	// RakServer::IsBanned fix
-	inline void BanIP(const char* ip) { m_BannedIPs.insert(ip); } 
-	inline void UnbanIP(const char* ip) { m_BannedIPs.erase(ip); }
-	inline void ClearBans() { m_BannedIPs.clear(); }
-	inline bool IsBanned(char* ip) { return m_BannedIPs.find(ip) != m_BannedIPs.end(); }
+	void BanIP(const char* ip) { m_BannedIPs.insert(ip); } 
+	void UnbanIP(const char* ip) { m_BannedIPs.erase(ip); }
+	void ClearBans() { m_BannedIPs.clear(); }
+	bool IsBanned(char* ip) { return m_BannedIPs.find(ip) != m_BannedIPs.end(); }
 
 	// Toggling rcon commands
 	bool ChangeRCONCommandName(std::string const &strCmd, std::string const &strNewCmd);
@@ -89,14 +89,14 @@ public:
 	bool IsConsolePlayer(WORD playerid, DWORD &color);
 	void ProcessConsoleMessages(const char* str);
 
-	void inline SetTickRate(int rate) { m_iTickRate = rate; }
-	int inline GetTickRate(void) { return m_iTickRate; }
+	void SetTickRate(int rate) { m_iTickRate = rate; }
+	int GetTickRate(void) { return m_iTickRate; }
 
-	void inline EnableNightVisionFix(bool enable) { m_bNightVisionFix = enable; }
-	bool inline IsNightVisionFixEnabled(void) { return m_bNightVisionFix; }
+	void EnableNightVisionFix(bool enable) { m_bNightVisionFix = enable; }
+	bool IsNightVisionFixEnabled(void) { return m_bNightVisionFix; }
 	
-	void inline ToggleOnServerMessage(bool toggle) { m_bOnServerMessage = toggle; }
-	bool inline IsOnServerMessageEnabled(void) { return m_bOnServerMessage; }
+	void ToggleOnServerMessage(bool toggle) { m_bOnServerMessage = toggle; }
+	bool IsOnServerMessageEnabled(void) { return m_bOnServerMessage; }
 
 	void SetExclusiveBroadcast(bool toggle);
 	bool GetExclusiveBroadcast(void);
@@ -104,8 +104,8 @@ public:
 	void SetExtendedNetStatsEnabled(bool enable);
 	bool IsExtendedNetStatsEnabled(void);
 
-	void inline SetAFKAccuracy(DWORD time_ms) { m_dwAFKAccuracy = time_ms; }
-	DWORD inline GetAFKAccuracy(void) { return m_dwAFKAccuracy; }
+	void SetAFKAccuracy(DWORD time_ms) { m_dwAFKAccuracy = time_ms; }
+	DWORD GetAFKAccuracy(void) { return m_dwAFKAccuracy; }
 
 	WORD GetMaxPlayers();
 	WORD GetPlayerCount();
