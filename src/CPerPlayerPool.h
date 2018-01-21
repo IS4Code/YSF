@@ -48,7 +48,7 @@ public:
 };
 
 
-template <class ObjectType, size_t MaxSize, class ExtraData>
+template <class ObjectType, size_t MaxSize, class ExtraData = std::tuple<size_t>>
 class CExtendedPerPlayerPool : public CPerPlayerPoolBase<ObjectType, MaxSize>
 {
 	typedef CPerPlayerPoolBase<ObjectType, MaxSize> Base;

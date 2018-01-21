@@ -183,6 +183,9 @@
     <ClCompile Include="src\CObjectData.cpp">
       <Filter>src\Data</Filter>
     </ClCompile>
+    <ClCompile Include="src\CPlayerObjectPool.cpp">
+      <Filter>src\Pools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">
@@ -308,6 +311,9 @@
     </ClInclude>
     <ClInclude Include="src\CObjectData.h">
       <Filter>src\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CPlayerObjectPool.h">
+      <Filter>src\Pools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

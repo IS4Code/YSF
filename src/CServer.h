@@ -1,6 +1,7 @@
 #ifndef YSF_CSERVER_H
 #define YSF_CSERVER_H
 
+#include <memory>
 #include "CSingleton.h"
 #include "CPool.h"
 #include "CPerPlayerPool.h"
@@ -10,6 +11,7 @@
 
 class CServer : public CSingleton<CServer>
 {
+	std::unique_ptr<CExtendedPerPlayerPool<CObject*, MAX_OBJECTS>> playerObjectPool;
 public:
 	CNetGame &NetGame;
 	CBoundedPool<CPlayerPool, CPlayer*, MAX_PLAYERS, &CPlayerPool::pPlayer, &CPlayerPool::bIsPlayerConnected, &CPlayerPool::dwPlayerPoolSize, CPlayerData> PlayerPool;
@@ -22,7 +24,8 @@ public:
 	CSlotPool<CTextDrawPool, CTextdraw*, MAX_TEXT_DRAWS, &CTextDrawPool::TextDraw, &CTextDrawPool::bSlotState> TextDrawPool;
 	CSlotPool<CSAMPGangZonePool, float[4], MAX_GANG_ZONES, &CSAMPGangZonePool::fGangZone, &CSAMPGangZonePool::bSlotState> GangZonePool;
 
-	CSlotPerPlayerPool<CObjectPool, CObject*, MAX_OBJECTS, MAX_PLAYERS, &CObjectPool::pPlayerObjects, &CObjectPool::bPlayerObjectSlotState> PlayerObjectPool;
+	CExtendedPerPlayerPool<CObject*, MAX_OBJECTS> &PlayerObjectPool;
+	//CSlotPerPlayerPool<CObjectPool, CObject*, MAX_OBJECTS, MAX_PLAYERS, &CObjectPool::pPlayerObjects, &CObjectPool::bPlayerObjectSlotState> PlayerObjectPool;
 
 	CServer(CNetGame &netGame);
 };

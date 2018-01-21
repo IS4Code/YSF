@@ -1,4 +1,6 @@
 #include "CServer.h"
+#include "CPlayerObjectPool.h"
+#include "linux_fix.h"
 
 CServer::CServer(CNetGame &netGame) :
 	NetGame(netGame),
@@ -12,7 +14,10 @@ CServer::CServer(CNetGame &netGame) :
 	TextDrawPool(*netGame.pTextDrawPool),
 	GangZonePool(*netGame.pGangZonePool),
 
-	PlayerObjectPool(*netGame.pObjectPool, PlayerPool)
+	playerObjectPool(std::make_unique<CSlotPerPlayerPool<CObjectPool, CObject*, MAX_OBJECTS, MAX_PLAYERS, &CObjectPool::pPlayerObjects, &CObjectPool::bPlayerObjectSlotState>>(*netGame.pObjectPool, PlayerPool)),
+	//playerObjectPool(std::make_unique<CPlayerObjectPool>(PlayerPool)),
+	PlayerObjectPool(*playerObjectPool)
+	//PlayerObjectPool(*netGame.pObjectPool, PlayerPool)
 {
 
 }
