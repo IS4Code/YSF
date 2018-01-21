@@ -60,7 +60,7 @@ public:
 	{
 		if (IsValid(index))
 		{
-			return func(this[index]);
+			return func((*this)[index]);
 		}
 		return std::result_of<Function(ObjectType &)>::type();
 	}

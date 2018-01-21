@@ -51,7 +51,7 @@ public:
 	{
 		if (IsValid(playerid, index))
 		{
-			return func(this[playerid][index]);
+			return func((*this)[playerid][index]);
 		}
 		return std::result_of<Function(ObjectType &)>::type();
 	}
