@@ -45,6 +45,16 @@ public:
 	{
 		return Capacity - 1;
 	}
+
+	template <class Function>
+	typename std::result_of<Function(ObjectType &)>::type Map(size_t playerid, size_t index, Function func)
+	{
+		if (IsValid(playerid, index))
+		{
+			return func(this[playerid][index]);
+		}
+		return std::result_of<Function(ObjectType &)>::type();
+	}
 };
 
 

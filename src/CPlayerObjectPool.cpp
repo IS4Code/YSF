@@ -27,11 +27,11 @@ bool CPlayerObjectPool::IsValid(size_t playerid, size_t index) const
 		MapPlayerPool
 		(
 			playerid, [index](const PerPlayerPool &pool)
-	{
-		return pool.Pool[index] != nullptr;
-	}
+			{
+				return pool.Pool[index] != nullptr;
+			}
 		)
-		;
+	;
 }
 
 size_t CPlayerObjectPool::TopIndex(size_t playerid) const

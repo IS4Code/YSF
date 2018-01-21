@@ -54,6 +54,16 @@ public:
 	{
 		return CPoolBase::Capacity - 1;
 	}
+
+	template <class Function>
+	typename std::result_of<Function(ObjectType &)>::type Map(size_t index, Function func)
+	{
+		if (IsValid(index))
+		{
+			return func(this[index]);
+		}
+		return std::result_of<Function(ObjectType &)>::type();
+	}
 };
 
 
