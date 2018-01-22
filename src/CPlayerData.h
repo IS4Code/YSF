@@ -43,6 +43,7 @@
 #include "CGangZonePool.h"
 #include "CPickupPool.h"
 #include "Structs.h"
+#include "utils/bimap.h"
 
 using default_clock = std::chrono::steady_clock;
 
@@ -187,6 +188,8 @@ public:
 	bool bEverUpdated = false;
 	bool bControllable = false;
 	bool bAttachedObjectCreated = false;
+
+	aux::bimap<WORD, WORD> localObjects;
 
 private:
 	struct RemovedBuilding

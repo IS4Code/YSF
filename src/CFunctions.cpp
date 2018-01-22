@@ -216,9 +216,14 @@ void CSAMPFunctions::SpawnPlayer(int playerid)
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
 }
 
+void CSAMPFunctions::SpawnObjectForPlayer(CObject *pObject, WORD wPlayerID)
+{
+	pfn__CObject__SpawnForPlayer(pObject, wPlayerID);
+}
+
 void CSAMPFunctions::SpawnObjectForPlayer(int iObjectId, WORD wPlayerID)
 {
-	pfn__CObject__SpawnForPlayer(pNetGame->pObjectPool->pObjects[iObjectId], wPlayerID);
+	SpawnObjectForPlayer(pNetGame->pObjectPool->pObjects[iObjectId], wPlayerID);
 }
 
 void CSAMPFunctions::Packet_WeaponsUpdate(Packet *p)

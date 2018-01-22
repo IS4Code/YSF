@@ -135,6 +135,7 @@ public:
 	
 	static void		SpawnPlayer(int iPlayerId);
 
+	static void		SpawnObjectForPlayer(CObject *pObjectId, WORD wPlayerID);
 	static void		SpawnObjectForPlayer(int iObjectId, WORD wPlayerID);
 
 	static void		Packet_WeaponsUpdate(Packet *p);

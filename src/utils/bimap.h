@@ -22,6 +22,42 @@ namespace aux
 			return l;
 		}
 
+		bool erase_l(const T &l)
+		{
+			auto it = left.find(l);
+			if (it == left.end())
+			{
+				return false;
+			} else {
+				auto it2 = right.find(it->second);
+				if (it2 == right.end() || it2->second != it->first)
+				{
+					throw std::runtime_error("bimap state is inconsistent");
+				}
+				left.erase(it);
+				right.erase(it2);
+				return true;
+			}
+		}
+
+		bool erase_r(const U &r)
+		{
+			auto it = right.find(l);
+			if (it == right.end())
+			{
+				return false;
+			} else {
+				auto it2 = left.find(it->second);
+				if (it2 == left.end() || it2->second != it->first)
+				{
+					throw std::runtime_error("bimap state is inconsistent");
+				}
+				right.erase(it);
+				left.erase(it2);
+				return true;
+			}
+		}
+
 		U &at_l(const T &l)
 		{
 			return left.at(l);

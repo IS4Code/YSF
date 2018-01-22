@@ -638,6 +638,7 @@ namespace Original
 	AMX_NATIVE AttachObjectToPlayer;
 	AMX_NATIVE AttachPlayerObjectToPlayer;
 	AMX_NATIVE DestroyObject;
+	AMX_NATIVE CreatePlayerObject;
 	AMX_NATIVE DestroyPlayerObject;
 	AMX_NATIVE SetPlayerObjectMaterial;
 	AMX_NATIVE SetPlayerObjectMaterialText;
@@ -667,6 +668,31 @@ namespace Hooks
 			return 1;
 		}
 		return 0;
+	}
+
+	// native CreatePlayerObject(playerid, ...)
+	AMX_DECLARE_NATIVE(CreatePlayerObject)
+	{
+		bool can_create = false;
+
+		auto &pool = CServer::Get()->ObjectPool;
+		for (size_t i = pool.Capacity - 1; i >= 1; i--)
+		{
+			if (!pool.IsValid(i))
+			{
+				can_create = true;
+				break;
+			}
+		}
+
+		if (!can_create) return INVALID_OBJECT_ID;
+		
+		cell objectid = Original::CreatePlayerObject(amx, params);
+		if (objectid != INVALID_OBJECT_ID)
+		{
+			pNetGame->pObjectPool->bPlayersObject[objectid] = false;
+		}
+		return objectid;
 	}
 
 	// native DestroyPlayerObject(playerid, objectid)
@@ -902,6 +928,7 @@ static AMX_NATIVE_INFO native_list[] =
 static AMX_HOOK_INFO hook_list[] = 
 {
 	AMX_DEFINE_HOOK(DestroyObject)
+	AMX_DEFINE_HOOK(CreatePlayerObject)
 	AMX_DEFINE_HOOK(DestroyPlayerObject)
 	AMX_DEFINE_HOOK(AttachObjectToPlayer)
 	AMX_DEFINE_HOOK(AttachPlayerObjectToPlayer)

@@ -4,6 +4,7 @@
 #include <utility>
 #include <cstddef>
 #include <type_traits>
+#include <exception>
 
 namespace aux
 {
@@ -90,6 +91,17 @@ namespace aux
 		constexpr T value_or(T other) const
 		{
 			return present ? data : other;
+		}
+
+		constexpr T &value()
+		{
+			if (!present) throw std::logic_error("Optional object does not have a value.");
+			return data;
+		}
+
+		constexpr T &operator*()
+		{
+			return data;
 		}
 
 		constexpr bool has_value() const

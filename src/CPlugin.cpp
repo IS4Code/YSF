@@ -743,39 +743,48 @@ int CPlugin::FindNPCProcessID(WORD npcid)
 	return ::FindNPCProcessID(name);
 }
 
-size_t CPlugin::CustomCreatePlayerObject(WORD playerid, WORD modelid, const CVector &pos, const CVector &rot, float drawdistance)
+WORD CPlugin::MapPlayerObjectIDToLocalID(WORD playerid, WORD objectid)
 {
-	CServer &server = *CServer::Get();
-	if (server.CustomPlayerObjectPool)
+	auto &pool = CServer::Get()->ObjectPool;
+	auto &ppool = CServer::Get()->PlayerObjectPool;
+	if (ppool.IsValid(playerid, objectid))
 	{
-		CPlayerObjectPool &pool = static_cast<CPlayerObjectPool&>(server.PlayerObjectPool);
-		return pool.Create(server.ObjectPool, playerid, modelid, pos, rot, drawdistance);
-	}
-	return INVALID_OBJECT_ID;
-}
+		auto &extra = CServer::Get()->PlayerPool.Extra(playerid);
+		auto local = extra.localObjects.find_l(objectid);
+		if (local.has_value()) return *local;
 
-CObject *CPlugin::CustomGetPlayerObject(WORD playerid, size_t objectid)
-{
-	CServer &server = *CServer::Get();
-	if (server.CustomPlayerObjectPool)
-	{
-		return server.PlayerObjectPool.Map(playerid, objectid, [](CObject *&obj)
+		for (WORD index = pool.Capacity - 1; index >= 1; index--)
 		{
-			return obj;
+			if (!pool.IsValid(index) && !extra.localObjects.find_r(index).has_value())
+			{
+				ppool[playerid][objectid]->wObjectID = index;
+				extra.localObjects.insert(objectid, index);
+				return index;
+			}
+		}
+		return INVALID_OBJECT_ID;
+	} else if(pool.IsValid(objectid))
+	{
+		auto &extra = CServer::Get()->PlayerPool.Extra(playerid);
+		extra.localObjects.find_r(objectid).map([&](const WORD &id)
+		{
+			extra.localObjects.erase_l(id);
+			WORD newobjectid = MapPlayerObjectIDToLocalID(playerid, id);
+			if (newobjectid == INVALID_OBJECT_ID)
+			{
+				RakNet::BitStream bs;
+				bs.Write(id);
+				CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
+				delete ppool[playerid][id];
+				ppool[playerid][id] = nullptr;
+				pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][id] = false;
+			} else {
+				ppool[playerid][id]->wObjectID = newobjectid;
+				CSAMPFunctions::SpawnObjectForPlayer(ppool[playerid][id], playerid);
+			}
 		});
 	}
-	return nullptr;
-}
-
-bool CPlugin::CustomDeletePlayerObject(WORD playerid, size_t objectid)
-{
-	CServer &server = *CServer::Get();
-	if (server.CustomPlayerObjectPool)
-	{
-		CPlayerObjectPool &pool = static_cast<CPlayerObjectPool&>(server.PlayerObjectPool);
-		return pool.Destroy(playerid, objectid);
-	}
-	return false;
+	return objectid;
 }
 
 bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
@@ -800,17 +809,25 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			
 			break;
 		}
-		case 0x2C: //RPC_CreateObject
+		case RPC_CreateObject:
 		{
-			auto &data = CServer::Get()->PlayerPool.Extra(playerid);
-
-			const int read_offset = bsSync->GetReadOffset();
+			int read_offset = bsSync->GetReadOffset();
 			WORD objectid;
 			bsSync->Read<WORD>(objectid);
 			bsSync->SetReadOffset(read_offset);
-			
-			if (data.IsObjectHidden(objectid)) return false;
 
+			bool hidden = CServer::Get()->PlayerPool.MapExtra(playerid, [=](CPlayerData &data)
+			{
+				return data.IsObjectHidden(objectid);
+			});
+			if (hidden) return false;
+
+			WORD newobjectid = MapPlayerObjectIDToLocalID(playerid, objectid);
+			if (newobjectid != objectid)
+			{
+				bsSync->SetWriteOffset(read_offset);
+				bsSync->Write(newobjectid);
+			}
 			break;
 		}
 		case RPC_InitGame:
