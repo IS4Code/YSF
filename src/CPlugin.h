@@ -149,6 +149,10 @@ private:
 	std::vector<std::string> m_RCONCommands;
 	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
 	std::set<char> m_vecValidNameCharacters;
+
+	size_t CustomCreatePlayerObject(WORD playerid, WORD modelid, const CVector &pos, const CVector &rot, float drawdistance);
+	CObject *CustomGetPlayerObject(WORD playerid, size_t objectid);
+	bool CustomDeletePlayerObject(WORD playerid, size_t objectid);
 };
 
 #endif

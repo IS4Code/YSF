@@ -162,9 +162,6 @@
     <ClCompile Include="src\includes\platform.cpp">
       <Filter>src\Includes</Filter>
     </ClCompile>
-    <ClCompile Include="src\logprintf_buf.cpp">
-      <Filter>src\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="src\CPlugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -185,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="src\CPlayerObjectPool.cpp">
       <Filter>src\Pools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\logprintf_buf.cpp">
+      <Filter>src\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -279,9 +279,6 @@
     <ClInclude Include="src\System.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\logprintf_buf.h">
-      <Filter>src\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="src\CPool.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -314,6 +311,15 @@
     </ClInclude>
     <ClInclude Include="src\CPlayerObjectPool.h">
       <Filter>src\Pools</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\logprintf_buf.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\bimap.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\optional.h">
+      <Filter>src\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

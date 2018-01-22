@@ -11,7 +11,6 @@
 
 class CServer : public CSingleton<CServer>
 {
-	std::unique_ptr<CExtendedPerPlayerPool<CObject*, MAX_OBJECTS>> playerObjectPool;
 public:
 	CNetGame &NetGame;
 	CBoundedPool<CPlayerPool, CPlayer*, MAX_PLAYERS, &CPlayerPool::pPlayer, &CPlayerPool::bIsPlayerConnected, &CPlayerPool::dwPlayerPoolSize, CPlayerData> PlayerPool;
@@ -24,6 +23,11 @@ public:
 	CSlotPool<CTextDrawPool, CTextdraw*, MAX_TEXT_DRAWS, &CTextDrawPool::TextDraw, &CTextDrawPool::bSlotState> TextDrawPool;
 	CSlotPool<CSAMPGangZonePool, float[4], MAX_GANG_ZONES, &CSAMPGangZonePool::fGangZone, &CSAMPGangZonePool::bSlotState> GangZonePool;
 
+private:
+	std::unique_ptr<CExtendedPerPlayerPool<CObject*, MAX_OBJECTS>> playerObjectPool;
+
+public:
+	bool CustomPlayerObjectPool;
 	CExtendedPerPlayerPool<CObject*, MAX_OBJECTS> &PlayerObjectPool;
 	//CSlotPerPlayerPool<CObjectPool, CObject*, MAX_OBJECTS, MAX_PLAYERS, &CObjectPool::pPlayerObjects, &CObjectPool::bPlayerObjectSlotState> PlayerObjectPool;
 

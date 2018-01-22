@@ -156,7 +156,6 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClCompile Include="src\CPlugin.cpp" />
     <ClCompile Include="src\CServer.cpp" />
     <ClCompile Include="src\CVehicleData.cpp" />
-    <ClCompile Include="src\logprintf_buf.cpp" />
     <ClCompile Include="src\CScriptParams.cpp" />
     <ClCompile Include="src\CCallbackManager.cpp" />
     <ClCompile Include="src\CGangZonePool.cpp" />
@@ -189,6 +188,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClCompile Include="src\Natives.cpp" />
     <ClCompile Include="src\System.cpp" />
     <ClCompile Include="src\Utils.cpp" />
+    <ClCompile Include="src\utils\logprintf_buf.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sampsvr_files\filterscripts\YSF_examples.pwn">
@@ -230,7 +230,6 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClInclude Include="src\CVehicleData.h" />
     <ClInclude Include="src\includes\types.h" />
     <ClInclude Include="src\linux_fix.h" />
-    <ClInclude Include="src\logprintf_buf.h" />
     <ClInclude Include="src\CScriptParams.h" />
     <ClInclude Include="src\CCallbackManager.h" />
     <ClInclude Include="src\CGangZonePool.h" />
@@ -252,6 +251,9 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClInclude Include="src\Structs.h" />
     <ClInclude Include="src\System.h" />
     <ClInclude Include="src\Utils.h" />
+    <ClInclude Include="src\utils\bimap.h" />
+    <ClInclude Include="src\utils\logprintf_buf.h" />
+    <ClInclude Include="src\utils\optional.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,8 +14,12 @@ CServer::CServer(CNetGame &netGame) :
 	TextDrawPool(*netGame.pTextDrawPool),
 	GangZonePool(*netGame.pGangZonePool),
 
-	playerObjectPool(std::make_unique<CSlotPerPlayerPool<CObjectPool, CObject*, MAX_OBJECTS, MAX_PLAYERS, &CObjectPool::pPlayerObjects, &CObjectPool::bPlayerObjectSlotState>>(*netGame.pObjectPool, PlayerPool)),
-	//playerObjectPool(std::make_unique<CPlayerObjectPool>(PlayerPool)),
+	//CustomPlayerObjectPool(false),
+	//playerObjectPool(std::make_unique<CSlotPerPlayerPool<CObjectPool, CObject*, MAX_OBJECTS, MAX_PLAYERS, &CObjectPool::pPlayerObjects, &CObjectPool::bPlayerObjectSlotState>>(*netGame.pObjectPool, PlayerPool)),
+	
+	CustomPlayerObjectPool(true),
+	playerObjectPool(std::make_unique<CPlayerObjectPool>(PlayerPool, ObjectPool)),
+	
 	PlayerObjectPool(*playerObjectPool)
 	//PlayerObjectPool(*netGame.pObjectPool, PlayerPool)
 {

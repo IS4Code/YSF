@@ -35,6 +35,7 @@
 #include "CConfig.h"
 #include "CCallbackManager.h"
 #include "Hooks.h"
+#include "CPlayerObjectPool.h"
 #include "Globals.h"
 #include "Utils.h"
 #include "System.h"
@@ -742,6 +743,41 @@ int CPlugin::FindNPCProcessID(WORD npcid)
 	return ::FindNPCProcessID(name);
 }
 
+size_t CPlugin::CustomCreatePlayerObject(WORD playerid, WORD modelid, const CVector &pos, const CVector &rot, float drawdistance)
+{
+	CServer &server = *CServer::Get();
+	if (server.CustomPlayerObjectPool)
+	{
+		CPlayerObjectPool &pool = static_cast<CPlayerObjectPool&>(server.PlayerObjectPool);
+		return pool.Create(server.ObjectPool, playerid, modelid, pos, rot, drawdistance);
+	}
+	return INVALID_OBJECT_ID;
+}
+
+CObject *CPlugin::CustomGetPlayerObject(WORD playerid, size_t objectid)
+{
+	CServer &server = *CServer::Get();
+	if (server.CustomPlayerObjectPool)
+	{
+		return server.PlayerObjectPool.Map(playerid, objectid, [](CObject *&obj)
+		{
+			return obj;
+		});
+	}
+	return nullptr;
+}
+
+bool CPlugin::CustomDeletePlayerObject(WORD playerid, size_t objectid)
+{
+	CServer &server = *CServer::Get();
+	if (server.CustomPlayerObjectPool)
+	{
+		CPlayerObjectPool &pool = static_cast<CPlayerObjectPool&>(server.PlayerObjectPool);
+		return pool.Destroy(playerid, objectid);
+	}
+	return false;
+}
+
 bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 {
 	switch (uniqueID)
@@ -772,7 +808,7 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			WORD objectid;
 			bsSync->Read<WORD>(objectid);
 			bsSync->SetReadOffset(read_offset);
-
+			
 			if (data.IsObjectHidden(objectid)) return false;
 
 			break;
