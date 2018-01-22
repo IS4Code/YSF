@@ -17,11 +17,12 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		return amx_ftoc(pNetGame->pObjectPool->pObjects[objectid]->fDrawDistance);
+		return CServer::Get()->ObjectPool.Map(objectid, [](CObject *&obj)
+		{
+			return amx_ftoc(obj->fDrawDistance);
+		});
 	}
 
 	// native Float:SetObjectMoveSpeed(objectid, Float:fSpeed);
@@ -29,12 +30,13 @@ namespace Natives
 	{
 		CHECK_PARAMS(2, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		pNetGame->pObjectPool->pObjects[objectid]->fMoveSpeed = CScriptParams::Get()->ReadFloat();
-		return 1;
+		return CServer::Get()->ObjectPool.Map(objectid, [](CObject *&obj)
+		{
+			obj->fMoveSpeed = CScriptParams::Get()->ReadFloat();
+			return 1;
+		});
 	}
 
 	// native Float:GetObjectMoveSpeed(objectid);
@@ -42,11 +44,12 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		return amx_ftoc(pNetGame->pObjectPool->pObjects[objectid]->fMoveSpeed);
+		return CServer::Get()->ObjectPool.Map(objectid, [](CObject *&obj)
+		{
+			return amx_ftoc(obj->fMoveSpeed);
+		});
 	}
 
 	// native GetObjectTarget(objectid, &Float:fX, &Float:fY, &Float:fZ);
@@ -54,13 +57,13 @@ namespace Natives
 	{
 		CHECK_PARAMS(4, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-		CScriptParams::Get()->Add(pObject->matTarget.pos);
-		return 1;
+		return CServer::Get()->ObjectPool.Map(objectid, [](CObject *&obj)
+		{
+			CScriptParams::Get()->Add(obj->matTarget.pos);
+			return 1;
+		});
 	}
 
 	// native GetObjectAttachedData(objectid, &vehicleid, &objectid, &attachedplayerid);
@@ -68,14 +71,20 @@ namespace Natives
 	{
 		CHECK_PARAMS(4, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int objectid = CScriptParams::Get()->ReadInt();
 
 		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
 
-		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-		CScriptParams::Get()->Add(pObject->wAttachedVehicleID, pObject->wAttachedObjectID, CServer::Get()->ObjectPool.Extra(objectid).attachedToPlayer);
-		return 1;
+		return CServer::Get()->ObjectPool.Map(objectid, [=](CObject *&obj)
+		{
+			WORD attachedToPlayer = INVALID_PLAYER_ID;
+			CServer::Get()->ObjectPool.MapExtra(objectid, [&](CObjectData &data)
+			{
+				attachedToPlayer = data.attachedToPlayer;
+			});
+			CScriptParams::Get()->Add(obj->wAttachedVehicleID, obj->wAttachedObjectID, attachedToPlayer);
+			return 1;
+		});
 	}
 
 	// native GetObjectAttachedOffset(objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
@@ -83,14 +92,13 @@ namespace Natives
 	{
 		CHECK_PARAMS(7, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-		CScriptParams::Get()->Add(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
-		return 1;
+		return CServer::Get()->ObjectPool.Map(objectid, [](CObject *&obj)
+		{
+			CScriptParams::Get()->Add(obj->vecAttachedOffset, obj->vecAttachedRotation);
+			return 1;
+		});
 	}
 
 	// native IsObjectMaterialSlotUsed(objectid, materialindex); // Return values: 1 = material, 2 = material text
@@ -98,26 +106,23 @@ namespace Natives
 	{
 		CHECK_PARAMS(2, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int objectid = CScriptParams::Get()->ReadInt();
+		int materialindex = CScriptParams::Get()->ReadInt();
+		if (materialindex < 0 || materialindex >= MAX_OBJECT_MATERIAL) return 0;
 
-		const int materialindex = CScriptParams::Get()->ReadInt();
-		if (materialindex < 0 || materialindex >= 16) return 0;
-
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-
-		// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
-		int index = -1;
-		for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+		return CServer::Get()->ObjectPool.Map(objectid, [=](CObject *&obj)
 		{
-			if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
-		}
+			// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+			int index = -1;
+			for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+			{
+				if (obj->Material[i].byteUsed && obj->Material[i].byteSlot == materialindex) index = i;
+			}
 
-		if (index == -1) return 0;
+			if (index == -1) return 0;
 
-		return pObject->Material[index].byteUsed;
+			return static_cast<cell>(obj->Material[index].byteUsed);
+		});
 	}
 
 	// native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
@@ -125,27 +130,25 @@ namespace Natives
 	{
 		CHECK_PARAMS(8, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		const int materialindex = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+		int materialindex = CScriptParams::Get()->ReadInt();
 
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-		if (materialindex < 0 || materialindex >= 16) return 0;
+		if (materialindex < 0 || materialindex >= MAX_OBJECT_MATERIAL) return 0;
 
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-
-		// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
-		int index = -1;
-		for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+		return CServer::Get()->ObjectPool.Map(objectid, [=](CObject *&obj)
 		{
-			if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
-		}
+			// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+			int index = -1;
+			for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+			{
+				if (obj->Material[i].byteUsed && obj->Material[i].byteSlot == materialindex) index = i;
+			}
 
-		if (index == -1) return 0;
+			if (index == -1) return 0;
 
-		CScriptParams::Get()->Add(pObject->Material[index].wModelID, pObject->Material[index].szMaterialTXD, pObject->Material[index].szMaterialTexture, ABGR_ARGB(pObject->Material[index].dwMaterialColor));
-		return 1;
+			CScriptParams::Get()->Add(obj->Material[index].wModelID, obj->Material[index].szMaterialTXD, obj->Material[index].szMaterialTexture, ABGR_ARGB(obj->Material[index].dwMaterialColor));
+			return 1;
+		});
 	}
 
 	// native GetObjectMaterialText(objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
@@ -153,28 +156,26 @@ namespace Natives
 	{
 		CHECK_PARAMS(12, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		const int materialindex = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+		int materialindex = CScriptParams::Get()->ReadInt();
 
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-		if (materialindex < 0 || materialindex >= 16) return 0;
+		if (materialindex < 0 || materialindex >= MAX_OBJECT_MATERIAL) return 0;
 
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-
-		// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
-		int index = -1;
-		for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+		return CServer::Get()->ObjectPool.Map(objectid, [=](CObject *&obj)
 		{
-			if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
-		}
+			// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+			int index = -1;
+			for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+			{
+				if (obj->Material[i].byteUsed && obj->Material[i].byteSlot == materialindex) index = i;
+			}
 
-		if (index == -1) return 0;
+			if (index == -1) return 0;
 
-		CScriptParams::Get()->Add(pObject->szMaterialText[index], pObject->Material[index].byteMaterialSize, pObject->Material[index].szFont, pObject->Material[index].byteFontSize,
-			pObject->Material[index].byteBold, pObject->Material[index].dwFontColor, pObject->Material[index].dwBackgroundColor, pObject->Material[index].byteAlignment);
-		return 1;
+			CScriptParams::Get()->Add(obj->szMaterialText[index], obj->Material[index].byteMaterialSize, obj->Material[index].szFont, obj->Material[index].byteFontSize,
+				obj->Material[index].byteBold, obj->Material[index].dwFontColor, obj->Material[index].dwBackgroundColor, obj->Material[index].byteAlignment);
+			return 1;
+		});
 	}
 
 	// native IsObjectNoCameraCol(objectid);
@@ -182,12 +183,12 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!pNetGame->pObjectPool->bObjectSlotState[objectid]) return 0;
-
-		return pNetGame->pObjectPool->pObjects[objectid]->bNoCameraCol;
+		return CServer::Get()->ObjectPool.Map(objectid, [](CObject *&obj)
+		{
+			return obj->bNoCameraCol;
+		});
 	}
 
 	// native Float:GetPlayerObjectDrawDistance(playerid, objectid);
@@ -195,14 +196,14 @@ namespace Natives
 	{
 		CHECK_PARAMS(2, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= 1000) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		return amx_ftoc(pNetGame->pObjectPool->pPlayerObjects[playerid][objectid]->fDrawDistance);
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [](CObject *&obj)
+		{
+			return amx_ftoc(obj->fDrawDistance);
+		});
 	}
 
 	// native Float:SetPlayerObjectMoveSpeed(playerid, objectid, Float:fSpeed);
@@ -210,15 +211,16 @@ namespace Natives
 	{
 		CHECK_PARAMS(3, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+		float speed = CScriptParams::Get()->ReadFloat();
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		pNetGame->pObjectPool->pPlayerObjects[playerid][objectid]->fMoveSpeed = amx_ctof(params[3]);
-		return 1;
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [=](CObject *&obj)
+		{
+			obj->fMoveSpeed = speed;
+			return 1;
+		});
 	}
 
 	// native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
@@ -226,14 +228,14 @@ namespace Natives
 	{
 		CHECK_PARAMS(2, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		return amx_ftoc(pNetGame->pObjectPool->pPlayerObjects[playerid][objectid]->fMoveSpeed);
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [](CObject *&obj)
+		{
+			return amx_ftoc(obj->fMoveSpeed);
+		});
 	}
 
 	// native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ);
@@ -241,16 +243,15 @@ namespace Natives
 	{
 		CHECK_PARAMS(5, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-		CScriptParams::Get()->Add(pObject->matTarget.pos);
-		return 1;
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [](CObject *&obj)
+		{
+			CScriptParams::Get()->Add(obj->matTarget.pos);
+			return 1;
+		});
 	}
 
 	// native GetPlayerObjectAttachedData(playerid, objectid, &vehicleid, &objectid, &attachedplayerid);
@@ -258,26 +259,27 @@ namespace Natives
 	{
 		CHECK_PARAMS(5, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-
-		WORD attachedobjectid = INVALID_OBJECT_ID;
-		WORD attachedplayerid = INVALID_PLAYER_ID;
-		const std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(playerid).FindObjectAddon(objectid);
-		if (pAddon)
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [=](CObject *&obj)
 		{
-			attachedobjectid = pAddon->wObjectID;
-			attachedplayerid = pAddon->wAttachPlayerID;
-		}
+			WORD attachedobjectid = INVALID_OBJECT_ID;
+			WORD attachedplayerid = INVALID_PLAYER_ID;
+			CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &data)
+			{
+				auto pAddon = data.FindObjectAddon(objectid);
+				if (pAddon)
+				{
+					attachedobjectid = pAddon->wObjectID;
+					attachedplayerid = pAddon->wAttachPlayerID;
+				}
+			});
 
-		CScriptParams::Get()->Add(pObject->wAttachedVehicleID, attachedobjectid, attachedplayerid);
-		return 1;
+			CScriptParams::Get()->Add(obj->wAttachedVehicleID, attachedobjectid, attachedplayerid);
+			return 1;
+		});
 	}
 
 	// native GetPlayerObjectAttachedOffset(playerid, objectid, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ);
@@ -285,34 +287,35 @@ namespace Natives
 	{
 		CHECK_PARAMS(8, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-		CVector vecOffset;
-		CVector vecRot;
-
-		if (pObject->wAttachedVehicleID)
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [=](CObject *&obj)
 		{
-			vecOffset = pObject->vecAttachedOffset;
-			vecRot = pObject->vecAttachedRotation;
-		}
-		else
-		{
-			const std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(playerid).FindObjectAddon(objectid);
-			if (pAddon)
+			CVector vecOffset, vecRot;
+
+			if (obj->wAttachedVehicleID)
 			{
-				vecOffset = pAddon->vecOffset;
-				vecOffset = pAddon->vecRot;
+				vecOffset = obj->vecAttachedOffset;
+				vecRot = obj->vecAttachedRotation;
 			}
-		}
+			else
+			{
+				CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &data)
+				{
+					auto pAddon = data.FindObjectAddon(objectid);
+					if (pAddon)
+					{
+						vecOffset = pAddon->vecOffset;
+						vecRot = pAddon->vecRot;
+					}
+				});
+			}
 
-		CScriptParams::Get()->Add(vecOffset, vecRot);
-		return 1;
+			CScriptParams::Get()->Add(vecOffset, vecRot);
+			return 1;
+		});
 	}
 
 	// native IsPlayerObjectMaterialSlotUsed(playerid, objectid, materialindex); // Return values: 1 = material, 2 = material text
@@ -320,27 +323,24 @@ namespace Natives
 	{
 		CHECK_PARAMS(3, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		const int materialindex = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
-		if (materialindex < 0 || materialindex >= 16) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+		int materialindex = CScriptParams::Get()->ReadInt();
+		if (materialindex < 0 || materialindex >= MAX_OBJECT_MATERIAL) return 0;
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-
-		// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
-		int index = -1;
-		for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [=](CObject *&obj)
 		{
-			if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
-		}
+			// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+			int index = -1;
+			for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+			{
+				if (obj->Material[i].byteUsed && obj->Material[i].byteSlot == materialindex) index = i;
+			}
 
-		if (index == -1) return 0;
-
-		return pObject->Material[index].byteUsed;
+			if (index == -1) return 0;
+			return static_cast<cell>(obj->Material[index].byteUsed);
+		});
 	}
 
 	// native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor);
@@ -348,28 +348,26 @@ namespace Natives
 	{
 		CHECK_PARAMS(9, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		const int materialindex = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+		int materialindex = CScriptParams::Get()->ReadInt();
 		if (materialindex < 0 || materialindex >= 16) return 0;
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-
-		// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
-		int index = -1;
-		for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [=](CObject *&obj)
 		{
-			if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
-		}
+			// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+			int index = -1;
+			for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+			{
+				if (obj->Material[i].byteUsed && obj->Material[i].byteSlot == materialindex) index = i;
+			}
 
-		if (index == -1) return 0;
+			if (index == -1) return 0;
 
-		CScriptParams::Get()->Add(pObject->Material[index].wModelID, pObject->Material[index].szMaterialTXD, pObject->Material[index].szMaterialTexture, ABGR_ARGB(pObject->Material[index].dwMaterialColor));
-		return 1;
+			CScriptParams::Get()->Add(obj->Material[index].wModelID, obj->Material[index].szMaterialTXD, obj->Material[index].szMaterialTexture, ABGR_ARGB(obj->Material[index].dwMaterialColor));
+			return 1;
+		});
 	}
 
 	// native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize, &bold, &fontcolor, &backcolor, &textalignment);
@@ -377,42 +375,43 @@ namespace Natives
 	{
 		CHECK_PARAMS(13, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		const int materialindex = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+		int materialindex = CScriptParams::Get()->ReadInt();
 		if (materialindex < 0 || materialindex >= 16) return 0;
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
-
-		// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
-		int index = -1;
-		for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [=](CObject *&obj)
 		{
-			if (pObject->Material[i].byteUsed && pObject->Material[i].byteSlot == materialindex) index = i;
-		}
-
-		if (index == -1) return 0;
-
-		std::string text;
-		for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.begin(); o != CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.end(); ++o)
-		{
-			if (o->first == objectid)
+			// We need to get the last matching material index, since SA-MP doesn't overwrite previous ones
+			int index = -1;
+			for (int i = 0; i < MAX_OBJECT_MATERIAL; i++)
 			{
-				if (o->second.first == materialindex)
-				{
-					text = o->second.second;
-				}
-				break;
+				if (obj->Material[i].byteUsed && obj->Material[i].byteSlot == materialindex) index = i;
 			}
-		}
 
-		CScriptParams::Get()->Add(text, pObject->Material[index].byteMaterialSize, pObject->Material[index].szFont, pObject->Material[index].byteFontSize,
-			pObject->Material[index].byteBold, pObject->Material[index].dwFontColor, pObject->Material[index].dwBackgroundColor, pObject->Material[index].byteAlignment);
-		return 1;
+			if (index == -1) return 0;
+
+			std::string text;
+			CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &data)
+			{
+				for (auto o = data.m_PlayerObjectMaterialText.begin(); o != data.m_PlayerObjectMaterialText.end(); ++o)
+				{
+					if (o->first == objectid)
+					{
+						if (o->second.first == materialindex)
+						{
+							text = o->second.second;
+						}
+						break;
+					}
+				}
+			});
+
+			CScriptParams::Get()->Add(text, obj->Material[index].byteMaterialSize, obj->Material[index].szFont, obj->Material[index].byteFontSize,
+				obj->Material[index].byteBold, obj->Material[index].dwFontColor, obj->Material[index].dwBackgroundColor, obj->Material[index].byteAlignment);
+			return 1;
+		});
 	}
 
 	// native IsPlayerObjectNoCameraCol(playerid, objectid);
@@ -420,14 +419,14 @@ namespace Natives
 	{
 		CHECK_PARAMS(2, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		return pNetGame->pObjectPool->pPlayerObjects[playerid][objectid]->bNoCameraCol;
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [](CObject *&obj)
+		{
+			return obj->bNoCameraCol;
+		});
 	}
 
 	// native GetPlayerSurfingPlayerObjectID(playerid);
@@ -435,16 +434,18 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
+		int playerid = CScriptParams::Get()->ReadInt();
 
-		const int surf = CServer::Get()->PlayerPool.Extra(playerid).wSurfingInfo - MAX_VEHICLES;
-		if (surf >= 0 && surf < MAX_OBJECTS)
+		cell surf = INVALID_OBJECT_ID;
+		CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &data)
 		{
-			if (pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][surf])
-				return surf;
-		}
-		return INVALID_OBJECT_ID;
+			surf = data.wSurfingInfo - MAX_VEHICLES;
+			if (!CServer::Get()->PlayerObjectPool.IsValid(playerid, surf))
+			{
+				surf = INVALID_OBJECT_ID;
+			}
+		});
+		return surf;
 	}
 
 	// native GetPlayerCameraTargetPlayerObj(playerid);
@@ -452,19 +453,19 @@ namespace Natives
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return INVALID_OBJECT_ID;
+		int playerid = CScriptParams::Get()->ReadInt();
 
-		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-		if (!pPlayer->bCameraTarget) return INVALID_OBJECT_ID;
-
-		const int target = pNetGame->pPlayerPool->pPlayer[playerid]->wCameraObject;
-		if (target >= 0 && target < MAX_OBJECTS)
+		cell target = INVALID_OBJECT_ID;
+		CServer::Get()->PlayerPool.Map(playerid, [&](CPlayer *&plr)
 		{
-			if (pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][target])
-				return target;
-		}
-		return INVALID_OBJECT_ID;
+			if (!plr->bCameraTarget) return;
+			target = plr->wCameraObject;
+			if (!CServer::Get()->PlayerObjectPool.IsValid(playerid, target))
+			{
+				target = INVALID_OBJECT_ID;
+			}
+		});
+		return target;
 	}
 
 	// native GetObjectType(playerid, objectid);
@@ -472,19 +473,13 @@ namespace Natives
 	{
 		CHECK_PARAMS(2, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (objectid < 0 || objectid >= MAX_OBJECTS) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
 
-		BYTE ret;
-		if (pNetGame->pObjectPool->bObjectSlotState[objectid])
-			ret = SELECT_OBJECT_GLOBAL_OBJECT;
-		else if (pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid])
-			ret = SELECT_OBJECT_PLAYER_OBJECT;
-		else
-			ret = 0;
-		return ret;
+		CServer &server = *CServer::Get();
+		if (server.PlayerObjectPool.IsValid(playerid, objectid)) return SELECT_OBJECT_PLAYER_OBJECT;
+		if (server.ObjectPool.IsValid(objectid)) return SELECT_OBJECT_GLOBAL_OBJECT;
+		return 0;
 	}
 
 	// native GetPlayerAttachedObject(playerid, index, &modelid, &bone, &Float:fX, &Float:fY, &Float:fZ, &Float:fRotX, &Float:fRotY, &Float:fRotZ, Float:&fSacleX, Float:&fScaleY, Float:&fScaleZ, &materialcolor1, &materialcolor2);
@@ -492,17 +487,19 @@ namespace Natives
 	{
 		CHECK_PARAMS(15, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int slot = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
+		int playerid = CScriptParams::Get()->ReadInt();
+		int slot = CScriptParams::Get()->ReadInt();
+
 		if (slot < 0 || slot >= MAX_PLAYER_ATTACHED_OBJECTS) return 0;
-		if (!pNetGame->pPlayerPool->pPlayer[playerid]->attachedObjectSlot[slot]) return 0;
+		return CServer::Get()->PlayerPool.Map(playerid, [=](CPlayer *&plr)
+		{
+			if (!plr->attachedObjectSlot[slot]) return 0;
 
-		CAttachedObject *pObject = &pNetGame->pPlayerPool->pPlayer[playerid]->attachedObject[slot];
-
-		CScriptParams::Get()->Add(pObject->iModelID, pObject->iBoneiD, pObject->vecPos, pObject->vecRot, pObject->vecScale,
-			RGBA_ABGR(pObject->dwMaterialColor1), RGBA_ABGR(pObject->dwMaterialColor2));
-		return 1;
+			CAttachedObject &obj = plr->attachedObject[slot];
+			CScriptParams::Get()->Add(obj.iModelID, obj.iBoneiD, obj.vecPos, obj.vecRot, obj.vecScale,
+				RGBA_ABGR(obj.dwMaterialColor1), RGBA_ABGR(obj.dwMaterialColor2));
+			return 1;
+		});
 	}
 
 	// native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
@@ -512,53 +509,50 @@ namespace Natives
 
 		CHECK_PARAMS(10, LOADED);
 
-		const int forplayerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-		const int attachtoid = CScriptParams::Get()->ReadInt();
+		int forplayerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+		int attachtoid = CScriptParams::Get()->ReadInt();
 
-		if (!IsPlayerConnected(forplayerid)) return 0;
+		return CServer::Get()->PlayerObjectPool.Map(forplayerid, objectid, [=](CObject *&obj)
+		{
+			return CServer::Get()->PlayerObjectPool.Map(forplayerid, attachtoid, [=](CObject *&attachto)
+			{
+				std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(forplayerid).GetObjectAddon(objectid);
+				if (pAddon == NULL)
+					return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
 
-		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-		if (attachtoid < 1 || attachtoid >= MAX_OBJECTS) return 0;
+				// Geting data
+				BYTE byteSyncRot;
+				CScriptParams::Get()->Read(pAddon->vecOffset, pAddon->vecRot, byteSyncRot);
 
-		CObjectPool *pObjectPool = pNetGame->pObjectPool;
-		if (!pObjectPool->pPlayerObjects[forplayerid][objectid] || !pObjectPool->pPlayerObjects[forplayerid][attachtoid]) return 0; // Check if object is exist
+				// Storing data
+				pAddon->wObjectID = static_cast<WORD>(attachtoid);
+				pAddon->creation_timepoint = default_clock::now();
 
-																																	// Find the space where to store data
-		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(forplayerid).GetObjectAddon(objectid);
-		if (pAddon == NULL)
-			return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
+				// Attach it
+				int iModelID = obj->iModel;
+				CVector &vecPos = obj->matWorld.pos;
+				CVector &vecRot = obj->vecRot;
+				float fDrawDistance = 299.0;
+				BYTE byteNoCameraCol = obj->bNoCameraCol;
 
-		// Geting data
-		BYTE byteSyncRot;
-		CScriptParams::Get()->Read(pAddon->vecOffset, pAddon->vecRot, byteSyncRot);
+				RakNet::BitStream bs;
+				bs.Write((WORD)objectid);
+				bs.Write(iModelID);
+				bs.Write(vecPos);
+				bs.Write(vecRot);
+				bs.Write(fDrawDistance); // 159
+				bs.Write(byteNoCameraCol);
+				bs.Write((WORD)-1); // attached vehicle
+				bs.Write((WORD)attachtoid); // attached object
+				bs.Write(pAddon->vecOffset);
+				bs.Write(pAddon->vecRot);
+				bs.Write(byteSyncRot);
 
-		// Storing data
-		pAddon->wObjectID = static_cast<WORD>(attachtoid);
-		pAddon->creation_timepoint = default_clock::now();
-
-		// Attach it
-		int &iModelID = pObjectPool->pPlayerObjects[forplayerid][objectid]->iModel;
-		CVector &vecPos = pObjectPool->pPlayerObjects[forplayerid][objectid]->matWorld.pos;
-		CVector &vecRot = pObjectPool->pPlayerObjects[forplayerid][objectid]->vecRot;
-		float fDrawDistance = 299.0;
-		BYTE byteNoCameraCol = pObjectPool->pPlayerObjects[forplayerid][objectid]->bNoCameraCol;
-
-		RakNet::BitStream bs;
-		bs.Write((WORD)objectid);
-		bs.Write(iModelID);
-		bs.Write(vecPos);
-		bs.Write(vecRot);
-		bs.Write(fDrawDistance); // 159
-		bs.Write(byteNoCameraCol);
-		bs.Write((WORD)-1); // attached vehicle
-		bs.Write((WORD)attachtoid); // attached object
-		bs.Write(pAddon->vecOffset);
-		bs.Write(pAddon->vecRot);
-		bs.Write(byteSyncRot);
-
-		CSAMPFunctions::RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
-		return 1;
+				CSAMPFunctions::RPC(&RPC_CreateObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0); // Send this on same RPC as CreateObject
+				return 1;
+			});
+		});
 	}
 
 
@@ -570,17 +564,11 @@ namespace Natives
 		int forplayerid = CScriptParams::Get()->ReadInt();
 		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!IsPlayerConnected(forplayerid)) return 0;
+		CServer &server = *CServer::Get();
+		if (!server.PlayerPool.IsValid(forplayerid)) return 0;
+		if (!server.ObjectPool.IsValid(objectid)) return 0;
 
-		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-
-		CObjectPool *pObjectPool = pNetGame->pObjectPool;
-		if (!pObjectPool->bObjectSlotState[objectid]) return 0;
-
-		CObject *pObject = pObjectPool->pObjects[objectid];
-		if (!pObject) return 0;
-
-		CServer::Get()->PlayerPool.Extra(forplayerid).HideObject(objectid, true);
+		server.PlayerPool.Extra(forplayerid).HideObject(objectid, true);
 		return 1;
 	}
 
@@ -592,17 +580,11 @@ namespace Natives
 		int forplayerid = CScriptParams::Get()->ReadInt();
 		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!IsPlayerConnected(forplayerid)) return 0;
+		CServer &server = *CServer::Get();
+		if (!server.PlayerPool.IsValid(forplayerid)) return 0;
+		if (!server.ObjectPool.IsValid(objectid)) return 0;
 
-		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-
-		CObjectPool *pObjectPool = pNetGame->pObjectPool;
-		if (!pObjectPool->bObjectSlotState[objectid]) return 0;
-
-		CObject *pObject = pObjectPool->pObjects[objectid];
-		if (!pObject) return 0;
-
-		CServer::Get()->PlayerPool.Extra(forplayerid).ShowObject(objectid, true);
+		server.PlayerPool.Extra(forplayerid).ShowObject(objectid, true);
 		return 1;
 	}
 
@@ -614,18 +596,12 @@ namespace Natives
 		int forplayerid = CScriptParams::Get()->ReadInt();
 		int objectid = CScriptParams::Get()->ReadInt();
 
-		if (!IsPlayerConnected(forplayerid)) return 0;
-
-		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-
-		CObjectPool *pObjectPool = pNetGame->pObjectPool;
-		if (!pObjectPool->bObjectSlotState[objectid]) return 0;
-
-		CObject *pObject = pObjectPool->pObjects[objectid];
-		if (!pObject) return 0;
-
-		CServer::Get()->PlayerPool.Extra(forplayerid).IsObjectHidden(objectid);
-		return 1;
+		CServer &server = *CServer::Get();
+		if (!server.ObjectPool.IsValid(objectid)) return 0;
+		return server.PlayerPool.MapExtra(forplayerid, [=](CPlayerData &data)
+		{
+			return data.IsObjectHidden(objectid);
+		});
 	}
 
 	// native HideNewObjectsForPlayer(playerid, bool:toggle);
@@ -636,9 +612,10 @@ namespace Natives
 		int playerid = CScriptParams::Get()->ReadInt();
 		bool toggle = CScriptParams::Get()->ReadBool();
 
-		if (!IsPlayerConnected(playerid)) return 0;
+		auto &pool = CServer::Get()->PlayerPool;
+		if (!pool.IsValid(playerid)) return 0;
 
-		CServer::Get()->PlayerPool.Extra(playerid).HideNewObjects(toggle);
+		pool.Extra(playerid).HideNewObjects(toggle);
 		return 1;
 	}
 
@@ -649,9 +626,10 @@ namespace Natives
 
 		int playerid = CScriptParams::Get()->ReadInt();
 
-		if (!IsPlayerConnected(playerid)) return 0;
-
-		return static_cast<cell>(CServer::Get()->PlayerPool.Extra(playerid).NewObjectsHidden());
+		return CServer::Get()->PlayerPool.MapExtra(playerid, [](CPlayerData &data)
+		{
+			return static_cast<cell>(data.NewObjectsHidden());
+		});
 	}
 }
 
@@ -672,13 +650,9 @@ namespace Hooks
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-
-		if (objectid < 0 || objectid > MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->pObjects[objectid]) return 0;
-
 		if (Original::DestroyObject(amx, params))
 		{
+			int objectid = CScriptParams::Get()->ReadInt();
 			CServer::Get()->ObjectPool.RemoveExtra(objectid);
 
 			auto &pool = CServer::Get()->PlayerPool;
@@ -700,26 +674,23 @@ namespace Hooks
 	{
 		CHECK_PARAMS(2, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int objectid = CScriptParams::Get()->ReadInt();
-
-		if (objectid < 0 || objectid > MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
-
-		if (IsPlayerConnected(playerid))
-		{
-			for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.begin(); o != CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.end(); ++o)
-			{
-				if (o->first == objectid)
-				{
-					o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.erase(o);
-				}
-			}
-			CServer::Get()->PlayerPool.Extra(playerid).DeleteObjectAddon(static_cast<WORD>(objectid));
-		}
-
 		if (Original::DestroyPlayerObject(amx, params))
 		{
+			int playerid = CScriptParams::Get()->ReadInt();
+			int objectid = CScriptParams::Get()->ReadInt();
+
+			CServer::Get()->PlayerPool.MapExtra(playerid, [=](CPlayerData &data)
+			{
+				for (auto o = data.m_PlayerObjectMaterialText.begin(); o != data.m_PlayerObjectMaterialText.end(); ++o)
+				{
+					if (o->first == objectid)
+					{
+						o = data.m_PlayerObjectMaterialText.erase(o);
+					}
+				}
+				data.DeleteObjectAddon(static_cast<WORD>(objectid));
+			});
+
 			return 1;
 		}
 		return 0;
@@ -730,22 +701,20 @@ namespace Hooks
 	{
 		CHECK_PARAMS(8, LOADED);
 
-		const int objectid = CScriptParams::Get()->ReadInt();
-		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-
-		const int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+		int playerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
-		if (!pObject) return 0;
+		return CServer::Get()->ObjectPool.Map(objectid, [=](CObject *&obj)
+		{
+			// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
+			Original::AttachObjectToPlayer(amx, params);
 
-		// FUCK SAMP -.- n_AttachObjectToPlayer always return 0
-		Original::AttachObjectToPlayer(amx, params);
-
-		// Store values which should be server purpose not mine
-		CServer::Get()->ObjectPool.Extra(objectid).attachedToPlayer = static_cast<WORD>(playerid);
-		CScriptParams::Get()->Read(pObject->vecAttachedOffset, pObject->vecAttachedRotation);
-		return 1;
+			// Store values which should be server purpose not mine
+			CServer::Get()->ObjectPool.Extra(objectid).attachedToPlayer = static_cast<WORD>(playerid);
+			CScriptParams::Get()->Read(obj->vecAttachedOffset, obj->vecAttachedRotation);
+			return 1;
+		});
 	}
 
 	// native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ, onlyaddtoinstance = 0)
@@ -758,14 +727,15 @@ namespace Hooks
 		const int attachplayerid = CScriptParams::Get()->ReadInt();
 		bool bOnlyAddToInstance;
 
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (!IsPlayerConnected(attachplayerid)) return 0;
+		CServer &server = *CServer::Get();
 
-		if (objectid < 1 || objectid >= MAX_OBJECTS) return 0;
-		if (!pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][objectid]) return 0;
+		if (!server.PlayerObjectPool.IsValid(playerid, objectid)) return 0;
+		if (!server.PlayerPool.IsValid(attachplayerid)) return 0;
+
+		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
 
 		// Find the space where to store data
-		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(playerid).GetObjectAddon(objectid);
+		std::shared_ptr<CPlayerObjectAttachAddon> pAddon = data.GetObjectAddon(objectid);
 		if (pAddon == NULL)
 			return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
 
@@ -795,11 +765,13 @@ namespace Hooks
 		else
 		{
 			// We'll attach it later to prevent crashes
-			if (CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectsAttachQueue.find(objectid) != CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectsAttachQueue.end())
-				CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectsAttachQueue.erase(objectid);
+			if (data.m_PlayerObjectsAttachQueue.find(objectid) != data.m_PlayerObjectsAttachQueue.end())
+			{
+				data.m_PlayerObjectsAttachQueue.erase(objectid);
+			}
 
 			// This case GOTTA called only from streamer when object ALREADY created.
-			CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectsAttachQueue.insert(objectid);
+			data.m_PlayerObjectsAttachQueue.insert(objectid);
 			pAddon->bCreated = true;
 		}
 		return 1;
@@ -810,13 +782,12 @@ namespace Hooks
 	{
 		CHECK_PARAMS(7, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-
-		if (Original::SetPlayerObjectMaterial(amx, params) && IsPlayerConnected(playerid))
+		if (Original::SetPlayerObjectMaterial(amx, params))
 		{
-			const int objectid = CScriptParams::Get()->ReadInt();
+			int playerid = CScriptParams::Get()->ReadInt();
+			int objectid = CScriptParams::Get()->ReadInt();
 
-			CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
+			CObject *pObject = CServer::Get()->PlayerObjectPool[playerid][objectid];
 			int index = pObject->dwMaterialCount;
 			if (index < MAX_OBJECT_MATERIAL)
 			{
@@ -825,19 +796,13 @@ namespace Hooks
 				DWORD color;
 				std::string szTXD, szTexture;
 				CScriptParams::Get()->Read(slot, modelid, szTXD, szTexture, color);
-				/*
-				if (pObject->szMaterialText[index])
-				{
-				free(pObject->szMaterialText[index]);
-				pObject->szMaterialText[index] = NULL;
-				}
-				*/
-
-				for (std::multimap<WORD, std::pair<BYTE, std::string>>::iterator o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.begin(); o != CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.end(); ++o)
+				
+				CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
+				for (auto o = data.m_PlayerObjectMaterialText.begin(); o != data.m_PlayerObjectMaterialText.end(); ++o)
 				{
 					if (o->first == objectid)
 					{
-						o = CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.erase(o);
+						o = data.m_PlayerObjectMaterialText.erase(o);
 					}
 				}
 
@@ -860,13 +825,12 @@ namespace Hooks
 	{
 		CHECK_PARAMS(11, LOADED);
 
-		const int playerid = CScriptParams::Get()->ReadInt();
-
-		if (Original::SetPlayerObjectMaterialText(amx, params) && IsPlayerConnected(playerid))
+		if (Original::SetPlayerObjectMaterialText(amx, params))
 		{
-			const int objectid = CScriptParams::Get()->ReadInt();
+			int playerid = CScriptParams::Get()->ReadInt();
+			int objectid = CScriptParams::Get()->ReadInt();
 
-			CObject *pObject = pNetGame->pObjectPool->pPlayerObjects[playerid][objectid];
+			CObject *pObject = CServer::Get()->PlayerObjectPool[playerid][objectid];
 			int index = pObject->dwMaterialCount;
 			if (index < MAX_OBJECT_MATERIAL && CConfig::Get()->m_bStorePlayerObjectsMaterial)
 			{
@@ -874,14 +838,6 @@ namespace Hooks
 				BYTE slot, materialsize, fontsize, bold, textalignment;
 				DWORD fontcolor, backcolor;
 				CScriptParams::Get()->Read(szText, slot, materialsize, szFontFace, fontsize, bold, fontcolor, backcolor, textalignment);
-
-				/*
-				if (pObject->szMaterialText[index])
-				free(pObject->szMaterialText[index]);
-
-				pObject->szMaterialText[index] = (char *)calloc(1u, szText.length() + 1);
-				strcpy(pObject->szMaterialText[index], szText.c_str());
-				*/
 
 				WORD objid = objectid;
 				CServer::Get()->PlayerPool.Extra(playerid).m_PlayerObjectMaterialText.emplace(objid, std::make_pair((BYTE)slot, std::move(szText)));
