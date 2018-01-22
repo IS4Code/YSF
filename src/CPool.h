@@ -23,7 +23,7 @@ namespace aux
 	{
 		static constexpr bool call(ValueType * const & value)
 		{
-			return value != nullptr;
+			return value == nullptr;
 		}
 	};
 
