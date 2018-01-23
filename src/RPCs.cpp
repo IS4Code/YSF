@@ -264,4 +264,59 @@ void InitRPCs()
 
 		CCallbackManager::OnClientCheckResponse(playerid, type, arg, response);
 	});
+
+	RedirectRPC(RPC_SelectObject, [](RPCParameters* rpcParams)
+	{
+		WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
+
+		RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+		DWORD type, modelid;
+		WORD objectid;
+		CVector pos;
+
+		bsData.Read(type);
+		bsData.Read(objectid);
+		bsData.Read(modelid);
+		bsData.Read(pos);
+
+		if (CServer::Get()->ObjectPool.IsValid(objectid))
+		{
+			type = 1;
+		}
+		else if (CPlugin::Get()->MapPlayerObjectIDToServerID(playerid, objectid))
+		{
+			type = 2;
+		}
+
+		if (type != 0)
+		{
+			CCallbackManager::OnPlayerSelectObject(playerid, type, objectid, modelid, pos);
+		}
+	});
+
+	RedirectRPC(RPC_EditObject, [](RPCParameters* rpcParams)
+	{
+		WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
+
+		RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+		WORD objectid;
+		DWORD response;
+		CVector pos, rot;
+
+		bsData.Read(objectid);
+		bsData.Read(response);
+		bsData.Read(pos);
+		bsData.Read(rot);
+
+		if (CServer::Get()->ObjectPool.IsValid(objectid))
+		{
+			CCallbackManager::OnPlayerEditObject(playerid, 0, objectid, response, pos, rot);
+		}
+		else if (CPlugin::Get()->MapPlayerObjectIDToServerID(playerid, objectid))
+		{
+			CCallbackManager::OnPlayerEditObject(playerid, 1, objectid, response, pos, rot);
+		}
+	});
 }

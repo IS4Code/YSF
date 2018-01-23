@@ -115,8 +115,10 @@ public:
 	bool RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
 
 	char* GetNPCCommandLine(WORD npcid);
-	int FindNPCProcessID(WORD npcid);
-	WORD MapPlayerObjectIDToLocalID(WORD playerid, WORD objectid);
+	int FindNPCProcessID(WORD npcid); 
+	bool CreatePlayerObjectLocalID(WORD playerid, WORD &objectid);
+	bool MapPlayerObjectIDToLocalID(WORD playerid, WORD &objectid);
+	bool MapPlayerObjectIDToServerID(WORD playerid, WORD &objectid);
 
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;

@@ -35,6 +35,7 @@
 
 // Thx to OrMisicL - from FCNPC
 #include <set>
+#include "Structs.h"
 #include "includes/types.h"
 #include "sdk/plugin.h"
 
@@ -65,6 +66,8 @@ public:
 	static void	OnPlayerPickedUpPickup(WORD playerid, WORD pickupid);
 	static void	OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid);
 	static void	OnClientCheckResponse(WORD playerid, BYTE type, DWORD arg, BYTE response);
+	static void	OnPlayerSelectObject(WORD playerid, DWORD type, DWORD objectid, DWORD modelid, const CVector &pos);
+	static void	OnPlayerEditObject(WORD playerid, bool playerobject, DWORD objectid, DWORD response, const CVector &pos, const CVector &rot);
 
 	static std::set<AMX *>		m_setAMX;
 };

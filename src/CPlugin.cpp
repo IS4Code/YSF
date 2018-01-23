@@ -35,7 +35,6 @@
 #include "CConfig.h"
 #include "CCallbackManager.h"
 #include "Hooks.h"
-#include "CPlayerObjectPool.h"
 #include "Globals.h"
 #include "Utils.h"
 #include "System.h"
@@ -743,11 +742,37 @@ int CPlugin::FindNPCProcessID(WORD npcid)
 	return ::FindNPCProcessID(name);
 }
 
-WORD CPlugin::MapPlayerObjectIDToLocalID(WORD playerid, WORD objectid)
+bool CPlugin::CreatePlayerObjectLocalID(WORD playerid, WORD &objectid)
 {
 	auto &pool = CServer::Get()->ObjectPool;
 	auto &ppool = CServer::Get()->PlayerObjectPool;
-	if (ppool.IsValid(playerid, objectid))
+	if (pool.IsValid(objectid))
+	{
+		CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &extra)
+		{
+			logprintf("test conflict %d", objectid);
+			extra.localObjects.find_r(objectid).map([&](const WORD &id)
+			{
+				logprintf("CONFLICT %d!", objectid);
+				extra.localObjects.erase_l(id);
+				WORD newobjectid = id;
+				CreatePlayerObjectLocalID(playerid, newobjectid);
+				if (newobjectid == INVALID_OBJECT_ID)
+				{
+					RakNet::BitStream bs;
+					bs.Write(id);
+					CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
+					delete ppool[playerid][id];
+					ppool[playerid][id] = nullptr;
+					pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][id] = false;
+				}
+				else {
+					ppool[playerid][id]->wObjectID = newobjectid;
+					CSAMPFunctions::SpawnObjectForPlayer(ppool[playerid][id], playerid);
+				}
+			});
+		});
+	}else if (ppool.IsValid(playerid, objectid))
 	{
 		auto &extra = CServer::Get()->PlayerPool.Extra(playerid);
 		auto local = extra.localObjects.find_l(objectid);
@@ -759,32 +784,42 @@ WORD CPlugin::MapPlayerObjectIDToLocalID(WORD playerid, WORD objectid)
 			{
 				ppool[playerid][objectid]->wObjectID = index;
 				extra.localObjects.insert(objectid, index);
-				return index;
+				objectid = index;
+				return true;
 			}
 		}
-		return INVALID_OBJECT_ID;
-	} else if(pool.IsValid(objectid))
-	{
-		auto &extra = CServer::Get()->PlayerPool.Extra(playerid);
-		extra.localObjects.find_r(objectid).map([&](const WORD &id)
-		{
-			extra.localObjects.erase_l(id);
-			WORD newobjectid = MapPlayerObjectIDToLocalID(playerid, id);
-			if (newobjectid == INVALID_OBJECT_ID)
-			{
-				RakNet::BitStream bs;
-				bs.Write(id);
-				CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
-				delete ppool[playerid][id];
-				ppool[playerid][id] = nullptr;
-				pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][id] = false;
-			} else {
-				ppool[playerid][id]->wObjectID = newobjectid;
-				CSAMPFunctions::SpawnObjectForPlayer(ppool[playerid][id], playerid);
-			}
-		});
+		objectid = INVALID_OBJECT_ID;
+		return true;
 	}
-	return objectid;
+	return false;
+}
+
+bool CPlugin::MapPlayerObjectIDToLocalID(WORD playerid, WORD &objectid)
+{
+	return CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &data)
+	{
+		auto local = data.localObjects.find_l(objectid);
+		if (local.has_value())
+		{
+			objectid = *local;
+			return true;
+		}
+		return false;
+	});
+}
+
+bool CPlugin::MapPlayerObjectIDToServerID(WORD playerid, WORD &objectid)
+{
+	return CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &data)
+	{
+		auto server = data.localObjects.find_r(objectid);
+		if (server.has_value())
+		{
+			objectid = *server;
+			return true;
+		}
+		return false;
+	});
 }
 
 bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
@@ -822,11 +857,14 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			});
 			if (hidden) return false;
 
-			WORD newobjectid = MapPlayerObjectIDToLocalID(playerid, objectid);
-			if (newobjectid != objectid)
+			if (CreatePlayerObjectLocalID(playerid, objectid))
 			{
+				logprintf("Redirecting to %d for %d", objectid, playerid);
+				if (objectid == INVALID_OBJECT_ID) return false;
+				int write_offset = bsSync->GetWriteOffset();
 				bsSync->SetWriteOffset(read_offset);
-				bsSync->Write(newobjectid);
+				bsSync->Write(objectid);
+				bsSync->SetWriteOffset(write_offset);
 			}
 			break;
 		}
@@ -894,5 +932,5 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			break;
 		}
 	}
-	return 1;
+	return true;
 }

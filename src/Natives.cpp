@@ -35,6 +35,8 @@
 #include <vector>
 
 #include "Natives.h"
+#include "CPlugin.h"
+#include "Globals.h"
 
 static std::unordered_multimap<std::string, const AMX_HOOK_INFO *> redirected_native_list;
 
@@ -103,4 +105,53 @@ void LoadNatives()
 	TextLabelsLoadNatives();
 	VehiclesLoadNatives();
 	YSFSettingsLoadNatives();
+}
+
+void *StorePlayerObjectState(cell *params)
+{
+	WORD playerid = params[1];
+	WORD objectid = params[2];
+
+	if (CPlugin::Get()->MapPlayerObjectIDToLocalID(playerid, objectid))
+	{
+		auto &pool = *pNetGame->pObjectPool;
+		CObject *original = nullptr;
+		pool.bPlayersObject[objectid] = true;
+		if (pool.bPlayerObjectSlotState[playerid][objectid])
+		{
+			original = pool.pPlayerObjects[playerid][objectid];
+		} else {
+			pool.bPlayerObjectSlotState[playerid][objectid] = true;
+		}
+		
+		logprintf("Storing %d to %d", params[2], objectid);
+		pool.pPlayerObjects[playerid][objectid] = pool.pPlayerObjects[playerid][params[2]];
+		params[2] = objectid;
+		return original;
+	}
+	return nullptr;
+}
+
+bool RestorePlayerObjectState(void *original, cell *params)
+{
+	WORD playerid = params[1];
+	WORD objectid = params[2];
+
+	if (CPlugin::Get()->MapPlayerObjectIDToServerID(playerid, objectid))
+	{
+		auto &pool = *pNetGame->pObjectPool;
+		cell old = params[2];
+		if (!pool.bPlayersObject[old])
+		{
+			pool.pPlayerObjects[playerid][objectid] = nullptr;
+			pool.bPlayerObjectSlotState[playerid][objectid] = false;
+		}
+		pool.pPlayerObjects[playerid][old] = reinterpret_cast<CObject *>(original);
+		pool.bPlayersObject[old] = original != nullptr;
+		pool.bPlayerObjectSlotState[playerid][old] = original != nullptr;
+		logprintf("Restoring %d to %d", params[2], objectid);
+		params[2] = objectid;
+		return true;
+	}
+	return false;
 }

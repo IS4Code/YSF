@@ -1,5 +1,4 @@
 #include "CServer.h"
-#include "CPlayerObjectPool.h"
 #include "linux_fix.h"
 
 CServer::CServer(CNetGame &netGame) :

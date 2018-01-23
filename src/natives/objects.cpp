@@ -635,10 +635,16 @@ namespace Natives
 
 namespace Original
 {
+	AMX_NATIVE CreateObject;
 	AMX_NATIVE AttachObjectToPlayer;
 	AMX_NATIVE AttachPlayerObjectToPlayer;
 	AMX_NATIVE DestroyObject;
 	AMX_NATIVE CreatePlayerObject;
+	AMX_NATIVE SetPlayerObjectPos;
+	AMX_NATIVE SetPlayerObjectRot;
+	AMX_NATIVE MovePlayerObject;
+	AMX_NATIVE StopPlayerObject;
+	AMX_NATIVE EditPlayerObject;
 	AMX_NATIVE DestroyPlayerObject;
 	AMX_NATIVE SetPlayerObjectMaterial;
 	AMX_NATIVE SetPlayerObjectMaterialText;
@@ -646,6 +652,22 @@ namespace Original
 
 namespace Hooks
 {
+	// native CreateObject(...)
+	AMX_DECLARE_NATIVE(CreateObject)
+	{
+		auto &pool = *pNetGame->pObjectPool;
+		constexpr size_t size = sizeof(pool.bPlayersObject);
+
+		char *backup = new char[size];
+		memcpy(backup, pool.bPlayersObject, size);
+		memset(pool.bPlayersObject, 0, size);
+
+		cell result = Original::CreateObject(amx, params);
+		memcpy(pool.bPlayersObject, backup, size);
+		delete[] backup;
+		return result;
+	}
+
 	// native DestroyObject(objectid)
 	AMX_DECLARE_NATIVE(DestroyObject)
 	{
@@ -673,7 +695,7 @@ namespace Hooks
 	// native CreatePlayerObject(playerid, ...)
 	AMX_DECLARE_NATIVE(CreatePlayerObject)
 	{
-		bool can_create = false;
+		/*bool can_create = false;
 
 		auto &pool = CServer::Get()->ObjectPool;
 		for (size_t i = pool.Capacity - 1; i >= 1; i--)
@@ -685,23 +707,72 @@ namespace Hooks
 			}
 		}
 
-		if (!can_create) return INVALID_OBJECT_ID;
+		if (!can_create) return INVALID_OBJECT_ID;*/
 		
 		cell objectid = Original::CreatePlayerObject(amx, params);
-		if (objectid != INVALID_OBJECT_ID)
+		/*if (objectid != INVALID_OBJECT_ID)
 		{
 			pNetGame->pObjectPool->bPlayersObject[objectid] = false;
-		}
+		}*/
 		return objectid;
+	}
+
+	// native SetPlayerObjectPos(playerid, objectid, ...)
+	AMX_DECLARE_NATIVE(SetPlayerObjectPos)
+	{
+		void *original = StorePlayerObjectState(params);
+		cell result = Original::SetPlayerObjectPos(amx, params);
+		RestorePlayerObjectState(original, params);
+		return result;
+	}
+
+	// native SetPlayerObjectRot(playerid, objectid, ...)
+	AMX_DECLARE_NATIVE(SetPlayerObjectRot)
+	{
+		void *original = StorePlayerObjectState(params);
+		cell result = Original::SetPlayerObjectRot(amx, params);
+		RestorePlayerObjectState(original, params);
+		return result;
+	}
+
+	// native MovePlayerObject(playerid, objectid, ...)
+	AMX_DECLARE_NATIVE(MovePlayerObject)
+	{
+		void *original = StorePlayerObjectState(params);
+		cell result = Original::MovePlayerObject(amx, params);
+		RestorePlayerObjectState(original, params);
+		return result;
+	}
+
+	// native StopPlayerObject(playerid, objectid)
+	AMX_DECLARE_NATIVE(StopPlayerObject)
+	{
+		void *original = StorePlayerObjectState(params);
+		cell result = Original::StopPlayerObject(amx, params);
+		RestorePlayerObjectState(original, params);
+		return result;
+	}
+
+	// native EditPlayerObject(playerid, objectid)
+	AMX_DECLARE_NATIVE(EditPlayerObject)
+	{
+		void *original = StorePlayerObjectState(params);
+		cell result = Original::EditPlayerObject(amx, params);
+		RestorePlayerObjectState(original, params);
+		return result;
 	}
 
 	// native DestroyPlayerObject(playerid, objectid)
 	AMX_DECLARE_NATIVE(DestroyPlayerObject)
 	{
-		CHECK_PARAMS(2, LOADED);
+		void *original = StorePlayerObjectState(params);
+		cell result = Original::DestroyPlayerObject(amx, params);
+		RestorePlayerObjectState(original, params);
 
-		if (Original::DestroyPlayerObject(amx, params))
+		if (result)
 		{
+			CHECK_PARAMS(2, LOADED);
+			
 			int playerid = CScriptParams::Get()->ReadInt();
 			int objectid = CScriptParams::Get()->ReadInt();
 
@@ -927,13 +998,20 @@ static AMX_NATIVE_INFO native_list[] =
 
 static AMX_HOOK_INFO hook_list[] = 
 {
+	AMX_DEFINE_HOOK(CreateObject)
 	AMX_DEFINE_HOOK(DestroyObject)
-	AMX_DEFINE_HOOK(CreatePlayerObject)
-	AMX_DEFINE_HOOK(DestroyPlayerObject)
 	AMX_DEFINE_HOOK(AttachObjectToPlayer)
-	AMX_DEFINE_HOOK(AttachPlayerObjectToPlayer)
+
+	AMX_DEFINE_HOOK(CreatePlayerObject)
+	AMX_DEFINE_HOOK(SetPlayerObjectPos)
+	AMX_DEFINE_HOOK(SetPlayerObjectRot)
+	AMX_DEFINE_HOOK(MovePlayerObject)
+	AMX_DEFINE_HOOK(StopPlayerObject)
+	AMX_DEFINE_HOOK(EditPlayerObject)
 	AMX_DEFINE_HOOK(SetPlayerObjectMaterial)
 	AMX_DEFINE_HOOK(SetPlayerObjectMaterialText)
+	AMX_DEFINE_HOOK(AttachPlayerObjectToPlayer)
+	AMX_DEFINE_HOOK(DestroyPlayerObject)
 };
 
 void ObjectsLoadNatives()
