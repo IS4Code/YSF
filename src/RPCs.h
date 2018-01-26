@@ -107,6 +107,8 @@ constexpr RPCID RPC_SetPlayerSkin			= 0x99; // 153
 constexpr RPCID RPC_WorldPlayerRemove		= 0xA3; // 163
 constexpr RPCID RPC_DeathBroadcast			= 0xA6; // 166
 
+constexpr RPCID RPC_SendArtList				= 0xB3; // 179
+
 void InitRPCs();
 
 enum PacketEnumeration : unsigned char

@@ -1006,4 +1006,31 @@ struct CNetGame
 	int						iSpawnsAvailable;		// 130 - 134
 	CPlayerSpawnInfo		AvailableSpawns[319];	// 129 - 14803
 };
+
+struct CModelInfo
+{
+	BYTE bState; // 0 - 1
+	DWORD dwVirtualWorld; // 1 - 5
+	DWORD dwBaseId; // 5 - 9
+	DWORD dwNewId; // 9 - 13
+	char szDffName[MAX_PATH + 1]; // 13 - 274
+	char szTxdName[MAX_PATH + 1]; // 274 - 535
+	DWORD dwDffCrc; // 535 - 539
+	DWORD dwTxdCrc; // 539 - 543
+	DWORD dwDffLength; // 543 - 547
+	DWORD dwTxdLength; // 547 - 551
+	BYTE bTimeOn; // 551 - 552
+	BYTE bTimeOff; // 552 - 553
+};
+static_assert(sizeof(CModelInfo) == 553, "Invalid CModelInfo size");
+
+struct CArtList
+{
+	char szArtPath[MAX_PATH]; // 0 - 260
+	BYTE bUnknown; // 260 - 261
+	CModelInfo *pModelList; // 261 - 265
+	DWORD dwCount; // 265 - 269
+};
+static_assert(sizeof(CArtList) == 269, "Invalid CArtInfo size");;
+
 #endif
