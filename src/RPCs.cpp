@@ -30,49 +30,18 @@
 *
 */
 
-#include "main.h"
+#include "RPCs.h"
+#include "CPlugin.h"
+#include "CServer.h"
+#include "CConfig.h"
+#include "CFunctions.h"
+#include "CCallbackManager.h"
+#include "Utils.h"
+#include "Globals.h"
 
 //#define testspawn
 
-BYTE RPC_Gravity = 0x92;
-
-BYTE RPC_CreatePickup = 95;
-BYTE RPC_DestroyPickup = 63;
-
-BYTE RPC_SetPlayerTeam = 45;
-BYTE RPC_CreateObject = 0x2C;
-
-BYTE RPC_DestroyObject = 0x2F;
-BYTE RPC_AttachObject = 0x4B;
-BYTE RPC_Widescreen = 111;
-BYTE RPC_ShowGangZone = 0x6C;
-BYTE RPC_HideGangZone = 0x78;
-BYTE RPC_FlashGangZone = 0x79;
-BYTE RPC_StopFlashGangZone = 0x55;
-BYTE RPC_RemovePlayerAttachedObject = 0x71;
-BYTE RPC_WorldPlayerAdd = 32;
-BYTE RPC_WorldPlayerRemove = 163;
-BYTE RPC_ChatBubble = 0x3B;
-BYTE RPC_SetPlayerSkin = 0x99;
-BYTE RPC_SetPlayerName = 0x0B;
-BYTE RPC_SetFightingStyle = 0x59;
-BYTE RPC_ScrApplyAnimation = 0x56;
-BYTE RPC_ClientMessage = 0x5D;
-BYTE RPC_ScrDisplayGameText = 0x49;
-BYTE RPC_Chat = 0x65;
-BYTE RPC_ClientCheck = 103;
-BYTE RPC_SetPlayerColor  = 72;
-BYTE RPC_SetTextDrawString = 0x69;
-BYTE RPC_SetPlayerAttachedObject = 0x71;
-
-BYTE RPC_UpdateScoresPingsIPs = 0x9B;
-BYTE RPC_PickedUpPickup = 0x83;
-BYTE RPC_Spawn = 0x34;
-BYTE RPC_Death = 0x35;
-BYTE RPC_DeathBroadcast = 0xA6;
-
-BYTE RPC_ServerJoin = 0x89;
-BYTE RPC_ServerQuit = 0x8A;
+BYTE RPCID::tmp;
 
 //----------------------------------------------------
 
@@ -91,18 +60,20 @@ void InitRPCs()
 	RedirectRPC(RPC_UpdateScoresPingsIPs, [](RPCParameters* rpcParams)
 	{
 		RakNet::BitStream bsUpdate;
+		auto &pool = CServer::Get()->PlayerPool;
 		for (WORD i = 0; i < MAX_PLAYERS; ++i)
 		{
 			if (IsPlayerConnected(i))
 			{
 				bsUpdate.Write(i);
+				auto &data = pool.Extra(i);
 
-				if (!pPlayerData[i]->bUpdateScoresPingsDisabled)
+				if (!data.bUpdateScoresPingsDisabled)
 				{
 					bsUpdate.Write(pNetGame->pPlayerPool->dwScore[i]);
 
-					if (pPlayerData[i]->bFakePingToggle)
-						bsUpdate.Write(pPlayerData[i]->dwFakePingValue);
+					if (data.bFakePingToggle)
+						bsUpdate.Write(data.dwFakePingValue);
 					else
 						bsUpdate.Write(CSAMPFunctions::GetLastPing(CSAMPFunctions::GetPlayerIDFromIndex(i)));
 				}
@@ -119,7 +90,7 @@ void InitRPCs()
 
 	//----------------------------------------------------
 	// Spawning
-	if (CServer::Get()->m_bUseCustomSpawn)
+	if (CConfig::Get()->m_bUseCustomSpawn)
 	{
 		RedirectRPC(RPC_Spawn, [](RPCParameters* rpcParams)
 		{
@@ -144,7 +115,7 @@ void InitRPCs()
 			pPlayer->syncData.fQuaternion[4] = pPlayer->spawn.fRotation;
 			pPlayer->vecPosition = pPlayer->spawn.vecPos;
 			pPlayer->wVehicleId = 0;
-			pPlayerData[playerid]->bControllable = true;
+			CServer::Get()->PlayerPool.Extra(playerid).bControllable = true;
 
 			CSAMPFunctions::SpawnPlayer(playerid);
 		});
@@ -152,7 +123,7 @@ void InitRPCs()
 	
 	//----------------------------------------------------
 	// Protection against fakekill
-	if (CServer::Get()->m_bDeathProtection)
+	if (CConfig::Get()->m_bDeathProtection)
 	{
 		RedirectRPC(RPC_Death, [](RPCParameters* rpcParams)
 		{
@@ -179,14 +150,14 @@ void InitRPCs()
 				if (!pKiller->byteStreamedIn[playerid] || !pPlayer->byteStreamedIn[killerid])
 					return;
 
-				if (pKiller->syncData.byteWeapon != reasonid && pKiller->byteState != PLAYER_STATE_DRIVER)
+				/*if (pKiller->syncData.byteWeapon != reasonid && pKiller->byteState != PLAYER_STATE_DRIVER)
 				{
-					if (reasonid <= 46 && (reasonid != WEAPON_ROCKETLAUNCHER && reasonid != WEAPON_HEATSEEKER))// 46 = parachute
+					if (reasonid <= 46 && reasonid != WEAPON_ROCKETLAUNCHER && reasonid != WEAPON_HEATSEEKER)// 46 = parachute
 					{
 						//			logprintf("onplayerdeath error 1, synced weapon: %d, reason: %d", pKiller->syncData.byteWeapon, reasonid);
 						return;
 					}
-				}
+				}*/
 
 				if (CSAMPFunctions::GetIntVariable("chatlogging"))
 					logprintf("[kill] %s killed %s %s", GetPlayerName(killerid), GetPlayerName(playerid), Utility::GetWeaponName(reasonid));
@@ -209,7 +180,7 @@ void InitRPCs()
 
 	//----------------------------------------------------
 	// Add distance protection to OnPlayerPickupPickup against fake pickup ids
-	if (CServer::Get()->m_bPickupProtection)
+	if (CConfig::Get()->m_bPickupProtection)
 	{
 		RedirectRPC(RPC_PickedUpPickup, [](RPCParameters* rpcParams)
 		{
@@ -242,7 +213,7 @@ void InitRPCs()
 				if (p->second->type == GLOBAL)
 				{
 					// Find global pickup ID by player pickup pointer
-					WORD pickupid = CServer::Get()->pPickupPool->FindPickup(p->second);
+					WORD pickupid = CPlugin::Get()->pPickupPool->FindPickup(p->second);
 					if (pickupid != 0xFFFF)
 					{
 						CCallbackManager::OnPlayerPickedUpPickup(playerid, pickupid);
@@ -293,4 +264,61 @@ void InitRPCs()
 
 		CCallbackManager::OnClientCheckResponse(playerid, type, arg, response);
 	});
+
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
+	RedirectRPC(RPC_SelectObject, [](RPCParameters* rpcParams)
+	{
+		WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
+
+		RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+		DWORD type, modelid;
+		WORD objectid;
+		CVector pos;
+
+		bsData.Read(type);
+		bsData.Read(objectid);
+		bsData.Read(modelid);
+		bsData.Read(pos);
+
+		if (CServer::Get()->ObjectPool.IsValid(objectid))
+		{
+			type = 1;
+		}
+		else if (CPlugin::Get()->MapPlayerObjectIDToServerID(playerid, objectid))
+		{
+			type = 2;
+		}
+
+		if (type != 0)
+		{
+			CCallbackManager::OnPlayerSelectObject(playerid, type, objectid, modelid, pos);
+		}
+	});
+
+	RedirectRPC(RPC_EditObject, [](RPCParameters* rpcParams)
+	{
+		WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
+
+		RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
+
+		WORD objectid;
+		DWORD response;
+		CVector pos, rot;
+
+		bsData.Read(objectid);
+		bsData.Read(response);
+		bsData.Read(pos);
+		bsData.Read(rot);
+
+		if (CServer::Get()->ObjectPool.IsValid(objectid))
+		{
+			CCallbackManager::OnPlayerEditObject(playerid, 0, objectid, response, pos, rot);
+		}
+		else if (CPlugin::Get()->MapPlayerObjectIDToServerID(playerid, objectid))
+		{
+			CCallbackManager::OnPlayerEditObject(playerid, 1, objectid, response, pos, rot);
+		}
+	});
+#endif
 }

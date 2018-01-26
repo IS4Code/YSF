@@ -33,19 +33,25 @@
 #ifndef YSF_UTILS_H
 #define YSF_UTILS_H
 
-#include "CVector.h"
 #include <vector>
 #include <cstddef>
 #include <algorithm>
 #include <string>
 
-// Linux
-#ifndef _WIN32
+#include "raknet/NetworkTypes.h"
+#include "includes/types.h"
 
-#undef GetTickCount
-int GetTickCount();
-void LoadTickCount();
+#include "CVector.h"
 
+#define ARRAY_SIZE(a)	( sizeof((a)) / sizeof(*(a)) )
+#define SAFE_DELETE(p)	{ if (p) { delete (p); (p) = NULL; } }
+#define SAFE_RELEASE(p)	{ if (p) { (p)->Release(); (p) = NULL; } }
+#define PAD(a, b) char a[b]
+
+#define _OFFSET(p_type, p_member) (size_t)(&((p_type *)NULL)->p_member)
+
+#ifndef PAGESIZE
+#define PAGESIZE (4096)
 #endif
 
 // Just to keep compatibility with streamer... If I got used to something, I don't like to switch to new one.
@@ -60,12 +66,6 @@ namespace Utility
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);
 bool IsPlayerConnected(int playerid);
 const char *GetPlayerName(int playerid, bool getForQuery = false);
-
-bool Unlock(void *address, size_t len);
-
-bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask);
-DWORD FindPattern(char *pattern, char *mask);
-void InstallJump(unsigned long addr, void *func);
 
 BYTE GetPacketID(Packet *p);
 bool IsPlayerUpdatePacket(BYTE packetId);

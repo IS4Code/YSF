@@ -31,17 +31,15 @@
 */
 
 #include "main.h"
-
-//----------------------------------------------------------
-
-void **ppPluginData;
-extern void *pAMXFunctions;
-
-// Internal server pointers
-CNetGame *pNetGame = NULL;
-void *pConsole = NULL;
-void *pRakServer = NULL;
-CPlayerData *pPlayerData[MAX_PLAYERS];
+#include "includes/platform.h"
+#include "CPlugin.h"
+#include "CScriptParams.h"
+#include "CCallbackManager.h"
+#include "CAddresses.h"
+#include "Hooks.h"
+#include "Natives.h"
+#include "Utils.h"
+#include "Globals.h"
 
 //----------------------------------------------------------
 // The Support() function indicates what possibilities this
@@ -81,23 +79,25 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		logprintf("Update to 0.3.7! http://sa-mp.com/download.php");
 	}
 
+	CScriptParams::Init();
 	if (version != SAMPVersion::VERSION_UNKNOWN)
 	{
-		CServer::Get()->Initialize(version);
+		CPlugin::Init(version);
 		
-		logprintf("\n");
-		logprintf(" ===============================\n");
-		logprintf("        " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " loaded\n");
-		logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2016 kurta999\n");
-		logprintf("    Server version: %s\n", szVersion);
-		logprintf("    Operating System: " OS_NAME "\n");
-		logprintf("    Built on: " __DATE__ " at " __TIME__ "\n");
-		logprintf(" ===============================\n");
+		logprintf("");
+		logprintf(" ===============================");
+		logprintf("        " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " loaded");
+		logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2016 kurta999");
+		logprintf("    Server version: %s", szVersion);
+		logprintf("    Operating System: " OS_NAME);
+		logprintf("    Built on: " __DATE__ " at " __TIME__);
+		logprintf(" ===============================");
+		logprintf("");
 	}
 	else
 	{
-		logprintf("Error: Unknown " OS_NAME " server version\n");
-		logprintf("Error: Big part of YSF will be unusable for you\n");
+		logprintf("Error: Unknown " OS_NAME " server version");
+		logprintf("Error: Big part of YSF will be unusable for you");
 	}
 	return true;
 }
@@ -110,14 +110,15 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 {
 	UninstallHooks();
 
-	CServer::CSingleton::Destroy();
-	CScriptParams::CSingleton::Destroy();
+	CPlugin::Destroy();
+	CScriptParams::Destroy();
 
 	// Corrected apperance in log file
-	logprintf("\n");
-	logprintf(" ==============\n");
-	logprintf("  " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " unloaded\n");
+	logprintf("");
 	logprintf(" ==============");
+	logprintf("  " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " unloaded");
+	logprintf(" ==============");
+	logprintf("");
 }
 
 //----------------------------------------------------------
@@ -128,8 +129,8 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx) 
 {
 	CCallbackManager::RegisterAMX(amx);
-	
-	if(CServer::Get()->IsInitialized())
+
+	if(CPlugin::IsInitialized())
 	{
 		static bool bFirst = false;
 		if(!bFirst)
@@ -138,7 +139,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX * amx)
 			InstallPostHooks();
 		}
 	}
-	return InitNatives(amx);
+	return RegisterAllNatives(amx);
 }
 
 //----------------------------------------------------------
@@ -154,8 +155,8 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
-	if(CServer::Get()->IsInitialized())
+	if(CPlugin::IsInitialized())
 	{
-		CServer::Get()->Process();
+		CPlugin::Get()->Process();
 	}
 }

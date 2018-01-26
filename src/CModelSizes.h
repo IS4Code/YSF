@@ -37,7 +37,7 @@
 
 namespace CModelSizes
 {
-	WORD GetColCount(void);
+	int GetColCount(void);
 	float GetColSphereRadius(int modelid);
 	CVector GetColSphereOffset(int modelid);
 }

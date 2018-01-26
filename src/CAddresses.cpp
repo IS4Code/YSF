@@ -30,7 +30,8 @@
 *
 */
 
-#include "main.h"
+#include "CAddresses.h"
+#include "Memory.h"
 
 //#define print_addresses
 #ifdef _WIN32
@@ -77,11 +78,14 @@ DWORD CAddress::FUNC_ContainsInvalidChars = NULL;
 DWORD CAddress::FUNC_CPlayer__SpawnForWorld = NULL;
 DWORD CAddress::FUNC_CVehicle__Respawn = NULL;
 DWORD CAddress::FUNC_CPlayerPool__HandleVehicleRespawn = NULL;
+DWORD CAddress::FUNC_CObject__SpawnForPlayer = NULL;
 
 DWORD CAddress::FUNC_ProcessQueryPacket = NULL;
 DWORD CAddress::FUNC_Packet_WeaponsUpdate = NULL;
 DWORD CAddress::FUNC_Packet_StatsUpdate = NULL;
 DWORD CAddress::FUNC_format_amxstring = NULL;
+
+DWORD CAddress::FUNC_ClientJoin = NULL;
 
 // Others
 DWORD CAddress::ADDR_GetNetworkStats_VerbosityLevel = NULL;
@@ -144,6 +148,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x56\x8B\xF1\x8B\x86\x3B\x26\x00\x00\x85\xC0\x0F\x84", "xxxxx????xxxx");
 	FUNC_CVehicle__Respawn =					FindPattern("\x53\x33\xC0\x56\x8B\xF1\x57\xB9\x10\x00\x00\x00\x8D\x7E\x0C", "xxxxxxxxx???xxx");
 	FUNC_CPlayerPool__HandleVehicleRespawn =	FindPattern("\x53\x55\x56\x8B\xF1\x8B\xAE\x68\x09", "xxxxxx?xx");
+	FUNC_CObject__SpawnForPlayer =				0x00497790;
 
 	FUNC_ProcessQueryPacket =					FindPattern("\x83\xEC\x24\x53\x55\x56\x57\x8B\x7C\x24", "xxxxxxxxxx");
 	FUNC_Packet_WeaponsUpdate =					FindPattern("\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x0\x0\x0\x0\x50\x64\x89\x25\x0\x0\x0\x0\x81\xEC\x2C\x01\x00\x00\x55\x56", "xx????xx????xxxx????xxxx??xx");
@@ -161,6 +166,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamIn =			FUNC_CGameMode__OnPlayerSpawn + 0xF10; // 0x0046E8E0
 	FUNC_CGameMode__OnPlayerStreamOut =			FUNC_CGameMode__OnPlayerStreamIn + 0x70; // 0x0046E950;
 	FUNC_CGameMode__OnDialogResponse =			FUNC_CGameMode__OnPlayerStreamOut + 0x230;  // 0x0046EB80;
+
+	FUNC_ClientJoin =							0x004966A0;
 	#else
 
 	// Thx for Mellnik
@@ -189,7 +196,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_ContainsInvalidChars =					FindPattern("\x53\x8B\x5D\x00\x0F\xB6\x0B\x84\xC9\x74\x00\x66\x90", "xxx?xxxxxx?xx") - 0x3;
 
 	FUNC_CPlayer__SpawnForWorld =				FindPattern("\x55\x89\xE5\x56\x53\x83\xEC\x00\x8B\x75\x00\xA1\x00\x00\x00\x00", "xxxxxxx?xx?x????");
-	
+	FUNC_CObject__SpawnForPlayer =				0x80C8080;
+
 	// 
 	DWORD addr = FindPattern("\x55\x31\xD2\x89\xE5\x57\xB9\x40\x00\x00\x00", "xxxxxxxxxxx");
 	//logprintf("addr: %x", addr);

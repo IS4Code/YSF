@@ -40,16 +40,11 @@
 #include <raknet/BitStream.h>
 #include <raknet/NetworkTypes.h>
 #include <sdk/amx/amx.h>
+#include "includes/types.h"
 
 #if !defined PAD
 	#define PAD(a, b) char a[b]
 #endif
-
-typedef unsigned long       DWORD;
-typedef int                 BOOL;
-typedef unsigned char       BYTE;
-typedef unsigned short      WORD;
-typedef float               FLOAT;
 
 /* -------------------------------------------------------- */
 

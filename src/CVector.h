@@ -12,7 +12,7 @@
 #ifndef __CVector_H
 #define __CVector_H
 
-#include <math.h>
+#include <cmath>
 
 #define FLOAT_EPSILON 0.0001f
 
@@ -55,7 +55,7 @@ public:
 	
     float Normalize ( void ) 
     { 
-        double t = sqrt(fX*fX + fY*fY + fZ*fZ);
+        double t = sqrt(static_cast<double>(fX*fX + fY*fY + fZ*fZ));
         if ( t > FLOAT_EPSILON )
         {
             double fX2 = fX / t;
@@ -67,7 +67,7 @@ public:
         }
         else
             t = 0;
-        return static_cast < float > ( t );
+        return static_cast<float>( t );
     }
 
 	float Length ( void ) const

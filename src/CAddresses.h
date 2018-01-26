@@ -68,6 +68,7 @@
 #endif
 
 #include <vector>
+#include "includes/types.h"
 
 enum class SAMPVersion
 {
@@ -117,11 +118,14 @@ public:
 	static DWORD			FUNC_CPlayer__SpawnForWorld;
 	static DWORD			FUNC_CVehicle__Respawn;
 	static DWORD			FUNC_CPlayerPool__HandleVehicleRespawn;
+	static DWORD			FUNC_CObject__SpawnForPlayer;
 
 	static DWORD			FUNC_ProcessQueryPacket;
 	static DWORD			FUNC_Packet_WeaponsUpdate;
 	static DWORD			FUNC_Packet_StatsUpdate;
 	static DWORD			FUNC_format_amxstring;
+
+	static DWORD			FUNC_ClientJoin;
 
 	// Others
 	static DWORD			ADDR_GetNetworkStats_VerbosityLevel;

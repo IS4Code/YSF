@@ -30,7 +30,7 @@
 *
 */
 
-#include "main.h"
+#include "CModelSizes.h"
 
 float MODELS_gColRadius[20000] =
 {
@@ -4050,7 +4050,7 @@ MODELS_gColOffset[20000][3] =
 	{ -0.003906f, 0.003906f, 1.546875f },{ -0.003906f, 0.003906f, 1.546875f },{ -0.003906f, 0.003906f, 1.546875f },{ 0.000000f, 0.000000f, 0.000000f },{ 0.004000f, 0.009999f, 0.464749f },{ 0.000000f, 0.000000f, 0.000000f },{ 0.003875f, -0.035156f, 0.507843f },{ 0.000000f, 0.003906f, 0.421875f },{ 0.000000f, 0.000000f, 0.000000f },{ 0.003906f, 0.074218f, 0.679687f } 
 };
 
-WORD CModelSizes::GetColCount(void)
+int CModelSizes::GetColCount(void)
 {
 	return sizeof(MODELS_gColRadius) / sizeof(MODELS_gColRadius[0]);
 }

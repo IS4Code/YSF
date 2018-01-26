@@ -30,8 +30,17 @@
 *
 */
 
-#include "main.h"
 #include <unordered_map>
+#include "sdk/plugincommon.h"
+#include "includes/platform.h"
+
+#include "CPlugin.h"
+#include "CServer.h"
+#include "CFunctions.h"
+#include "CAddresses.h"
+#include "CCallbackManager.h"
+#include "Globals.h"
+#include "Memory.h"
 
 CConsole__AddStringVariable_t				CSAMPFunctions::pfn__CConsole__AddStringVariable = NULL;
 CConsole__GetStringVariable_t				CSAMPFunctions::pfn__CConsole__GetStringVariable = NULL;
@@ -49,11 +58,11 @@ CFilterscripts__UnLoadFilterscript_t		CSAMPFunctions::pfn__CFilterscripts__UnLoa
 
 CPlayer__SpawnForWorld_t					CSAMPFunctions::pfn__CPlayer__SpawnForWorld = NULL;
 CPlayerPool__HandleVehicleRespawn_t			CSAMPFunctions::pfn__CPlayerPool__HandleVehicleRespawn = NULL;
+CObject__SpawnForPlayer_t					CSAMPFunctions::pfn__CObject__SpawnForPlayer = NULL;
 
 Packet_WeaponsUpdate_t						CSAMPFunctions::pfn__Packet_WeaponsUpdate = NULL;
 Packet_StatsUpdate_t						CSAMPFunctions::pfn__Packet_StatsUpdate = NULL;
 
-logprintf_t									logprintf = NULL;
 format_amxstring_t							CSAMPFunctions::pfn__format_amxstring = NULL;
 
 RakNet__Start_t								CSAMPFunctions::pfn__RakNet__Start = NULL;
@@ -90,6 +99,7 @@ void CSAMPFunctions::PreInitialize()
 
 	INIT_FPTR(CPlayer__SpawnForWorld);
 	INIT_FPTR(CPlayerPool__HandleVehicleRespawn);
+	INIT_FPTR(CObject__SpawnForPlayer);
 
 	INIT_FPTR(Packet_WeaponsUpdate);
 	INIT_FPTR(Packet_StatsUpdate);
@@ -110,6 +120,8 @@ void CSAMPFunctions::PostInitialize()
 	// Get pRakServer
 	int (*pfn_GetRakServer)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_RAKSERVER];
 	pRakServer = (void*)pfn_GetRakServer();
+
+	CServer::Init(*pNetGame);
 
 	// Init RakServer functions & hooks
 	int *pRakServer_VTBL = ((int*)(*(void**)pRakServer));
@@ -202,6 +214,16 @@ bool CSAMPFunctions::UnLoadFilterscript(const char *szName)
 void CSAMPFunctions::SpawnPlayer(int playerid)
 {
 	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
+}
+
+void CSAMPFunctions::SpawnObjectForPlayer(CObject *pObject, WORD wPlayerID)
+{
+	pfn__CObject__SpawnForPlayer(pObject, wPlayerID);
+}
+
+void CSAMPFunctions::SpawnObjectForPlayer(int iObjectId, WORD wPlayerID)
+{
+	SpawnObjectForPlayer(pNetGame->pObjectPool->pObjects[iObjectId], wPlayerID);
 }
 
 void CSAMPFunctions::Packet_WeaponsUpdate(Packet *p)
@@ -330,25 +352,24 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	// logprintf("respawned vehicle: %d", pVehicle->wVehicleID);
 
 	// Check if vehicle has custom spawn
-	auto v = CServer::Get()->vehicleSpawnData.find(pVehicle->wVehicleID);
-	if(v == CServer::Get()->vehicleSpawnData.end())
-	{
-
-	}
-	// If yes, then re-create the vehicle at different location
-	else 
-	{			
-		pVehicle->customSpawn.iModelID = v->second.iModelID;
-		pVehicle->customSpawn.vecPos = v->second.vecPos;
-		pVehicle->customSpawn.fRot = v->second.fRot;
-		pVehicle->customSpawn.iColor1 = v->second.iColor1;
-		pVehicle->customSpawn.iColor2 = v->second.iColor2;
-		pVehicle->customSpawn.iRespawnTime = v->second.iRespawnTime;
-		pVehicle->customSpawn.iInterior = v->second.iInterior;
-
-		// logprintf("custom vehicle spawn respawned %d", pVehicle->wVehicleID);
-		CServer::Get()->vehicleSpawnData.erase(v);
-	}
+	CServer::Get()->VehiclePool.MapExtra(
+		pVehicle->wVehicleID, [pVehicle](CVehicleData &data)
+		{
+			// If yes, then re-create the vehicle at different location
+			if (data.customSpawnData)
+			{
+				pVehicle->customSpawn.iModelID = data.spawnData.iModelID;
+				pVehicle->customSpawn.vecPos = data.spawnData.vecPos;
+				pVehicle->customSpawn.fRot = data.spawnData.fRot;
+				pVehicle->customSpawn.iColor1 = data.spawnData.iColor1;
+				pVehicle->customSpawn.iColor2 = data.spawnData.iColor2;
+				pVehicle->customSpawn.iRespawnTime = data.spawnData.iRespawnTime;
+				pVehicle->customSpawn.iInterior = data.spawnData.iInterior;
+				// logprintf("custom vehicle spawn respawned %d", pVehicle->wVehicleID);
+				data.customSpawnData = false;
+			}
+		}
+	);
 
 	pVehicle->vehModInfo.iColor1 = pVehicle->customSpawn.iColor1;
 	pVehicle->vehModInfo.iColor2 = pVehicle->customSpawn.iColor2;

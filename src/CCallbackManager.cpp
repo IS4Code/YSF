@@ -30,7 +30,10 @@
 *
 */
 
-#include "main.h"
+#include "CCallbackManager.h"
+#include "Globals.h"
+#include "includes/platform.h"
+#include "includes/net.h"
 
 std::set<AMX *> CCallbackManager::m_setAMX;
 
@@ -479,3 +482,51 @@ void CCallbackManager::OnSystemCommandExecute(const char *output, int retval, in
 		}
 	}
 }
+
+void CCallbackManager::OnPlayerSelectObject(WORD playerid, DWORD type, DWORD objectid, DWORD modelid, const CVector &pos)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnPlayerSelectObject", &idx))
+		{
+			amx_Push(iter, amx_ftoc(pos.fZ));
+			amx_Push(iter, amx_ftoc(pos.fY));
+			amx_Push(iter, amx_ftoc(pos.fX));
+			amx_Push(iter, static_cast<cell>(modelid));
+			amx_Push(iter, static_cast<cell>(objectid));
+			amx_Push(iter, static_cast<cell>(type));
+			amx_Push(iter, static_cast<cell>(playerid));
+
+			amx_Exec(iter, &ret, idx);
+			if (ret) break;
+		}
+	}
+}
+
+void CCallbackManager::OnPlayerEditObject(WORD playerid, bool playerobject, DWORD objectid, DWORD response, const CVector &pos, const CVector &rot)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnPlayerSelectObject", &idx))
+		{
+			amx_Push(iter, amx_ftoc(rot.fZ));
+			amx_Push(iter, amx_ftoc(rot.fY));
+			amx_Push(iter, amx_ftoc(rot.fX));
+			amx_Push(iter, amx_ftoc(pos.fZ));
+			amx_Push(iter, amx_ftoc(pos.fY));
+			amx_Push(iter, amx_ftoc(pos.fX));
+			amx_Push(iter, static_cast<cell>(response));
+			amx_Push(iter, static_cast<cell>(objectid));
+			amx_Push(iter, static_cast<cell>(playerobject));
+			amx_Push(iter, static_cast<cell>(playerid));
+
+			amx_Exec(iter, &ret, idx);
+			if (ret) break;
+		}
+	}
+}
+

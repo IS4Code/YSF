@@ -30,7 +30,7 @@
 *
 */
 
-#include "main.h"
+#include "CPickupPool.h"
 
 #define MAX_PICKUP_DISTANCE	70.0f
 

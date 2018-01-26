@@ -161,6 +161,9 @@ native IsPlayerCameraTargetEnabled(playerid);
 native SetPlayerDisabledKeysSync(playerid, keys, updown = 0, leftright = 0);
 native GetPlayerDisabledKeysSync(playerid, &keys, &updown = 0, &leftright = 0);
 
+native GetPlayerBuildingsRemoved(playerid);
+native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius);
+
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX = 0.0, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fAngle = 0.0);
 native GetActorSkin(actorid);
@@ -177,6 +180,13 @@ native ResetPlayerNameInServerQuery(playerid);
 // Pause functions
 native IsPlayerPaused(playerid);
 native GetPlayerPausedTime(playerid);
+
+// Objects
+native HideObjectForPlayer(playerid, objectid);
+native ShowObjectForPlayer(playerid, objectid);
+native HideNewObjectsForPlayer(playerid, bool:toggle);
+native IsObjectHiddenForPlayer(playerid, objectid);
+native NewObjectsHiddenForPlayer(playerid);
 
 // Objects get - global
 native Float:GetObjectDrawDistance(objectid);

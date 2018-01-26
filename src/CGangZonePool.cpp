@@ -30,7 +30,14 @@
 *
 */
 
-#include "main.h"
+#include "CGangZonePool.h"
+#include "includes/platform.h"
+#include "CServer.h"
+#include "CFunctions.h"
+#include "CCallbackManager.h"
+#include "Utils.h"
+#include "Globals.h"
+#include "RPCs.h"
 
 CGangZonePool::CGangZonePool()
 {
@@ -68,19 +75,20 @@ WORD CGangZonePool::New(float fMinX, float fMinY, float fMaxX, float fMaxY)
 WORD CGangZonePool::New(WORD playerid, float fMinX, float fMinY, float fMaxX, float fMaxY)
 {
 	WORD wZone = 0;
+	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
 	while (wZone < MAX_GANG_ZONES)
 	{
-		if (!pPlayerData[playerid]->pPlayerZone[wZone]) break;
+		if (!data.pPlayerZone[wZone]) break;
 		wZone++;
 	}
 	if (wZone == MAX_GANG_ZONES) return 0xFFFF;
 		
 	// Allocate memory for gangzone
-	pPlayerData[playerid]->pPlayerZone[wZone] = new CGangZone();
-	pPlayerData[playerid]->pPlayerZone[wZone]->fGangZone[0] = fMinX;
-	pPlayerData[playerid]->pPlayerZone[wZone]->fGangZone[1] = fMinY;
-	pPlayerData[playerid]->pPlayerZone[wZone]->fGangZone[2] = fMaxX;
-	pPlayerData[playerid]->pPlayerZone[wZone]->fGangZone[3] = fMaxY;
+	data.pPlayerZone[wZone] = new CGangZone();
+	data.pPlayerZone[wZone]->fGangZone[0] = fMinX;
+	data.pPlayerZone[wZone]->fGangZone[1] = fMinY;
+	data.pPlayerZone[wZone]->fGangZone[2] = fMaxX;
+	data.pPlayerZone[wZone]->fGangZone[3] = fMaxY;
 	return wZone;
 }
 
@@ -101,7 +109,7 @@ void CGangZonePool::Delete(WORD playerid, WORD wZone)
 {
 	HideForPlayer(playerid, wZone, true);
 
-	SAFE_DELETE(pPlayerData[playerid]->pPlayerZone[wZone]);
+	SAFE_DELETE(CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[wZone]);
 }
 
 bool CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
@@ -109,10 +117,10 @@ bool CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 	// Find free zone slot on player, client side
 	WORD i = 0;;
 	CGangZone *pZone = NULL;
-
+	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
 	while(i != MAX_GANG_ZONES)
 	{
-		if(pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 0xFF) break;
+		if(data.byteClientSideZoneIDUsed[i] == 0xFF) break;
 		i++;
 	}
 	if (i == MAX_GANG_ZONES) return 0;
@@ -126,22 +134,22 @@ bool CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 		// Hide the old one, if showed
 		HideForPlayer(playerid, wZone, false);
 
-		pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0;
-		pPlayerData[playerid]->wClientSideGlobalZoneID[i] = wZone;
+		data.byteClientSideZoneIDUsed[i] = 0;
+		data.wClientSideGlobalZoneID[i] = wZone;
 		
 	}
 	else
 	{
-		pZone = pPlayerData[playerid]->pPlayerZone[wZone];
+		pZone = data.pPlayerZone[wZone];
 		if(!pZone) return 0;
 
 		// Hide the old one, if showed
 		HideForPlayer(playerid, wZone, true);
 
-		pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 1;
-		pPlayerData[playerid]->wClientSidePlayerZoneID[i] = wZone;
+		data.byteClientSideZoneIDUsed[i] = 1;
+		data.wClientSidePlayerZoneID[i] = wZone;
 	}
-	pPlayerData[playerid]->dwClientSideZoneColor[i] = dwColor;
+	data.dwClientSideZoneColor[i] = dwColor;
 
 	//logprintf("CGangZonePool::ShowForPlayer playerid = %d, zoneid = %d, clientsideid = %d, bPlayerZone = %d", playerid, wZone, i, bPlayerZone);
 
@@ -158,28 +166,30 @@ bool CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool
 
 void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 {
+	auto &pool = CServer::Get()->PlayerPool;
 	for(WORD playerid = 0; playerid != MAX_PLAYERS; ++playerid)
 	{
 		// Skip not connected players
 		if(!IsPlayerConnected(playerid)) continue;
 
 		WORD i = 0;
+		auto &data = pool.Extra(playerid);
 
 		while(i != MAX_GANG_ZONES)
 		{
-			if(pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 0xFF) break;
+			if(data.byteClientSideZoneIDUsed[i] == 0xFF) break;
 			i++;
 		}
 		if (i == MAX_GANG_ZONES) return;
 
 		// Hide the old one, if showed
-		if(pPlayerData[playerid]->byteClientSideZoneIDUsed[i] != 0xFF)
+		if(data.byteClientSideZoneIDUsed[i] != 0xFF)
 			HideForPlayer(playerid, wZone, false, false);
 
 		// Mark client side zone id as used
-		pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0;
-		pPlayerData[playerid]->wClientSideGlobalZoneID[i] = wZone;
-		pPlayerData[playerid]->dwClientSideZoneColor[i] = dwColor;
+		data.byteClientSideZoneIDUsed[i] = 0;
+		data.wClientSideGlobalZoneID[i] = wZone;
+		data.dwClientSideZoneColor[i] = dwColor;
 
 		RakNet::BitStream bsParams;
 		bsParams.Write(i);
@@ -195,46 +205,47 @@ void CGangZonePool::ShowForAll(WORD wZone, DWORD dwColor)
 bool CGangZonePool::HideForPlayer(WORD playerid, WORD wZone, bool bPlayerZone, bool bCallCallback)
 {
 	WORD i = 0;
+	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
 
 	// Mark client side zone id as unused
 	if(!bPlayerZone)
 	{
 		while(i != MAX_GANG_ZONES)
 		{
-			if(pPlayerData[playerid]->wClientSideGlobalZoneID[i] == wZone && pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 0) break;
+			if(data.wClientSideGlobalZoneID[i] == wZone && data.byteClientSideZoneIDUsed[i] == 0) break;
 			i++;
 		}
 		if(i == MAX_GANG_ZONES) return 0;
 
-		if (pPlayerData[playerid]->bInGangZone[i] && bCallCallback)
+		if (data.bInGangZone[i] && bCallCallback)
 		{
-			CCallbackManager::OnPlayerLeaveGangZone(playerid, pPlayerData[playerid]->wClientSideGlobalZoneID[i]);
+			CCallbackManager::OnPlayerLeaveGangZone(playerid, data.wClientSideGlobalZoneID[i]);
 		}
 
-		pPlayerData[playerid]->wClientSideGlobalZoneID[i] = 0xFFFF;
+		data.wClientSideGlobalZoneID[i] = 0xFFFF;
 	}
 	else
 	{
 		while(i != MAX_GANG_ZONES)
 		{
-			if(pPlayerData[playerid]->wClientSidePlayerZoneID[i] == wZone && pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 1) break;
+			if(data.wClientSidePlayerZoneID[i] == wZone && data.byteClientSideZoneIDUsed[i] == 1) break;
 			i++;
 		}
 		if(i == MAX_GANG_ZONES) return 0;
 		
-		if (pPlayerData[playerid]->bInGangZone[i] && bCallCallback)
+		if (data.bInGangZone[i] && bCallCallback)
 		{
-			CCallbackManager::OnPlayerLeavePlayerGangZone(playerid, pPlayerData[playerid]->wClientSidePlayerZoneID[i]);
+			CCallbackManager::OnPlayerLeavePlayerGangZone(playerid, data.wClientSidePlayerZoneID[i]);
 		}
 
-		pPlayerData[playerid]->wClientSidePlayerZoneID[i] = 0xFFFF;
+		data.wClientSidePlayerZoneID[i] = 0xFFFF;
 	}
 	if (i == MAX_GANG_ZONES) return 0;
 
-	pPlayerData[playerid]->byteClientSideZoneIDUsed[i] = 0xFF;
-	pPlayerData[playerid]->dwClientSideZoneColor[i] = 0;
-	pPlayerData[playerid]->bInGangZone[i] = false;
-	pPlayerData[playerid]->bIsGangZoneFlashing[i] = false;
+	data.byteClientSideZoneIDUsed[i] = 0xFF;
+	data.dwClientSideZoneColor[i] = 0;
+	data.bInGangZone[i] = false;
+	data.bIsGangZoneFlashing[i] = false;
 
 	//logprintf("CGangZonePool::HideForPlayer playerid = %d, zoneid = %d, clientsideid = %d, bPlayerZone = %d", playerid, wZone, i, bPlayerZone);
 
@@ -258,13 +269,14 @@ void CGangZonePool::HideForAll(WORD wZone)
 void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
 {
 	WORD i = 0;
+	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
 
 	// check id
 	if(!bPlayerZone)
 	{
 		while(i != MAX_GANG_ZONES)
 		{
-			if(pPlayerData[playerid]->wClientSideGlobalZoneID[i] == wZone && pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 0) break;
+			if(data.wClientSideGlobalZoneID[i] == wZone && data.byteClientSideZoneIDUsed[i] == 0) break;
 			i++;
 		}
 	}
@@ -272,14 +284,14 @@ void CGangZonePool::FlashForPlayer(WORD playerid, WORD wZone, DWORD dwColor, boo
 	{
 		while(i != MAX_GANG_ZONES)
 		{
-			if(pPlayerData[playerid]->wClientSidePlayerZoneID[i] == wZone && pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 1) break;
+			if(data.wClientSidePlayerZoneID[i] == wZone && data.byteClientSideZoneIDUsed[i] == 1) break;
 			i++;
 		}
 	}
 	if (i == MAX_GANG_ZONES) return;
 
-	pPlayerData[playerid]->dwClientSideZoneFlashColor[i] = dwColor;
-	pPlayerData[playerid]->bIsGangZoneFlashing[i] = true;
+	data.dwClientSideZoneFlashColor[i] = dwColor;
+	data.bIsGangZoneFlashing[i] = true;
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);
@@ -301,13 +313,14 @@ void CGangZonePool::FlashForAll(WORD wZone, DWORD dwColor)
 void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZone)
 {
 	WORD i = 0;
+	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
 
 	// check id
 	if(!bPlayerZone)
 	{
 		while(i != MAX_GANG_ZONES)
 		{
-			if(pPlayerData[playerid]->wClientSideGlobalZoneID[i] == wZone && pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 0) break;
+			if(data.wClientSideGlobalZoneID[i] == wZone && data.byteClientSideZoneIDUsed[i] == 0) break;
 			i++;
 		}
 	}
@@ -315,14 +328,14 @@ void CGangZonePool::StopFlashForPlayer(WORD playerid, WORD wZone, bool bPlayerZo
 	{
 		while(i != MAX_GANG_ZONES)
 		{
-			if(pPlayerData[playerid]->wClientSidePlayerZoneID[i] == wZone && pPlayerData[playerid]->byteClientSideZoneIDUsed[i] == 1) break;
+			if(data.wClientSidePlayerZoneID[i] == wZone && data.byteClientSideZoneIDUsed[i] == 1) break;
 			i++;
 		}
 	}
 	if (i == MAX_GANG_ZONES) return;
 
-	pPlayerData[playerid]->dwClientSideZoneFlashColor[i] = 0;
-	pPlayerData[playerid]->bIsGangZoneFlashing[i] = true;
+	data.dwClientSideZoneFlashColor[i] = 0;
+	data.bIsGangZoneFlashing[i] = true;
 
 	RakNet::BitStream bsParams;
 	bsParams.Write(i);

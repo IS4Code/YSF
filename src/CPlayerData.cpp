@@ -30,9 +30,17 @@
 *
 */
 
-#include "main.h"
+#include "CPlayerData.h"
+#include "includes/platform.h"
+#include "CPlugin.h"
+#include "CConfig.h"
+#include "CFunctions.h"
+#include "CCallbackManager.h"
+#include "Globals.h"
+#include "Utils.h"
+#include "RPCs.h"
 
-CPlayerData::CPlayerData( WORD playerid )
+CPlayerData::CPlayerData(WORD playerid) : wPlayerID(playerid)
 {
 	static DWORD dwPlayerColors[100] = 
 	{
@@ -50,52 +58,6 @@ CPlayerData::CPlayerData( WORD playerid )
 		0xD8C762FF
 	};
 
-	wPlayerID = playerid;
-	iNPCProcessID = -1;
-	wSurfingInfo = 0;
-	wDialogID = -1;
-	
-	// Exclusive RPC broadcast
-	bBroadcastTo = 0;
-
-	// Variables to store disabled keys
-	wDisabledKeys = 0;
-	wDisabledKeysUD = 0;
-	wDisabledKeysLR = 0;
-
-	// Per-player things
-	fGravity = pNetGame->fGravity;
-	byteWeather = pNetGame->byteWeather;
-	fBounds[0] = 20000.0f;
-	fBounds[1] = -20000.0f;
-	fBounds[2] = 20000.0f;
-	fBounds[3] = -20000.0f;
-
-	// Gangzones
-	memset(pPlayerZone, NULL, sizeof(pPlayerZone));
-	memset(byteClientSideZoneIDUsed, 0xFF, sizeof(byteClientSideZoneIDUsed));
-	memset(wClientSideGlobalZoneID, 0xFFFF, sizeof(wClientSideGlobalZoneID));
-	memset(wClientSidePlayerZoneID, 0xFFFF, sizeof(wClientSidePlayerZoneID));
-	memset(dwClientSideZoneColor, NULL, sizeof(dwClientSideZoneColor));
-	memset(dwClientSideZoneFlashColor, NULL, sizeof(dwClientSideZoneFlashColor));
-
-	dwFakePingValue = 0;
-	
-	bObjectsRemoved = false;
-	bWidescreen = false;
-	bUpdateScoresPingsDisabled = false;
-	bFakePingToggle = false;
-	bAFKState = false;
-	bEverUpdated = false;
-	bControllable = true;
-	bAttachedObjectCreated = false;
-	bCustomNameInQuery = false;
-
-	// Private
-	memset(m_iTeams, -1, sizeof(m_iSkins));
-	memset(m_iSkins, -1, sizeof(m_iSkins));
-	memset(m_iFightingStyles, -1, sizeof(m_iFightingStyles));
-
 	// Fix for GetPlayerColor
 	if (pNetGame->pPlayerPool->pPlayer[playerid])
 	{
@@ -106,13 +68,13 @@ CPlayerData::CPlayerData( WORD playerid )
 	if (pNetGame->pPlayerPool->bIsNPC[playerid])
 	{
 		if (CSAMPFunctions::GetPlayerIDFromIndex(playerid).binaryAddress == 0x0100007F)
-			iNPCProcessID = CServer::Get()->FindNPCProcessID(playerid);
+			iNPCProcessID = CPlugin::Get()->FindNPCProcessID(playerid);
 	}
 }
 
 CPlayerData::~CPlayerData( void )
 {
-	CServer::Get()->RemoveConsolePlayer(wPlayerID);
+	CPlugin::Get()->RemoveConsolePlayer(wPlayerID);
 
 	for (WORD i = 0; i != MAX_OBJECTS; ++i)
 	{
@@ -122,7 +84,7 @@ CPlayerData::~CPlayerData( void )
 
 bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
 {
-	m_iTeams[teamplayerid] = team;
+	m_iTeams[teamplayerid] = team + 1;
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)teamplayerid);
@@ -134,16 +96,16 @@ bool CPlayerData::SetPlayerTeamForPlayer(WORD teamplayerid, int team)
 int CPlayerData::GetPlayerTeamForPlayer(WORD teamplayerid)
 {
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[teamplayerid];
-	if (m_iTeams[teamplayerid] == -1)
+	if (m_iTeams[teamplayerid] == 0)
 	{
 		return p->spawn.byteTeam;
 	}
-	return m_iTeams[teamplayerid];
+	return m_iTeams[teamplayerid] - 1;
 }
 
 bool CPlayerData::SetPlayerSkinForPlayer(WORD skinplayerid, int skin)
 {
-	m_iSkins[skinplayerid] = skin;
+	m_iSkins[skinplayerid] = skin + 1;
 
 	RakNet::BitStream bs;
 	bs.Write((int)skinplayerid);
@@ -155,11 +117,11 @@ bool CPlayerData::SetPlayerSkinForPlayer(WORD skinplayerid, int skin)
 int CPlayerData::GetPlayerSkinForPlayer(WORD skinplayerid)
 {
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[skinplayerid];
-	if (m_iSkins[skinplayerid] == -1)
+	if (m_iSkins[skinplayerid] == 0)
 	{
 		return p->spawn.iSkin;
 	}
-	return m_iSkins[skinplayerid];
+	return m_iSkins[skinplayerid] - 1;
 }
 
 bool CPlayerData::SetPlayerNameForPlayer(WORD nameplayerid, const char *name)
@@ -189,7 +151,7 @@ const char *CPlayerData::GetPlayerNameForPlayer(WORD nameplayerid)
 
 bool CPlayerData::SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style)
 {
-	m_iFightingStyles[styleplayerid] = style;
+	m_iFightingStyles[styleplayerid] = style + 1;
 
 	RakNet::BitStream bs;
 	bs.Write((WORD)styleplayerid);
@@ -201,11 +163,11 @@ bool CPlayerData::SetPlayerFightingStyleForPlayer(WORD styleplayerid, int style)
 int CPlayerData::GetPlayerFightingStyleForPlayer(WORD styleplayerid)
 {
 	CPlayer *p = pNetGame->pPlayerPool->pPlayer[styleplayerid];
-	if (m_iFightingStyles[styleplayerid] == -1)
+	if (m_iFightingStyles[styleplayerid] == 0)
 	{
 		return p->byteFightingStyle;
 	}
-	return m_iFightingStyles[styleplayerid];
+	return m_iFightingStyles[styleplayerid] - 1;
 }
 
 void CPlayerData::ResetPlayerMarkerForPlayer(WORD resetplayerid)
@@ -299,14 +261,14 @@ void CPlayerData::Process(void)
 	if (bEverUpdated && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_NONE && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_WASTED)
 	{
 		default_clock::duration passed_time = default_clock::now() - LastUpdateTick;
-		if(bAFKState == false && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->GetAFKAccuracy())
+		if(bAFKState == false && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CPlugin::Get()->GetAFKAccuracy())
 		{
 			bAFKState = true;
 
 			CCallbackManager::OnPlayerPauseStateChange(wPlayerID, bAFKState);
 		}
 
-		else if(bAFKState == true && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() < CServer::Get()->GetAFKAccuracy())
+		else if(bAFKState == true && std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() < CPlugin::Get()->GetAFKAccuracy())
 		{
 			bAFKState = false;
 
@@ -326,7 +288,7 @@ void CPlayerData::Process(void)
 				{
 					default_clock::duration passed_time = default_clock::now() - it->second->creation_timepoint;
 					//logprintf("time passed: %d", std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count());
-					if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CServer::Get()->m_iAttachObjectDelay)
+					if (std::chrono::duration_cast<std::chrono::milliseconds>(passed_time).count() > CConfig::Get()->m_iAttachObjectDelay)
 					{
 						RakNet::BitStream bs;
 						bs.Write((WORD)it->first); // wObjectID
@@ -353,7 +315,7 @@ void CPlayerData::Process(void)
 		}
 	}
 	
-	if (CServer::Get()->m_bUsePerPlayerGangZones)
+	if (CConfig::Get()->m_bUsePerPlayerGangZones)
 	{
 		// Processing gangzones
 		for (WORD zoneid = 0; zoneid != MAX_GANG_ZONES; ++zoneid)
@@ -370,7 +332,7 @@ void CPlayerData::Process(void)
 					return;
 				}
 
-				pGangZone = CServer::Get()->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
+				pGangZone = CPlugin::Get()->pGangZonePool->pGangZone[wClientSideGlobalZoneID[zoneid]];
 			}
 			else
 			{
@@ -424,4 +386,76 @@ void CPlayerData::Process(void)
 			}
 		}
 	}
+}
+
+void CPlayerData::HideObject(WORD objectid, bool sync)
+{
+	if (sync)
+	{
+		RakNet::BitStream bs;
+		bs.Write(objectid);
+		CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(wPlayerID), 0, 0);
+	}
+	m_HiddenObjects.insert(objectid);
+}
+
+void CPlayerData::ShowObject(WORD objectid, bool sync)
+{
+	m_HiddenObjects.erase(objectid);
+	if (sync)
+	{
+		CSAMPFunctions::SpawnObjectForPlayer(objectid, wPlayerID);
+	}
+}
+
+void CPlayerData::HideNewObjects(bool toggle)
+{
+	m_HideNewObjects = toggle;
+}
+
+bool CPlayerData::NewObjectsHidden() const
+{
+	return m_HideNewObjects;
+}
+
+bool CPlayerData::IsObjectHidden(WORD objectid) const
+{
+	CObjectPool *pObjectPool = pNetGame->pObjectPool;
+	if (!pObjectPool->bObjectSlotState[objectid]) return false;
+
+	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
+	if (!pObject) return false;
+
+	if (m_HideNewObjects)
+	{
+		return true;
+	}
+
+	return m_HiddenObjects.find(objectid) != m_HiddenObjects.end();
+}
+
+void CPlayerData::SetBuildingsRemoved(int modelid, const CVector &pos, float range)
+{
+	m_RemovedBuildings.emplace_back(modelid, pos, range);
+}
+
+bool CPlayerData::GetBuildingsRemoved() const
+{
+	return !m_RemovedBuildings.empty();
+}
+
+bool CPlayerData::IsBuildingRemoved(int modelid, const CVector &pos, float range) const
+{
+	for (auto &building : m_RemovedBuildings)
+	{
+		if (modelid == -1 || building.ModelId == -1 || modelid == building.ModelId)
+		{
+			CVector d = pos - building.Position;
+			if (d.Length() <= range + building.Range)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }

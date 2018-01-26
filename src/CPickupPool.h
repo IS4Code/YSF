@@ -33,11 +33,11 @@
 #ifndef YSF_PICKUPPOOL_H
 #define YSF_PICKUPPOOL_H
 
-#include "CVector.h"
 #include <vector>
 #include <bitset>
 #include <cstddef>
-#include "main.h"
+
+#include "CVector.h"
 
 #ifdef NEW_PICKUP_SYSTEM
 enum ePickupType : BYTE

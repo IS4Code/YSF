@@ -45,20 +45,20 @@
 #define INIT_FPTR(name) \
 	pfn__ ## name = (name ## _t)(CAddress::FUNC_ ## name) 
 
-#ifdef _WIN32
-#include <winsock2.h>
+#include "includes/net.h"
 
+#ifdef _WIN32
 #define STDCALL __stdcall
 #define THISCALL __thiscall
 #define FASTCALL __fastcall
 #else
-typedef int SOCKET;
-
 #define STDCALL
 #define THISCALL
 #define FASTCALL
 #define CDECL
 #endif
+
+#include "Structs.h"
 
 struct Packet;
 struct ConsoleVariable_s;
@@ -79,11 +79,11 @@ typedef bool (THISCALL *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscrip
 
 typedef void (THISCALL *CPlayer__SpawnForWorld_t)(void *pPlayer);
 typedef DWORD (THISCALL *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
+typedef void (THISCALL *CObject__SpawnForPlayer_t)(void *pObject, WORD playerID);
 
 typedef int (THISCALL *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef int (THISCALL *Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
 
-typedef void(*logprintf_t)(char* format, ...);
 typedef char* (CDECL *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
 
 typedef bool (THISCALL *RakNet__Start_t)(void* ppRakServer, unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress);
@@ -135,6 +135,9 @@ public:
 	
 	static void		SpawnPlayer(int iPlayerId);
 
+	static void		SpawnObjectForPlayer(CObject *pObjectId, WORD wPlayerID);
+	static void		SpawnObjectForPlayer(int iObjectId, WORD wPlayerID);
+
 	static void		Packet_WeaponsUpdate(Packet *p);
 	static void		Packet_StatsUpdate(Packet *p);
 
@@ -179,6 +182,9 @@ public:
 	DEFINE_FUNCTION_POINTER(CPlayer__SpawnForWorld);
 	DEFINE_FUNCTION_POINTER(CPlayerPool__HandleVehicleRespawn);
 
+	// Object
+	DEFINE_FUNCTION_POINTER(CObject__SpawnForPlayer);
+
 	// Query
 	DEFINE_FUNCTION_POINTER(Packet_WeaponsUpdate);
 	DEFINE_FUNCTION_POINTER(Packet_StatsUpdate);
@@ -201,7 +207,5 @@ public:
 	DEFINE_FUNCTION_POINTER(RakNet__RemoveFromBanList);				
 	DEFINE_FUNCTION_POINTER(RakNet__ClearBanList);					
 };
-
-extern logprintf_t logprintf;
 
 #endif
