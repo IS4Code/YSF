@@ -43,7 +43,7 @@ namespace aux
 
 		}
 
-		constexpr optional(const optional<T> &other) : present(other.present), dummy()
+		optional(const optional<T> &other) : present(other.present), dummy()
 		{
 			if (present)
 			{
@@ -51,7 +51,7 @@ namespace aux
 			}
 		}
 
-		constexpr optional(optional<T> &&other) : present(other.present), dummy()
+		optional(optional<T> &&other) : present(other.present), dummy()
 		{
 			if (present)
 			{

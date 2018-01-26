@@ -53,7 +53,7 @@ public:
 		{
 			return func((*this)[playerid][index]);
 		}
-		return std::result_of<Function(ObjectType &)>::type();
+		return typename std::result_of<Function(ObjectType &)>::type();
 	}
 };
 
@@ -88,7 +88,7 @@ public:
 		auto iter = extraData.find(std::make_pair(playerid, index));
 		if (iter == extraData.end())
 		{
-			return std::result_of<Function(ExtraData &)>::type();
+			return typename std::result_of<Function(ExtraData &)>::type();
 		}
 		return func(iter->second);
 	}
