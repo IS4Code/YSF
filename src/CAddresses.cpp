@@ -85,7 +85,7 @@ DWORD CAddress::FUNC_Packet_WeaponsUpdate = NULL;
 DWORD CAddress::FUNC_Packet_StatsUpdate = NULL;
 DWORD CAddress::FUNC_format_amxstring = NULL;
 
-DWORD CAddress::FUNC_ClientJoin = NULL;
+//DWORD CAddress::FUNC_ClientJoin = NULL;
 
 // Others
 DWORD CAddress::ADDR_GetNetworkStats_VerbosityLevel = NULL;
@@ -167,7 +167,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamOut =			FUNC_CGameMode__OnPlayerStreamIn + 0x70; // 0x0046E950;
 	FUNC_CGameMode__OnDialogResponse =			FUNC_CGameMode__OnPlayerStreamOut + 0x230;  // 0x0046EB80;
 
-	FUNC_ClientJoin =							0x004966A0;
+	//FUNC_ClientJoin =							0x004966A0;
 	#else
 
 	// Thx for Mellnik

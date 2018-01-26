@@ -64,7 +64,7 @@ subhook_t CGameMode__OnPlayerStreamIn_hook;
 subhook_t CGameMode__OnPlayerStreamOut_hook;
 subhook_t CGameMode__OnDialogResponse_hook;
 
-subhook_t ClientJoin_hook;
+//subhook_t ClientJoin_hook;
 
 //----------------------------------------------------
 char gRecordingDataPath[MAX_PATH];
@@ -896,31 +896,11 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 
 //----------------------------------------------------
 
-typedef void(CDECL* FUNC_ClientJoin)(RPCParameters *rpcParams);
+/*typedef void(CDECL* FUNC_ClientJoin)(RPCParameters *rpcParams);
 
 void CDECL HOOK_ClientJoin(RPCParameters *rpcParams)
 {
 	subhook_remove(ClientJoin_hook);
-
-	/*RakNet::BitStream bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
-	int version;
-	int read = bsData.GetReadOffset();
-	bsData.Read(version);
-	bsData.SetReadOffset(read);
-	int write = bsData.GetWriteOffset();
-	logprintf("Client joined with version %d, %d %d.", version, read, write);
-	bsData.SetWriteOffset(read);
-	bsData.Write(4057);
-	bsData.SetWriteOffset(write);
-
-	read = bsData.GetReadOffset();
-	bsData.Read(version);
-	bsData.SetReadOffset(read);
-	write = bsData.GetWriteOffset();
-	logprintf("ClientX joined with version %d, %d %d.", version, read, write);
-	bsData.SetWriteOffset(read);
-	bsData.Write(4057);
-	bsData.SetWriteOffset(write);*/
 
 	int *ver = (int*)rpcParams->input;
 	logprintf("Client joined with version %d.", *ver);
@@ -935,7 +915,7 @@ void CDECL HOOK_ClientJoin(RPCParameters *rpcParams)
 	((FUNC_ClientJoin)CAddress::FUNC_ClientJoin)(rpcParams);
 	
 	subhook_install(ClientJoin_hook);
-}
+}*/
 
 //----------------------------------------------------
 
@@ -961,8 +941,8 @@ void InstallPreHooks()
 	subhook_install(CVehicle__Respawn_hook);
 
 
-	ClientJoin_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_ClientJoin), reinterpret_cast<void*>(HOOK_ClientJoin), static_cast<subhook_options_t>(NULL));
-	subhook_install(ClientJoin_hook);
+	//ClientJoin_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_ClientJoin), reinterpret_cast<void*>(HOOK_ClientJoin), static_cast<subhook_options_t>(NULL));
+	//subhook_install(ClientJoin_hook);
 
 	// Callback hooks
 	CGameMode__OnPlayerConnect_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CGameMode__OnPlayerConnect), reinterpret_cast<void*>(HOOK_CGameMode__OnPlayerConnect), static_cast<subhook_options_t>(NULL));
