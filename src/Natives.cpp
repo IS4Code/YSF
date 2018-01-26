@@ -107,6 +107,7 @@ void LoadNatives()
 	YSFSettingsLoadNatives();
 }
 
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
 void *StorePlayerObjectState(cell *params)
 {
 	WORD playerid = params[1];
@@ -155,3 +156,4 @@ bool RestorePlayerObjectState(void *original, cell *params)
 	}
 	return false;
 }
+#endif

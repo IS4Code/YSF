@@ -42,7 +42,7 @@ namespace aux
 
 		bool erase_r(const U &r)
 		{
-			auto it = right.find(l);
+			auto it = right.find(r);
 			if (it == right.end())
 			{
 				return false;

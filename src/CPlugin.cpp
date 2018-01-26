@@ -742,31 +742,32 @@ int CPlugin::FindNPCProcessID(WORD npcid)
 	return ::FindNPCProcessID(name);
 }
 
-bool CPlugin::CreatePlayerObjectLocalID(WORD playerid, WORD &objectid)
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
+namespace Hooks
+{
+	AMX_DECLARE_NATIVE(DestroyPlayerObject);
+}
+
+bool CPlugin::CreatePlayerObjectLocalID(WORD playerid, WORD &objectid, bool playerobject)
 {
 	auto &pool = CServer::Get()->ObjectPool;
 	auto &ppool = CServer::Get()->PlayerObjectPool;
-	if (pool.IsValid(objectid))
+	if (!playerobject && pool.IsValid(objectid))
 	{
 		CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &extra)
 		{
-			logprintf("test conflict %d", objectid);
-			extra.localObjects.find_r(objectid).map([&](const WORD &id)
+			extra.localObjects.find_r(objectid).map([&](WORD id)
 			{
-				logprintf("CONFLICT %d!", objectid);
 				extra.localObjects.erase_l(id);
 				WORD newobjectid = id;
-				CreatePlayerObjectLocalID(playerid, newobjectid);
+				CreatePlayerObjectLocalID(playerid, newobjectid, true);
 				if (newobjectid == INVALID_OBJECT_ID)
 				{
-					RakNet::BitStream bs;
-					bs.Write(id);
-					CSAMPFunctions::RPC(&RPC_DestroyObject, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), 0, 0);
-					delete ppool[playerid][id];
-					ppool[playerid][id] = nullptr;
-					pNetGame->pObjectPool->bPlayerObjectSlotState[playerid][id] = false;
+					cell params[3] = {2, playerid, id};
+					Hooks::DestroyPlayerObject(nullptr, params);
 				}
 				else {
+					logprintf("replacing with %d", newobjectid);
 					ppool[playerid][id]->wObjectID = newobjectid;
 					CSAMPFunctions::SpawnObjectForPlayer(ppool[playerid][id], playerid);
 				}
@@ -777,7 +778,7 @@ bool CPlugin::CreatePlayerObjectLocalID(WORD playerid, WORD &objectid)
 		auto &extra = CServer::Get()->PlayerPool.Extra(playerid);
 		auto local = extra.localObjects.find_l(objectid);
 		if (local.has_value()) return *local;
-
+		logprintf("finding map for %d", objectid);
 		for (WORD index = pool.Capacity - 1; index >= 1; index--)
 		{
 			if (!pool.IsValid(index) && !extra.localObjects.find_r(index).has_value())
@@ -821,6 +822,7 @@ bool CPlugin::MapPlayerObjectIDToServerID(WORD playerid, WORD &objectid)
 		return false;
 	});
 }
+#endif
 
 bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 {
@@ -857,15 +859,16 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			});
 			if (hidden) return false;
 
-			if (CreatePlayerObjectLocalID(playerid, objectid))
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
+			if (CreatePlayerObjectLocalID(playerid, objectid, false))
 			{
-				logprintf("Redirecting to %d for %d", objectid, playerid);
 				if (objectid == INVALID_OBJECT_ID) return false;
 				int write_offset = bsSync->GetWriteOffset();
 				bsSync->SetWriteOffset(read_offset);
 				bsSync->Write(objectid);
 				bsSync->SetWriteOffset(write_offset);
 			}
+#endif
 			break;
 		}
 		case RPC_InitGame:

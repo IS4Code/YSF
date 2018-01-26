@@ -265,6 +265,7 @@ void InitRPCs()
 		CCallbackManager::OnClientCheckResponse(playerid, type, arg, response);
 	});
 
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
 	RedirectRPC(RPC_SelectObject, [](RPCParameters* rpcParams)
 	{
 		WORD playerid = static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(rpcParams->sender));
@@ -319,4 +320,5 @@ void InitRPCs()
 			CCallbackManager::OnPlayerEditObject(playerid, 1, objectid, response, pos, rot);
 		}
 	});
+#endif
 }

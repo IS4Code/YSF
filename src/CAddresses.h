@@ -125,6 +125,8 @@ public:
 	static DWORD			FUNC_Packet_StatsUpdate;
 	static DWORD			FUNC_format_amxstring;
 
+	static DWORD			FUNC_ClientJoin;
+
 	// Others
 	static DWORD			ADDR_GetNetworkStats_VerbosityLevel;
 	static DWORD			ADDR_GetPlayerNetworkStats_VerbosityLevel;

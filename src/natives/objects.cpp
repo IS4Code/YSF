@@ -652,6 +652,31 @@ namespace Original
 
 namespace Hooks
 {
+	// native DestroyObject(objectid)
+	AMX_DECLARE_NATIVE(DestroyObject)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		if (Original::DestroyObject(amx, params))
+		{
+			int objectid = CScriptParams::Get()->ReadInt();
+			CServer::Get()->ObjectPool.RemoveExtra(objectid);
+
+			auto &pool = CServer::Get()->PlayerPool;
+			for (int i = 0; i < MAX_PLAYERS; i++)
+			{
+				if (pool.IsValid(i))
+				{
+					pool.Extra(i).ShowObject(objectid, false);
+				}
+			}
+
+			return 1;
+		}
+		return 0;
+	}
+
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
 	// native CreateObject(...)
 	AMX_DECLARE_NATIVE(CreateObject)
 	{
@@ -668,53 +693,20 @@ namespace Hooks
 		return result;
 	}
 
-	// native DestroyObject(objectid)
-	AMX_DECLARE_NATIVE(DestroyObject)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		if (Original::DestroyObject(amx, params))
-		{
-			int objectid = CScriptParams::Get()->ReadInt();
-			CServer::Get()->ObjectPool.RemoveExtra(objectid);
-
-			auto &pool = CServer::Get()->PlayerPool;
-			for (int i = 0; i < MAX_PLAYERS; i++)
-			{
-				if(pool.IsValid(i))
-				{
-					pool.Extra(i).ShowObject(objectid, false);
-				}
-			}
-
-			return 1;
-		}
-		return 0;
-	}
-
 	// native CreatePlayerObject(playerid, ...)
 	AMX_DECLARE_NATIVE(CreatePlayerObject)
 	{
-		/*bool can_create = false;
+		auto &pool = *pNetGame->pObjectPool;
+		constexpr size_t size = sizeof(pool.bPlayersObject);
 
-		auto &pool = CServer::Get()->ObjectPool;
-		for (size_t i = pool.Capacity - 1; i >= 1; i--)
-		{
-			if (!pool.IsValid(i))
-			{
-				can_create = true;
-				break;
-			}
-		}
+		char *backup = new char[size];
+		memcpy(backup, pool.bPlayersObject, size);
+		memset(pool.bPlayersObject, 0, size);
 
-		if (!can_create) return INVALID_OBJECT_ID;*/
-		
-		cell objectid = Original::CreatePlayerObject(amx, params);
-		/*if (objectid != INVALID_OBJECT_ID)
-		{
-			pNetGame->pObjectPool->bPlayersObject[objectid] = false;
-		}*/
-		return objectid;
+		cell result = Original::CreatePlayerObject(amx, params);
+		memcpy(pool.bPlayersObject, backup, size);
+		delete[] backup;
+		return result;
 	}
 
 	// native SetPlayerObjectPos(playerid, objectid, ...)
@@ -761,13 +753,18 @@ namespace Hooks
 		RestorePlayerObjectState(original, params);
 		return result;
 	}
+#endif
 
 	// native DestroyPlayerObject(playerid, objectid)
 	AMX_DECLARE_NATIVE(DestroyPlayerObject)
 	{
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
 		void *original = StorePlayerObjectState(params);
 		cell result = Original::DestroyPlayerObject(amx, params);
 		RestorePlayerObjectState(original, params);
+#else
+		cell result = Original::DestroyPlayerObject(amx, params);
+#endif
 
 		if (result)
 		{
@@ -998,9 +995,11 @@ static AMX_NATIVE_INFO native_list[] =
 
 static AMX_HOOK_INFO hook_list[] = 
 {
-	AMX_DEFINE_HOOK(CreateObject)
 	AMX_DEFINE_HOOK(DestroyObject)
 	AMX_DEFINE_HOOK(AttachObjectToPlayer)
+
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
+	AMX_DEFINE_HOOK(CreateObject)
 
 	AMX_DEFINE_HOOK(CreatePlayerObject)
 	AMX_DEFINE_HOOK(SetPlayerObjectPos)
@@ -1008,6 +1007,7 @@ static AMX_HOOK_INFO hook_list[] =
 	AMX_DEFINE_HOOK(MovePlayerObject)
 	AMX_DEFINE_HOOK(StopPlayerObject)
 	AMX_DEFINE_HOOK(EditPlayerObject)
+#endif
 	AMX_DEFINE_HOOK(SetPlayerObjectMaterial)
 	AMX_DEFINE_HOOK(SetPlayerObjectMaterialText)
 	AMX_DEFINE_HOOK(AttachPlayerObjectToPlayer)

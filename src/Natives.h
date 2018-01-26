@@ -95,6 +95,9 @@ void RegisterNatives(const AMX_NATIVE_INFO(&natives_list)[Count])
 	RegisterNatives(natives_list, static_cast<int>(Count));
 }
 
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
 void *StorePlayerObjectState(cell *params);
 bool RestorePlayerObjectState(void *original, cell *params);
+#endif
+
 #endif

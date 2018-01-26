@@ -116,7 +116,7 @@ public:
 
 	char* GetNPCCommandLine(WORD npcid);
 	int FindNPCProcessID(WORD npcid); 
-	bool CreatePlayerObjectLocalID(WORD playerid, WORD &objectid);
+	bool CreatePlayerObjectLocalID(WORD playerid, WORD &objectid, bool playerobject);
 	bool MapPlayerObjectIDToLocalID(WORD playerid, WORD &objectid);
 	bool MapPlayerObjectIDToServerID(WORD playerid, WORD &objectid);
 

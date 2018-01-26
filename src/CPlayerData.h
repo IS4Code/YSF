@@ -189,7 +189,9 @@ public:
 	bool bControllable = false;
 	bool bAttachedObjectCreated = false;
 
+#ifdef NEW_PLAYER_OBJECT_SYSTEM
 	aux::bimap<WORD, WORD> localObjects;
+#endif
 
 private:
 	struct RemovedBuilding
