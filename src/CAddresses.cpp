@@ -296,7 +296,55 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamOut = 0x0046EC30;
 	FUNC_CGameMode__OnDialogResponse = 0x0046EE60;
 #else
-#error Linux addresses are not yet complete
+	VAR_pRestartWaitTime = 0x08166610;
+	VAR_pPosSyncBounds[0] = 0x0815C670;
+	VAR_pPosSyncBounds[1] = 0x0815C66C;
+	VAR_pPosSyncBounds[2] = 0x0815C678;
+	VAR_pPosSyncBounds[3] = 0x0815C674;
+
+	VAR_wRCONUser = 0x081A5224;
+	ARRAY_ConsoleCommands = 0x081A3940;
+
+	FUNC_CConsole__AddStringVariable = 0x080A8E00;
+	FUNC_CConsole__GetStringVariable = 0x080A88F0;
+	FUNC_CConsole__SetStringVariable = 0x080A8870;
+	FUNC_CConsole__GetIntVariable = 0x080A87D0;
+	FUNC_CConsole__SetIntVariable = 0x080A87A0;
+	FUNC_CConsole__GetBoolVariable = 0x080A8770;
+	FUNC_CConsole__ModifyVariableFlags = 0x080A8920;
+	FUNC_CConsole__FindVariable = 0x080A8250;
+	FUNC_CConsole__SendRules = 0x080A7CB0;
+	FUNC_CConsole__Execute = 0x080A8330;
+
+	FUNC_CNetGame__SetWeather = 0x080B7380;
+	FUNC_CNetGame__SetGravity = 0x080B7480;
+
+	FUNC_CFilterscripts__LoadFilterscript = 0x080A9980;
+	FUNC_CFilterscripts__UnLoadFilterscript = 0x080A9DB0;
+
+	FUNC_ContainsInvalidChars = 0x080E1220;
+
+	FUNC_CPlayer__SpawnForWorld = 0x080D7870;
+	FUNC_CVehicle__Respawn = 0x08157430;
+	FUNC_CPlayerPool__HandleVehicleRespawn = 0x080DCAA0;
+	FUNC_CObject__SpawnForPlayer = 0x080D2880;
+
+	FUNC_ProcessQueryPacket = 0x080DE960;
+	FUNC_Packet_WeaponsUpdate = 0x080B52A0;
+	FUNC_Packet_StatsUpdate = 0x080B6080;
+	FUNC_format_amxstring = 0x080E1B00;
+
+	ADDR_GetNetworkStats_VerbosityLevel = 0x80E975B;
+	ADDR_GetPlayerNetworkStats_VerbosityLevel = 0x80E910B;
+
+	ADDR_RecordingDirectory = 0x080D7082;
+
+	FUNC_CGameMode__OnPlayerConnect = 0x080ADB20;
+	FUNC_CGameMode__OnPlayerDisconnect = 0x080ADB90;
+	FUNC_CGameMode__OnPlayerSpawn = 0x080ADC10;
+	FUNC_CGameMode__OnPlayerStreamIn = 0x080AEE10;
+	FUNC_CGameMode__OnPlayerStreamOut = 0x080AEE90;
+	FUNC_CGameMode__OnDialogResponse = 0x080AF110;
 #endif
 #endif
 	
