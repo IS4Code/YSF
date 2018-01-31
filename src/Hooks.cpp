@@ -76,7 +76,7 @@ char gRecordingDataPath[MAX_PATH];
 #ifdef _WIN32
 #define HOOK_THISCALL(NAME, ARG1, ...) FASTCALL NAME(ARG1, void *_padding, __VA_ARGS__)
 #else
-#define HOOK_THISCALL(NAME, ARG1, ...) CDECL NAME(ARG1, __VA_ARGS__)
+#define HOOK_THISCALL(NAME, ARG1, ...) CDECL NAME(ARG1, ## __VA_ARGS__)
 #endif
 
 void HOOK_THISCALL(HOOK_CNetGame__SetWeather, void *thisptr, BYTE weatherid)
@@ -895,7 +895,7 @@ void InstallPreHooks()
 	SetWeather_hook = Hook(CAddress::FUNC_CNetGame__SetWeather, HOOK_CNetGame__SetWeather);
 	SetGravity_hook = Hook(CAddress::FUNC_CNetGame__SetGravity, HOOK_CNetGame__SetGravity);
 	Namecheck_hook = Hook(CAddress::FUNC_ContainsInvalidChars, HOOK_ContainsInvalidChars);
-	amx_Register_hook = subhook_new(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register], reinterpret_cast<void*>(HOOK_amx_Register), static_cast<subhook_options_t>(NULL));
+	amx_Register_hook = subhook_new(reinterpret_cast<void*>(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register]), reinterpret_cast<void*>(HOOK_amx_Register), static_cast<subhook_options_t>(NULL));
 	subhook_install(amx_Register_hook);
 	
 	query_hook = Hook(CAddress::FUNC_ProcessQueryPacket, HOOK_ProcessQueryPacket);
