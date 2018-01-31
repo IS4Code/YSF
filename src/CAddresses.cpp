@@ -35,71 +35,72 @@
 
 //#define print_addresses
 #ifdef _WIN32
-DWORD CAddress::FUNC_Logprintf_03Z = 0x00486CB0;
-DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x00487310;
-DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x00487460;
-DWORD CAddress::FUNC_Logprintf_03ZR4 = 0x004875F0;
-DWORD CAddress::FUNC_Logprintf_037 = 0x0048A0B0;
-DWORD CAddress::FUNC_Logprintf_037_R2_1 = 0x0048C8D0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03Z = 0x00486CB0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03ZR2_2 = 0x00487310;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03ZR3 = 0x00487460;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03ZR4 = 0x004875F0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_037 = 0x0048A0B0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_037_R2_1 = 0x0048C8D0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03DL_R1 = 0x00491FA0;
 #else
-DWORD CAddress::FUNC_Logprintf_03Z = 0x080A7440;
-DWORD CAddress::FUNC_Logprintf_03ZR2_2 = 0x080A77D0;
-DWORD CAddress::FUNC_Logprintf_03ZR3 = 0x080A78E0;
-DWORD CAddress::FUNC_Logprintf_03ZR4 = 0x80A7A90;
-DWORD CAddress::FUNC_Logprintf_037 = 0x080A9000;
-DWORD CAddress::FUNC_Logprintf_037_R2_1 = 0x080A91D0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03Z = 0x080A7440;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03ZR2_2 = 0x080A77D0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03ZR3 = 0x080A78E0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03ZR4 = 0x80A7A90;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_037 = 0x080A9000;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_037_R2_1 = 0x080A91D0;
 #endif
 
 // Variables
-DWORD CAddress::VAR_pRestartWaitTime = NULL;
-DWORD CAddress::VAR_pPosSyncBounds[4];
-DWORD CAddress::VAR_wRCONUser = NULL;
-DWORD CAddress::ARRAY_ConsoleCommands = NULL;
+ADDR<float> CAddress::VAR_pRestartWaitTime = nullptr;
+ADDR<float> CAddress::VAR_pPosSyncBounds[4] = {};
+ADDR<WORD> CAddress::VAR_wRCONUser = nullptr;
+ADDR<ConsoleCommand_s[]> CAddress::ARRAY_ConsoleCommands = nullptr;
 
 // Functions
-DWORD CAddress::FUNC_CConsole__AddStringVariable = NULL;
-DWORD CAddress::FUNC_CConsole__GetStringVariable = NULL;
-DWORD CAddress::FUNC_CConsole__SetStringVariable = NULL;
-DWORD CAddress::FUNC_CConsole__GetIntVariable = NULL;
-DWORD CAddress::FUNC_CConsole__SetIntVariable = NULL;
-DWORD CAddress::FUNC_CConsole__GetBoolVariable = NULL;
-DWORD CAddress::FUNC_CConsole__ModifyVariableFlags = NULL;
-DWORD CAddress::FUNC_CConsole__FindVariable = NULL;
-DWORD CAddress::FUNC_CConsole__SendRules = NULL;
-DWORD CAddress::FUNC_CConsole__Execute = NULL;
+DEFINE_FUNC_PTR(CConsole__AddStringVariable);
+DEFINE_FUNC_PTR(CConsole__GetStringVariable);
+DEFINE_FUNC_PTR(CConsole__SetStringVariable);
+DEFINE_FUNC_PTR(CConsole__GetIntVariable);
+DEFINE_FUNC_PTR(CConsole__SetIntVariable);
+DEFINE_FUNC_PTR(CConsole__GetBoolVariable);
+DEFINE_FUNC_PTR(CConsole__ModifyVariableFlags);
+DEFINE_FUNC_PTR(CConsole__FindVariable);
+DEFINE_FUNC_PTR(CConsole__SendRules);
+DEFINE_FUNC_PTR(CConsole__Execute);
 
-DWORD CAddress::FUNC_CNetGame__SetWeather = NULL;
-DWORD CAddress::FUNC_CNetGame__SetGravity = NULL;
+DEFINE_FUNC_PTR(CNetGame__SetWeather);
+DEFINE_FUNC_PTR(CNetGame__SetGravity);
 
-DWORD CAddress::FUNC_CFilterscripts__LoadFilterscript = NULL;
-DWORD CAddress::FUNC_CFilterscripts__UnLoadFilterscript = NULL;
-DWORD CAddress::FUNC_ContainsInvalidChars = NULL;
+DEFINE_FUNC_PTR(CFilterscripts__LoadFilterscript);
+DEFINE_FUNC_PTR(CFilterscripts__UnLoadFilterscript);
+DEFINE_FUNC_PTR(ContainsInvalidChars);
 
-DWORD CAddress::FUNC_CPlayer__SpawnForWorld = NULL;
-DWORD CAddress::FUNC_CVehicle__Respawn = NULL;
-DWORD CAddress::FUNC_CPlayerPool__HandleVehicleRespawn = NULL;
-DWORD CAddress::FUNC_CObject__SpawnForPlayer = NULL;
+DEFINE_FUNC_PTR(CPlayer__SpawnForWorld);
+DEFINE_FUNC_PTR(CVehicle__Respawn);
+DEFINE_FUNC_PTR(CPlayerPool__HandleVehicleRespawn);
+DEFINE_FUNC_PTR(CObject__SpawnForPlayer);
 
-DWORD CAddress::FUNC_ProcessQueryPacket = NULL;
-DWORD CAddress::FUNC_Packet_WeaponsUpdate = NULL;
-DWORD CAddress::FUNC_Packet_StatsUpdate = NULL;
-DWORD CAddress::FUNC_format_amxstring = NULL;
+DEFINE_FUNC_PTR(ProcessQueryPacket);
+DEFINE_FUNC_PTR(Packet_WeaponsUpdate);
+DEFINE_FUNC_PTR(Packet_StatsUpdate);
+DEFINE_FUNC_PTR(format_amxstring);
 
-//DWORD CAddress::FUNC_ClientJoin = NULL;
+//DECLARE_FUNC_PTR(ClientJoin);
 
 // Others
-DWORD CAddress::ADDR_GetNetworkStats_VerbosityLevel = NULL;
-DWORD CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel = NULL;
+ADDR<BYTE> CAddress::ADDR_GetNetworkStats_VerbosityLevel;
+ADDR<BYTE> CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel;
 
-DWORD CAddress::ADDR_RecordingDirectory = NULL;
+ADDR<const char*> CAddress::ADDR_RecordingDirectory;
 
 // Callback hooks
-DWORD CAddress::FUNC_CGameMode__OnPlayerConnect = NULL;
-DWORD CAddress::FUNC_CGameMode__OnPlayerDisconnect = NULL;
-DWORD CAddress::FUNC_CGameMode__OnPlayerSpawn = NULL;
-DWORD CAddress::FUNC_CGameMode__OnPlayerStreamIn = NULL;
-DWORD CAddress::FUNC_CGameMode__OnPlayerStreamOut = NULL;
-DWORD CAddress::FUNC_CGameMode__OnDialogResponse = NULL;
+DEFINE_FUNC_PTR(CGameMode__OnPlayerConnect);
+DEFINE_FUNC_PTR(CGameMode__OnPlayerDisconnect);
+DEFINE_FUNC_PTR(CGameMode__OnPlayerSpawn);
+DEFINE_FUNC_PTR(CGameMode__OnPlayerStreamIn);
+DEFINE_FUNC_PTR(CGameMode__OnPlayerStreamOut);
+DEFINE_FUNC_PTR(CGameMode__OnDialogResponse);
 
 void CAddress::Initialize(SAMPVersion sampVersion)
 {
@@ -155,10 +156,10 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_Packet_StatsUpdate =					FindPattern("\x6A\xFF\x68\x00\x00\x00\x00\x64\xA1\x00\x00\x00\x00\x50\x64\x89\x25\x00\x00\x00\x00\x81\xEC\x20\x01\x00\x00\x56\x57", "xxx????xx????xxxxxxxxxxx???xx");
 	FUNC_format_amxstring =						FindPattern("\x8B\x54\x24\x08\x56\x8B\x74\x24\x08\x57\x33\xC0", "xxxxxxxxxxxx");
 
-	ADDR_GetNetworkStats_VerbosityLevel =		FindPattern("\x6A\x01\x8D\x4C\x0C", "xxxxx"); // 0x0047362A
-	ADDR_GetPlayerNetworkStats_VerbosityLevel = FindPattern("\x6A\x01\x8D\x44\x04", "xxxxx"); // 0x004730B9;
+	ADDR_GetNetworkStats_VerbosityLevel =		1 + FindPattern("\x6A\x01\x8D\x4C\x0C", "xxxxx"); // 0x0047362A
+	ADDR_GetPlayerNetworkStats_VerbosityLevel = 1 + FindPattern("\x6A\x01\x8D\x44\x04", "xxxxx"); // 0x004730B9;
 
-	ADDR_RecordingDirectory =					FindPattern("\x75\xDF\x8D\x44\x24\x18\x50\x8D\x8C\x24", "xxxxx?xxxx") + 14; // 0x00482265
+	ADDR_RecordingDirectory =					1 + FindPattern("\x75\xDF\x8D\x44\x24\x18\x50\x8D\x8C\x24", "xxxxx?xxxx") + 14; // 0x00482265
 
 	FUNC_CGameMode__OnPlayerConnect =			FindPattern("\x83\xEC\x08\x56\x8B\xF1\x8A\x46\x68", "xxxxxxxxx"); // 0x0046D910
 	FUNC_CGameMode__OnPlayerDisconnect =		FUNC_CGameMode__OnPlayerConnect + 0x60; // 0x0046D970;
@@ -207,8 +208,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_Packet_StatsUpdate =					FindPattern("\x55\x31\xD2\x89\xE5\x81\xEC\x58\x01\x00\x00\x89\x5D\xF4", "xxxxxxxxxxxxxx"); // 80AD430
 	FUNC_format_amxstring = FindPattern("\x55\xB8\x00\x10\x00\x00\x89\xE5\x56\x53\x83\xEC\x20", "xxxxxxxxxxxxx");
 
-	ADDR_GetNetworkStats_VerbosityLevel =		FindPattern("\xB8\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx");
-	ADDR_GetPlayerNetworkStats_VerbosityLevel = FindPattern("\xBB\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx"); // 080DD7FA
+	ADDR_GetNetworkStats_VerbosityLevel =		1 + FindPattern("\xB8\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx");
+	ADDR_GetPlayerNetworkStats_VerbosityLevel = 1 + FindPattern("\xBB\x01\x00\x00\x00\x83\xD9\x03", "xxxxxxxx"); // 080DD7FA
 	
 	FUNC_CGameMode__OnPlayerConnect = 0x80A5160;
 	FUNC_CGameMode__OnPlayerDisconnect = 0x80A51D0;
@@ -231,7 +232,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 			VAR_pPosSyncBounds[1] =						0x0815070C;
 			VAR_pPosSyncBounds[2] =						0x08150718;
 			VAR_pPosSyncBounds[3] =						0x08150714;
-			ADDR_RecordingDirectory =					0x080CC7D1;
+			ADDR_RecordingDirectory =					0x080CC7D2;
 			FUNC_CVehicle__Respawn =					0x814B4C0;
 			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
 			VAR_wRCONUser =								0x08197DF0;
@@ -284,31 +285,23 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	//logprintf("ARRAY_ConsoleCommands: %x", ARRAY_ConsoleCommands);
 	// Unlock restart wait time
 	if (VAR_pRestartWaitTime)
-		Unlock((void*)VAR_pRestartWaitTime, 4);
+		VAR_pRestartWaitTime.unlock();
 
 	for (BYTE i = 0; i < 4; i++)
 	{
 		if (VAR_pPosSyncBounds[i])
-			Unlock((void*)VAR_pPosSyncBounds[i], 4);
+			VAR_pPosSyncBounds[i].unlock();
 	}
 
 	// Patch GetNetworkStats to get more advanced stats than default
 	if(ADDR_GetNetworkStats_VerbosityLevel)
 	{
-#ifdef __WIN32
-		Unlock((void*)ADDR_GetNetworkStats_VerbosityLevel, 2);
-#else
-		Unlock((void*)ADDR_GetNetworkStats_VerbosityLevel, 5);
-#endif
+		ADDR_GetNetworkStats_VerbosityLevel.unlock();
 	}
 
 	// Patch GetPlayerNetworkStats to get more advanced stats than default
 	if(ADDR_GetPlayerNetworkStats_VerbosityLevel)
 	{
-#ifdef __WIN32
-		Unlock((void*)ADDR_GetPlayerNetworkStats_VerbosityLevel, 2);
-#else
-		Unlock((void*)ADDR_GetPlayerNetworkStats_VerbosityLevel, 5);
-#endif
+		ADDR_GetPlayerNetworkStats_VerbosityLevel.unlock();
 	}
 }

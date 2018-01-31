@@ -74,17 +74,29 @@ typedef ConsoleVariable_s* (THISCALL *CConsole__FindVariable_t)(void *pConsole, 
 typedef void (THISCALL *CConsole__SendRules_t)(void *pConsole, SOCKET s, char* data, const sockaddr_in* to, int tolen);
 typedef void (THISCALL *CConsole__Execute_t)(void *pConsole, char* pExecLine);
 
+typedef void (THISCALL *CNetGame__SetWeather_t)(void *pNetGame, BYTE weatherid);
+typedef void (THISCALL *CNetGame__SetGravity_t)(void *pNetGame, float gravity);
+
 typedef bool (THISCALL *CFilterscripts__LoadFilterscript_t)(void *pFilterscriptPool, const char *szName);
 typedef bool (THISCALL *CFilterscripts__UnLoadFilterscript_t)(void *pFilterscriptPool, const char *szName);
+typedef bool (*ContainsInvalidChars_t)(char *szString);
 
 typedef void (THISCALL *CPlayer__SpawnForWorld_t)(void *pPlayer);
+typedef void (THISCALL *CVehicle__Respawn_t)(CVehicle *pVehicle, void *padding);
 typedef DWORD (THISCALL *CPlayerPool__HandleVehicleRespawn_t)(CPlayerPool *pPlayerPool, WORD wVehicleID);
 typedef void (THISCALL *CObject__SpawnForPlayer_t)(void *pObject, WORD playerID);
 
+typedef int (*ProcessQueryPacket_t)(unsigned int binaryAddress, unsigned short port, char* data, int length, SOCKET s);
 typedef int (THISCALL *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef int (THISCALL *Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
-
 typedef char* (CDECL *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
+
+typedef int (THISCALL *CGameMode__OnPlayerConnect_t)(CGameMode *pGameMode, cell playerid);
+typedef int (THISCALL *CGameMode__OnPlayerDisconnect_t)(CGameMode *pGameMode, cell playerid, cell reason);
+typedef int (THISCALL *CGameMode__OnPlayerSpawn_t)(CGameMode *pGameMode, cell playerid);
+typedef int (THISCALL *CGameMode__OnPlayerStreamIn_t)(CGameMode *pGameMode, cell playerid, cell forplayerid);
+typedef int (THISCALL *CGameMode__OnPlayerStreamOut_t)(CGameMode *pGameMode, cell playerid, cell forplayerid);
+typedef int (THISCALL *CGameMode__OnDialogResponse_t)(CGameMode *pGameMode, cell playerid, cell dialogid, cell response, cell listitem, char *szInputtext);
 
 typedef bool (THISCALL *RakNet__Start_t)(void* ppRakServer, unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress);
 typedef bool (THISCALL *RakNet__Send_t)(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast);
@@ -163,7 +175,7 @@ public:
 
 	// Function
 	// Rules
-	DEFINE_FUNCTION_POINTER(CConsole__AddStringVariable);
+	/*DEFINE_FUNCTION_POINTER(CConsole__AddStringVariable);
 	DEFINE_FUNCTION_POINTER(CConsole__GetStringVariable);
 	DEFINE_FUNCTION_POINTER(CConsole__SetStringVariable);
 	DEFINE_FUNCTION_POINTER(CConsole__GetIntVariable);
@@ -188,7 +200,7 @@ public:
 	// Query
 	DEFINE_FUNCTION_POINTER(Packet_WeaponsUpdate);
 	DEFINE_FUNCTION_POINTER(Packet_StatsUpdate);
-	DEFINE_FUNCTION_POINTER(format_amxstring);
+	DEFINE_FUNCTION_POINTER(format_amxstring);*/
 
 	// RakServer
 	DEFINE_FUNCTION_POINTER(RakNet__Start);							

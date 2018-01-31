@@ -33,6 +33,10 @@
 #ifndef YSF_ADDRESSES_H
 #define YSF_ADDRESSES_H
 
+#include <type_traits>
+#include <exception>
+#include "CFunctions.h"
+
 #ifdef _WIN32
 	#define RAKNET_START_OFFSET							1
 	#define RAKNET_SEND_OFFSET							7
@@ -75,71 +79,169 @@ enum class SAMPVersion
 	VERSION_UNKNOWN,
 	VERSION_037,
 	VERSION_037_R2,
+	VERSION_03DL_R1
 };
+
+namespace aux
+{
+	template <class T>
+	struct is_function_pointer : std::false_type
+	{
+
+	};
+
+#define DEF_IS_FUNCTION_POINTER_CQ(CALLCONV, QUALIFIERS) \
+	template <class TRet, class... TArgs> \
+	struct is_function_pointer<TRet(CALLCONV * QUALIFIERS)(TArgs...)> : std::true_type { }
+
+#define DEF_IS_FUNCTION_POINTER(CALLCONV) \
+	DEF_IS_FUNCTION_POINTER_CQ(CALLCONV,); \
+	DEF_IS_FUNCTION_POINTER_CQ(CALLCONV, const); \
+	DEF_IS_FUNCTION_POINTER_CQ(CALLCONV, volatile); \
+	DEF_IS_FUNCTION_POINTER_CQ(CALLCONV, const volatile)
+
+#ifdef _WIN32
+	DEF_IS_FUNCTION_POINTER(__cdecl);
+	DEF_IS_FUNCTION_POINTER(__stdcall);
+	DEF_IS_FUNCTION_POINTER(__fastcall);
+	DEF_IS_FUNCTION_POINTER(__thiscall);
+#else
+	DEF_IS_FUNCTION_POINTER();
+#endif
+
+	template <class TRet, class... TArgs>
+	struct is_function_pointer<TRet(*)(TArgs..., ...)> : std::true_type { };
+#undef DEF_IS_FUNCTION_POINTER_CQ
+#undef DEF_IS_FUNCTION_POINTER
+}
+
+template <class T>
+class ADDR
+{
+	// __thiscall without * produces errors
+	typedef std::conditional_t<aux::is_function_pointer<T>::value, T, T*> ptr_type;
+
+	ptr_type ptr;
+public:
+	constexpr ADDR() : ptr(nullptr)
+	{
+
+	}
+
+	constexpr ADDR(decltype(nullptr)) : ptr(nullptr)
+	{
+
+	}
+
+	constexpr ADDR(DWORD addr) : ptr(reinterpret_cast<ptr_type>(addr))
+	{
+
+	}
+
+	constexpr operator DWORD() const
+	{
+		return reinterpret_cast<DWORD>(ptr);
+	}
+
+	ADDR &operator=(DWORD addr)
+	{
+		ptr = reinterpret_cast<ptr_type>(addr);
+		return *this;
+	}
+
+	decltype(*ptr) operator*()
+	{
+		if (ptr == nullptr) throw std::logic_error("Attempt to dereference null pointer.");
+		return *ptr;
+	}
+
+	void unlock()
+	{
+		if (ptr == nullptr) throw std::logic_error("Attempt to dereference null pointer.");
+		Unlock(reinterpret_cast<void*>(ptr), sizeof(T));
+	}
+
+	constexpr explicit operator bool() const
+	{
+		return ptr != nullptr;
+	}
+
+	template <class... Args>
+	typename std::result_of<ptr_type(Args...)>::type operator()(Args&&... args)
+	{
+		if (ptr == nullptr) throw std::logic_error("Attempt to dereference null pointer.");
+		return ptr(std::forward<Args>(args)...);
+	}
+};
+
+#define DECLARE_FUNC_PTR(name) static ADDR<name ## _t> FUNC_ ## name
+#define DEFINE_FUNC_PTR(name) ADDR<name ## _t> CAddress::FUNC_ ## name = nullptr
 
 class CAddress
 {
+	typedef void(logprintf_t)(const char* format, ...);
 public:
 	static void	Initialize(SAMPVersion version);
 
-	static DWORD			FUNC_Logprintf_03Z;
-	static DWORD			FUNC_Logprintf_03ZR2_2;
-	static DWORD			FUNC_Logprintf_03ZR3;
-	static DWORD			FUNC_Logprintf_03ZR4;
-	static DWORD			FUNC_Logprintf_037;
-	static DWORD			FUNC_Logprintf_037_R2;
-	static DWORD			FUNC_Logprintf_037_R2_1;
+	static ADDR<logprintf_t> FUNC_Logprintf_03Z;
+	static ADDR<logprintf_t> FUNC_Logprintf_03ZR2_2;
+	static ADDR<logprintf_t> FUNC_Logprintf_03ZR3;
+	static ADDR<logprintf_t> FUNC_Logprintf_03ZR4;
+	static ADDR<logprintf_t> FUNC_Logprintf_037;
+	static ADDR<logprintf_t> FUNC_Logprintf_037_R2;
+	static ADDR<logprintf_t> FUNC_Logprintf_037_R2_1;
+	static ADDR<logprintf_t> FUNC_Logprintf_03DL_R1;
 
 	// Variables
-	static DWORD			VAR_pRestartWaitTime;
-	static DWORD			VAR_pPosSyncBounds[4];
-	static DWORD			VAR_wRCONUser;
-	static DWORD			ARRAY_ConsoleCommands;
+	static ADDR<float>		VAR_pRestartWaitTime;
+	static ADDR<float>		VAR_pPosSyncBounds[4];
+	static ADDR<WORD>		VAR_wRCONUser;
+	static ADDR<ConsoleCommand_s[]> ARRAY_ConsoleCommands;
 
 	// Functions
-	static DWORD			FUNC_CConsole__AddStringVariable;
-	static DWORD			FUNC_CConsole__GetStringVariable;
-	static DWORD			FUNC_CConsole__SetStringVariable;
-	static DWORD			FUNC_CConsole__GetIntVariable;
-	static DWORD			FUNC_CConsole__SetIntVariable;
-	static DWORD			FUNC_CConsole__GetBoolVariable;
-	static DWORD			FUNC_CConsole__ModifyVariableFlags;
-	static DWORD			FUNC_CConsole__FindVariable;	 
-	static DWORD			FUNC_CConsole__SendRules;
-	static DWORD			FUNC_CConsole__Execute;
+	DECLARE_FUNC_PTR(CConsole__AddStringVariable);
+	DECLARE_FUNC_PTR(CConsole__GetStringVariable);
+	DECLARE_FUNC_PTR(CConsole__SetStringVariable);
+	DECLARE_FUNC_PTR(CConsole__GetIntVariable);
+	DECLARE_FUNC_PTR(CConsole__SetIntVariable);
+	DECLARE_FUNC_PTR(CConsole__GetBoolVariable);
+	DECLARE_FUNC_PTR(CConsole__ModifyVariableFlags);
+	DECLARE_FUNC_PTR(CConsole__FindVariable);
+	DECLARE_FUNC_PTR(CConsole__SendRules);
+	DECLARE_FUNC_PTR(CConsole__Execute);
 
-	static DWORD			FUNC_CNetGame__SetWeather;
-	static DWORD			FUNC_CNetGame__SetGravity;
+	DECLARE_FUNC_PTR(CNetGame__SetWeather);
+	DECLARE_FUNC_PTR(CNetGame__SetGravity);
 
-	static DWORD			FUNC_CFilterscripts__LoadFilterscript;
-	static DWORD			FUNC_CFilterscripts__UnLoadFilterscript;
-	static DWORD			FUNC_ContainsInvalidChars;
+	DECLARE_FUNC_PTR(CFilterscripts__LoadFilterscript);
+	DECLARE_FUNC_PTR(CFilterscripts__UnLoadFilterscript);
+	DECLARE_FUNC_PTR(ContainsInvalidChars);
 
-	static DWORD			FUNC_CPlayer__SpawnForWorld;
-	static DWORD			FUNC_CVehicle__Respawn;
-	static DWORD			FUNC_CPlayerPool__HandleVehicleRespawn;
-	static DWORD			FUNC_CObject__SpawnForPlayer;
+	DECLARE_FUNC_PTR(CPlayer__SpawnForWorld);
+	DECLARE_FUNC_PTR(CVehicle__Respawn);
+	DECLARE_FUNC_PTR(CPlayerPool__HandleVehicleRespawn);
+	DECLARE_FUNC_PTR(CObject__SpawnForPlayer);
 
-	static DWORD			FUNC_ProcessQueryPacket;
-	static DWORD			FUNC_Packet_WeaponsUpdate;
-	static DWORD			FUNC_Packet_StatsUpdate;
-	static DWORD			FUNC_format_amxstring;
+	DECLARE_FUNC_PTR(ProcessQueryPacket);
+	DECLARE_FUNC_PTR(Packet_WeaponsUpdate);
+	DECLARE_FUNC_PTR(Packet_StatsUpdate);
+	DECLARE_FUNC_PTR(format_amxstring);
 
-	//static DWORD			FUNC_ClientJoin;
+	//DECLARE_FUNC_PTR(ClientJoin);
 
 	// Others
-	static DWORD			ADDR_GetNetworkStats_VerbosityLevel;
-	static DWORD			ADDR_GetPlayerNetworkStats_VerbosityLevel;
+	static ADDR<BYTE> ADDR_GetNetworkStats_VerbosityLevel;
+	static ADDR<BYTE> ADDR_GetPlayerNetworkStats_VerbosityLevel;
 
-	static DWORD			ADDR_RecordingDirectory;
+	static ADDR<const char*> ADDR_RecordingDirectory;
 
 	// Callback hooks
-	static DWORD			FUNC_CGameMode__OnPlayerConnect;
-	static DWORD			FUNC_CGameMode__OnPlayerDisconnect;
-	static DWORD			FUNC_CGameMode__OnPlayerSpawn;
-	static DWORD			FUNC_CGameMode__OnPlayerStreamIn;
-	static DWORD			FUNC_CGameMode__OnPlayerStreamOut;
-	static DWORD			FUNC_CGameMode__OnDialogResponse;
+	DECLARE_FUNC_PTR(CGameMode__OnPlayerConnect);
+	DECLARE_FUNC_PTR(CGameMode__OnPlayerDisconnect);
+	DECLARE_FUNC_PTR(CGameMode__OnPlayerSpawn);
+	DECLARE_FUNC_PTR(CGameMode__OnPlayerStreamIn);
+	DECLARE_FUNC_PTR(CGameMode__OnPlayerStreamOut);
+	DECLARE_FUNC_PTR(CGameMode__OnDialogResponse);
 };
 
 #endif

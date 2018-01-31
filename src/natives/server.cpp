@@ -15,7 +15,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 		if (!CAddress::VAR_pRestartWaitTime) return 0;
 
-		*(float*)CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
+		*CAddress::VAR_pRestartWaitTime = amx_ctof(params[1]);
 		return 1;
 	}
 
@@ -25,7 +25,7 @@ namespace Natives
 		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 		if (!CAddress::VAR_pRestartWaitTime) return 0;
 
-		float fRestartTime = *(float*)CAddress::VAR_pRestartWaitTime;
+		float fRestartTime = *CAddress::VAR_pRestartWaitTime;
 		return amx_ftoc(fRestartTime);
 	}
 
@@ -60,7 +60,7 @@ namespace Natives
 
 		float fBounds[4];
 		for (BYTE i = 0; i != 4; ++i)
-			fBounds[i] = *(float*)CAddress::VAR_pPosSyncBounds[i];
+			fBounds[i] = *CAddress::VAR_pPosSyncBounds[i];
 
 		CScriptParams::Get()->Add(fBounds[0], fBounds[1], fBounds[2], fBounds[3]);
 		return 1;
@@ -72,7 +72,7 @@ namespace Natives
 		CHECK_PARAMS(4, LOADED);
 
 		for (BYTE i = 0; i != 4; ++i)
-			*(float*)CAddress::VAR_pPosSyncBounds[i] = CScriptParams::Get()->ReadFloat();
+			*CAddress::VAR_pPosSyncBounds[i] = CScriptParams::Get()->ReadFloat();
 		return 1;
 	}
 

@@ -81,7 +81,7 @@ CPlugin::CPlugin(SAMPVersion version)
 	m_vecValidNameCharacters.insert({ ']', '[', '_', '$', '=', '(', ')', '@', '.' });
 
 	// Create mirror from SAMP server's internal array of console commands
-	ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+	ConsoleCommand_s *cmds = *CAddress::ARRAY_ConsoleCommands;
 	do
 	{
 		m_RCONCommands.push_back(std::string(cmds->szName));
@@ -285,7 +285,7 @@ bool CPlugin::ChangeRCONCommandName(std::string const &strCmd, std::string const
 		auto pos = std::distance(m_RCONCommands.begin(), it);
 
 		// Find command in array by it's position in vector
-		ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+		ConsoleCommand_s *cmds = *CAddress::ARRAY_ConsoleCommands;
 		do
 		{
 			cmds++;
@@ -306,7 +306,7 @@ bool CPlugin::GetRCONCommandName(std::string const &strCmd, std::string &strNewC
 		auto pos = std::distance(m_RCONCommands.begin(), it);
 
 		// Find command in array by it's position in vector
-		ConsoleCommand_s *cmds = (ConsoleCommand_s*)CAddress::ARRAY_ConsoleCommands;
+		ConsoleCommand_s *cmds = *CAddress::ARRAY_ConsoleCommands;
 		do
 		{
 			cmds++;
@@ -368,8 +368,8 @@ void CPlugin::SetExtendedNetStatsEnabled(bool enable)
 {
 	if(CAddress::ADDR_GetNetworkStats_VerbosityLevel)
 	{
-		*(BYTE*)(CAddress::ADDR_GetNetworkStats_VerbosityLevel + 1) = enable ? 2 : 1;
-		*(BYTE*)(CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel + 1) = enable ? 2 : 1;
+		*CAddress::ADDR_GetNetworkStats_VerbosityLevel = enable ? 2 : 1;
+		*CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel = enable ? 2 : 1;
 	}
 }
 

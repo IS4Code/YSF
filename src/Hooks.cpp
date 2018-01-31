@@ -73,12 +73,13 @@ char gRecordingDataPath[MAX_PATH];
 // Hooks //
 ///////////////////////////////////////////////////////////////
 
-typedef void(THISCALL* FUNC_CNetGame__SetWeather)(void *thisptr, BYTE weatherid);
 #ifdef _WIN32
-void FASTCALL HOOK_CNetGame__SetWeather(void *thisptr, void *padding, BYTE weatherid)
+#define HOOK_THISCALL(NAME, ARG1, ...) FASTCALL NAME(ARG1, void *_padding, __VA_ARGS__)
 #else
-void CDECL HOOK_CNetGame__SetWeather(void *thisptr, BYTE weatherid)
+#define HOOK_THISCALL(NAME, ARG1, ...) CDECL NAME(ARG1, __VA_ARGS__)
 #endif
+
+void HOOK_THISCALL(HOOK_CNetGame__SetWeather, void *thisptr, BYTE weatherid)
 {
 	subhook_remove(SetWeather_hook);
 
@@ -89,18 +90,13 @@ void CDECL HOOK_CNetGame__SetWeather(void *thisptr, BYTE weatherid)
 			pool.Extra(i).byteWeather = weatherid;
 	}
 
-	((FUNC_CNetGame__SetWeather)CAddress::FUNC_CNetGame__SetWeather)(thisptr, weatherid);
+	CAddress::FUNC_CNetGame__SetWeather(thisptr, weatherid);
 	subhook_install(SetWeather_hook);
 }
 
 //----------------------------------------------------
 
-typedef void(THISCALL* FUNC_CNetGame__SetGravity)(void *thisptr, float gravity);
-#ifdef _WIN32
-void FASTCALL HOOK_CNetGame__SetGravity(void *thisptr, void *padding, float gravity)
-#else
-void CDECL HOOK_CNetGame__SetGravity(void *thisptr, float gravity)
-#endif
+void HOOK_THISCALL(HOOK_CNetGame__SetGravity, void *thisptr, float gravity)
 {
 	subhook_remove(SetGravity_hook);
 
@@ -111,7 +107,7 @@ void CDECL HOOK_CNetGame__SetGravity(void *thisptr, float gravity)
 			pool.Extra(i).fGravity = gravity;
 	}
 
-	((FUNC_CNetGame__SetGravity)CAddress::FUNC_CNetGame__SetGravity)(thisptr, gravity);
+	CAddress::FUNC_CNetGame__SetGravity(thisptr, gravity);
 	subhook_install(SetGravity_hook);
 }
 
@@ -351,14 +347,14 @@ void HOOK_logprintf(const char *msg, ...)
 			fflush(g_fLog);
 		}
 	
-		if (*(WORD*)CAddress::VAR_wRCONUser != INVALID_PLAYER_ID)
+		if (*CAddress::VAR_wRCONUser != INVALID_PLAYER_ID)
 		{
 			DWORD len = strlen(buffer);
 			RakNet::BitStream bsParams;
 			bsParams.Write(0xFFFFFFFF);
 			bsParams.Write((DWORD)len);
 			bsParams.Write(buffer, len);
-			CSAMPFunctions::RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(*(WORD*)CAddress::VAR_wRCONUser), false, false);
+			CSAMPFunctions::RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(*CAddress::VAR_wRCONUser), false, false);
 		}
 		else if (bRconSocketReply)
 		{
@@ -759,22 +755,13 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 //----------------------------------------------------
 
-#ifdef _WIN32
-void FASTCALL HOOK_CVehicle__Respawn(CVehicle *thisptr, void *padding)
-#else
-void CDECL HOOK_CVehicle__Respawn(CVehicle *thisptr)
-#endif
+void HOOK_THISCALL(HOOK_CVehicle__Respawn, CVehicle *thisptr)
 {
 	CSAMPFunctions::RespawnVehicle(thisptr);
 }
 //----------------------------------------------------
 
-typedef int(THISCALL* FUNC_CGameMode__OnPlayerConnect)(CGameMode *thisptr, cell playerid);
-#ifdef _WIN32
-int FASTCALL HOOK_CGameMode__OnPlayerConnect(CGameMode *thisptr, void *padding, cell playerid)
-#else
-int CDECL HOOK_CGameMode__OnPlayerConnect(CGameMode *thisptr, cell playerid)
-#endif
+int HOOK_THISCALL(HOOK_CGameMode__OnPlayerConnect, CGameMode *thisptr, cell playerid)
 {
 	subhook_remove(CGameMode__OnPlayerConnect_hook);
 
@@ -786,92 +773,67 @@ int CDECL HOOK_CGameMode__OnPlayerConnect(CGameMode *thisptr, cell playerid)
 		CPlugin::Get()->pPickupPool->InitializeForPlayer(playerid);
 #endif
 
-	int ret = ((FUNC_CGameMode__OnPlayerConnect)CAddress::FUNC_CGameMode__OnPlayerConnect)(thisptr, playerid);
+	int ret = CAddress::FUNC_CGameMode__OnPlayerConnect(thisptr, playerid);
 	subhook_install(CGameMode__OnPlayerConnect_hook);
 	return ret;
 }
 
 //----------------------------------------------------
 
-typedef int(THISCALL* FUNC_CGameMode__OnPlayerDisconnect)(CGameMode *thisptr, cell playerid, cell reason);
-#ifdef _WIN32
-int FASTCALL HOOK_CGameMode__OnPlayerDisconnect(CGameMode *thisptr, void *padding, cell playerid, cell reason)
-#else
-int CDECL HOOK_CGameMode__OnPlayerDisconnect(CGameMode *thisptr, cell playerid, cell reason)
-#endif
+int HOOK_THISCALL(HOOK_CGameMode__OnPlayerDisconnect, CGameMode *thisptr, cell playerid, cell reason)
 {
 	subhook_remove(CGameMode__OnPlayerDisconnect_hook);
 
 	CPlugin::Get()->RemovePlayer(playerid);
 	
-	int ret = ((FUNC_CGameMode__OnPlayerDisconnect)CAddress::FUNC_CGameMode__OnPlayerDisconnect)(thisptr, playerid, reason);
+	int ret = CAddress::FUNC_CGameMode__OnPlayerDisconnect(thisptr, playerid, reason);
 	subhook_install(CGameMode__OnPlayerDisconnect_hook);
 	return ret;
 }
 
 //----------------------------------------------------
 
-typedef int(THISCALL* FUNC_CGameMode__OnPlayerSpawn)(CGameMode *thisptr, cell playerid);
-#ifdef _WIN32
-int FASTCALL HOOK_CGameMode__OnPlayerSpawn(CGameMode *thisptr, void *padding, cell playerid)
-#else
-int CDECL HOOK_CGameMode__OnPlayerSpawn(CGameMode *thisptr, cell playerid)
-#endif
+int HOOK_THISCALL(HOOK_CGameMode__OnPlayerSpawn, CGameMode *thisptr, cell playerid)
 {
 	subhook_remove(CGameMode__OnPlayerSpawn_hook);
 
 	if (IsPlayerConnected(playerid))
 		CServer::Get()->PlayerPool.Extra(playerid).bControllable = true;
 
-	int ret = ((FUNC_CGameMode__OnPlayerSpawn)CAddress::FUNC_CGameMode__OnPlayerSpawn)(thisptr, playerid);
+	int ret = CAddress::FUNC_CGameMode__OnPlayerSpawn(thisptr, playerid);
 	subhook_install(CGameMode__OnPlayerSpawn_hook);
 	return ret;
 }
 
 //----------------------------------------------------
 
-typedef int(THISCALL* FUNC_CGameMode__OnPlayerStreamIn)(CGameMode *thisptr, cell playerid, cell forplayerid);
-#ifdef _WIN32
-int FASTCALL HOOK_CGameMode__OnPlayerStreamIn(CGameMode *thisptr, void *padding, cell playerid, cell forplayerid)
-#else
-int CDECL HOOK_CGameMode__OnPlayerStreamIn(CGameMode *thisptr, cell playerid, cell forplayerid)
-#endif
+int HOOK_THISCALL(HOOK_CGameMode__OnPlayerStreamIn, CGameMode *thisptr, cell playerid, cell forplayerid)
 {
 	subhook_remove(CGameMode__OnPlayerStreamIn_hook);
 
 	CPlugin::Get()->OnPlayerStreamIn(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
 
-	int ret = ((FUNC_CGameMode__OnPlayerStreamIn)CAddress::FUNC_CGameMode__OnPlayerStreamIn)(thisptr, playerid, forplayerid);
+	int ret = CAddress::FUNC_CGameMode__OnPlayerStreamIn(thisptr, playerid, forplayerid);
 	subhook_install(CGameMode__OnPlayerStreamIn_hook);
 	return ret;
 }
 
 //----------------------------------------------------
 
-typedef int(THISCALL* FUNC_CGameMode__OnPlayerStreamOut)(CGameMode *thisptr, cell playerid, cell forplayerid);
-#ifdef _WIN32
-int FASTCALL HOOK_CGameMode__OnPlayerStreamOut(CGameMode *thisptr, void *padding, cell playerid, cell forplayerid)
-#else
-int CDECL HOOK_CGameMode__OnPlayerStreamOut(CGameMode *thisptr, cell playerid, cell forplayerid)
-#endif
+int HOOK_THISCALL(HOOK_CGameMode__OnPlayerStreamOut, CGameMode *thisptr, cell playerid, cell forplayerid)
 {
 	subhook_remove(CGameMode__OnPlayerStreamOut_hook);
 
 	CPlugin::Get()->OnPlayerStreamOut(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
 	
-	int ret = ((FUNC_CGameMode__OnPlayerStreamOut)CAddress::FUNC_CGameMode__OnPlayerStreamOut)(thisptr, playerid, forplayerid);
+	int ret = CAddress::FUNC_CGameMode__OnPlayerStreamOut(thisptr, playerid, forplayerid);
 	subhook_install(CGameMode__OnPlayerStreamOut_hook);
 	return ret;
 }
 
 //----------------------------------------------------
 
-typedef int(THISCALL* FUNC_CGameMode__OnDialogResponse)(CGameMode *thisptr, cell playerid, cell dialogid, cell response, cell listitem, char *szInputtext);
-#ifdef _WIN32
-int FASTCALL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, void *padding, cell playerid, cell dialogid, cell response, cell listitem, char *szInputtext)
-#else
-int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, cell dialogid, cell response, cell listitem, char *szInputtext)
-#endif
+int HOOK_THISCALL(HOOK_CGameMode__OnDialogResponse, CGameMode *thisptr, cell playerid, cell dialogid, cell response, cell listitem, char *szInputtext)
 {
 	subhook_remove(CGameMode__OnDialogResponse_hook);
 
@@ -888,7 +850,7 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 	}
 
 	if(ret == -1)
-		ret = ((FUNC_CGameMode__OnDialogResponse)CAddress::FUNC_CGameMode__OnDialogResponse)(thisptr, playerid, dialogid, response, listitem, szInputtext);
+		ret = CAddress::FUNC_CGameMode__OnDialogResponse(thisptr, playerid, dialogid, response, listitem, szInputtext);
 	
 	subhook_install(CGameMode__OnDialogResponse_hook);
 	return ret;
@@ -896,8 +858,7 @@ int CDECL HOOK_CGameMode__OnDialogResponse(CGameMode *thisptr, cell playerid, ce
 
 //----------------------------------------------------
 
-/*typedef void(CDECL* FUNC_ClientJoin)(RPCParameters *rpcParams);
-
+/*
 void CDECL HOOK_ClientJoin(RPCParameters *rpcParams)
 {
 	subhook_remove(ClientJoin_hook);
@@ -919,55 +880,41 @@ void CDECL HOOK_ClientJoin(RPCParameters *rpcParams)
 
 //----------------------------------------------------
 
+template <class TFunc, class THook>
+subhook_t Hook(ADDR<TFunc> &func, THook hook)
+{
+	subhook_t var = subhook_new(reinterpret_cast<void*>(*func), reinterpret_cast<void*>(hook), static_cast<subhook_options_t>(0));
+	subhook_install(var);
+	return var;
+}
+
 // Things that needs to be hooked before netgame initialied
 void InstallPreHooks()
 {
-	SetWeather_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CNetGame__SetWeather), reinterpret_cast<void*>(HOOK_CNetGame__SetWeather), static_cast<subhook_options_t>(NULL));
-	subhook_install(SetWeather_hook);
-	
-	SetGravity_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CNetGame__SetGravity), reinterpret_cast<void*>(HOOK_CNetGame__SetGravity), static_cast<subhook_options_t>(NULL));
-	subhook_install(SetGravity_hook);
-
-	Namecheck_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_ContainsInvalidChars), reinterpret_cast<void*>(HOOK_ContainsInvalidChars), static_cast<subhook_options_t>(NULL));
-	subhook_install(Namecheck_hook);
-
-	amx_Register_hook = subhook_new(reinterpret_cast<void*>(*(DWORD*)((DWORD)pAMXFunctions + (PLUGIN_AMX_EXPORT_Register * 4))), reinterpret_cast<void*>(HOOK_amx_Register), static_cast<subhook_options_t>(NULL));
+	SetWeather_hook = Hook(CAddress::FUNC_CNetGame__SetWeather, HOOK_CNetGame__SetWeather);
+	SetGravity_hook = Hook(CAddress::FUNC_CNetGame__SetGravity, HOOK_CNetGame__SetGravity);
+	Namecheck_hook = Hook(CAddress::FUNC_ContainsInvalidChars, HOOK_ContainsInvalidChars);
+	amx_Register_hook = subhook_new(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register], reinterpret_cast<void*>(HOOK_amx_Register), static_cast<subhook_options_t>(NULL));
 	subhook_install(amx_Register_hook);
 	
-	query_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_ProcessQueryPacket), reinterpret_cast<void*>(HOOK_ProcessQueryPacket), static_cast<subhook_options_t>(NULL));
-	subhook_install(query_hook);
-
-	CVehicle__Respawn_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CVehicle__Respawn), reinterpret_cast<void*>(HOOK_CVehicle__Respawn), static_cast<subhook_options_t>(NULL));
-	subhook_install(CVehicle__Respawn_hook);
-
-
-	//ClientJoin_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_ClientJoin), reinterpret_cast<void*>(HOOK_ClientJoin), static_cast<subhook_options_t>(NULL));
-	//subhook_install(ClientJoin_hook);
-
-	// Callback hooks
-	CGameMode__OnPlayerConnect_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CGameMode__OnPlayerConnect), reinterpret_cast<void*>(HOOK_CGameMode__OnPlayerConnect), static_cast<subhook_options_t>(NULL));
-	subhook_install(CGameMode__OnPlayerConnect_hook);
+	query_hook = Hook(CAddress::FUNC_ProcessQueryPacket, HOOK_ProcessQueryPacket);
+	CVehicle__Respawn_hook = Hook(CAddress::FUNC_CVehicle__Respawn, HOOK_CVehicle__Respawn);
 	
-	CGameMode__OnPlayerDisconnect_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CGameMode__OnPlayerDisconnect), reinterpret_cast<void*>(HOOK_CGameMode__OnPlayerDisconnect), static_cast<subhook_options_t>(NULL));
-	subhook_install(CGameMode__OnPlayerDisconnect_hook);
-
-	CGameMode__OnPlayerSpawn_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CGameMode__OnPlayerSpawn), reinterpret_cast<void*>(HOOK_CGameMode__OnPlayerSpawn), static_cast<subhook_options_t>(NULL));
-	subhook_install(CGameMode__OnPlayerSpawn_hook);
-
-	CGameMode__OnPlayerStreamIn_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CGameMode__OnPlayerStreamIn), reinterpret_cast<void*>(HOOK_CGameMode__OnPlayerStreamIn), static_cast<subhook_options_t>(NULL));
-	subhook_install(CGameMode__OnPlayerStreamIn_hook);
-
-	CGameMode__OnPlayerStreamOut_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CGameMode__OnPlayerStreamOut), reinterpret_cast<void*>(HOOK_CGameMode__OnPlayerStreamOut), static_cast<subhook_options_t>(NULL));
-	subhook_install(CGameMode__OnPlayerStreamOut_hook);
-
-	CGameMode__OnDialogResponse_hook = subhook_new(reinterpret_cast<void*>(CAddress::FUNC_CGameMode__OnDialogResponse), reinterpret_cast<void*>(HOOK_CGameMode__OnDialogResponse), static_cast<subhook_options_t>(NULL));
-	subhook_install(CGameMode__OnDialogResponse_hook);
-
+	//ClientJoin_hook = Hook(CAddress::FUNC_ClientJoin, HOOK_ClientJoin);
+	
+	// Callback hooks
+	CGameMode__OnPlayerConnect_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerConnect, HOOK_CGameMode__OnPlayerConnect);
+	CGameMode__OnPlayerDisconnect_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerDisconnect, HOOK_CGameMode__OnPlayerDisconnect);
+	CGameMode__OnPlayerSpawn_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerSpawn, HOOK_CGameMode__OnPlayerSpawn);
+	CGameMode__OnPlayerStreamIn_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerStreamIn, HOOK_CGameMode__OnPlayerStreamIn);
+	CGameMode__OnPlayerStreamOut_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerStreamOut, HOOK_CGameMode__OnPlayerStreamOut);
+	CGameMode__OnDialogResponse_hook = Hook(CAddress::FUNC_CGameMode__OnDialogResponse, HOOK_CGameMode__OnDialogResponse);
+	
 	if(CAddress::ADDR_RecordingDirectory)
 	{
 		strcpy(gRecordingDataPath, "scriptfiles/%s.rec");
-		Unlock((void*)CAddress::ADDR_RecordingDirectory, 5);
-		*(DWORD*)(CAddress::ADDR_RecordingDirectory + 1) = (DWORD)&gRecordingDataPath;
+		CAddress::ADDR_RecordingDirectory.unlock();
+		*CAddress::ADDR_RecordingDirectory = gRecordingDataPath;
 	}
 }
 
