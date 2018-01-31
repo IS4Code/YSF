@@ -550,7 +550,7 @@ struct CPlayer
 	BYTE					byteVehicleStreamedIn[MAX_VEHICLES];		// 1341 - 3341
 	BYTE					byteSomethingUnused[1000];					// 3341 - 4341
 #ifdef SAMP_03DL
-	BYTE					byteSomethingUnused2[1000];
+	BYTE					byteSomethingUnused2[1000];					// 4341 - 5341
 #endif
 	BYTE					byte3DTextLabelStreamedIn[1024];			// 4341  - 5365
 	BYTE					bPickupStreamedIn[MAX_PICKUPS];				// 5365 - 9461
@@ -578,7 +578,7 @@ struct CPlayer
 	DWORD					dwKeys;				// 10573 - 10577
 	DWORD					dwOldKeys;			// 10577 - 10581
 #ifdef SAMP_03DL
-	DWORD					dwUnknown1;
+	DWORD					dwUnknown1;			// 11581 - 11585
 #endif
 	BOOL					bEditObject;		// 10581 - 10585
 	BOOL					bEditAttachedObject;// 10585 - 10589

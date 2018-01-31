@@ -31,6 +31,7 @@
 */
 
 #include "CAddresses.h"
+#include "Globals.h"
 #include "Memory.h"
 
 //#define print_addresses
@@ -104,8 +105,9 @@ DEFINE_FUNC_PTR(CGameMode__OnDialogResponse);
 
 void CAddress::Initialize(SAMPVersion sampVersion)
 {
+#ifndef SAMP_03DL
 	// Thx for Whitetiger
-	DWORD dwTemp; 
+	DWORD dwTemp;
 #ifdef _WIN32
 	dwTemp =									FindPattern("\xD9\x15\x00\x00\x00\x00\xD8\x1D\x00\x00\x00\x00\xDF\xE0\xF6\xC4\x41\x75\x07", "xx????xx????xxxxxxx") + 6;
 	VAR_pRestartWaitTime =						*(DWORD*)(dwTemp + 2);
@@ -241,8 +243,64 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 		}
 	}
 	#endif
-/*	
-	logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
+
+#else
+#ifdef _WIN32
+	VAR_pRestartWaitTime = 0x0051C188;
+	VAR_pPosSyncBounds[0] = 0x004BEEC8;
+	VAR_pPosSyncBounds[1] = 0x004BEECC;
+	VAR_pPosSyncBounds[2] = 0x004BEE84;
+	VAR_pPosSyncBounds[3] = 0x004BF1FC;
+
+	VAR_wRCONUser = 0x004EBCE4;
+	ARRAY_ConsoleCommands = 0x004EA848;
+
+	FUNC_CConsole__AddStringVariable = 0x00491C40;
+	FUNC_CConsole__GetStringVariable = 0x00490BA0;
+	FUNC_CConsole__SetStringVariable = 0x00490BC0;
+	FUNC_CConsole__GetIntVariable = 0x00490C80;
+	FUNC_CConsole__SetIntVariable = 0x00490CA0;
+	FUNC_CConsole__GetBoolVariable = 0x00490CC0;
+	FUNC_CConsole__ModifyVariableFlags = 0x00490B80;
+	FUNC_CConsole__FindVariable = 0x00490AA0;
+	FUNC_CConsole__SendRules = 0x00490770;
+	FUNC_CConsole__Execute = 0x00490CE0;
+
+	FUNC_CNetGame__SetWeather = 0x00496240;
+	FUNC_CNetGame__SetGravity = 0x00496310;
+
+	FUNC_CFilterscripts__LoadFilterscript = 0x0046A9D0;
+	FUNC_CFilterscripts__UnLoadFilterscript = 0x0046D1C0;
+
+	FUNC_ContainsInvalidChars = 0x00468EE0;
+
+	FUNC_CPlayer__SpawnForWorld = 0x00487730;
+	FUNC_CVehicle__Respawn = 0x00489790;
+	FUNC_CPlayerPool__HandleVehicleRespawn = 0x00465E40;
+	FUNC_CObject__SpawnForPlayer = 0x0049DFC0;
+
+	FUNC_ProcessQueryPacket = 0x0049E480;
+	FUNC_Packet_WeaponsUpdate = 0x00495940;
+	FUNC_Packet_StatsUpdate = 0x00495860;
+	FUNC_format_amxstring = 0x0046FD00;
+
+	ADDR_GetNetworkStats_VerbosityLevel = 0x00473BEB;
+	ADDR_GetPlayerNetworkStats_VerbosityLevel = 0x0047367A;
+
+	ADDR_RecordingDirectory = 0x00483FC6;
+
+	FUNC_CGameMode__OnPlayerConnect = 0x0046AE10;
+	FUNC_CGameMode__OnPlayerDisconnect = 0x0046AE90;
+	FUNC_CGameMode__OnPlayerSpawn = 0x0046DCB0;
+	FUNC_CGameMode__OnPlayerStreamIn = 0x0046EBC0;
+	FUNC_CGameMode__OnPlayerStreamOut = 0x0046EC30;
+	FUNC_CGameMode__OnDialogResponse = 0x0046EE60;
+#else
+#error Linux addresses are not yet complete
+#endif
+#endif
+	
+	/*logprintf("VAR_pRestartWaitTime: %X", VAR_pRestartWaitTime);
 
 	logprintf("FUNC_CConsole__AddStringVariable: %X", FUNC_CConsole__AddStringVariable);
 	logprintf("FUNC_CConsole__GetStringVariable: %X", FUNC_CConsole__GetStringVariable);
@@ -280,7 +338,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	logprintf("FUNC_CGameMode__OnPlayerStreamIn: %X", FUNC_CGameMode__OnPlayerStreamIn);
 	logprintf("FUNC_CGameMode__OnPlayerStreamOut: %X", FUNC_CGameMode__OnPlayerStreamOut);
 	logprintf("FUNC_CGameMode__OnDialogResponse: %X", FUNC_CGameMode__OnDialogResponse);
-*/
+	*/
 
 	//logprintf("ARRAY_ConsoleCommands: %x", ARRAY_ConsoleCommands);
 	// Unlock restart wait time

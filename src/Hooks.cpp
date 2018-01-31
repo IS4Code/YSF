@@ -883,6 +883,7 @@ void CDECL HOOK_ClientJoin(RPCParameters *rpcParams)
 template <class TFunc, class THook>
 subhook_t Hook(ADDR<TFunc> &func, THook hook)
 {
+	//logprintf("Hooking %x", (DWORD)func);
 	subhook_t var = subhook_new(reinterpret_cast<void*>(*func), reinterpret_cast<void*>(hook), static_cast<subhook_options_t>(0));
 	subhook_install(var);
 	return var;
