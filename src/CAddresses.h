@@ -36,6 +36,7 @@
 #include <type_traits>
 #include <exception>
 #include "CFunctions.h"
+#include "Memory.h"
 
 #ifdef _WIN32
 	#define RAKNET_START_OFFSET							1
@@ -119,26 +120,26 @@ template <class T>
 class ADDR
 {
 	// __thiscall without * produces errors
-	typedef std::conditional_t<aux::is_function_pointer<T>::value, T, T*> ptr_type;
+	typedef typename std::conditional<aux::is_function_pointer<T>::value, T, T*>::type ptr_type;
 
 	ptr_type ptr;
 public:
-	constexpr ADDR() : ptr(nullptr)
+	ADDR() : ptr(nullptr)
 	{
 
 	}
 
-	constexpr ADDR(decltype(nullptr)) : ptr(nullptr)
+	ADDR(decltype(nullptr)) : ptr(nullptr)
 	{
 
 	}
 
-	constexpr ADDR(DWORD addr) : ptr(reinterpret_cast<ptr_type>(addr))
+	ADDR(DWORD addr) : ptr(reinterpret_cast<ptr_type>(addr))
 	{
 
 	}
 
-	constexpr operator DWORD() const
+	operator DWORD() const
 	{
 		return reinterpret_cast<DWORD>(ptr);
 	}
@@ -149,7 +150,7 @@ public:
 		return *this;
 	}
 
-	decltype(*ptr) operator*()
+	auto operator*() -> decltype(*ptr)
 	{
 		if (ptr == nullptr) throw std::logic_error("Attempt to dereference null pointer.");
 		return *ptr;
@@ -161,13 +162,13 @@ public:
 		Unlock(reinterpret_cast<void*>(ptr), sizeof(T));
 	}
 
-	constexpr explicit operator bool() const
+	explicit operator bool() const
 	{
 		return ptr != nullptr;
 	}
 
 	template <class... Args>
-	typename std::result_of<ptr_type(Args...)>::type operator()(Args&&... args)
+	auto operator()(Args&&... args) -> decltype(ptr(std::forward<Args>(args)...))
 	{
 		if (ptr == nullptr) throw std::logic_error("Attempt to dereference null pointer.");
 		return ptr(std::forward<Args>(args)...);
