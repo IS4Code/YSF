@@ -34,6 +34,8 @@
 #include "Globals.h"
 #include "Memory.h"
 
+#undef DECLARE_FUNC_PTR
+
 //#define print_addresses
 #ifdef _WIN32
 ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03Z = 0x00486CB0;
@@ -87,7 +89,11 @@ DEFINE_FUNC_PTR(Packet_WeaponsUpdate);
 DEFINE_FUNC_PTR(Packet_StatsUpdate);
 DEFINE_FUNC_PTR(format_amxstring);
 
-//DECLARE_FUNC_PTR(ClientJoin);
+#ifdef SAMP_03DL
+DEFINE_FUNC_PTR(ClientJoin);
+DEFINE_FUNC_PTR(AddSimpleModel);
+DEFINE_FUNC_PTR(DynamicListInsert);
+#endif
 
 // Others
 ADDR<BYTE> CAddress::ADDR_GetNetworkStats_VerbosityLevel;
@@ -295,6 +301,10 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamIn = 0x0046EBC0;
 	FUNC_CGameMode__OnPlayerStreamOut = 0x0046EC30;
 	FUNC_CGameMode__OnDialogResponse = 0x0046EE60;
+
+	//FUNC_ClientJoin = 0x0049CEA0;
+	FUNC_AddSimpleModel = 0x00497170;
+	FUNC_DynamicListInsert = 0x00482100;
 #else
 	VAR_pRestartWaitTime = 0x08166610;
 	VAR_pPosSyncBounds[0] = 0x0815C670;
@@ -345,6 +355,9 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamIn = 0x080AEE10;
 	FUNC_CGameMode__OnPlayerStreamOut = 0x080AEE90;
 	FUNC_CGameMode__OnDialogResponse = 0x080AF110;
+
+	FUNC_AddSimpleModel = 0x080B98C0;
+	FUNC_DynamicListInsert = 0x080BA2D0;
 #endif
 #endif
 	

@@ -937,3 +937,23 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 	}
 	return true;
 }
+
+#ifdef SAMP_03DL
+
+void CPlugin::CacheModelInfo(CModelInfo* info)
+{
+	m_modelCache[std::make_pair(std::string(info->szDffName), std::string(info->szTxdName))] = info;
+}
+
+CModelInfo* CPlugin::FindCachedModelInfo(const char *dffname, const char *txdname)
+{
+	auto it = m_modelCache.find(std::make_pair(std::string(dffname), std::string(txdname)));
+	if (it == m_modelCache.end())
+	{
+		return nullptr;
+	} else {
+		return it->second;
+	}
+}
+
+#endif

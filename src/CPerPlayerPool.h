@@ -6,24 +6,10 @@
 #include <exception>
 #include <type_traits>
 #include "includes/types.h"
+#include "utils/pair_hash.h"
 #include "CPool.h"
 #include "CPlayerData.h"
 #include "Structs.h"
-
-namespace aux
-{
-	struct pair_hash
-	{
-		template <typename T, typename U>
-		std::size_t operator()(const std::pair<T, U> &x) const
-		{
-			std::size_t hash = 0;
-			hash ^= std::hash<T>()(x.first) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-			hash ^= std::hash<U>()(x.second) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-			return hash;
-		}
-	};
-}
 
 template <class ObjectType, size_t MaxSize>
 class CPerPlayerPoolBase

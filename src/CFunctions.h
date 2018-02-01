@@ -91,6 +91,10 @@ typedef int (THISCALL *Packet_WeaponsUpdate_t)(void *pNetGame, Packet *p);
 typedef int (THISCALL *Packet_StatsUpdate_t)(void *pNetGame, Packet *p);
 typedef char* (CDECL *format_amxstring_t)(AMX *amx, cell *params, int parm, int &len);
 
+typedef void (*ClientJoin_t)(RPCParameters *rpcParams);
+typedef int (THISCALL *AddSimpleModel_t)(CArtInfo *pArtInfo, MODEL_TYPE type, int virtualworld, int baseid, int newid, char *dffname, char *txdname, char timeon, char timeoff);
+typedef int (THISCALL *DynamicListInsert_t)(CArtList *pArtList, CModelInfo *pModelInfo);
+
 typedef int (THISCALL *CGameMode__OnPlayerConnect_t)(CGameMode *pGameMode, cell playerid);
 typedef int (THISCALL *CGameMode__OnPlayerDisconnect_t)(CGameMode *pGameMode, cell playerid, cell reason);
 typedef int (THISCALL *CGameMode__OnPlayerSpawn_t)(CGameMode *pGameMode, cell playerid);

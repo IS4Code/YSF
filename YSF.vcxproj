@@ -252,6 +252,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClInclude Include="src\utils\bimap.h" />
     <ClInclude Include="src\utils\logprintf_buf.h" />
     <ClInclude Include="src\utils\optional.h" />
+    <ClInclude Include="src\utils\pair_hash.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

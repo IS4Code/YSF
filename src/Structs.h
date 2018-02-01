@@ -1063,7 +1063,9 @@ static_assert(sizeof(CNetGame) == 16096, "Invalid CNetGame size");
 #endif
 #endif
 
+#ifdef SAMP_03DL
 enum MODEL_TYPE : BYTE { MODEL_TYPE_CHAR = 1, MODEL_TYPE_SIMPLE = 2 };
+static_assert(sizeof(MODEL_TYPE) == 1, "Invalid MODEL_TYPE size");
 
 struct CModelInfo
 {
@@ -1087,7 +1089,7 @@ struct CArtList
 	CModelInfo **pModelList;	// 0 - 4
 	DWORD dwCapacity;				// 4 - 8
 };
-static_assert(sizeof(CArtList) == 8, "Invalid CArtList size");;
+static_assert(sizeof(CArtList) == 8, "Invalid CArtList size");
 
 struct CArtInfo
 {
@@ -1095,6 +1097,7 @@ struct CArtInfo
 	BYTE bUnknown;				// 260 - 261
 	CArtList artList;			// 261 - 269
 };
-static_assert(sizeof(CArtInfo) == 269, "Invalid CArtInfo size");;
+static_assert(sizeof(CArtInfo) == 269, "Invalid CArtInfo size");
+#endif
 
 #endif

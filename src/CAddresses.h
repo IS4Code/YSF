@@ -228,7 +228,11 @@ public:
 	DECLARE_FUNC_PTR(Packet_StatsUpdate);
 	DECLARE_FUNC_PTR(format_amxstring);
 
-	//DECLARE_FUNC_PTR(ClientJoin);
+#ifdef SAMP_03DL
+	DECLARE_FUNC_PTR(ClientJoin);
+	DECLARE_FUNC_PTR(AddSimpleModel);
+	DECLARE_FUNC_PTR(DynamicListInsert);
+#endif
 
 	// Others
 	static ADDR<BYTE> ADDR_GetNetworkStats_VerbosityLevel;

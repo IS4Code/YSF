@@ -44,7 +44,9 @@ class CYSFPickupPool;
 #include <unordered_map>
 #include <queue>
 #include <mutex>
+#include <string>
 
+#include "utils/pair_hash.h"
 #include "raknet/NetworkTypes.h"
 #include "CFunctions.h"
 #include "CSingleton.h"
@@ -120,6 +122,11 @@ public:
 	bool MapPlayerObjectIDToLocalID(WORD playerid, WORD &objectid);
 	bool MapPlayerObjectIDToServerID(WORD playerid, WORD &objectid);
 
+#ifdef SAMP_03DL
+	void CacheModelInfo(CModelInfo* info);
+	CModelInfo* FindCachedModelInfo(const char *dffname, const char *txdname);
+#endif
+
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;
 
@@ -152,6 +159,9 @@ private:
 	std::vector<std::string> m_RCONCommands;
 	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
 	std::set<char> m_vecValidNameCharacters;
+#ifdef SAMP_03DL
+	std::unordered_map<std::pair<std::string, std::string>, CModelInfo*, aux::pair_hash> m_modelCache;
+#endif
 };
 
 #endif

@@ -64,7 +64,8 @@ subhook_t CGameMode__OnPlayerStreamIn_hook;
 subhook_t CGameMode__OnPlayerStreamOut_hook;
 subhook_t CGameMode__OnDialogResponse_hook;
 
-//subhook_t ClientJoin_hook;
+subhook_t ClientJoin_hook;
+subhook_t AddSimpleModel_hook;
 
 //----------------------------------------------------
 char gRecordingDataPath[MAX_PATH];
@@ -858,25 +859,60 @@ int HOOK_THISCALL(HOOK_CGameMode__OnDialogResponse, CGameMode *thisptr, cell pla
 
 //----------------------------------------------------
 
-/*
+#ifdef SAMP_03DL
 void CDECL HOOK_ClientJoin(RPCParameters *rpcParams)
 {
+	//4057 - 0.3.7-R2, 4062 - 0.3.DL-R1
 	subhook_remove(ClientJoin_hook);
 
-	int *ver = (int*)rpcParams->input;
+	/*int *ver = (int*)rpcParams->input;
 	logprintf("Client joined with version %d.", *ver);
 
 	unsigned char namelen = rpcParams->input[5];
 
 	unsigned int *resp = (unsigned int*)rpcParams->input+6+namelen;
 	logprintf("Resp %d.", *resp);
-	*resp = *resp ^ *ver ^ 4057;
-	*ver = 4057;
+	*resp = *resp ^ *ver ^ 4062;
+	*ver = 4062;*/
 
-	((FUNC_ClientJoin)CAddress::FUNC_ClientJoin)(rpcParams);
+	CAddress::FUNC_ClientJoin(rpcParams);
 	
 	subhook_install(ClientJoin_hook);
-}*/
+}
+
+int HOOK_THISCALL(HOOK_AddSimpleModel, CArtInfo *pArtInfo, MODEL_TYPE type, int virtualworld, int baseid, int newid, char *dffname, char *txdname, char timeon, char timeoff)
+{
+	CPlugin &plugin = *CPlugin::Get();
+
+	CModelInfo *model = plugin.FindCachedModelInfo(dffname, txdname);
+
+	int result;
+	if (model == nullptr)
+	{
+		subhook_remove(AddSimpleModel_hook);
+		result = CAddress::FUNC_AddSimpleModel(pArtInfo, type, virtualworld, baseid, newid, dffname, txdname, timeon, timeoff);
+		subhook_install(AddSimpleModel_hook);
+
+		if (result > 0 || (result == 0 && pArtInfo->artList.dwCapacity > 0 && pArtInfo->artList.pModelList[0]->dwNewId == newid))
+		{
+			model = pArtInfo->artList.pModelList[result];
+			plugin.CacheModelInfo(model);
+		}
+	} else {
+		// server will never delete this
+		CModelInfo *newModel = new CModelInfo(*model);
+		newModel->bType = type;
+		newModel->dwVirtualWorld = virtualworld;
+		newModel->dwBaseId = baseid;
+		newModel->dwNewId = newid;
+		newModel->bTimeOn = timeon;
+		newModel->bTimeOff = timeoff;
+		result = CAddress::FUNC_DynamicListInsert(&pArtInfo->artList, newModel);
+	}
+
+	return result;
+}
+#endif
 
 //----------------------------------------------------
 
@@ -901,7 +937,10 @@ void InstallPreHooks()
 	query_hook = Hook(CAddress::FUNC_ProcessQueryPacket, HOOK_ProcessQueryPacket);
 	CVehicle__Respawn_hook = Hook(CAddress::FUNC_CVehicle__Respawn, HOOK_CVehicle__Respawn);
 	
+#ifdef SAMP_03DL
 	//ClientJoin_hook = Hook(CAddress::FUNC_ClientJoin, HOOK_ClientJoin);
+	AddSimpleModel_hook = Hook(CAddress::FUNC_AddSimpleModel, HOOK_AddSimpleModel);
+#endif
 	
 	// Callback hooks
 	CGameMode__OnPlayerConnect_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerConnect, HOOK_CGameMode__OnPlayerConnect);
