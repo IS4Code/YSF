@@ -1063,9 +1063,11 @@ static_assert(sizeof(CNetGame) == 16096, "Invalid CNetGame size");
 #endif
 #endif
 
+enum MODEL_TYPE : BYTE { MODEL_TYPE_CHAR = 1, MODEL_TYPE_SIMPLE = 2 };
+
 struct CModelInfo
 {
-	BYTE bState;					// 0 - 1
+	MODEL_TYPE bType;				// 0 - 1
 	DWORD dwVirtualWorld;			// 1 - 5
 	DWORD dwBaseId;					// 5 - 9
 	DWORD dwNewId;					// 9 - 13
@@ -1082,11 +1084,17 @@ static_assert(sizeof(CModelInfo) == 553, "Invalid CModelInfo size");
 
 struct CArtList
 {
+	CModelInfo **pModelList;	// 0 - 4
+	DWORD dwCapacity;				// 4 - 8
+};
+static_assert(sizeof(CArtList) == 8, "Invalid CArtList size");;
+
+struct CArtInfo
+{
 	char szArtPath[MAX_PATH];	// 0 - 260
 	BYTE bUnknown;				// 260 - 261
-	CModelInfo *pModelList;		// 261 - 265
-	DWORD dwCount;				// 265 - 269
+	CArtList artList;			// 261 - 269
 };
-static_assert(sizeof(CArtList) == 269, "Invalid CArtInfo size");;
+static_assert(sizeof(CArtInfo) == 269, "Invalid CArtInfo size");;
 
 #endif
