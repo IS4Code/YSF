@@ -1,0 +1,22 @@
+{
+  "user": "IllidanS4",
+  "repo": "YSF",
+  "contributors": ["Y_Less", "kurta999"],
+  "dependencies": ["sampctl/samp-stdlib"],
+  "resources": [
+    {
+      "name": "YSF_.*\\.zip",
+      "archive": true,
+      "platform": "windows",
+      "includes": ["pawno/include"],
+      "plugins": ["plugins/YSF.dll"]
+    },
+    {
+      "name": "YSF_.*\\.zip",
+      "archive": true,
+      "platform": "linux",
+      "includes": ["pawno/include"],
+      "plugins": ["plugins/YSF.so"]
+    }
+  ]
+}
