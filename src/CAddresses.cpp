@@ -52,6 +52,7 @@ ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03ZR3 = 0x080A78E0;
 ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03ZR4 = 0x80A7A90;
 ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_037 = 0x080A9000;
 ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_037_R2_1 = 0x080A91D0;
+ADDR<CAddress::logprintf_t> CAddress::FUNC_Logprintf_03DL_R1 = 0x080B1CA0;
 #endif
 
 // Variables
