@@ -946,6 +946,31 @@ namespace Natives
 
 		return static_cast<cell>(CServer::Get()->PlayerPool.Extra(playerid).IsBuildingRemoved(modelid, pos, range));
 	}
+
+	// native TogglePlayerGhostMode(playerid, bool:toggle);
+	AMX_DECLARE_NATIVE(TogglePlayerGhostMode)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
+		data.ghostMode = CScriptParams::Get()->ReadBool();
+		return 1;
+	}
+
+	// native GetPlayerGhostMode(playerid);
+	AMX_DECLARE_NATIVE(GetPlayerGhostMode)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
+		return static_cast<cell>(data.ghostMode);
+	}
 }
 
 namespace Original
@@ -1192,6 +1217,8 @@ static AMX_NATIVE_INFO native_list[] =
 
 	AMX_DEFINE_NATIVE(GetPlayerBuildingsRemoved) // R20
 	AMX_DEFINE_NATIVE(IsBuildingRemovedForPlayer) // R20
+	AMX_DEFINE_NATIVE(TogglePlayerGhostMode) // R20
+	AMX_DEFINE_NATIVE(GetPlayerGhostMode) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =

@@ -452,20 +452,25 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		case ID_PLAYER_SYNC:
 		{
 			if (!data.wDisabledKeysLR && !data.wDisabledKeysUD && !data.wDisabledKeys
-				&& todata.customPos.find(playerid) == todata.customPos.end() && !todata.bCustomQuat[playerid]) break;
+				&& todata.customPos.find(playerid) == todata.customPos.end() && !todata.bCustomQuat[playerid] && !todata.ghostMode && !data.ghostMode) break;
 			
-			const int owerwrite_offset = bsSync->GetReadOffset(); // skip p->vehicleSyncData.wVehicleId
+			const int owerwrite_offset = bsSync->GetReadOffset();
 			//bsSync->SetReadOffset(owerwrite_offset);
 
 			WORD wKeysLR, wKeysUD, wKeys;
 			CVector vecPos;
 			float fQuat[4];
+			BYTE byteHealth, byteArmour, byteWeapon, byteSpecialAction;
 
 			bsSync->Read(wKeysLR);
 			bsSync->Read(wKeysUD);
 			bsSync->Read(wKeys);
 			bsSync->Read(vecPos);
 			bsSync->Read(fQuat);
+			bsSync->Read(byteHealth);
+			bsSync->Read(byteArmour);
+			bsSync->Read(byteWeapon);
+			bsSync->Read(byteSpecialAction);
 
 			wKeysLR &= ~data.wDisabledKeysLR;
 			wKeysUD &= ~data.wDisabledKeysUD;
@@ -502,6 +507,16 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->WriteNormQuat(todata.fCustomQuat[playerid][0], todata.fCustomQuat[playerid][1], todata.fCustomQuat[playerid][2], todata.fCustomQuat[playerid][3]);
 			else
 				bsSync->WriteNormQuat(fQuat[0], fQuat[1], fQuat[2], fQuat[3]);
+
+			bsSync->Write(byteHealth);
+			bsSync->Write(byteArmour);
+			bsSync->Write(byteWeapon);
+			if((todata.ghostMode || data.ghostMode) && byteSpecialAction == 0)
+			{
+				bsSync->Write((BYTE)3);
+			} else {
+				bsSync->Write(byteSpecialAction);
+			}
 			
 			// restore default offsets
 			bsSync->SetReadOffset(read_offset);

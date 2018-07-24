@@ -131,6 +131,8 @@ public:
 	WORD wDisabledKeysUD = 0;
 	WORD wDisabledKeysLR = 0;
 
+	bool ghostMode = false;
+
 	// Per-player things
 	float fGravity = 0.0f;
 	BYTE byteWeather = 0;
