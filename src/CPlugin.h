@@ -111,7 +111,7 @@ public:
 	WORD GetPlayerCount();
 	WORD GetNPCCount();
 
-	void RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
+	RakNet::BitStream *BuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid);
 	bool RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid);
 
 	char* GetNPCCommandLine(WORD npcid);

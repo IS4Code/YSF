@@ -430,19 +430,18 @@ bool CPlugin::GetExclusiveBroadcast(void)
 	return m_bExclusiveBroadcast; 
 }
 
-void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
+RakNet::BitStream *CPlugin::BuildSyncData(RakNet::BitStream *bsOrig, WORD toplayerid)
 {
-	const int read_offset = bsSync->GetReadOffset();
-	const int write_offset = bsSync->GetWriteOffset();
-
 	BYTE id;
 	WORD playerid;
 
-	bsSync->Read(id);
-	bsSync->Read(playerid);
+	bsOrig->SetReadOffset(0);
 
-	//logprintf("RebuildSyncData pre %d - %d", id, playerid);
-	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(toplayerid)) return;
+	bsOrig->Read(id);
+	bsOrig->Read(playerid);
+	
+	//logprintf("BuildSyncData id %d %d to %d", id, playerid, toplayerid);
+	if (!IsPlayerConnected(playerid) || !IsPlayerConnected(toplayerid)) return nullptr;
 
 	//logprintf("RebuildSyncData %d - %d", id, playerid);
 	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
@@ -452,78 +451,13 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 		case ID_PLAYER_SYNC:
 		{
 			if (!data.wDisabledKeysLR && !data.wDisabledKeysUD && !data.wDisabledKeys
-				&& todata.customPos.find(playerid) == todata.customPos.end() && !todata.bCustomQuat[playerid] && !todata.ghostMode && !data.ghostMode) break;
+				&& todata.customPos.find(playerid) == todata.customPos.end() && !todata.bCustomQuat[playerid] && !todata.ghostMode) break;
 			
-			const int owerwrite_offset = bsSync->GetReadOffset();
-			//bsSync->SetReadOffset(owerwrite_offset);
+			RakNet::BitStream *bsSync = new RakNet::BitStream();
 
-			WORD wKeysLR, wKeysUD, wKeys;
-			CVector vecPos;
-			float fQuat[4];
-			BYTE byteHealth, byteArmour, byteWeapon, byteSpecialAction;
-
-			bsSync->Read(wKeysLR);
-			bsSync->Read(wKeysUD);
-			bsSync->Read(wKeys);
-			bsSync->Read(vecPos);
-			bsSync->Read(fQuat);
-			bsSync->Read(byteHealth);
-			bsSync->Read(byteArmour);
-			bsSync->Read(byteWeapon);
-			bsSync->Read(byteSpecialAction);
-
-			wKeysLR &= ~data.wDisabledKeysLR;
-			wKeysUD &= ~data.wDisabledKeysUD;
-			wKeys &= ~data.wDisabledKeys;
-
-			bsSync->SetWriteOffset(owerwrite_offset);
+			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
+			WORD keys;
 			
-			// LEFT/RIGHT KEYS
-			if(wKeysLR)
-				bsSync->Write(wKeysLR);
-			else
-				bsSync->Write(false);
-			
-			// UP/DOWN KEYS
-			if (wKeysUD)
-				bsSync->Write(wKeysUD);
-			else
-				bsSync->Write(false);
-
-			// Keys
-			if (wKeys)
-				bsSync->Write(wKeys);
-			else
-				bsSync->Write(false);
-			
-			// Position
-			if (todata.customPos.find(playerid) != todata.customPos.end())
-				bsSync->Write((char*)todata.customPos[playerid].get(), sizeof(CVector));
-			else
-				bsSync->Write((char*)&vecPos, sizeof(CVector));
-
-			// Rotation (in quaternion)
-			if (todata.bCustomQuat[playerid])
-				bsSync->WriteNormQuat(todata.fCustomQuat[playerid][0], todata.fCustomQuat[playerid][1], todata.fCustomQuat[playerid][2], todata.fCustomQuat[playerid][3]);
-			else
-				bsSync->WriteNormQuat(fQuat[0], fQuat[1], fQuat[2], fQuat[3]);
-
-			bsSync->Write(byteHealth);
-			bsSync->Write(byteArmour);
-			bsSync->Write(byteWeapon);
-			if((todata.ghostMode || data.ghostMode) && byteSpecialAction == 0)
-			{
-				bsSync->Write((BYTE)3);
-			} else {
-				bsSync->Write(byteSpecialAction);
-			}
-			
-			// restore default offsets
-			bsSync->SetReadOffset(read_offset);
-			bsSync->SetWriteOffset(write_offset);
-
-			/*
-			bsSync->Reset();
 			bsSync->Write((BYTE)ID_PLAYER_SYNC);
 			bsSync->Write(playerid);
 
@@ -533,7 +467,7 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write(true);
 
 				keys = p->syncData.wLRAnalog;
-				keys &= ~pPlayerData[playerid]->wDisabledKeysLR;
+				keys &= ~data.wDisabledKeysLR;
 				bsSync->Write(keys);
 			}
 			else
@@ -547,7 +481,7 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write(true);
 
 				keys = p->syncData.wUDAnalog;
-				keys &= ~pPlayerData[playerid]->wDisabledKeysUD;
+				keys &= ~data.wDisabledKeysUD;
 				bsSync->Write(keys);
 			}
 			else
@@ -557,18 +491,18 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 
 			// Keys
 			keys = p->syncData.wKeys;
-			keys &= ~pPlayerData[playerid]->wDisabledKeys;
+			keys &= ~data.wDisabledKeys;
 			bsSync->Write(keys);
 
 			// Position
-			if (pPlayerData[toplayerid]->bCustomPos[playerid])
-				bsSync->Write(*pPlayerData[toplayerid]->vecCustomPos[playerid]);
+			if (todata.customPos.find(playerid) != todata.customPos.end())
+				bsSync->Write((char*)todata.customPos[playerid].get(), sizeof(CVector));
 			else
 				bsSync->Write((char*)&p->syncData.vecPosition, sizeof(CVector));
 
 			// Rotation (in quaternion)
-			if (pPlayerData[toplayerid]->bCustomQuat[playerid])
-				bsSync->WriteNormQuat(pPlayerData[toplayerid]->fCustomQuat[playerid][0], pPlayerData[toplayerid]->fCustomQuat[playerid][1], pPlayerData[toplayerid]->fCustomQuat[playerid][2], pPlayerData[toplayerid]->fCustomQuat[playerid][3]);
+			if (todata.bCustomQuat[playerid])
+				bsSync->WriteNormQuat(todata.fCustomQuat[playerid][0], todata.fCustomQuat[playerid][1], todata.fCustomQuat[playerid][2], todata.fCustomQuat[playerid][3]);
 			else
 				bsSync->WriteNormQuat(p->syncData.fQuaternion[0], p->syncData.fQuaternion[1], p->syncData.fQuaternion[2], p->syncData.fQuaternion[3]);
 
@@ -598,7 +532,12 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			bsSync->Write(p->syncData.byteWeapon);
 
 			// Special action
-			bsSync->Write(p->syncData.byteSpecialAction);
+			if(todata.ghostMode)
+			{
+				bsSync->Write((BYTE)3);
+			} else {
+				bsSync->Write(p->syncData.byteSpecialAction);
+			}
 
 			// Velocity
 			bsSync->WriteVector(p->syncData.vecVelocity.fX, p->syncData.vecVelocity.fY, p->syncData.vecVelocity.fZ);
@@ -624,53 +563,33 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 				bsSync->Write((int)p->syncData.dwAnimationData);
 			}
 			else bsSync->Write(false);
-			*/
-			break;
+			
+			return bsSync;
 		}
 		case ID_VEHICLE_SYNC:
 		{
 			if (!data.wDisabledKeysLR && !data.wDisabledKeysUD && !data.wDisabledKeys) break;
-			
-			const int owerwrite_offset = bsSync->GetReadOffset() + 16; // skip p->vehicleSyncData.wVehicleId
-			bsSync->SetReadOffset(owerwrite_offset); 
 
-			WORD wKeys, wKeysLR, wKeysUD;
-			bsSync->Read(wKeysLR);
-			bsSync->Read(wKeysUD);
-			bsSync->Read(wKeys);
+			RakNet::BitStream *bsSync = new RakNet::BitStream();
 
-			wKeysLR &= ~data.wDisabledKeysLR;
-			wKeysUD &= ~data.wDisabledKeysUD;
-			wKeys &= ~data.wDisabledKeys;
-
-			bsSync->SetWriteOffset(owerwrite_offset);
-			bsSync->Write(wKeysLR);
-			bsSync->Write(wKeysUD);
-			bsSync->Write(wKeys);
-
-			// restore default offsets
-			bsSync->SetReadOffset(read_offset);
-			bsSync->SetWriteOffset(write_offset);
-
-			/*
 			CPlayer *p = pNetGame->pPlayerPool->pPlayer[playerid];
+			WORD keys;
 
-			bsSync->Reset();
 			bsSync->Write((BYTE)ID_VEHICLE_SYNC);
 			bsSync->Write(playerid);
 
 			bsSync->Write(p->vehicleSyncData.wVehicleId);
 
 			keys = p->vehicleSyncData.wLRAnalog;
-			keys &= ~pPlayerData[playerid]->wDisabledKeysLR;
+			keys &= ~data.wDisabledKeysLR;
 			bsSync->Write((short)keys);
 
 			keys = p->vehicleSyncData.wUDAnalog;
-			keys &= ~pPlayerData[playerid]->wDisabledKeysUD;
+			keys &= ~data.wDisabledKeysUD;
 			bsSync->Write((short)keys);
 
 			keys = p->vehicleSyncData.wKeys;
-			keys &= ~pPlayerData[playerid]->wDisabledKeys;
+			keys &= ~data.wDisabledKeys;
 			bsSync->Write(keys);
 
 			bsSync->WriteNormQuat(p->vehicleSyncData.fQuaternion[0], p->vehicleSyncData.fQuaternion[1], p->vehicleSyncData.fQuaternion[2], p->vehicleSyncData.fQuaternion[3]);
@@ -738,11 +657,10 @@ void CPlugin::RebuildSyncData(RakNet::BitStream *bsSync, WORD toplayerid)
 			{
 				bsSync->Write(false);
 			}
-			*/
-			break;
+			return bsSync;
 		}
 	}
-
+	return nullptr;
 }
 
 char* CPlugin::GetNPCCommandLine(WORD npcid)

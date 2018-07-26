@@ -148,16 +148,15 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 {
-/*	
-	BYTE id;
-	WORD playerid;
-	parameters->Read(id);
-	parameters->Read(playerid);
-
-	logprintf("id: %d - playerid: %d, sendto: %d", id, playerid, CSAMPFunctions::GetIndexFromPlayerID(playerId));
-*/	
-	CPlugin::Get()->RebuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
-	return CSAMPFunctions::Send(parameters, priority, reliability, orderingChannel, playerId, broadcast);
+	RakNet::BitStream *newParams = CPlugin::Get()->BuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
+	if(newParams)
+	{
+		bool ret = CSAMPFunctions::Send(newParams, priority, reliability, orderingChannel, playerId, broadcast);
+		delete newParams;
+		return ret;
+	} else {
+		return CSAMPFunctions::Send(parameters, priority, reliability, orderingChannel, playerId, broadcast);
+	}
 }
 
 //----------------------------------------------------
