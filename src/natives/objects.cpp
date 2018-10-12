@@ -826,7 +826,6 @@ namespace Hooks
 
 		int objectid = CScriptParams::Get()->ReadInt();
 		int playerid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
 
 		return CServer::Get()->ObjectPool.Map(objectid, [=](CObject *&obj)
 		{
