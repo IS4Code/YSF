@@ -85,7 +85,9 @@ void Redirect(AMX * amx, char const * const from, ucell to, AMX_NATIVE * store)
 
 cell* get_amxaddr(AMX *amx, cell amx_addr)
 {
-  return (cell *)(amx->base + (int)(((AMX_HEADER *)amx->base)->dat + amx_addr));
+	cell *addr;
+	if(amx_GetAddr(amx, amx_addr, &addr) != AMX_ERR_NONE) return nullptr;
+	return addr;
 }
 
 int set_amxstring(AMX *amx, cell amx_addr, const char *source, int max)
@@ -93,24 +95,11 @@ int set_amxstring(AMX *amx, cell amx_addr, const char *source, int max)
 	if (max <= 0) return 0;
 
 	cell *dest = get_amxaddr(amx, amx_addr);
+	if(!dest) return 0;
 	cell *start = dest;
 	while (--max && *source)
 	{
-		*dest++ = (cell)*source++;
-	}
-	*dest = 0;
-	return dest - start;
-}
-
-int set_amxstring(AMX *amx, cell amx_addr, const wchar_t *source, int max)
-{
-	if (max <= 0) return 0;
-
-	cell *dest = get_amxaddr(amx, amx_addr);
-	cell *start = dest;
-	while (--max && *source)
-	{
-		*dest++ = (cell)*source++;
+		*dest++ = (unsigned char)*source++;
 	}
 	*dest = 0;
 	return dest - start;
@@ -121,11 +110,12 @@ int set_amxstring(AMX *amx, cell amx_addr, const std::string &source, int max)
 	if (max <= 0) return 0;
 
 	cell *dest = get_amxaddr(amx, amx_addr);
+	if(!dest) return 0;
 	cell *start = dest;
 	auto it = source.begin();
 	while (--max && it != source.end())
 	{
-		*dest++ = *it != '\0' ? (cell)*it : 0x00FFFF00;
+		*dest++ = *it != '\0' ? (unsigned char)*it : 0x00FFFF00;
 		it++;
 	}
 	*dest = 0;

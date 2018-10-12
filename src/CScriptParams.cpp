@@ -163,13 +163,6 @@ void CScriptParams::AddInternal(const char *str)
 	set_amxstring(m_AMX, addr, str, maxsize);
 }
 
-void CScriptParams::AddInternal(const wchar_t *str)
-{
-	cell addr = ReadCell();
-	int maxsize = ReadInt();
-	set_amxstring(m_AMX, addr, str, maxsize);
-}
-
 void CScriptParams::AddInternal(const std::string &str)
 {
 	cell addr = ReadCell();
