@@ -198,6 +198,7 @@ native Float:GetObjectMoveSpeed(objectid);
 native GetObjectTarget(objectid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0);
 native GetObjectAttachedData(objectid, &attached_vehicleid, &attached_objectid = 0, &attached_playerid = 0);
 native GetObjectAttachedOffset(objectid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fRotX = 0.0, &Float:fRotY = 0.0, &Float:fRotZ = 0.0);
+native GetObjectSyncRotation(objectid);
 native IsObjectMaterialSlotUsed(objectid, materialindex); // Return values: 1 = material, 2 = material text
 native GetObjectMaterial(objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor = 0);
 native GetObjectMaterialText(objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize = 0, &bold = 0, &fontcolor = 0, &backcolor = 0, &textalignment = 0);
@@ -210,6 +211,7 @@ native Float:GetPlayerObjectMoveSpeed(playerid, objectid);
 native Float:GetPlayerObjectTarget(playerid, objectid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0);
 native GetPlayerObjectAttachedData(playerid, objectid, &attached_vehicleid, &attached_objectid = 0, &attached_playerid = 0);
 native GetPlayerObjectAttachedOffset(playerid, objectid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fRotX = 0.0, &Float:fRotY = 0.0, &Float:fRotZ = 0.0);
+native GetPlayerObjectSyncRotation(playerid, objectid);
 native IsPlayerObjectMaterialSlotUsed(playerid, objectid, materialindex); // Return values: 1 = material, 2 = material text
 native GetPlayerObjectMaterial(playerid, objectid, materialindex, &modelid, txdname[], txdnamelen = sizeof(txdname), texturename[], texturenamelen = sizeof(texturename), &materialcolor = 0);
 native GetPlayerObjectMaterialText(playerid, objectid, materialindex, text[], textlen = sizeof(text), &materialsize, fontface[], fontfacelen = sizeof(fontface), &fontsize = 0, &bold = 0, &fontcolor = 0, &backcolor = 0, &textalignment = 0);

@@ -101,6 +101,19 @@ namespace Natives
 		});
 	}
 
+	// native GetObjectSyncRotation(objectid);
+	AMX_DECLARE_NATIVE(GetObjectSyncRotation)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		int objectid = CScriptParams::Get()->ReadInt();
+
+		return CServer::Get()->ObjectPool.Map(objectid, [](CObject *&obj)
+		{
+			return obj->byteSyncRot;
+		});
+	}
+
 	// native IsObjectMaterialSlotUsed(objectid, materialindex); // Return values: 1 = material, 2 = material text
 	AMX_DECLARE_NATIVE(IsObjectMaterialSlotUsed)
 	{
@@ -315,6 +328,22 @@ namespace Natives
 
 			CScriptParams::Get()->Add(vecOffset, vecRot);
 			return 1;
+		});
+	}
+
+
+	// native GetPlayerObjectSyncRotation(playerid, objectid);
+	AMX_DECLARE_NATIVE(GetPlayerObjectSyncRotation)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		int objectid = CScriptParams::Get()->ReadInt();
+
+		auto &pool = CServer::Get()->PlayerObjectPool;
+		return pool.Map(playerid, objectid, [=](CObject *&obj)
+		{
+			return obj->byteSyncRot;
 		});
 	}
 
@@ -967,6 +996,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetObjectMaterial) // R6
 	AMX_DEFINE_NATIVE(GetObjectMaterialText) // R6
 	AMX_DEFINE_NATIVE(IsObjectNoCameraCol) // R13
+	AMX_DEFINE_NATIVE(GetObjectSyncRotation) // R20
 
 	// Objects get - player
 	AMX_DEFINE_NATIVE(GetPlayerObjectDrawDistance)
@@ -982,6 +1012,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetPlayerSurfingPlayerObjectID) // R12
 	AMX_DEFINE_NATIVE(GetPlayerCameraTargetPlayerObj) // R13
 	AMX_DEFINE_NATIVE(GetObjectType)// R12
+	AMX_DEFINE_NATIVE(GetPlayerObjectSyncRotation) // R20
 
 	// special - for attached objects
 	AMX_DEFINE_NATIVE(GetPlayerAttachedObject) // R3
