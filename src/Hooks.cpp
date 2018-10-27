@@ -322,49 +322,20 @@ void HOOK_logprintf(const char *msg, ...)
 	else
 		bAllow = true;
 
-	if (bAllow)
+	if(bAllow)
 	{		
-#ifdef _WIN32		
-		char OEMbuffer[1024];
-		CharToOemA(buffer, OEMbuffer);
-		puts(OEMbuffer);
+		intptr_t dst = reinterpret_cast<intptr_t>(subhook_get_trampoline(logprintf_hook));
+#ifdef _WIN32
+		__asm {
+			mov eax, [dst]
+			leave
+			jmp eax
+		}
 #else
-		if (CSAMPFunctions::GetBoolVariable("output"))
-			puts(buffer);
-#endif 
-		if (!g_fLog)
-			g_fLog = fopen("server_log.txt", "a");
-
-		if (CSAMPFunctions::GetBoolVariable("timestamp"))
-		{
-			time_t t;
-			time(&t);
-			char szTimeFormat[256];
-			strftime(szTimeFormat, sizeof(szTimeFormat), CSAMPFunctions::GetStringVariable("logtimeformat"), localtime(&t));
-			fprintf(g_fLog, "%s %s\n", &szTimeFormat, &buffer);
-			fflush(g_fLog);
-		}
-		else
-		{
-			fputs(buffer, g_fLog);
-			fflush(g_fLog);
-		}
-	
-		if (*(WORD*)CAddress::VAR_wRCONUser != INVALID_PLAYER_ID)
-		{
-			DWORD len = strlen(buffer);
-			RakNet::BitStream bsParams;
-			bsParams.Write(0xFFFFFFFF);
-			bsParams.Write((DWORD)len);
-			bsParams.Write(buffer, len);
-			CSAMPFunctions::RPC(&RPC_ClientMessage, &bsParams, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(*(WORD*)CAddress::VAR_wRCONUser), false, false);
-		}
-		else if (bRconSocketReply)
-		{
-			RconSocketReply(buffer);
-		}
-
-		CPlugin::Get()->ProcessConsoleMessages(buffer);
+		asm("mov eax, %0" :: "r" (dst));
+		asm("leave");
+		asm("jmp eax");
+#endif
 	}
 }
 
