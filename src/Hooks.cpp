@@ -334,9 +334,11 @@ void HOOK_logprintf(const char *msg, ...)
 			jmp eax
 		}
 #else
-		asm("mov eax, %0" :: "r" (dst));
-		asm("leave");
-		asm("jmp eax");
+		asm volatile(
+			"mov %eax, %0;"
+			"leave;"
+			"jmp %eax" :: "r" (dst)
+		);
 #endif
 	}
 }
