@@ -496,7 +496,7 @@ RakNet::BitStream *CPlugin::BuildSyncData(RakNet::BitStream *bsOrig, WORD toplay
 
 			// Position
 			if (todata.customPos.find(playerid) != todata.customPos.end())
-				bsSync->Write((char*)todata.customPos[playerid].get(), sizeof(CVector));
+				bsSync->Write((char*)&todata.customPos[playerid], sizeof(CVector));
 			else
 				bsSync->Write((char*)&p->syncData.vecPosition, sizeof(CVector));
 

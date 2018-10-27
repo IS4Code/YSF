@@ -140,7 +140,7 @@ public:
 	
 	// Per-player pos
 	std::bitset<MAX_PLAYERS> bCustomQuat;
-	std::unordered_map <WORD, std::unique_ptr<CVector>> customPos;
+	std::unordered_map <WORD, CVector> customPos;
 	float fCustomQuat[MAX_PLAYERS][4] = {};
 
 	std::shared_ptr<CPlayerObjectAttachAddon> GetObjectAddon(WORD objectid);

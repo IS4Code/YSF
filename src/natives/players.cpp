@@ -254,7 +254,7 @@ namespace Natives
 		CVector vecPos;
 		CScriptParams::Get()->Read(vecPos);
 
-		CServer::Get()->PlayerPool.Extra(playerid).customPos[posplayerid] = std::make_unique<CVector>(std::move(vecPos));
+		CServer::Get()->PlayerPool.Extra(playerid).customPos[posplayerid] = std::move(vecPos);
 		return 1;
 	}
 
