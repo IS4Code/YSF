@@ -89,6 +89,7 @@ public:
 	static DWORD			FUNC_Logprintf_037;
 	static DWORD			FUNC_Logprintf_037_R2;
 	static DWORD			FUNC_Logprintf_037_R2_1;
+	static DWORD			FUNC_Logprintf_03DL_R1;
 
 	// Variables
 	static DWORD			VAR_pRestartWaitTime;

@@ -77,6 +77,9 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	{
 		logprintf("This version of YSF doesn't support SA-MP 0.3z");
 		logprintf("Update to 0.3.7! http://sa-mp.com/download.php");
+	} else if(addr == CAddress::FUNC_Logprintf_03DL_R1)
+	{
+		logprintf("This version of YSF doesn't support SA-MP 0.3.DL");
 	}
 
 	CScriptParams::Init();
