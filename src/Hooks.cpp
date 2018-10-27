@@ -310,17 +310,19 @@ typedef void (*FUNC_logprintf)(const char *msg, ...);
 
 void HOOK_logprintf(const char *msg, ...)
 {
-	char buffer[1024];
-	va_list arguments;
-	va_start(arguments, msg);
-	vsnprintf(buffer, sizeof(buffer), msg, arguments);
-	va_end(arguments);
-
 	bool bAllow;
-	if (CPlugin::Get()->IsOnServerMessageEnabled())
+	if(CPlugin::Get()->IsOnServerMessageEnabled())
+	{
+		char buffer[1024];
+		va_list arguments;
+		va_start(arguments, msg);
+		vsnprintf(buffer, sizeof(buffer), msg, arguments);
+		va_end(arguments);
+
 		bAllow = CCallbackManager::OnServerMessage(buffer);
-	else
+	}else{
 		bAllow = true;
+	}
 
 	if(bAllow)
 	{		
