@@ -308,38 +308,30 @@ void RconSocketReply(char* szMessage);
 
 typedef void (*FUNC_logprintf)(const char *msg, ...);
 
-void HOOK_logprintf(const char *msg, ...)
+static unsigned char HOOK_logprintf[7] = {0xE8, 0xCC, 0xCC, 0xCC, 0xCC, 0xFF, 0xE0}; //call rel, jmp eax
+extern "C" void *subhook_unprotect(void *address, size_t size);
+
+void custom_logprintf(const char *msg, ...)
 {
-	bool bAllow;
+	char buffer[1024];
+	va_list arguments;
+	va_start(arguments, msg);
+	vsnprintf(buffer, sizeof(buffer), msg, arguments);
+	va_end(arguments);
+
+	if(CCallbackManager::OnServerMessage(buffer))
+	{
+		reinterpret_cast<FUNC_logprintf>(subhook_get_trampoline(logprintf_hook))("%s", buffer);
+	}
+}
+
+void *logprintf_trampoline()
+{
 	if(CPlugin::Get()->IsOnServerMessageEnabled())
 	{
-		char buffer[1024];
-		va_list arguments;
-		va_start(arguments, msg);
-		vsnprintf(buffer, sizeof(buffer), msg, arguments);
-		va_end(arguments);
-
-		bAllow = CCallbackManager::OnServerMessage(buffer);
+		return reinterpret_cast<void*>(&custom_logprintf);
 	}else{
-		bAllow = true;
-	}
-
-	if(bAllow)
-	{		
-		intptr_t dst = reinterpret_cast<intptr_t>(subhook_get_trampoline(logprintf_hook));
-#ifdef _WIN32
-		__asm {
-			mov eax, [dst]
-			leave
-			jmp eax
-		}
-#else
-		asm volatile(
-			"mov %eax, %0;"
-			"leave;"
-			"jmp %eax" :: "r" (dst)
-		);
-#endif
+		return subhook_get_trampoline(logprintf_hook);
 	}
 }
 
@@ -967,7 +959,10 @@ void InstallPostHooks()
 	// Re-init a few RPCs
 	InitRPCs();
 
-	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), reinterpret_cast<void*>(HOOK_logprintf), static_cast<subhook_options_t>(NULL));
+	auto fixaddr = reinterpret_cast<uintptr_t*>(HOOK_logprintf + 1);
+	*fixaddr = reinterpret_cast<uintptr_t>(&logprintf_trampoline) - reinterpret_cast<uintptr_t>(HOOK_logprintf + 5);
+
+	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), subhook_unprotect(HOOK_logprintf, sizeof(HOOK_logprintf)), static_cast<subhook_options_t>(NULL));
 	subhook_install(logprintf_hook);
 
 	// logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
