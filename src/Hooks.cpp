@@ -308,7 +308,6 @@ void RconSocketReply(char* szMessage);
 
 typedef void (*FUNC_logprintf)(const char *msg, ...);
 
-static unsigned char HOOK_logprintf[7] = {0xE8, 0xCC, 0xCC, 0xCC, 0xCC, 0xFF, 0xE0}; //call rel, jmp eax
 extern "C" void *subhook_unprotect(void *address, size_t size);
 
 void custom_logprintf(const char *msg, ...)
@@ -958,6 +957,8 @@ void InstallPostHooks()
 #endif
 	// Re-init a few RPCs
 	InitRPCs();
+
+	static unsigned char HOOK_logprintf[7] = {0xE8, 0xCC, 0xCC, 0xCC, 0xCC, 0xFF, 0xE0}; //call rel, jmp eax
 
 	auto fixaddr = reinterpret_cast<uintptr_t*>(HOOK_logprintf + 1);
 	*fixaddr = reinterpret_cast<uintptr_t>(&logprintf_trampoline) - reinterpret_cast<uintptr_t>(HOOK_logprintf + 5);

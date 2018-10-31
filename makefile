@@ -10,7 +10,7 @@ GCC = gcc -m32 -Ilib -fno-stack-protector -nodefaultlibs
 LINK = $(GCC)
 YSF_OUTFILE = "./YSF.so"
 
-COMPILE_FLAGS = -c -O3 -fpack-struct=1 -fPIC -w -DLINUX
+COMPILE_FLAGS = -c -O3 -fPIC -w -DLINUX
 
 YSF = -D YSF $(COMPILE_FLAGS)
 

@@ -212,6 +212,8 @@ typedef void(*VARCHANGEFUNC)();
 
 /* -------------------------------------------------------- */
 
+#pragma pack(push, 1)
+
 // RakNet Remote system
 struct PingAndClockDifferential
 {
@@ -1006,4 +1008,7 @@ struct CNetGame
 	int						iSpawnsAvailable;		// 130 - 134
 	CPlayerSpawnInfo		AvailableSpawns[319];	// 129 - 14803
 };
+
+#pragma pack(pop)
+
 #endif
