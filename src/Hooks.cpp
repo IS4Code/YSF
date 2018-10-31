@@ -308,8 +308,6 @@ void RconSocketReply(char* szMessage);
 
 typedef void (*FUNC_logprintf)(const char *msg, ...);
 
-extern "C" void *subhook_unprotect(void *address, size_t size);
-
 void custom_logprintf(const char *msg, ...)
 {
 	char buffer[1024];
@@ -326,6 +324,7 @@ void custom_logprintf(const char *msg, ...)
 
 void *logprintf_trampoline()
 {
+	// If server messages aren't handled, the hook will jump to the trampoline
 	if(CPlugin::Get()->IsOnServerMessageEnabled())
 	{
 		return reinterpret_cast<void*>(&custom_logprintf);
@@ -936,6 +935,8 @@ void InstallPreHooks()
 	}
 }
 
+extern "C" void *subhook_unprotect(void *address, size_t size);
+
 // Things that needs to be hooked after netgame initialied
 void InstallPostHooks()
 {
@@ -959,11 +960,10 @@ void InstallPostHooks()
 	InitRPCs();
 
 	static unsigned char HOOK_logprintf[7] = {0xE8, 0xCC, 0xCC, 0xCC, 0xCC, 0xFF, 0xE0}; //call rel, jmp eax
+	*reinterpret_cast<uintptr_t*>(HOOK_logprintf + 1) = reinterpret_cast<uintptr_t>(&logprintf_trampoline) - reinterpret_cast<uintptr_t>(HOOK_logprintf + 5);
+	subhook_unprotect(HOOK_logprintf, sizeof(HOOK_logprintf));
 
-	auto fixaddr = reinterpret_cast<uintptr_t*>(HOOK_logprintf + 1);
-	*fixaddr = reinterpret_cast<uintptr_t>(&logprintf_trampoline) - reinterpret_cast<uintptr_t>(HOOK_logprintf + 5);
-
-	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), subhook_unprotect(HOOK_logprintf, sizeof(HOOK_logprintf)), static_cast<subhook_options_t>(NULL));
+	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), HOOK_logprintf, static_cast<subhook_options_t>(NULL));
 	subhook_install(logprintf_hook);
 
 	// logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
