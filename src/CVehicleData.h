@@ -18,7 +18,7 @@ public:
 
 	bool bChangedVehicleColor = false;
 
-	bool customSpawnData;
+	bool customSpawnData = false;
 	CVehicleSpawn spawnData = {};
 };
 
