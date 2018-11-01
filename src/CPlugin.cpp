@@ -42,7 +42,7 @@
 #include "RPCs.h"
 #include "includes/platform.h"
 
-CPlugin::CPlugin(SAMPVersion version)
+CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 {
 	m_iTicks = 0;
 	m_iTickRate = 5;
@@ -869,4 +869,9 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 		}
 	}
 	return true;
+}
+
+bool CPlugin::IsMainThread() const
+{
+	return std::this_thread::get_id() == main_thread;
 }

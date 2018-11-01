@@ -120,6 +120,8 @@ public:
 	bool MapPlayerObjectIDToLocalID(WORD playerid, WORD &objectid);
 	bool MapPlayerObjectIDToServerID(WORD playerid, WORD &objectid);
 
+	bool IsMainThread() const;
+
 	CGangZonePool *pGangZonePool;
 	CYSFPickupPool *pPickupPool;
 
@@ -152,6 +154,7 @@ private:
 	std::vector<std::string> m_RCONCommands;
 	std::unordered_map<WORD, DWORD> m_ConsoleMessagePlayers;
 	std::set<char> m_vecValidNameCharacters;
+	std::thread::id main_thread;
 };
 
 #endif

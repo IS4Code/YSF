@@ -325,7 +325,7 @@ void custom_logprintf(const char *msg, ...)
 void *logprintf_trampoline()
 {
 	// If server messages aren't handled, the hook will jump to the trampoline
-	if(CPlugin::Get()->IsOnServerMessageEnabled())
+	if(CPlugin::Get()->IsOnServerMessageEnabled() && CPlugin::Get()->IsMainThread())
 	{
 		return reinterpret_cast<void*>(&custom_logprintf);
 	}else{

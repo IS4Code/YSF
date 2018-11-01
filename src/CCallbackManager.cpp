@@ -211,12 +211,12 @@ void CCallbackManager::OnPlayerPickedUpPlayerPickup(WORD playerid, WORD pickupid
 
 bool CCallbackManager::OnServerMessage(const char* message)
 {
-	if (!message) return 0;
+	if (!message) return false;
 
 	// Fix crash caused by % symbol (by default this crash happens in /rcon varlist)
-	size_t len = strlen(message);
+	/*size_t len = strlen(message);
 	char* msg = new char[len + 1];
-	strncpy(msg, message, len);
+	strncpy(msg, message, len + 1);
 	size_t i = 0;
 	while (msg[i])
 	{
@@ -225,25 +225,25 @@ bool CCallbackManager::OnServerMessage(const char* message)
 			msg[i] = '#';
 		}
 		i++;
-	}
+	}*/
 
-	int idx = -1;
+	int idx;
 	cell ret = 1;
 	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnServerMessage", &idx))
 		{
 			cell amx_addr;
-			amx_PushString(iter, &amx_addr, nullptr, msg, 0, 0);
+			amx_PushString(iter, &amx_addr, nullptr, message, 0, 0);
 			amx_Exec(iter, &ret, idx);
 			amx_Release(iter, amx_addr);
 
-			if (!ret) return 0;
+			if (!ret) return false;
 		}
 	}
 
-	delete[] msg;
-	return static_cast<int>(ret) != 0;
+	//delete[] msg;
+	return true;
 }
 
 bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command)
