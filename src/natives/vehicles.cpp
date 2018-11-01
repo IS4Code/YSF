@@ -403,6 +403,21 @@ namespace Natives
 		return pNetGame->pVehiclePool->pVehicle[vehicleid]->bDead;
 	}
 
+	// native SetVehicleDead(vehicleid, bool:dead);
+	AMX_DECLARE_NATIVE(SetVehicleDead)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int vehicleid = CScriptParams::Get()->ReadInt();
+		if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+
+		if(!pNetGame->pVehiclePool->pVehicle[vehicleid])
+			return 0;
+
+		pNetGame->pVehiclePool->pVehicle[vehicleid]->bDead = CScriptParams::Get()->ReadBool();
+		return 1;
+	}
+
 	// native SetVehicleParamsSirenState(vehicleid, sirenState);
 	AMX_DECLARE_NATIVE(SetVehicleParamsSirenState)
 	{
@@ -528,6 +543,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetVehicleBeenOccupied) // R9
 	AMX_DEFINE_NATIVE(IsVehicleOccupied) // R9
 	AMX_DEFINE_NATIVE(IsVehicleDead) // R9
+	AMX_DEFINE_NATIVE(SetVehicleDead) // R20
 	AMX_DEFINE_NATIVE(SetVehicleParamsSirenState) // R19
 	AMX_DEFINE_NATIVE(ToggleVehicleSirenEnabled) // R19
 	AMX_DEFINE_NATIVE(IsVehicleSirenEnabled) // R19

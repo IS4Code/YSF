@@ -318,7 +318,7 @@ void CSAMPFunctions::ClearBanList(void)
 
 void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 {
-	memset(&pVehicle->vehMatrix, 0, sizeof(MATRIX4X4));
+ 	memset(&pVehicle->vehMatrix, 0, sizeof(MATRIX4X4));
 	memset(&pVehicle->vecVelocity, 0, sizeof(CVector));
 	memset(&pVehicle->vecTurnSpeed, 0, sizeof(CVector));
 	memset(&pVehicle->vehModInfo, 0, sizeof(CVehicleModInfo));
@@ -333,22 +333,8 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	pVehicle->bOccupied = 0;
 	pVehicle->vehRespawnTick = GetTickCount();
 	pVehicle->vehOccupiedTick = GetTickCount();
-	pVehicle->vehParamEx.alarm = -1;
-	pVehicle->vehParamEx.bonnet = -1;
-	pVehicle->vehParamEx.boot = -1;
-	pVehicle->vehParamEx.doors = -1;
-	pVehicle->vehParamEx.engine = -1;
-	pVehicle->vehParamEx.lights = -1;
-	pVehicle->vehParamEx.objective = -1;
-	pVehicle->vehParamEx.siren = -1;
-	pVehicle->vehParamEx.door_driver = -1;
-	pVehicle->vehParamEx.door_passenger = -1;
-	pVehicle->vehParamEx.door_backleft = -1;
-	pVehicle->vehParamEx.door_backright = -1;
-	pVehicle->vehParamEx.window_driver = -1;
-	pVehicle->vehParamEx.window_passenger = -1;
-	pVehicle->vehParamEx.window_backleft = -1;
-	pVehicle->vehParamEx.window_backright = -1;
+
+	memset(&pVehicle->vehParamEx, -1, sizeof(CVehicleParams));
 	// logprintf("respawned vehicle: %d", pVehicle->wVehicleID);
 
 	// Check if vehicle has custom spawn
