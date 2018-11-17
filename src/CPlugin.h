@@ -44,6 +44,7 @@ class CYSFPickupPool;
 #include <unordered_map>
 #include <queue>
 #include <mutex>
+#include <thread>
 
 #include "raknet/NetworkTypes.h"
 #include "CFunctions.h"
