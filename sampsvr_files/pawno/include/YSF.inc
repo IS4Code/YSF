@@ -269,6 +269,7 @@ native HasVehicleBeenOccupied(vehicleid);
 native SetVehicleBeenOccupied(vehicleid, occupied);
 native IsVehicleOccupied(vehicleid);
 native IsVehicleDead(vehicleid);
+native SetVehicleDead(vehicleid, bool:dead);
 native SetVehicleParamsSirenState(vehicleid, sirenState);
 native ToggleVehicleSirenEnabled(vehicleid, enabled);
 native IsVehicleSirenEnabled(vehicleid);
