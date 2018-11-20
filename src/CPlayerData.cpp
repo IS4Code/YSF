@@ -439,9 +439,9 @@ void CPlayerData::SetBuildingsRemoved(int modelid, const CVector &pos, float ran
 	m_RemovedBuildings.emplace_back(modelid, pos, range);
 }
 
-bool CPlayerData::GetBuildingsRemoved() const
+size_t CPlayerData::GetBuildingsRemoved() const
 {
-	return !m_RemovedBuildings.empty();
+	return m_RemovedBuildings.size();
 }
 
 bool CPlayerData::IsBuildingRemoved(int modelid, const CVector &pos, float range) const

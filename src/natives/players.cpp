@@ -928,7 +928,7 @@ namespace Natives
 
 		if (!IsPlayerConnected(playerid)) return 0;
 
-		return static_cast<cell>(CServer::Get()->PlayerPool.Extra(playerid).GetBuildingsRemoved());
+		return CServer::Get()->PlayerPool.Extra(playerid).GetBuildingsRemoved();
 	}
 
 	// native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius)

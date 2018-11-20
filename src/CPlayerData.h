@@ -116,7 +116,7 @@ public:
 	void HideNewObjects(bool toggle);
 	bool IsObjectHidden(WORD objectid) const;
 	void SetBuildingsRemoved(int modelid, const CVector &pos, float range);
-	bool GetBuildingsRemoved() const;
+	size_t GetBuildingsRemoved() const;
 	bool IsBuildingRemoved(int modelid, const CVector &pos, float range) const;
 
 	int iNPCProcessID = -1;
