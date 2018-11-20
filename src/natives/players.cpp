@@ -971,6 +971,21 @@ namespace Natives
 		CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
 		return static_cast<cell>(data.ghostMode);
 	}
+
+	// native SetPlayerSyncKeys(playerid, keys, updown, leftright);
+	AMX_DECLARE_NATIVE(SetPlayerSyncKeys)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.wKeys = pPlayer->vehicleSyncData.wKeys = pPlayer->passengerSyncData.wKeys = CScriptParams::Get()->ReadInt();
+		pPlayer->syncData.wUDAnalog = pPlayer->vehicleSyncData.wUDAnalog = pPlayer->passengerSyncData.wUDAnalog = CScriptParams::Get()->ReadInt();
+		pPlayer->syncData.wLRAnalog = pPlayer->vehicleSyncData.wLRAnalog = pPlayer->passengerSyncData.wLRAnalog = CScriptParams::Get()->ReadInt();
+		return 1;
+	}
 }
 
 namespace Original
@@ -1219,6 +1234,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(IsBuildingRemovedForPlayer) // R20
 	AMX_DEFINE_NATIVE(TogglePlayerGhostMode) // R20
 	AMX_DEFINE_NATIVE(GetPlayerGhostMode) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncKeys) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =

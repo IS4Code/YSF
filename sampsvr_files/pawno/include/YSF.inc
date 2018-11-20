@@ -166,6 +166,7 @@ native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:f
 
 native TogglePlayerGhostMode(playerid, bool:toggle);
 native GetPlayerGhostMode(playerid);
+native SetPlayerSyncKeys(playerid, keys, updown, leftright);
 
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX = 0.0, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fAngle = 0.0);
