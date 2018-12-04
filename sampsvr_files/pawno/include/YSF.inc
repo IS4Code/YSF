@@ -167,6 +167,11 @@ native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:f
 native TogglePlayerGhostMode(playerid, bool:toggle);
 native GetPlayerGhostMode(playerid);
 native SetPlayerSyncKeys(playerid, keys, updown, leftright);
+native SetPlayerSyncCameraFrontVector(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncCameraPos(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncCameraMode(playerid, mode);
+native SetPlayerSyncWeapon(playerid, weaponid);
+native SetPlayerSyncWeaponState(playerid, weaponstate);
 
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX = 0.0, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fAngle = 0.0);

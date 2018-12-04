@@ -986,6 +986,79 @@ namespace Natives
 		pPlayer->syncData.wLRAnalog = pPlayer->vehicleSyncData.wLRAnalog = pPlayer->passengerSyncData.wLRAnalog = CScriptParams::Get()->ReadInt();
 		return 1;
 	}
+
+	// native SetPlayerSyncCameraFrontVector(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncCameraFrontVector)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->aimSyncData.vecFront.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->aimSyncData.vecFront.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->aimSyncData.vecFront.fZ = CScriptParams::Get()->ReadFloat();
+		pPlayer->bHasAimSync = true;
+		return 1;
+	}
+
+	// native SetPlayerSyncCameraPos(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncCameraPos)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->aimSyncData.vecPosition.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->aimSyncData.vecPosition.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->aimSyncData.vecPosition.fZ = CScriptParams::Get()->ReadFloat();
+		pPlayer->bHasAimSync = true;
+		return 1;
+	}
+
+	// native SetPlayerSyncCameraMode(playerid, mode);
+	AMX_DECLARE_NATIVE(SetPlayerSyncCameraMode)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->aimSyncData.byteCameraMode = CScriptParams::Get()->ReadInt();
+		pPlayer->bHasAimSync = true;
+		return 1;
+	}
+
+	// native SetPlayerSyncWeapon(playerid, weaponid);
+	AMX_DECLARE_NATIVE(SetPlayerSyncWeapon)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.byteWeapon = pPlayer->vehicleSyncData.bytePlayerWeapon = pPlayer->passengerSyncData.bytePlayerWeapon = CScriptParams::Get()->ReadInt() & 0x3F;
+		return 1;
+	}
+
+	// native SetPlayerSyncWeaponState(playerid, weaponstate);
+	AMX_DECLARE_NATIVE(SetPlayerSyncWeaponState)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->aimSyncData.byteWeaponState = CScriptParams::Get()->ReadInt() & 0x3;
+		pPlayer->bHasAimSync = true;
+		return 1;
+	}
 }
 
 namespace Original
@@ -1235,6 +1308,11 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(TogglePlayerGhostMode) // R20
 	AMX_DEFINE_NATIVE(GetPlayerGhostMode) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncKeys) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncCameraFrontVector) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncCameraPos) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncCameraMode) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncWeapon) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncWeaponState) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =
