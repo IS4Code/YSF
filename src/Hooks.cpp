@@ -905,7 +905,7 @@ void InstallPreHooks()
 	
 #ifdef SAMP_03DL
 	//ClientJoin_hook = Hook(CAddress::FUNC_ClientJoin, HOOK_ClientJoin);
-	AddSimpleModel_hook = Hook(CAddress::FUNC_AddSimpleModel, HOOK_AddSimpleModel);
+	//AddSimpleModel_hook = Hook(CAddress::FUNC_AddSimpleModel, HOOK_AddSimpleModel);
 #endif
 	
 	// Callback hooks
