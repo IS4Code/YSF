@@ -68,18 +68,31 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	char szVersion[64];
 
 	DWORD addr = reinterpret_cast<DWORD>(logprintf);
+#ifdef SAMP_03DL
+	if(addr == CAddress::FUNC_Logprintf_03DL_R1 || Utility::CFGLoad("SkipVersionCheck"))
+	{
+		version = SAMPVersion::VERSION_03DL_R1;
+		strcpy(szVersion, "0.3.DL R1");
+	}else if(addr == CAddress::FUNC_Logprintf_037_R2_1)
+	{
+		logprintf("This version of YSF doesn't support SA-MP 0.3.7");
+		logprintf("Use another version of YSF or build without SAMP_03DL");
+	}
+#else
 	if(addr == CAddress::FUNC_Logprintf_037_R2_1 || Utility::CFGLoad("SkipVersionCheck"))
 	{
 		version = SAMPVersion::VERSION_037_R2;
 		strcpy(szVersion, "0.3.7 R2-1");
+	}else if(addr == CAddress::FUNC_Logprintf_03DL_R1)
+	{
+		logprintf("This version of YSF doesn't support SA-MP 0.3.DL");
+		logprintf("Use another version of YSF or build with SAMP_03DL");
 	}
-	else if (addr == CAddress::FUNC_Logprintf_03Z || CAddress::FUNC_Logprintf_03ZR2_2 || CAddress::FUNC_Logprintf_03ZR3 || CAddress::FUNC_Logprintf_03ZR4)
+#endif
+	else if(addr == CAddress::FUNC_Logprintf_03Z || CAddress::FUNC_Logprintf_03ZR2_2 || CAddress::FUNC_Logprintf_03ZR3 || CAddress::FUNC_Logprintf_03ZR4)
 	{
 		logprintf("This version of YSF doesn't support SA-MP 0.3z");
 		logprintf("Update to 0.3.7! http://sa-mp.com/download.php");
-	} else if(addr == CAddress::FUNC_Logprintf_03DL_R1)
-	{
-		logprintf("This version of YSF doesn't support SA-MP 0.3.DL");
 	}
 
 	CScriptParams::Init();

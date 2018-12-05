@@ -6,24 +6,10 @@
 #include <exception>
 #include <type_traits>
 #include "includes/types.h"
+#include "utils/pair_hash.h"
 #include "CPool.h"
 #include "CPlayerData.h"
 #include "Structs.h"
-
-namespace aux
-{
-	struct pair_hash
-	{
-		template <typename T, typename U>
-		std::size_t operator()(const std::pair<T, U> &x) const
-		{
-			std::size_t hash = 0;
-			hash ^= std::hash<T>()(x.first) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-			hash ^= std::hash<U>()(x.second) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-			return hash;
-		}
-	};
-}
 
 template <class ObjectType, size_t MaxSize>
 class CPerPlayerPoolBase
@@ -127,7 +113,7 @@ public:
 template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ObjectType(PoolType::*PoolArray)[PlayerPoolMaxSize][MaxSize], BOOL(PoolType::*SlotArray)[PlayerPoolMaxSize][MaxSize], class ExtraData = std::tuple<size_t>>
 class CSlotPerPlayerPool : public CBasicPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, ExtraData>
 {
-	typedef CBasicPerPlayerPool<PoolType, ObjectType, PlayerPoolMaxSize, MaxSize, PoolArray, ExtraData> Base;
+	typedef CBasicPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, ExtraData> Base;
 public:
 	CSlotPerPlayerPool(PoolType& poolData, const CPoolBase<CPlayer*, PlayerPoolMaxSize>& playerPool) : Base(poolData, playerPool)
 	{

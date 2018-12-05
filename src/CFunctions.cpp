@@ -42,7 +42,7 @@
 #include "Globals.h"
 #include "Memory.h"
 
-CConsole__AddStringVariable_t				CSAMPFunctions::pfn__CConsole__AddStringVariable = NULL;
+/*CConsole__AddStringVariable_t				CSAMPFunctions::pfn__CConsole__AddStringVariable = NULL;
 CConsole__GetStringVariable_t				CSAMPFunctions::pfn__CConsole__GetStringVariable = NULL;
 CConsole__SetStringVariable_t				CSAMPFunctions::pfn__CConsole__SetStringVariable = NULL;
 CConsole__GetIntVariable_t					CSAMPFunctions::pfn__CConsole__GetIntVariable = NULL;
@@ -63,7 +63,7 @@ CObject__SpawnForPlayer_t					CSAMPFunctions::pfn__CObject__SpawnForPlayer = NUL
 Packet_WeaponsUpdate_t						CSAMPFunctions::pfn__Packet_WeaponsUpdate = NULL;
 Packet_StatsUpdate_t						CSAMPFunctions::pfn__Packet_StatsUpdate = NULL;
 
-format_amxstring_t							CSAMPFunctions::pfn__format_amxstring = NULL;
+format_amxstring_t							CSAMPFunctions::pfn__format_amxstring = NULL;*/
 
 RakNet__Start_t								CSAMPFunctions::pfn__RakNet__Start = NULL;
 RakNet__Send_t								CSAMPFunctions::pfn__RakNet__Send = NULL;
@@ -83,7 +83,7 @@ RakNet__ClearBanList_t						CSAMPFunctions::pfn__RakNet__ClearBanList = NULL;
 
 void CSAMPFunctions::PreInitialize()
 {
-	INIT_FPTR(CConsole__AddStringVariable);
+	/*INIT_FPTR(CConsole__AddStringVariable);
 	INIT_FPTR(CConsole__GetStringVariable);
 	INIT_FPTR(CConsole__SetStringVariable);
 	INIT_FPTR(CConsole__GetIntVariable);
@@ -104,7 +104,7 @@ void CSAMPFunctions::PreInitialize()
 	INIT_FPTR(Packet_WeaponsUpdate);
 	INIT_FPTR(Packet_StatsUpdate);
 
-	INIT_FPTR(format_amxstring);
+	INIT_FPTR(format_amxstring);*/
 }
 
 void CSAMPFunctions::PostInitialize()
@@ -153,72 +153,72 @@ void CSAMPFunctions::PostInitialize()
 
 void CSAMPFunctions::AddStringVariable(char *szRule, int flags, char *szString, void *changefunc)
 {
-	pfn__CConsole__AddStringVariable(pConsole, szRule, flags, szString, changefunc);
+	CAddress::FUNC_CConsole__AddStringVariable(pConsole, szRule, flags, szString, changefunc);
 }
 
 char* CSAMPFunctions::GetStringVariable(char *szRule)
 {
-	return pfn__CConsole__GetStringVariable(pConsole, szRule);
+	return CAddress::FUNC_CConsole__GetStringVariable(pConsole, szRule);
 }
 
 void CSAMPFunctions::SetStringVariable(char *szRule, char *szString)
 {
-	pfn__CConsole__SetStringVariable(pConsole, szRule, szString);
+	CAddress::FUNC_CConsole__SetStringVariable(pConsole, szRule, szString);
 }
 
 int CSAMPFunctions::GetIntVariable(char *szRule)
 {
-	return pfn__CConsole__GetIntVariable(pConsole, szRule);
+	return CAddress::FUNC_CConsole__GetIntVariable(pConsole, szRule);
 }
 
 bool CSAMPFunctions::GetBoolVariable(char *szRule)
 {
-	return pfn__CConsole__GetBoolVariable(pConsole, szRule);
+	return CAddress::FUNC_CConsole__GetBoolVariable(pConsole, szRule);
 }
 
 void CSAMPFunctions::SetIntVariable(char *szRule, int value)
 {
-	pfn__CConsole__SetIntVariable(pConsole, szRule, value);
+	CAddress::FUNC_CConsole__SetIntVariable(pConsole, szRule, value);
 }
 
 void CSAMPFunctions::ModifyVariableFlags(char *szRule, int value)
 {
-	pfn__CConsole__ModifyVariableFlags(pConsole, szRule, value);
+	CAddress::FUNC_CConsole__ModifyVariableFlags(pConsole, szRule, value);
 }
 
 ConsoleVariable_s* CSAMPFunctions::FindVariable(char *szRule)
 {
-	return pfn__CConsole__FindVariable(pConsole, szRule);
+	return CAddress::FUNC_CConsole__FindVariable(pConsole, szRule);
 }
 
 void CSAMPFunctions::SendRules(SOCKET s, char* data, const sockaddr_in* to, int tolen)
 {
-	pfn__CConsole__SendRules(pConsole, s, data, to, tolen);
+	CAddress::FUNC_CConsole__SendRules(pConsole, s, data, to, tolen);
 }
 
 void CSAMPFunctions::Execute(char* pExecLine)
 {
-	pfn__CConsole__Execute(pConsole, pExecLine);
+	CAddress::FUNC_CConsole__Execute(pConsole, pExecLine);
 }
 
 bool CSAMPFunctions::LoadFilterscript(const char *szName)
 {
-	return pfn__CFilterscripts__LoadFilterscript(pNetGame->pFilterScriptPool, szName);
+	return CAddress::FUNC_CFilterscripts__LoadFilterscript(pNetGame->pFilterScriptPool, szName);
 }
 
 bool CSAMPFunctions::UnLoadFilterscript(const char *szName)
 {
-	return pfn__CFilterscripts__UnLoadFilterscript(pNetGame->pFilterScriptPool, szName);
+	return CAddress::FUNC_CFilterscripts__UnLoadFilterscript(pNetGame->pFilterScriptPool, szName);
 }
 
 void CSAMPFunctions::SpawnPlayer(int playerid)
 {
-	pfn__CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
+	CAddress::FUNC_CPlayer__SpawnForWorld(pNetGame->pPlayerPool->pPlayer[playerid]);
 }
 
 void CSAMPFunctions::SpawnObjectForPlayer(CObject *pObject, WORD wPlayerID)
 {
-	pfn__CObject__SpawnForPlayer(pObject, wPlayerID);
+	CAddress::FUNC_CObject__SpawnForPlayer(pObject, wPlayerID);
 }
 
 void CSAMPFunctions::SpawnObjectForPlayer(int iObjectId, WORD wPlayerID)
@@ -228,17 +228,17 @@ void CSAMPFunctions::SpawnObjectForPlayer(int iObjectId, WORD wPlayerID)
 
 void CSAMPFunctions::Packet_WeaponsUpdate(Packet *p)
 {
-	pfn__Packet_WeaponsUpdate(pNetGame, p);
+	CAddress::FUNC_Packet_WeaponsUpdate(pNetGame, p);
 }
 
 void CSAMPFunctions::Packet_StatsUpdate(Packet *p)
 {
-	pfn__Packet_StatsUpdate(pNetGame, p);
+	CAddress::FUNC_Packet_StatsUpdate(pNetGame, p);
 }
 
 char* CSAMPFunctions::format_amxstring(AMX *amx, cell *params, int parm, int &len)
 {
-	return pfn__format_amxstring(amx, params, parm, len);
+	return CAddress::FUNC_format_amxstring(amx, params, parm, len);
 }
 
 bool CSAMPFunctions::Start(unsigned short AllowedPlayers, unsigned int depreciated, int threadSleepTimer, unsigned short port, const char *forceHostAddress)
@@ -363,7 +363,7 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	pVehicle->vecPosition = pVehicle->customSpawn.vecPos;
 
 	if (pNetGame && pNetGame->pPlayerPool)
-		pfn__CPlayerPool__HandleVehicleRespawn(pNetGame->pPlayerPool, pVehicle->wVehicleID);
+		CAddress::FUNC_CPlayerPool__HandleVehicleRespawn(pNetGame->pPlayerPool, pVehicle->wVehicleID);
 
 	CCallbackManager::OnVehicleSpawn(pVehicle->wVehicleID);
 }
