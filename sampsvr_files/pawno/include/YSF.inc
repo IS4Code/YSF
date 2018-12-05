@@ -172,6 +172,7 @@ native SetPlayerSyncCameraPos(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraMode(playerid, mode);
 native SetPlayerSyncWeapon(playerid, weaponid);
 native SetPlayerSyncWeaponState(playerid, weaponstate);
+native SetPlayerSyncSpecialAction(playerid, actionid);
 
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX = 0.0, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fAngle = 0.0);

@@ -1059,6 +1059,19 @@ namespace Natives
 		pPlayer->bHasAimSync = true;
 		return 1;
 	}
+
+	// native SetPlayerSyncSpecialAction(playerid, actionid);
+	AMX_DECLARE_NATIVE(SetPlayerSyncSpecialAction)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.byteSpecialAction = CScriptParams::Get()->ReadInt();
+		return 1;
+	}
 }
 
 namespace Original
@@ -1313,6 +1326,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncCameraMode) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncWeapon) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncWeaponState) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncSpecialAction) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =
