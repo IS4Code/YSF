@@ -146,7 +146,7 @@ native GetPlayerLastSyncedVehicleID(playerid);
 native GetPlayerLastSyncedTrailerID(playerid);
 
 native SendBulletData(senderid, forplayerid = -1, weaponid, hittype, hitid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ);
-native ShowPlayerForPlayer(forplayerid, playerid);
+native ShowPlayerForPlayer(forplayerid, playerid, bool:setskin=false);
 native HidePlayerForPlayer(forplayerid, playerid);
 native AddPlayerForPlayer(forplayerid, playerid, isnpc = 0);
 native RemovePlayerForPlayer(forplayerid, playerid);

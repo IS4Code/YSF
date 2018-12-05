@@ -647,10 +647,10 @@ namespace Natives
 		return 1;
 	}
 
-	// native ShowPlayerForPlayer(forplayerid, playerid);
+	// native ShowPlayerForPlayer(forplayerid, playerid, bool:setskin=false);
 	AMX_DECLARE_NATIVE(ShowPlayerForPlayer)
 	{
-		CHECK_PARAMS(2, LOADED);
+		CHECK_PARAMS(2, MORE_PARAMETER_ALLOWED);
 
 		const int forplayerid = CScriptParams::Get()->ReadInt();
 		if (!IsPlayerConnected(forplayerid)) return 0;
@@ -663,6 +663,14 @@ namespace Natives
 		RakNet::BitStream bs;
 		bs.Write((WORD)playerid);
 		CSAMPFunctions::RPC(&RPC_WorldPlayerAdd, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0);
+
+		if(params[0] / sizeof(cell) >= 3 && CScriptParams::Get()->ReadBool())
+		{
+			RakNet::BitStream bs;
+			bs.Write((int)playerid);
+			bs.Write((int)pNetGame->pPlayerPool->pPlayer[playerid]->spawn.iSkin);
+			CSAMPFunctions::RPC(&RPC_SetPlayerSkin, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), 0, 0);
+		}
 		return 1;
 	}
 
