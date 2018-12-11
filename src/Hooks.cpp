@@ -894,7 +894,7 @@ subhook_t Hook(ADDR<TFunc> &func, THook hook)
 // Things that needs to be hooked before netgame initialied
 void InstallPreHooks()
 {
-	SetWeather_hook = Hook(CAddress::FUNC_CNetGame__SetWeather, HOOK_CNetGame__SetWeather);
+	/*SetWeather_hook = Hook(CAddress::FUNC_CNetGame__SetWeather, HOOK_CNetGame__SetWeather);
 	SetGravity_hook = Hook(CAddress::FUNC_CNetGame__SetGravity, HOOK_CNetGame__SetGravity);
 	Namecheck_hook = Hook(CAddress::FUNC_ContainsInvalidChars, HOOK_ContainsInvalidChars);
 	amx_Register_hook = subhook_new(reinterpret_cast<void*>(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register]), reinterpret_cast<void*>(HOOK_amx_Register), static_cast<subhook_options_t>(NULL));
@@ -915,7 +915,8 @@ void InstallPreHooks()
 	CGameMode__OnPlayerStreamIn_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerStreamIn, HOOK_CGameMode__OnPlayerStreamIn);
 	CGameMode__OnPlayerStreamOut_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerStreamOut, HOOK_CGameMode__OnPlayerStreamOut);
 	CGameMode__OnDialogResponse_hook = Hook(CAddress::FUNC_CGameMode__OnDialogResponse, HOOK_CGameMode__OnDialogResponse);
-	
+	*/
+
 	if(CAddress::ADDR_RecordingDirectory)
 	{
 		strcpy(gRecordingDataPath, "scriptfiles/%s.rec");
@@ -946,7 +947,7 @@ void InstallPostHooks()
 	CPlugin::Get()->pPickupPool = new CYSFPickupPool();
 #endif
 	// Re-init a few RPCs
-	InitRPCs();
+	/*InitRPCs();
 
 	static unsigned char HOOK_logprintf[7] = {0xE8, 0xCC, 0xCC, 0xCC, 0xCC, 0xFF, 0xE0}; //call rel, jmp eax
 	*reinterpret_cast<uintptr_t*>(HOOK_logprintf + 1) = reinterpret_cast<uintptr_t>(&logprintf_trampoline) - reinterpret_cast<uintptr_t>(HOOK_logprintf + 5);
@@ -955,12 +956,14 @@ void InstallPostHooks()
 	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), HOOK_logprintf, static_cast<subhook_options_t>(NULL));
 	subhook_install(logprintf_hook);
 
+	*/
+
 	// logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
 }
 
 void UninstallHooks()
 {
-	SUBHOOK_REMOVE(SetWeather_hook);
+	/*SUBHOOK_REMOVE(SetWeather_hook);
 	SUBHOOK_REMOVE(SetGravity_hook);
 	SUBHOOK_REMOVE(Namecheck_hook);
 	SUBHOOK_REMOVE(amx_Register_hook);
@@ -979,5 +982,5 @@ void UninstallHooks()
 	{
 		fclose(g_fLog);
 		g_fLog = NULL;
-	}
+	}*/
 }

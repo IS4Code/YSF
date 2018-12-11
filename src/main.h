@@ -44,7 +44,7 @@
 // VERSION INFO
 // ------------
 
-#define PROJECT_NAME		"YSF"
+#define PROJECT_NAME		"YSF Lite"
 #define PROJECT_VERSION		"R20-RC3"
 
 // ------------
