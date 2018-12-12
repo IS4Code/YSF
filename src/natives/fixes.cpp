@@ -27,6 +27,7 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(GetWeaponName)
 	{
 		CHECK_PARAMS(3, NO_FLAGS);
+		sentinel sentinel;
 
 		return set_amxstring(amx, params[2], Utility::GetWeaponName(static_cast<BYTE>(params[1])), params[3]);
 	}
@@ -35,6 +36,7 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(IsPlayerConnected)
 	{
 		CHECK_PARAMS(1, LOADED);
+		sentinel sentinel;
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;

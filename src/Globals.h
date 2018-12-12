@@ -16,4 +16,13 @@ extern void *pRakServer;
 
 //extern class CPlayerData *pPlayerData[MAX_PLAYERS];
 
+class sentinel
+{
+public:
+	sentinel();
+	~sentinel();
+private:
+	void check(bool ctor);
+};
+
 #endif

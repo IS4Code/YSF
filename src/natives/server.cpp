@@ -719,6 +719,7 @@ namespace Hooks
 	// native Float:GetGravity();
 	AMX_DECLARE_NATIVE(GetGravity)
 	{
+		sentinel sentinel;
 		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		float fGravity = pNetGame->fGravity;

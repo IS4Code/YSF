@@ -686,6 +686,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(1, LOADED);
 
+		sentinel sentinel;
 		if (Original::DestroyObject(amx, params))
 		{
 			int objectid = CScriptParams::Get()->ReadInt();
@@ -787,6 +788,7 @@ namespace Hooks
 	// native DestroyPlayerObject(playerid, objectid)
 	AMX_DECLARE_NATIVE(DestroyPlayerObject)
 	{
+		sentinel sentinel;
 #ifdef NEW_PLAYER_OBJECT_SYSTEM
 		void *original = StorePlayerObjectState(params);
 		cell result = Original::DestroyPlayerObject(amx, params);
@@ -823,6 +825,7 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(AttachObjectToPlayer)
 	{
 		CHECK_PARAMS(8, LOADED);
+		sentinel sentinel;
 
 		int objectid = CScriptParams::Get()->ReadInt();
 		int playerid = CScriptParams::Get()->ReadInt();
@@ -843,6 +846,7 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(AttachPlayerObjectToPlayer)
 	{
 		CHECK_PARAMS(9, MORE_PARAMETER_ALLOWED);
+		sentinel sentinel;
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const int objectid = CScriptParams::Get()->ReadInt();
@@ -904,6 +908,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(7, LOADED);
 
+		sentinel sentinel;
 		if (Original::SetPlayerObjectMaterial(amx, params))
 		{
 			int playerid = CScriptParams::Get()->ReadInt();
@@ -946,6 +951,7 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(SetPlayerObjectMaterialText)
 	{
 		CHECK_PARAMS(11, LOADED);
+		sentinel sentinel;
 
 		if (Original::SetPlayerObjectMaterialText(amx, params))
 		{

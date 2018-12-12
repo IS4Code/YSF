@@ -1176,6 +1176,8 @@ namespace Hooks
 	{
 		CHECK_PARAMS(2, LOADED);
 
+		sentinel sentinel;
+
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (Original::SetPlayerTeam(amx, params))
 		{
@@ -1194,6 +1196,8 @@ namespace Hooks
 	{
 		CHECK_PARAMS(2, LOADED);
 
+		sentinel sentinel;
+
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (Original::SetPlayerSkin(amx, params))
 		{
@@ -1211,6 +1215,8 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(SetPlayerName)
 	{
 		CHECK_PARAMS(2, LOADED);
+
+		sentinel sentinel;
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const int ret = Original::SetPlayerName(amx, params);
@@ -1231,6 +1237,8 @@ namespace Hooks
 	{
 		CHECK_PARAMS(2, LOADED);
 
+		sentinel sentinel;
+
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (Original::SetPlayerFightingStyle(amx, params))
 		{
@@ -1250,6 +1258,8 @@ namespace Hooks
 	{
 		CHECK_PARAMS(2, LOADED);
 
+		sentinel sentinel;
+
 		const int playerid = CScriptParams::Get()->ReadInt();
 
 		if (Original::SetPlayerWeather(amx, params) && IsPlayerConnected(playerid))
@@ -1264,6 +1274,8 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(SetPlayerWorldBounds)
 	{
 		CHECK_PARAMS(5, LOADED);
+
+		sentinel sentinel;
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if (Original::SetPlayerWorldBounds(amx, params) && IsPlayerConnected(playerid))
@@ -1282,6 +1294,8 @@ namespace Hooks
 	{
 		CHECK_PARAMS(2, LOADED);
 
+		sentinel sentinel;
+
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const bool toggle = CScriptParams::Get()->ReadBool();
 
@@ -1298,6 +1312,8 @@ namespace Hooks
 	{
 		CHECK_PARAMS(7, LOADED);
 
+		sentinel sentinel;
+
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const int dialogid = CScriptParams::Get()->ReadInt();
 
@@ -1313,6 +1329,8 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(RemoveBuildingForPlayer)
 	{
 		CHECK_PARAMS(6, LOADED);
+
+		sentinel sentinel;
 
 		int playerid, modelid;
 		CVector pos;

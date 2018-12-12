@@ -256,6 +256,8 @@ void CPlayerData::DeleteObjectAddon(WORD objectid)
 
 void CPlayerData::Process(void)
 {
+	sentinel sentinel;
+
 	// Processing AFK detection	
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	if (bEverUpdated && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_NONE && pPlayerPool->pPlayer[wPlayerID]->byteState != PLAYER_STATE_WASTED)

@@ -84,6 +84,8 @@ char gRecordingDataPath[MAX_PATH];
 
 void HOOK_THISCALL(HOOK_CNetGame__SetWeather, void *thisptr, BYTE weatherid)
 {
+	sentinel sentinel;
+
 	subhook_remove(SetWeather_hook);
 
 	auto &pool = CServer::Get()->PlayerPool;
@@ -101,6 +103,8 @@ void HOOK_THISCALL(HOOK_CNetGame__SetWeather, void *thisptr, BYTE weatherid)
 
 void HOOK_THISCALL(HOOK_CNetGame__SetGravity, void *thisptr, float gravity)
 {
+	sentinel sentinel;
+
 	subhook_remove(SetGravity_hook);
 
 	auto &pool = CServer::Get()->PlayerPool;
@@ -119,6 +123,8 @@ void HOOK_THISCALL(HOOK_CNetGame__SetGravity, void *thisptr, float gravity)
 // Custom name check
 bool HOOK_ContainsInvalidChars(char * szString)
 {
+	sentinel sentinel;
+
 	return !CPlugin::Get()->IsValidNick(szString);
 }
 
@@ -127,6 +133,8 @@ bool HOOK_ContainsInvalidChars(char * szString)
 typedef BYTE (*FUNC_amx_Register)(AMX *amx, AMX_NATIVE_INFO *nativelist, int number);
 int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 {
+	sentinel sentinel;
+
 	// amx_Register hook for redirect natives
 	static bool bNativesHooked = false;
 
@@ -147,6 +155,8 @@ int AMXAPI HOOK_amx_Register(AMX *amx, AMX_NATIVE_INFO *nativelist, int number)
 
 bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast)
 {
+	sentinel sentinel;
+
 	RakNet::BitStream *newParams = CPlugin::Get()->BuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
 	if(newParams)
 	{
@@ -162,6 +172,8 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 
 bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::BitStream* parameters, PacketPriority priority, PacketReliability reliability, unsigned orderingChannel, PlayerID playerId, bool broadcast, bool shiftTimestamp)
 {
+	sentinel sentinel;
+
 	if (!CPlugin::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)))) return 1;
 
 	auto &pool = CServer::Get()->PlayerPool;
@@ -181,18 +193,24 @@ bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::B
 
 void THISCALL CHookRakServer::AddToBanList(void* ppRakServer, const char *IP, unsigned int milliseconds)
 {
+	sentinel sentinel;
+
 	CPlugin::Get()->BanIP(IP);
 	return CSAMPFunctions::AddToBanList(IP, milliseconds);
 }
 
 void THISCALL CHookRakServer::RemoveFromBanList(void* ppRakServer, const char *IP)
 {
+	sentinel sentinel;
+
 	CPlugin::Get()->UnbanIP(IP);
 	return CSAMPFunctions::RemoveFromBanList(IP);
 }
 
 void THISCALL CHookRakServer::ClearBanList(void* ppRakServer)
 {
+	sentinel sentinel;
+
 	CPlugin::Get()->ClearBans();
 	return CSAMPFunctions::ClearBanList();
 }
@@ -201,6 +219,8 @@ void THISCALL CHookRakServer::ClearBanList(void* ppRakServer)
 
 Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 {
+	sentinel sentinel;
+
 	Packet* p = CSAMPFunctions::Receive(ppRakServer);
 	BYTE packetId = GetPacketID(p);
 	if(packetId == 0xFF) return p;
@@ -724,12 +744,16 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 
 void HOOK_THISCALL(HOOK_CVehicle__Respawn, CVehicle *thisptr)
 {
+	sentinel sentinel;
+
 	CSAMPFunctions::RespawnVehicle(thisptr);
 }
 //----------------------------------------------------
 
 int HOOK_THISCALL(HOOK_CGameMode__OnPlayerConnect, CGameMode *thisptr, cell playerid)
 {
+	sentinel sentinel;
+
 	subhook_remove(CGameMode__OnPlayerConnect_hook);
 
 #ifndef NEW_PICKUP_SYSTEM
@@ -749,6 +773,8 @@ int HOOK_THISCALL(HOOK_CGameMode__OnPlayerConnect, CGameMode *thisptr, cell play
 
 int HOOK_THISCALL(HOOK_CGameMode__OnPlayerDisconnect, CGameMode *thisptr, cell playerid, cell reason)
 {
+	sentinel sentinel;
+
 	subhook_remove(CGameMode__OnPlayerDisconnect_hook);
 
 	CPlugin::Get()->RemovePlayer(playerid);
@@ -762,6 +788,8 @@ int HOOK_THISCALL(HOOK_CGameMode__OnPlayerDisconnect, CGameMode *thisptr, cell p
 
 int HOOK_THISCALL(HOOK_CGameMode__OnPlayerSpawn, CGameMode *thisptr, cell playerid)
 {
+	sentinel sentinel;
+
 	subhook_remove(CGameMode__OnPlayerSpawn_hook);
 
 	if (IsPlayerConnected(playerid))
@@ -776,6 +804,8 @@ int HOOK_THISCALL(HOOK_CGameMode__OnPlayerSpawn, CGameMode *thisptr, cell player
 
 int HOOK_THISCALL(HOOK_CGameMode__OnPlayerStreamIn, CGameMode *thisptr, cell playerid, cell forplayerid)
 {
+	sentinel sentinel;
+
 	subhook_remove(CGameMode__OnPlayerStreamIn_hook);
 
 	CPlugin::Get()->OnPlayerStreamIn(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
@@ -789,6 +819,8 @@ int HOOK_THISCALL(HOOK_CGameMode__OnPlayerStreamIn, CGameMode *thisptr, cell pla
 
 int HOOK_THISCALL(HOOK_CGameMode__OnPlayerStreamOut, CGameMode *thisptr, cell playerid, cell forplayerid)
 {
+	sentinel sentinel;
+
 	subhook_remove(CGameMode__OnPlayerStreamOut_hook);
 
 	CPlugin::Get()->OnPlayerStreamOut(static_cast<WORD>(playerid), static_cast<WORD>(forplayerid));
@@ -802,6 +834,8 @@ int HOOK_THISCALL(HOOK_CGameMode__OnPlayerStreamOut, CGameMode *thisptr, cell pl
 
 int HOOK_THISCALL(HOOK_CGameMode__OnDialogResponse, CGameMode *thisptr, cell playerid, cell dialogid, cell response, cell listitem, char *szInputtext)
 {
+	sentinel sentinel;
+
 	subhook_remove(CGameMode__OnDialogResponse_hook);
 
 	int ret = -1;

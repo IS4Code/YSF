@@ -499,6 +499,8 @@ namespace Hooks
 	{
 		CHECK_PARAMS(3, LOADED);
 
+		sentinel sentinel;
+
 		const int vehicleid = CScriptParams::Get()->ReadInt();
 		if (Original::ChangeVehicleColor(amx, params))
 		{
@@ -512,6 +514,8 @@ namespace Hooks
 	AMX_DECLARE_NATIVE(DestroyVehicle)
 	{
 		CHECK_PARAMS(1, LOADED);
+
+		sentinel sentinel;
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
 		if (Original::DestroyVehicle(amx, params))

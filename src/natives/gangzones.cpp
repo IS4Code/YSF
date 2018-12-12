@@ -417,6 +417,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(4, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
+			sentinel sentinel;
 
 		float fMinX, fMinY, fMaxX, fMaxY;
 		CScriptParams::Get()->Read(fMinX, fMinY, fMaxX, fMaxY);
@@ -438,6 +439,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(1, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
+			sentinel sentinel;
 
 		CGangZonePool *pGangZonePool = CPlugin::Get()->pGangZonePool;
 		const int zoneid = CScriptParams::Get()->ReadInt();
@@ -452,6 +454,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(3, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
+			sentinel sentinel;
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const int zoneid = CScriptParams::Get()->ReadInt();
@@ -468,6 +471,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(2, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
+			sentinel sentinel;
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const int zoneid = CScriptParams::Get()->ReadInt();
@@ -485,6 +489,7 @@ namespace Hooks
 	{
 		CHECK_PARAMS(2, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
+			sentinel sentinel;
 
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
@@ -499,6 +504,7 @@ namespace Hooks
 		CHECK_PARAMS(1, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
 
+			sentinel sentinel;
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
@@ -511,6 +517,7 @@ namespace Hooks
 		CHECK_PARAMS(3, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
 
+			sentinel sentinel;
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const int zoneid = CScriptParams::Get()->ReadInt();
 
@@ -527,6 +534,7 @@ namespace Hooks
 		CHECK_PARAMS(2, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
 
+			sentinel sentinel;
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
@@ -539,6 +547,7 @@ namespace Hooks
 		CHECK_PARAMS(2, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
 
+			sentinel sentinel;
 		const int playerid = CScriptParams::Get()->ReadInt();
 		const int zoneid = CScriptParams::Get()->ReadInt();
 
@@ -555,6 +564,7 @@ namespace Hooks
 		CHECK_PARAMS(1, LOADED);
 		CHECK_PER_PLAYER_ZONES_STATE()
 
+			sentinel sentinel;
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
