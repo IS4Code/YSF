@@ -1080,6 +1080,81 @@ namespace Natives
 		pPlayer->syncData.byteSpecialAction = CScriptParams::Get()->ReadInt();
 		return 1;
 	}
+
+	// native SetPlayerSyncHealth(playerid, Float:health);
+	AMX_DECLARE_NATIVE(SetPlayerSyncHealth)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.byteHealth = pPlayer->vehicleSyncData.bytePlayerHealth = pPlayer->passengerSyncData.bytePlayerHealth = static_cast<BYTE>(CScriptParams::Get()->ReadFloat());
+		return 1;
+	}
+
+	// native SetPlayerSyncArmour(playerid, Float:armour);
+	AMX_DECLARE_NATIVE(SetPlayerSyncArmour)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+		
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.byteArmour = pPlayer->vehicleSyncData.bytePlayerArmour = pPlayer->passengerSyncData.bytePlayerArmour = static_cast<BYTE>(CScriptParams::Get()->ReadFloat());
+
+		return 1;
+	}
+
+	// native SendPlayerDeath(playerid, forplayerid=-1);
+	AMX_DECLARE_NATIVE(SendPlayerDeath)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		int forplayerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(forplayerid) && forplayerid != -1) return 0;
+
+		RakNet::BitStream bs;
+		bs.Write((WORD)playerid);
+		CSAMPFunctions::RPC(&RPC_DeathBroadcast, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, forplayerid == -1 ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), forplayerid == -1, 0);
+		return 1;
+	}
+
+	// native UpdatePlayerSyncData(playerid, type=-1);
+	AMX_DECLARE_NATIVE(UpdatePlayerSyncData)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		int type = CScriptParams::Get()->ReadInt();
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		if(type == -1)
+		{
+			switch(pPlayer->byteState)
+			{
+				case PLAYER_STATE_ONFOOT:
+					pPlayer->iUpdateState = 1;
+					break;
+				case PLAYER_STATE_DRIVER:
+					pPlayer->iUpdateState = 2;
+					break;
+				case PLAYER_STATE_PASSENGER:
+					pPlayer->iUpdateState = 3;
+					break;
+			}
+		}else{
+			pPlayer->iUpdateState = type;
+		}
+		return 1;
+	}
 }
 
 namespace Original
@@ -1335,6 +1410,10 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncWeapon) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncWeaponState) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncSpecialAction) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncHealth) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncArmour) // R20
+	AMX_DEFINE_NATIVE(SendPlayerDeath) // R20
+	AMX_DEFINE_NATIVE(UpdatePlayerSyncData) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =

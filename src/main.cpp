@@ -94,7 +94,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		logprintf("This version of YSF doesn't support SA-MP 0.3z");
 		logprintf("Update to 0.3.7! http://sa-mp.com/download.php");
 	}
-
+	
 	CScriptParams::Init();
 	if (version != SAMPVersion::VERSION_UNKNOWN)
 	{
