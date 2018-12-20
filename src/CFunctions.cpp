@@ -318,10 +318,10 @@ void CSAMPFunctions::ClearBanList(void)
 
 void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 {
- 	memset(&pVehicle->vehMatrix, 0, sizeof(MATRIX4X4));
-	memset(&pVehicle->vecVelocity, 0, sizeof(CVector));
-	memset(&pVehicle->vecTurnSpeed, 0, sizeof(CVector));
-	memset(&pVehicle->vehModInfo, 0, sizeof(CVehicleModInfo));
+	pVehicle->vehMatrix = {};
+	pVehicle->vecVelocity = {};
+	pVehicle->vecTurnSpeed = {};
+	pVehicle->vehModInfo = {};
 
 	pVehicle->fHealth = 1000.0f;
 	pVehicle->vehDoorStatus = 0;
@@ -334,7 +334,7 @@ void CSAMPFunctions::RespawnVehicle(CVehicle *pVehicle)
 	pVehicle->vehRespawnTick = GetTickCount();
 	pVehicle->vehOccupiedTick = GetTickCount();
 
-	memset(&pVehicle->vehParamEx, -1, sizeof(CVehicleParams));
+	memset(&pVehicle->vehParamEx, -1, sizeof(pVehicle->vehParamEx));
 	// logprintf("respawned vehicle: %d", pVehicle->wVehicleID);
 
 	// Check if vehicle has custom spawn
