@@ -1108,6 +1108,99 @@ namespace Natives
 		return 1;
 	}
 
+	// native SetPlayerSyncPosition(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncPosition)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.vecPosition.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.vecPosition.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.vecPosition.fZ = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleId(playerid, vehicleid);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleId)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.wVehicleId = pPlayer->passengerSyncData.wVehicleId = CScriptParams::Get()->ReadInt();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncVehiclePosition(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehiclePosition)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.vecPosition.fX = pPlayer->passengerSyncData.vecPosition.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.vecPosition.fY = pPlayer->passengerSyncData.vecPosition.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.vecPosition.fZ = pPlayer->passengerSyncData.vecPosition.fZ = CScriptParams::Get()->ReadFloat();
+		
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleVelocity(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleVelocity)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.vecVelocity.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.vecVelocity.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.vecVelocity.fZ = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleRotQuat(playerid, Float:w, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleRotQuat)
+	{
+		CHECK_PARAMS(5, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.fQuaternion[0] = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.fQuaternion[1] = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.fQuaternion[2] = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.fQuaternion[3] = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleHealth(playerid, Float:health);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleHealth)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.fHealth = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
 	// native SendPlayerDeath(playerid, forplayerid=-1);
 	AMX_DECLARE_NATIVE(SendPlayerDeath)
 	{
@@ -1412,6 +1505,12 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncSpecialAction) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncHealth) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncArmour) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncPosition) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleId) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehiclePosition) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleVelocity) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleRotQuat) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleHealth) // R20
 	AMX_DEFINE_NATIVE(SendPlayerDeath) // R20
 	AMX_DEFINE_NATIVE(UpdatePlayerSyncData) // R20
 };
