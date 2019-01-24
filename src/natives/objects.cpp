@@ -548,7 +548,7 @@ namespace Natives
 			{
 				std::shared_ptr<CPlayerObjectAttachAddon> pAddon = CServer::Get()->PlayerPool.Extra(forplayerid).GetObjectAddon(objectid);
 				if (pAddon == NULL)
-					return logprintf("AttachPlayerObjectToPlayer: ERROR!!!!"), 0;
+					return logprintf("AttachPlayerObjectToObject: ERROR!!!!"), 0;
 
 				// Geting data
 				BYTE byteSyncRot;
