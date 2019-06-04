@@ -788,6 +788,11 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 
 			bool hidden = CServer::Get()->PlayerPool.MapExtra(playerid, [=](CPlayerData &data)
 			{
+				if(data.NewObjectsHidden())
+				{
+					data.HideObject(objectid, false);
+					return true;
+				}
 				return data.IsObjectHidden(objectid);
 			});
 			if (hidden) return false;
