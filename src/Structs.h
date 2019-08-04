@@ -242,7 +242,7 @@ struct RemoteSystemStruct
 	BYTE byte8AC;
 	BYTE gap8AD[1023];
 	unsigned int connectionTime;
-	enum ConnectMode
+	enum ConnectMode : DWORD
 	{
 		NO_ACTION,
 		DISCONNECT_ASAP,
