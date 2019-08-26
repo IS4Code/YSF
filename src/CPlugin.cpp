@@ -92,13 +92,7 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 
 CPlugin::~CPlugin()
 {
-	for(int i = 0; i != MAX_PLAYERS; ++i)
-		RemovePlayer(i);
 
-	if(CConfig::Get()->m_bUsePerPlayerGangZones)
-	{
-		SAFE_DELETE(pGangZonePool);
-	}
 }
 
 void CPlugin::AddPlayer(int playerid)
