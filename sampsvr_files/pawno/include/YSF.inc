@@ -25,6 +25,20 @@ enum E_SCM_EVENT_TYPE
     SCM_EVENT_MOD_SHOP = 4
 }
 
+enum E_PLAYER_CONNECT_MODE
+{
+    NO_ACTION,
+    DISCONNECT_ASAP,
+    DISCONNECT_ASAP_SILENTLY,
+    DISCONNECT_ON_NO_ACK,
+    REQUESTED_CONNECTION,
+    HANDLING_CONNECTION_REQUEST,
+    UNVERIFIED_SENDER,
+    SET_ENCRYPTION_ON_MULTIPLE_16_B,
+    CONNECTED
+}
+#define SET_ENCRYPTION_ON_MULTIPLE_16_BYTE_PACKET SET_ENCRYPTION_ON_MULTIPLE_16_B
+
 // Execute
 native execute(const command[], saveoutput=0, index=0);
 
@@ -183,6 +197,9 @@ native SetPlayerSyncVehicleRotQuat(playerid, Float:w, Float:x, Float:y, Float:z)
 native SetPlayerSyncVehicleHealth(playerid, Float:health);
 native SendPlayerDeath(playerid, forplayerid=-1);
 native UpdatePlayerSyncData(playerid, type=-1);
+
+native SetPlayerConnectMode(playerid, E_PLAYER_CONNECT_MODE:mode);
+native E_PLAYER_CONNECT_MODE:GetPlayerConnectMode(playerid);
 
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX = 0.0, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fAngle = 0.0);

@@ -1248,6 +1248,27 @@ namespace Natives
 		}
 		return 1;
 	}
+
+	// native SetPlayerConnectMode(playerid, E_PLAYER_CONNECT_MODE:mode);
+	AMX_DECLARE_NATIVE(SetPlayerConnectMode)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+		pNetGame->pPlayerPool->pRemoteSystem[playerid]->connectMode = static_cast<RemoteSystemStruct::ConnectMode>(CScriptParams::Get()->ReadInt());
+		return 1;
+	}
+
+	// native E_PLAYER_CONNECT_MODE:GetPlayerConnectMode(playerid);
+	AMX_DECLARE_NATIVE(GetPlayerConnectMode)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+		return static_cast<cell>(pNetGame->pPlayerPool->pRemoteSystem[playerid]->connectMode);
+	}
 }
 
 namespace Original
@@ -1513,6 +1534,8 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleHealth) // R20
 	AMX_DEFINE_NATIVE(SendPlayerDeath) // R20
 	AMX_DEFINE_NATIVE(UpdatePlayerSyncData) // R20
+	AMX_DEFINE_NATIVE(SetPlayerConnectMode) // R20
+	AMX_DEFINE_NATIVE(GetPlayerConnectMode) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =
