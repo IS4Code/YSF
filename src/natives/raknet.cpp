@@ -1,9 +1,12 @@
 #include "../Natives.h"
 #include "../CPlugin.h"
+#include "../CAddresses.h"
 #include "../CScriptParams.h"
 #include "../Utils.h"
 
 #include "raknet/NetworkTypes.h"
+
+#include <cstring>
 
 namespace Natives
 {
@@ -199,6 +202,29 @@ namespace Natives
 		}
 		return 1;
 	}
+
+	// native ToggleEarlyRPCBan(bool:toggle);
+	AMX_DECLARE_NATIVE(ToggleEarlyRPCBan)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		auto &arr = *CAddress::ADDR_EarlyRPCBranch;
+		static bool enabled = true;
+		static unsigned char backup[sizeof(arr)];
+
+		const bool toggle = CScriptParams::Get()->ReadBool();
+		if(toggle != enabled)
+		{
+			if(toggle)
+			{
+				std::memcpy(arr, backup, sizeof(arr));
+			}else{
+				std::memcpy(backup, arr, sizeof(arr));
+				std::memset(arr, 0x90, sizeof(arr));
+			}
+		}
+		return 1;
+	}
 }
 
 static AMX_NATIVE_INFO native_list[] =
@@ -212,6 +238,8 @@ static AMX_NATIVE_INFO native_list[] =
 
 	AMX_DEFINE_NATIVE(SendRPC)
 	AMX_DEFINE_NATIVE(SendData)
+
+	AMX_DEFINE_NATIVE(ToggleEarlyRPCBan)
 };
 
 void RakNetLoadNatives()

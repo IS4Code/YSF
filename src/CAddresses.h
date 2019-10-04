@@ -240,6 +240,12 @@ public:
 
 	static ADDR<const char*> ADDR_RecordingDirectory;
 
+#ifdef _WIN32
+	static ADDR<unsigned char[82]> ADDR_EarlyRPCBranch;
+#else
+	static ADDR<unsigned char[42]> ADDR_EarlyRPCBranch;
+#endif
+
 	// Callback hooks
 	DECLARE_FUNC_PTR(CGameMode__OnPlayerConnect);
 	DECLARE_FUNC_PTR(CGameMode__OnPlayerDisconnect);

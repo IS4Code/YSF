@@ -102,6 +102,12 @@ ADDR<BYTE> CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel;
 
 ADDR<const char*> CAddress::ADDR_RecordingDirectory;
 
+#ifdef _WIN32
+ADDR<unsigned char[82]> CAddress::ADDR_EarlyRPCBranch;
+#else
+ADDR<unsigned char[42]> CAddress::ADDR_EarlyRPCBranch;
+#endif
+
 // Callback hooks
 DEFINE_FUNC_PTR(CGameMode__OnPlayerConnect);
 DEFINE_FUNC_PTR(CGameMode__OnPlayerDisconnect);
@@ -177,6 +183,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamOut =			FUNC_CGameMode__OnPlayerStreamIn + 0x70; // 0x0046E950;
 	FUNC_CGameMode__OnDialogResponse =			FUNC_CGameMode__OnPlayerStreamOut + 0x230;  // 0x0046EB80;
 
+	ADDR_EarlyRPCBranch =						0x004591FC;
+
 	//FUNC_ClientJoin =							0x004966A0;
 	#else
 
@@ -226,6 +234,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamIn = 0x80A6450;
 	FUNC_CGameMode__OnPlayerStreamOut = 0x80A64D0;
 	FUNC_CGameMode__OnDialogResponse = 0x80A6750;
+
+	ADDR_EarlyRPCBranch = 0x08075344;
 
 	switch(sampVersion)
 	{
@@ -423,5 +433,10 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	if(ADDR_GetPlayerNetworkStats_VerbosityLevel)
 	{
 		ADDR_GetPlayerNetworkStats_VerbosityLevel.unlock();
+	}
+
+	if(ADDR_EarlyRPCBranch)
+	{
+		ADDR_EarlyRPCBranch.unlock();
 	}
 }
