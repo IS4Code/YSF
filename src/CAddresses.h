@@ -243,7 +243,7 @@ public:
 #ifdef _WIN32
 	static ADDR<unsigned char[82]> ADDR_EarlyRPCBranch;
 #else
-	static ADDR<unsigned char[42]> ADDR_EarlyRPCBranch;
+	static ADDR<unsigned char[114]> ADDR_EarlyRPCBranch;
 #endif
 
 	// Callback hooks

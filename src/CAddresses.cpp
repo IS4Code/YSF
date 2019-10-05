@@ -105,7 +105,7 @@ ADDR<const char*> CAddress::ADDR_RecordingDirectory;
 #ifdef _WIN32
 ADDR<unsigned char[82]> CAddress::ADDR_EarlyRPCBranch;
 #else
-ADDR<unsigned char[42]> CAddress::ADDR_EarlyRPCBranch;
+ADDR<unsigned char[114]> CAddress::ADDR_EarlyRPCBranch;
 #endif
 
 // Callback hooks
@@ -235,7 +235,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamOut = 0x80A64D0;
 	FUNC_CGameMode__OnDialogResponse = 0x80A6750;
 
-	ADDR_EarlyRPCBranch = 0x08075344;
+	ADDR_EarlyRPCBranch = 0x080752FC;
 
 	switch(sampVersion)
 	{
