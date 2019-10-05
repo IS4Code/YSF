@@ -203,24 +203,25 @@ namespace Natives
 		return 1;
 	}
 
-	// native ToggleEarlyRPCBan(bool:toggle);
-	AMX_DECLARE_NATIVE(ToggleEarlyRPCBan)
+	// native ToggleCloseConnectionFix(bool:toggle);
+	AMX_DECLARE_NATIVE(ToggleCloseConnectionFix)
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		auto &arr = *CAddress::ADDR_EarlyRPCBranch;
-		static bool enabled = true;
+		auto &arr = *CAddress::ADDR_WrongPacketIDBranch;
+		static bool toggled = false;
 		static unsigned char backup[sizeof(arr)];
 
-		const bool toggle = CScriptParams::Get()->ReadBool();
-		if(toggle != enabled)
+		bool toggle = CScriptParams::Get()->ReadBool();
+		if(toggle != toggled)
 		{
+			toggled = toggle;
 			if(toggle)
 			{
-				std::memcpy(arr, backup, sizeof(arr));
-			}else{
 				std::memcpy(backup, arr, sizeof(arr));
 				std::memset(arr, 0x90, sizeof(arr));
+			}else{
+				std::memcpy(arr, backup, sizeof(arr));
 			}
 		}
 		return 1;
@@ -239,7 +240,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SendRPC)
 	AMX_DEFINE_NATIVE(SendData)
 
-	AMX_DEFINE_NATIVE(ToggleEarlyRPCBan)
+	AMX_DEFINE_NATIVE(ToggleCloseConnectionFix)
 };
 
 void RakNetLoadNatives()

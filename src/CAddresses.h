@@ -241,9 +241,9 @@ public:
 	static ADDR<const char*> ADDR_RecordingDirectory;
 
 #ifdef _WIN32
-	static ADDR<unsigned char[82]> ADDR_EarlyRPCBranch;
+	static ADDR<unsigned char[82]> ADDR_WrongPacketIDBranch;
 #else
-	static ADDR<unsigned char[114]> ADDR_EarlyRPCBranch;
+	static ADDR<unsigned char[114]> ADDR_WrongPacketIDBranch;
 #endif
 
 	// Callback hooks

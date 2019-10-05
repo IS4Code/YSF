@@ -278,7 +278,7 @@ native GetLocalIP(index, localip[], len = sizeof(localip));
 native SetExclusiveBroadcast(toggle);
 native BroadcastToPlayer(playerid, toggle = 1);
 
-native ToggleEarlyRPCBan(bool:toggle);
+native ToggleCloseConnectionFix(bool:toggle);
 
 // Vehicle functions
 native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fRot = 0.0, &color1 = 0, &color2 = 0);
