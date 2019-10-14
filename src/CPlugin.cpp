@@ -48,6 +48,8 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 	m_iTickRate = 5;
 	m_bNightVisionFix = true;
 	m_bOnServerMessage = false;
+	m_bNPCOnQuery = false; // Nobody: R21
+	m_bNPCOnScoreboard = false; // Nobody: R21
 	m_dwAFKAccuracy = 1500;
 	
 	// Loading configurations from plugins/YSF.cfg
@@ -381,7 +383,7 @@ WORD CPlugin::GetMaxPlayers()
 	WORD count = 0;
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	for (WORD i = 0; i != MAX_PLAYERS; ++i)
-		if (pPlayerPool->bIsNPC[i])
+		if (pPlayerPool->bIsNPC[i] && !CPlugin::Get()->IsNPCOnQueryEnabled())
 			count++;
 	return static_cast<WORD>(CSAMPFunctions::GetIntVariable("maxplayers")) - count;
 }
@@ -392,7 +394,7 @@ WORD CPlugin::GetPlayerCount()
 	CPlayerPool *pPlayerPool = pNetGame->pPlayerPool;
 	auto &pool = CServer::Get()->PlayerPool;
 	for (WORD i = 0; i != MAX_PLAYERS; ++i)
-		if (IsPlayerConnected(i) && !pPlayerPool->bIsNPC[i] && !pool.Extra(i).HiddenInQuery())
+		if (IsPlayerConnected(i) && (!pPlayerPool->bIsNPC[i] || CPlugin::Get()->IsNPCOnQueryEnabled()) && !pool.Extra(i).HiddenInQuery())
 			count++;
 	return count;
 }
@@ -864,6 +866,29 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			}
 			bsSync->Write((char*)&pNetGame->pVehiclePool, 212); // modelsUsed
 			bsSync->Write((DWORD)vehiclefriendlyfire);
+			break;
+		}
+		case RPC_ServerJoin:
+		{
+			const int read_offset = bsSync->GetReadOffset();
+
+			WORD playerid;
+			DWORD Unk;
+			BYTE isNPC;
+
+			bsSync->Read<WORD>(playerid);
+			bsSync->Read<DWORD>(Unk);
+			bsSync->Read<BYTE>(isNPC);
+			bsSync->SetReadOffset(read_offset);
+			const char* name = GetPlayerName(playerid);
+			size_t len = strlen(name);
+
+			bsSync->Reset();
+			bsSync->Write((WORD)playerid);
+			bsSync->Write((DWORD)0);
+			bsSync->Write((BYTE)(isNPC == 1 ? !(BYTE)CPlugin::Get()->IsNPCOnScoreboardEnabled() : 0));
+			bsSync->Write((BYTE)len);
+			bsSync->Write(name, len);
 			break;
 		}
 	}

@@ -103,6 +103,10 @@ native YSF_SetExtendedNetStatsEnabled(enable);
 native YSF_IsExtendedNetStatsEnabled();
 native YSF_SetAFKAccuracy(time_ms);
 native YSF_GetAFKAccuracy();
+native YSF_ToggleNPCOnQuery(toggle);
+native YSF_IsNPCOnQueryEnabled();
+native YSF_ToggleNPCOnScoreboard(toggle);
+native YSF_IsNPCOnScoreboardEnabled();
 
 native SetRecordingDirectory(const dir[]);
 native GetRecordingDirectory(dir[], len = sizeof(dir));

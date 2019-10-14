@@ -91,6 +91,40 @@ namespace Natives
 
 		return static_cast<cell>(CPlugin::Get()->GetAFKAccuracy());
 	}
+
+	// native YSF_ToggleNPCOnQuery(toggle);
+	AMX_DECLARE_NATIVE(YSF_ToggleNPCOnQuery) // Nobody: R21
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		CPlugin::Get()->ToggleNPCOnQuery(CScriptParams::Get()->ReadBool());
+		return 1;
+	}
+
+	// native YSF_IsNPCOnQueryEnabled();
+	AMX_DECLARE_NATIVE(YSF_IsNPCOnQueryEnabled) // Nobody: R21
+	{
+		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+
+		return static_cast<cell>(CPlugin::Get()->IsNPCOnQueryEnabled());
+	}
+
+	// native YSF_ToggleNPCOnScoreboard(toggle);
+	AMX_DECLARE_NATIVE(YSF_ToggleNPCOnScoreboard) // Nobody: R21
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		CPlugin::Get()->ToggleNPCOnScoreboard(CScriptParams::Get()->ReadBool());
+		return 1;
+	}
+
+	// native YSF_IsNPCOnQueryEnabled();
+	AMX_DECLARE_NATIVE(YSF_IsNPCOnScoreboardEnabled) // Nobody: R21
+	{
+		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
+
+		return static_cast<cell>(CPlugin::Get()->IsNPCOnScoreboardEnabled());
+	}
 }
 
 static AMX_NATIVE_INFO native_list[] =
@@ -105,6 +139,10 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(YSF_IsExtendedNetStatsEnabled) // R17
 	AMX_DEFINE_NATIVE(YSF_SetAFKAccuracy) // R17
 	AMX_DEFINE_NATIVE(YSF_GetAFKAccuracy) // R17
+	AMX_DEFINE_NATIVE(YSF_ToggleNPCOnQuery) // Nobody: R21
+	AMX_DEFINE_NATIVE(YSF_IsNPCOnQueryEnabled) // Nobody: R21
+	AMX_DEFINE_NATIVE(YSF_ToggleNPCOnScoreboard) // Nobody: R21
+	AMX_DEFINE_NATIVE(YSF_IsNPCOnScoreboardEnabled) // Nobody: R21
 };
 
 void YSFSettingsLoadNatives()

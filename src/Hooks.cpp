@@ -540,7 +540,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						auto &pool = CServer::Get()->PlayerPool;
 						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pool.Extra(r).HiddenInQuery())
+							if (IsPlayerConnected(r) && (!pPlayerPool->bIsNPC[r] || CPlugin::Get()->IsNPCOnQueryEnabled()) && !pool.Extra(r).HiddenInQuery())
 							{
 								szName = (char*)GetPlayerName(r, true);
 								byteNameLen = (BYTE)strlen(szName);
@@ -587,7 +587,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						auto &pool = CServer::Get()->PlayerPool;
 						for (WORD r = 0; r != MAX_PLAYERS; ++r)
 						{
-							if (IsPlayerConnected(r) && !pPlayerPool->bIsNPC[r] && !pool.Extra(r).HiddenInQuery())
+							if (IsPlayerConnected(r) && (!pPlayerPool->bIsNPC[r] || CPlugin::Get()->IsNPCOnQueryEnabled()) && !pool.Extra(r).HiddenInQuery())
 							{
 								memcpy(newdata, &r, sizeof(BYTE));
 								newdata += sizeof(BYTE);

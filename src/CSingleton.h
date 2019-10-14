@@ -36,7 +36,7 @@
 // maddinat0r - thx! https://github.com/maddinat0r/samp-discord-connector/blob/master/src/CSingleton.hpp
 
 #include <memory>
-#include <exception>
+#include <stdexcept>
 #include "linux_fix.h"
 
 template<class T>
