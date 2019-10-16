@@ -103,6 +103,8 @@ native YSF_SetExtendedNetStatsEnabled(enable);
 native YSF_IsExtendedNetStatsEnabled();
 native YSF_SetAFKAccuracy(time_ms);
 native YSF_GetAFKAccuracy();
+native YSF_QueryFloodCheck(toggle);
+native YSF_IsQueryFloodCheckEnabled();
 
 native SetRecordingDirectory(const dir[]);
 native GetRecordingDirectory(dir[], len = sizeof(dir));
@@ -454,6 +456,7 @@ forward OnPlayerPickUpPlayerPickup(playerid, pickupid);
 forward OnPlayerPauseStateChange(playerid, pausestate);
 forward OnPlayerStatsAndWeaponsUpdate(playerid);
 forward OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const command[]);
+forward OnQueryFloodCheck(queryType, binaryAddress);
 forward OnServerMessage(const msg[]);
 forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
 				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);

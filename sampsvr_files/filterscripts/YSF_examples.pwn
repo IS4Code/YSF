@@ -1146,3 +1146,10 @@ public OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31
 }
 */
 
+public OnQueryFloodCheck(queryType, binaryAddress)
+{
+	if (queryType == 'c' || queryType == 'd')
+		return 1;
+	return 0;
+}
+

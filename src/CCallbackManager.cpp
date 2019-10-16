@@ -272,6 +272,24 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 	return static_cast<int>(ret) != 0;
 }
 
+bool CCallbackManager::OnQueryFloodCheck(char queryType, unsigned int binaryAddress)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnQueryFloodCheck", &idx))
+		{
+			amx_Push(iter, static_cast<cell>(binaryAddress));
+			amx_Push(iter, static_cast<cell>(queryType));
+			amx_Exec(iter, &ret, idx);
+
+			if (ret != 0) return 1;
+		}
+	}
+	return 0;
+}
+
 void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
 {
 	int idx = -1;

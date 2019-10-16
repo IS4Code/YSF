@@ -34,7 +34,7 @@
 #define YSF_ADDRESSES_H
 
 #include <type_traits>
-#include <exception>
+#include <stdexcept>
 #include "CFunctions.h"
 #include "Memory.h"
 
