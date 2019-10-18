@@ -275,7 +275,7 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 bool CCallbackManager::OnQueryFloodCheck(char queryType, unsigned int binaryAddress)
 {
 	int idx = -1;
-	cell ret = 1;
+	cell ret = -1;
 	for (auto iter : m_setAMX)
 	{
 		if (!amx_FindPublic(iter, "OnQueryFloodCheck", &idx))
@@ -283,11 +283,11 @@ bool CCallbackManager::OnQueryFloodCheck(char queryType, unsigned int binaryAddr
 			amx_Push(iter, static_cast<cell>(binaryAddress));
 			amx_Push(iter, static_cast<cell>(queryType));
 			amx_Exec(iter, &ret, idx);
-
-			if (ret != 0) return 1;
+			
+			if (!ret) return 0;
 		}
 	}
-	return 0;
+	return (ret == -1 ? false : static_cast<int>(ret) != 0);
 }
 
 void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)

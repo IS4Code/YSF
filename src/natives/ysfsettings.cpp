@@ -92,21 +92,21 @@ namespace Natives
 		return static_cast<cell>(CPlugin::Get()->GetAFKAccuracy());
 	}
 
-	// native YSF_QueryFloodCheck(toggle);
-	AMX_DECLARE_NATIVE(YSF_QueryFloodCheck)
+	// native YSF_SetQueryFloodCheckType(type);
+	AMX_DECLARE_NATIVE(YSF_SetQueryFloodCheckType)
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		CPlugin::Get()->ToggleQueryFloodCheck(CScriptParams::Get()->ReadBool());
+		CPlugin::Get()->SetQueryFloodCheckType(CScriptParams::Get()->ReadInt());
 		return 1;
 	}
 
-	// native YSF_IsQueryFloodCheckEnabled();
-	AMX_DECLARE_NATIVE(YSF_IsQueryFloodCheckEnabled)
+	// native YSF_GetQueryFloodCheckType();
+	AMX_DECLARE_NATIVE(YSF_GetQueryFloodCheckType)
 	{
 		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
-		return static_cast<cell>(CPlugin::Get()->IsQueryFloodCheckEnabled());
+		return static_cast<cell>(CPlugin::Get()->GetQueryFloodCheckType());
 	}
 
 }
@@ -123,8 +123,8 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(YSF_IsExtendedNetStatsEnabled) // R17
 	AMX_DEFINE_NATIVE(YSF_SetAFKAccuracy) // R17
 	AMX_DEFINE_NATIVE(YSF_GetAFKAccuracy) // R17
-	AMX_DEFINE_NATIVE(YSF_QueryFloodCheck) // Nobody: no tag yet.
-	AMX_DEFINE_NATIVE(YSF_IsQueryFloodCheckEnabled) // Nobody: no tag yet.
+	AMX_DEFINE_NATIVE(YSF_SetQueryFloodCheckType) // Nobody: no tag yet.
+	AMX_DEFINE_NATIVE(YSF_GetQueryFloodCheckType) // Nobody: no tag yet.
 };
 
 void YSFSettingsLoadNatives()

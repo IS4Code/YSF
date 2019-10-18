@@ -103,8 +103,8 @@ native YSF_SetExtendedNetStatsEnabled(enable);
 native YSF_IsExtendedNetStatsEnabled();
 native YSF_SetAFKAccuracy(time_ms);
 native YSF_GetAFKAccuracy();
-native YSF_QueryFloodCheck(toggle);
-native YSF_IsQueryFloodCheckEnabled();
+native YSF_SetQueryFloodCheckType(type);
+native YSF_GetQueryFloodCheckType();
 
 native SetRecordingDirectory(const dir[]);
 native GetRecordingDirectory(dir[], len = sizeof(dir));

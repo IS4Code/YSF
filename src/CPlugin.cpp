@@ -48,7 +48,7 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 	m_iTickRate = 5;
 	m_bNightVisionFix = true;
 	m_bOnServerMessage = false;
-	m_bQueryFloodCheck = true;
+	m_iQueryFloodCheck = 1;
 	m_dwAFKAccuracy = 1500;
 	
 	// Loading configurations from plugins/YSF.cfg

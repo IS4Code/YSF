@@ -110,8 +110,8 @@ public:
 	void SetAFKAccuracy(DWORD time_ms) { m_dwAFKAccuracy = time_ms; }
 	DWORD GetAFKAccuracy(void) { return m_dwAFKAccuracy; }
 
-	void ToggleQueryFloodCheck(bool toggle) { m_bQueryFloodCheck = toggle; }
-	bool IsQueryFloodCheckEnabled(void) { return m_bQueryFloodCheck; }
+	void SetQueryFloodCheckType(int type) { m_iQueryFloodCheck = type; }
+	int GetQueryFloodCheckType(void) { return m_iQueryFloodCheck; }
 
 
 	WORD GetMaxPlayers();
@@ -157,7 +157,7 @@ private:
 	int m_iTickRate;
 	bool m_bNightVisionFix : 1;
 	bool m_bOnServerMessage : 1;
-	bool m_bQueryFloodCheck : 1;
+	int m_iQueryFloodCheck;
 	
 	bool m_bExclusiveBroadcast = 0;
 

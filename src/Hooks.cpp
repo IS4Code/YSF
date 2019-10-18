@@ -354,12 +354,22 @@ void RconSocketReply(char* szMessage)
 }
 
 //----------------------------------------------------
+int GetProtectionTicks(char queryType)
+{
+	switch (queryType)
+	{
+	case 'i': return 2;
+	case 'p': return 1;
+	}
+	return 25;
+}
+
 // bool CheckQueryFlood()
 // returns 1 if this query could flood
 // returns 0 otherwise
 bool CheckQueryFlood(char queryType, unsigned int binaryAddress)
 {
-	if (CPlugin::Get()->IsQueryFloodCheckEnabled())
+	if (((queryType == 'i' || queryType == 'p') && CPlugin::Get()->GetQueryFloodCheckType() > 0) || (queryType != 'i' && queryType != 'p' && CPlugin::Get()->GetQueryFloodCheckType() >= 0))
 	{
 		static DWORD dwLastQueryTick = 0;
 		static unsigned int lastBinAddr = 0;
@@ -368,18 +378,19 @@ bool CheckQueryFlood(char queryType, unsigned int binaryAddress)
 		{
 			dwLastQueryTick = static_cast<DWORD>(GetTickCount());
 			lastBinAddr = binaryAddress;
-			return 0;
+			return CCallbackManager::OnQueryFloodCheck(queryType, binaryAddress); // 0
 		}
+
 		if (lastBinAddr != binaryAddress)
 		{
-			if ((static_cast<DWORD>(GetTickCount()) - dwLastQueryTick) < 25)
+			if ((static_cast<DWORD>(GetTickCount()) - dwLastQueryTick) < (unsigned int)GetProtectionTicks(queryType))
 				return 1;
 
 			dwLastQueryTick = static_cast<DWORD>(GetTickCount());
 			lastBinAddr = binaryAddress;
 		}
 	}
-	return CCallbackManager::OnQueryFloodCheck(queryType, binaryAddress); // return 0;
+	return CCallbackManager::OnQueryFloodCheck(queryType, binaryAddress); // 0
 }
 
 //----------------------------------------------------
@@ -412,6 +423,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				{
 					if (length == 15)
 					{
+						if (CheckQueryFlood(data[10], binaryAddress)) return 1;
 						sendto(s, data, 15, 0, (sockaddr*)&to, sizeof(to));
 					}
 					break;
