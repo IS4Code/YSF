@@ -1054,6 +1054,27 @@ namespace Natives
 		return 1;
 	}
 
+	// native GetPlayerSyncWeapon(playerid);
+	AMX_DECLARE_NATIVE(GetPlayerSyncWeapon)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		switch(pPlayer->byteState)
+		{
+			case PLAYER_STATE_ONFOOT:
+				return pPlayer->syncData.byteWeapon;
+			case PLAYER_STATE_DRIVER:
+				return pPlayer->vehicleSyncData.bytePlayerWeapon;
+			case PLAYER_STATE_PASSENGER:
+				return pPlayer->passengerSyncData.bytePlayerWeapon;
+		}
+		return 0;
+	}
+
 	// native SetPlayerSyncWeaponState(playerid, weaponstate);
 	AMX_DECLARE_NATIVE(SetPlayerSyncWeaponState)
 	{
@@ -1522,6 +1543,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncCameraPos) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncCameraMode) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncWeapon) // R20
+	AMX_DEFINE_NATIVE(GetPlayerSyncWeapon) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncWeaponState) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncSpecialAction) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncHealth) // R20

@@ -185,6 +185,7 @@ native SetPlayerSyncCameraFrontVector(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraPos(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraMode(playerid, mode);
 native SetPlayerSyncWeapon(playerid, weaponid);
+native GetPlayerSyncWeapon(playerid);
 native SetPlayerSyncWeaponState(playerid, weaponstate);
 native SetPlayerSyncSpecialAction(playerid, actionid);
 native SetPlayerSyncHealth(playerid, Float:health);
