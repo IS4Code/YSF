@@ -228,6 +228,8 @@ public:
 	DECLARE_FUNC_PTR(Packet_StatsUpdate);
 	DECLARE_FUNC_PTR(format_amxstring);
 
+	DECLARE_FUNC_PTR(ReplaceBadChars);
+
 #ifdef SAMP_03DL
 	DECLARE_FUNC_PTR(ClientJoin);
 	DECLARE_FUNC_PTR(AddSimpleModel);

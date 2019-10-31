@@ -244,6 +244,21 @@ namespace Natives
 		return 0;
 	}
 
+	// native ToggleChatTextReplacement(bool:toggle);
+	AMX_DECLARE_NATIVE(ToggleChatTextReplacement)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		CPlugin::Get()->ToggleChatTextReplacement(CScriptParams::Get()->ReadBool());
+		return 1;
+	}
+
+	// native bool:ChatTextReplacementToggled();
+	AMX_DECLARE_NATIVE(ChatTextReplacementToggled)
+	{
+		return CPlugin::Get()->ChatTextReplacementToggled();
+	}
+
 	// native GetServerSettings(&showplayermarkes, &shownametags, &stuntbonus, &useplayerpedanims, &bLimitchatradius, &disableinteriorenterexits, &nametaglos, &manualvehicleengine, 
 	//		&limitplayermarkers, &vehiclefriendlyfire, &defaultcameracollision, &Float:fGlobalchatradius, &Float:fNameTagDrawDistance, &Float:fPlayermarkerslimit);
 	AMX_DECLARE_NATIVE(GetServerSettings)
@@ -759,6 +774,9 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(RemoveServerRule) // Doesn't work!
 	AMX_DEFINE_NATIVE(SetServerRuleFlags)
 	AMX_DEFINE_NATIVE(GetServerRuleFlags)
+
+	AMX_DEFINE_NATIVE(ToggleChatTextReplacement) // R20
+	AMX_DEFINE_NATIVE(ChatTextReplacementToggled) // R20
 
 	// Server settings
 	AMX_DEFINE_NATIVE(GetServerSettings)

@@ -125,6 +125,9 @@ public:
 
 	bool IsMainThread() const;
 
+	void ToggleChatTextReplacement(bool toggle) { chatReplacement = toggle; };
+	bool ChatTextReplacementToggled() const { return chatReplacement; };
+
 #ifdef SAMP_03DL
 	void CacheModelInfo(CModelInfo* info);
 	CModelInfo* FindCachedModelInfo(const char *dffname, const char *txdname);
@@ -164,6 +167,7 @@ private:
 	std::set<char> m_vecValidNameCharacters;
 
 	std::thread::id main_thread;
+	bool chatReplacement = true;
 #ifdef SAMP_03DL
 	std::unordered_map<std::pair<std::string, std::string>, CModelInfo*, aux::pair_hash> m_modelCache;
 #endif

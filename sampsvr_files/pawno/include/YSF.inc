@@ -72,6 +72,10 @@ native IsValidServerRule(const name[]);
 native SetServerRuleFlags(const name[], E_SERVER_RULE_FLAGS:flags);
 native E_SERVER_RULE_FLAGS:GetServerRuleFlags(const name[]);
 
+// Chat character replacement
+native ToggleChatTextReplacement(bool:toggle);
+native bool:ChatTextReplacementToggled();
+
 // Server settings
 native GetServerSettings(&showplayermarkes, &shownametags = 0, &stuntbonus = 0, &useplayerpedanims = 0, &bLimitchatradius = 0, &disableinteriorenterexits = 0, &nametaglos = 0, &manualvehicleengine = 0, &limitplayermarkers = 0, &vehiclefriendlyfire = 0, &defaultcameracollision = 0, &Float:fGlobalchatradius = 0.0, &Float:fNameTagDrawDistance = 0.0, &Float:fPlayermarkerslimit = 0.0);
 native GetNPCCommandLine(npcid, npcscript[], length = sizeof(npcscript));

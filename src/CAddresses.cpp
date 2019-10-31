@@ -90,6 +90,8 @@ DEFINE_FUNC_PTR(Packet_WeaponsUpdate);
 DEFINE_FUNC_PTR(Packet_StatsUpdate);
 DEFINE_FUNC_PTR(format_amxstring);
 
+DEFINE_FUNC_PTR(ReplaceBadChars);
+
 #ifdef SAMP_03DL
 DEFINE_FUNC_PTR(ClientJoin);
 DEFINE_FUNC_PTR(AddSimpleModel);
@@ -185,7 +187,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 
 	ADDR_WrongPacketIDBranch =						0x004591FC;
 
-	//FUNC_ClientJoin =							0x004966A0;
+	FUNC_ReplaceBadChars = 0x00468F20;
 	#else
 
 	// Thx for Mellnik
@@ -236,6 +238,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnDialogResponse = 0x80A6750;
 
 	ADDR_WrongPacketIDBranch = 0x080752FC;
+
+	FUNC_ReplaceBadChars = 0x080D5CA0;
 
 	switch(sampVersion)
 	{
