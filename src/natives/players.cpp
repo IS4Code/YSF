@@ -1290,6 +1290,77 @@ namespace Natives
 		if(!IsPlayerConnected(playerid)) return 0;
 		return static_cast<cell>(pNetGame->pPlayerPool->pRemoteSystem[playerid]->connectMode);
 	}
+
+	// native SendPlayerClientGameInit(playerid, bool:usecjwalk=bool:-1, bool:limitglobalchat=bool:-1, Float:globalchatradius=Float:-1, Float:nametagdistance=Float:-1, bool:disableenterexits=bool:-1, bool:nametaglos=bool:-1, bool:manualvehengineandlights=bool:-1, spawnsavailable=-1, bool:shownametags=bool:-1, bool:showplayermarkers=bool:-1, onfoot_rate=-1, incar_rate=-1, weapon_rate=-1, lagcompmode=-1, bool:vehiclefriendlyfire=bool:-1, const hostname[]="");
+	AMX_DECLARE_NATIVE(SendPlayerClientGameInit)
+	{
+		CHECK_PARAMS(17, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+		bool usecjwalk = params[2] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bUseCJWalk) != 0;
+		bool limitglobalchat = params[3] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bLimitGlobalChatRadius) != 0;
+		float globalchatradius = params[4] != -1 ? CScriptParams::Get()->ReadFloat() : pNetGame->fGlobalChatRadius;
+		float nametagdistance = params[5] != -1 ? CScriptParams::Get()->ReadFloat() : pNetGame->fNameTagDrawDistance;
+		bool disableenterexits = params[6] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->byteDisableEnterExits) != 0;
+		bool nametaglos = params[7] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->byteNameTagLOS) != 0;
+		bool manualvehengineandlights = params[8] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bManulVehicleEngineAndLights) != 0;
+		int spawnsavailable = params[9] != -1 ? CScriptParams::Get()->ReadInt() : pNetGame->iSpawnsAvailable;
+		bool shownametags = params[10] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->byteShowNameTags) != 0;
+		bool showplayermarkers = params[11] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bShowPlayerMarkers) != 0;
+		int onfoot_rate = params[12] != -1 ? CScriptParams::Get()->ReadInt() : CSAMPFunctions::GetIntVariable("onfoot_rate");
+		int incar_rate = params[13] != -1 ? CScriptParams::Get()->ReadInt() : CSAMPFunctions::GetIntVariable("incar_rate");
+		int weapon_rate = params[14] != -1 ? CScriptParams::Get()->ReadInt() : CSAMPFunctions::GetIntVariable("weapon_rate");
+		int lagcompmode = params[15] != -1 ? CScriptParams::Get()->ReadInt() : CSAMPFunctions::GetIntVariable("lagcompmode");
+		bool vehiclefriendlyfire = params[16] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bVehicleFriendlyFire) != 0;
+
+		RakNet::BitStream bsSync;
+		bsSync.Write((bool)!!pNetGame->byteEnableZoneNames);
+		bsSync.Write((bool)usecjwalk);
+		bsSync.Write((bool)!!pNetGame->byteAllowWeapons);
+		bsSync.Write(limitglobalchat);
+		bsSync.Write(globalchatradius);
+		bsSync.Write((bool)!!pNetGame->byteStuntBonus);
+		bsSync.Write(nametagdistance);
+		bsSync.Write(disableenterexits);
+		bsSync.Write(nametaglos);
+		bsSync.Write(manualvehengineandlights);
+		bsSync.Write(pNetGame->iSpawnsAvailable);
+		bsSync.Write((WORD)playerid);
+		bsSync.Write(shownametags);
+		bsSync.Write((int)showplayermarkers);
+		bsSync.Write(pNetGame->byteWorldTimeHour);
+		bsSync.Write(pNetGame->byteWeather);
+		bsSync.Write(pNetGame->fGravity);
+		bsSync.Write((bool)!!pNetGame->bLanMode);
+		bsSync.Write(pNetGame->iDeathDropMoney);
+		bsSync.Write(false);
+		bsSync.Write(onfoot_rate);
+		bsSync.Write(incar_rate);
+		bsSync.Write(weapon_rate);
+		bsSync.Write((int)2);
+		bsSync.Write(lagcompmode);
+
+		std::string hostname;
+		CScriptParams::Get()->Read(hostname);
+
+		const char* szHostName = !hostname.empty() ? hostname.c_str() : CSAMPFunctions::GetStringVariable("hostname");
+		if(szHostName)
+		{
+			size_t len = strlen(szHostName);
+			bsSync.Write((BYTE)len);
+			bsSync.Write(szHostName, len);
+		} else
+		{
+			bsSync.Write((BYTE)0);
+		}
+		bsSync.Write((char*)&pNetGame->pVehiclePool, 212); // modelsUsed
+		bsSync.Write((DWORD)vehiclefriendlyfire);
+
+		CSAMPFunctions::RPC(&RPC_InitGame, &bsSync, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+
+		return 1;
+	}
 }
 
 namespace Original
@@ -1558,6 +1629,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(UpdatePlayerSyncData) // R20
 	AMX_DEFINE_NATIVE(SetPlayerConnectMode) // R20
 	AMX_DEFINE_NATIVE(GetPlayerConnectMode) // R20
+	AMX_DEFINE_NATIVE(SendPlayerClientGameInit) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =

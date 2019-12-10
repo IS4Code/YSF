@@ -302,7 +302,7 @@ void CCallbackManager::OnVehicleSpawn(WORD vehicleid)
 
 void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bool* limitglobalchat, float* globalchatradius, float* nametagdistance, 
 	bool* disableenterexits, bool* nametaglos, bool* manualvehengineandlights, int* spawnsavailable, bool* shownametags, bool* showplayermarkers, 
-	int* onfoot_rate, int* incar_rate, int* weapon_rate, int* lacgompmode, bool* vehiclefriendlyfire)
+	int* onfoot_rate, int* incar_rate, int* weapon_rate, int* lagcompmode, bool* vehiclefriendlyfire)
 {
 	int idx = -1;
 	cell ret = 1;
@@ -315,7 +315,7 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 
 			dwTemp = *vehiclefriendlyfire;
 			amx_PushArray(iter, &amx_addr, &phys_ptr, reinterpret_cast<cell*>(&dwTemp), 1);							// 0
-			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(lacgompmode), 1);					// 1
+			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(lagcompmode), 1);					// 1
 			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(weapon_rate), 1);					// 2
 			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(incar_rate), 1);					// 3
 			amx_PushArray(iter, &amx_addr_last, &temp_ptr, reinterpret_cast<cell*>(onfoot_rate), 1);					// 4
@@ -348,7 +348,7 @@ void CCallbackManager::OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bo
 			amx_Release(iter, amx_addr);
 
 			*vehiclefriendlyfire = static_cast<int>(phys_ptr[0]) != 0;
-			*lacgompmode = static_cast<int>(phys_ptr[1]);
+			*lagcompmode = static_cast<int>(phys_ptr[1]);
 			*weapon_rate = static_cast<int>(phys_ptr[2]);
 			*incar_rate = static_cast<int>(phys_ptr[3]);
 			*onfoot_rate = static_cast<int>(phys_ptr[4]);

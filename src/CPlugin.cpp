@@ -818,11 +818,11 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			int onfoot_rate = CSAMPFunctions::GetIntVariable("onfoot_rate");
 			int incar_rate = CSAMPFunctions::GetIntVariable("incar_rate");
 			int weapon_rate = CSAMPFunctions::GetIntVariable("weapon_rate");
-			int lacgompmode = CSAMPFunctions::GetIntVariable("lagcompmode");
+			int lagcompmode = CSAMPFunctions::GetIntVariable("lagcompmode");
 			bool vehiclefriendlyfire = static_cast<int>(pNetGame->bVehicleFriendlyFire) != 0;
 
 			CCallbackManager::OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
-				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
+				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lagcompmode, &vehiclefriendlyfire);
 
 			bsSync->Reset();
 			bsSync->Write((bool)!!pNetGame->byteEnableZoneNames);
@@ -849,7 +849,7 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			bsSync->Write(incar_rate);
 			bsSync->Write(weapon_rate);
 			bsSync->Write((int)2);
-			bsSync->Write(lacgompmode);
+			bsSync->Write(lagcompmode);
 
 			const char* szHostName = CSAMPFunctions::GetStringVariable("hostname");
 			if (szHostName)
