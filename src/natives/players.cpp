@@ -818,13 +818,16 @@ namespace Natives
 		BYTE state = pNetGame->pPlayerPool->pPlayer[playerid]->byteState;
 		switch (state)
 		{
-		case PLAYER_STATE_ONFOOT:
-		case PLAYER_STATE_DRIVER:
-		case PLAYER_STATE_PASSENGER:
-		case PLAYER_STATE_SPAWNED:
-		{
-			return true;
-		}
+		   case PLAYER_STATE_ONFOOT:
+		   case PLAYER_STATE_DRIVER:
+		   case PLAYER_STATE_PASSENGER:
+		   case PLAYER_STATE_EXIT_VEHICLE:
+		   case PLAYER_STATE_ENTER_VEHICLE_DRIVER:
+		   case PLAYER_STATE_ENTER_VEHICLE_PASSENGER:
+                   case PLAYER_STATE_SPAWNED:
+		   {
+		      return true;
+		   }
 		}
 		return false;
 	}
