@@ -1,6 +1,9 @@
 language: cpp
 compiler: gcc
 dist: trusty
+addons:
+  artifacts: true
+  s3_region: "us-west-1"
 
 before_install:
   # C++14
