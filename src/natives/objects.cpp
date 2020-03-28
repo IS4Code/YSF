@@ -804,11 +804,14 @@ namespace Hooks
 
 			CServer::Get()->PlayerPool.MapExtra(playerid, [=](CPlayerData &data)
 			{
-				for (auto o = data.m_PlayerObjectMaterialText.begin(); o != data.m_PlayerObjectMaterialText.end(); ++o)
+				auto o = data.m_PlayerObjectMaterialText.begin();
+				while(o != data.m_PlayerObjectMaterialText.end())
 				{
-					if (o->first == objectid)
+					if(o->first == objectid)
 					{
 						o = data.m_PlayerObjectMaterialText.erase(o);
+					} else {
+						++o;
 					}
 				}
 				data.DeleteObjectAddon(static_cast<WORD>(objectid));
@@ -920,11 +923,14 @@ namespace Hooks
 				CScriptParams::Get()->Read(slot, modelid, szTXD, szTexture, color);
 				
 				CPlayerData &data = CServer::Get()->PlayerPool.Extra(playerid);
-				for (auto o = data.m_PlayerObjectMaterialText.begin(); o != data.m_PlayerObjectMaterialText.end(); ++o)
+				auto o = data.m_PlayerObjectMaterialText.begin();
+				while(o != data.m_PlayerObjectMaterialText.end())
 				{
-					if (o->first == objectid)
+					if(o->first == objectid)
 					{
 						o = data.m_PlayerObjectMaterialText.erase(o);
+					} else {
+						++o;
 					}
 				}
 
