@@ -256,7 +256,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 			VAR_pPosSyncBounds[2] =						0x08150718;
 			VAR_pPosSyncBounds[3] =						0x08150714;
 			ADDR_RecordingDirectory =					0x080CC7D2;
-			FUNC_CVehicle__Respawn =					0x814B4C0;
+			FUNC_CVehicle__Respawn =					FindPattern("\x55\x31\xD2\x89\xE5\x57\xB9\x00\x00\x00\x00\x53", "xxxxxxx????x");
 			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
 			VAR_wRCONUser =								0x08197DF0;
 			ARRAY_ConsoleCommands =						0x08196920;
