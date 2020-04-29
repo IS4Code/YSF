@@ -18,6 +18,7 @@ public:
 	int m_iRakNetInternalSleepTime;
 	int m_iAttachObjectDelay;
 	bool m_bStorePlayerObjectsMaterial : 1;
+	bool m_bGroupPlayerObjects : 1;
 };
 
 #endif

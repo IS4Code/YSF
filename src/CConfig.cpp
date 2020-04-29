@@ -45,6 +45,9 @@ CConfig::CConfig()
 		fprintf(fileConfig, "\n");
 		fprintf(fileConfig, "# With this option you can load YSF on whatever server version, but it can result unwanted behavior\n");
 		fprintf(fileConfig, "SkipVersionCheck 0\n");
+		fprintf(fileConfig, "\n");
+		fprintf(fileConfig, "# This option makes newly created player objects prioritize IDs used by other existing player objects.\n");
+		fprintf(fileConfig, "GroupPlayerObjects 0\n");
 
 		fclose(fileConfig);
 	}
@@ -59,6 +62,7 @@ CConfig::CConfig()
 	m_iRakNetInternalSleepTime = Utility::CFGLoad("RakNetInternalSleepTime");
 	m_iAttachObjectDelay = Utility::CFGLoad("AttachObjectDelay");
 	m_bStorePlayerObjectsMaterial = static_cast<int>(Utility::CFGLoad("StorePlayerObjectsMaterial") != 0);
+	m_bGroupPlayerObjects = static_cast<int>(Utility::CFGLoad("GroupPlayerObjects") != 0);
 
 	//logprintf("%d, %d, %d, %d", m_bPickupProtection, m_bDeathProtection, m_iRakNetInternalSleepTime, m_iAttachObjectDelay);
 }

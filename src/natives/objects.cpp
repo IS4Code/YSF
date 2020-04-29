@@ -679,6 +679,8 @@ namespace Original
 	AMX_NATIVE SetPlayerObjectMaterialText;
 }
 
+cell min_player_object = INVALID_OBJECT_ID;
+
 namespace Hooks
 {
 	// native DestroyObject(objectid)
@@ -708,7 +710,69 @@ namespace Hooks
 	// native CreatePlayerObject(playerid, ...)
 	AMX_DECLARE_NATIVE(CreatePlayerObject)
 	{
-		return Original::CreatePlayerObject(amx, params);
+		if(CConfig::Get()->m_bGroupPlayerObjects)
+		{
+			CHECK_PARAMS(1, MORE_PARAMETER_ALLOWED);
+			int playerid = CScriptParams::Get()->ReadInt();
+			if(playerid >= 0 && playerid < MAX_PLAYERS && min_player_object != INVALID_OBJECT_ID)
+			{
+				auto pool = pNetGame->pObjectPool;
+				if(!pool->bPlayersObject[min_player_object])
+				{
+					min_player_object = INVALID_OBJECT_ID;
+				}
+				if(min_player_object != INVALID_OBJECT_ID)
+				{
+					cell create_at = min_player_object;
+					if(CServer::Get()->PlayerObjectPool.IsValid(playerid, create_at))
+					{
+						for(cell i = create_at + 1; i < MAX_OBJECTS; i++)
+						{
+							if(!pool->bObjectSlotState[i] && pool->bPlayersObject[i] && !pool->bPlayerObjectSlotState[playerid][i])
+							{
+								create_at = i;
+								break;
+							}
+						}
+						if(create_at == min_player_object)
+						{
+							cell result = Original::CreatePlayerObject(amx, params);
+							if(result != INVALID_OBJECT_ID && result < min_player_object)
+							{
+								min_player_object = result;
+							}
+							return result;
+						}
+					}
+					for(cell i = 1; i < create_at; i++)
+					{
+						if(!pool->bObjectSlotState[i] && !pool->bPlayersObject[i])
+						{
+							pool->bObjectSlotState[i] = true;
+							pool->bPlayersObject[i] = true;
+						}
+					}
+					cell result = Original::CreatePlayerObject(amx, params);
+					for(cell i = 1; i < create_at; i++)
+					{
+						if(pool->bObjectSlotState[i] && pool->bPlayersObject[i])
+						{
+							pool->bObjectSlotState[i] = false;
+							pool->bPlayersObject[i] = false;
+						}
+					}
+					return result;
+				}
+			}
+			cell result = Original::CreatePlayerObject(amx, params);
+			if(result != INVALID_OBJECT_ID && result < min_player_object)
+			{
+				min_player_object = result;
+			}
+			return result;
+		} else {
+			return Original::CreatePlayerObject(amx, params);
+		}
 	}
 
 	// native DestroyPlayerObject(playerid, objectid)
@@ -737,6 +801,21 @@ namespace Hooks
 				}
 				data.DeleteObjectAddon(static_cast<WORD>(objectid));
 			});
+
+			if(objectid == min_player_object)
+			{
+				auto pool = pNetGame->pObjectPool;
+				cell i = min_player_object + 1;
+				min_player_object = INVALID_OBJECT_ID;
+				for(; i < MAX_OBJECTS; i++)
+				{
+					if(!pool->bObjectSlotState[i] && pool->bPlayersObject[i])
+					{
+						min_player_object = i;
+						break;
+					}
+				}
+			}
 
 			return 1;
 		}
