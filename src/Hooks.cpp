@@ -900,9 +900,9 @@ void InstallPreHooks()
 	amx_Register_hook = subhook_new(reinterpret_cast<void*>(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register]), reinterpret_cast<void*>(HOOK_amx_Register), static_cast<subhook_options_t>(NULL));
 	subhook_install(amx_Register_hook);
 	
-	query_hook = Hook(CAddress::FUNC_ProcessQueryPacket, HOOK_ProcessQueryPacket);
+	query_hook = Hook(CAddress::FUNC_ProcessQueryPacket, HOOK_ProcessQueryPacket);*/
 	CVehicle__Respawn_hook = Hook(CAddress::FUNC_CVehicle__Respawn, HOOK_CVehicle__Respawn);
-	
+	/*
 #ifdef SAMP_03DL
 	//ClientJoin_hook = Hook(CAddress::FUNC_ClientJoin, HOOK_ClientJoin);
 	//AddSimpleModel_hook = Hook(CAddress::FUNC_AddSimpleModel, HOOK_AddSimpleModel);
@@ -968,9 +968,9 @@ void UninstallHooks()
 	SUBHOOK_REMOVE(Namecheck_hook);
 	SUBHOOK_REMOVE(amx_Register_hook);
 	SUBHOOK_REMOVE(query_hook);
-	SUBHOOK_REMOVE(logprintf_hook);
+	SUBHOOK_REMOVE(logprintf_hook);*/
 	SUBHOOK_REMOVE(CVehicle__Respawn_hook);
-	SUBHOOK_REMOVE(CGameMode__OnPlayerConnect_hook);
+	/*SUBHOOK_REMOVE(CGameMode__OnPlayerConnect_hook);
 	SUBHOOK_REMOVE(CGameMode__OnPlayerDisconnect_hook);
 	SUBHOOK_REMOVE(CGameMode__OnPlayerSpawn_hook);
 	SUBHOOK_REMOVE(CGameMode__OnPlayerStreamIn_hook);
