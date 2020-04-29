@@ -43,7 +43,7 @@ namespace Natives
 		const int textdrawid = CScriptParams::Get()->ReadInt();
 		if (textdrawid < 0 || textdrawid >= MAX_TEXT_DRAWS) return 0;
 
-		const char *szText = (pNetGame->pTextDrawPool->bSlotState[textdrawid]) ? pNetGame->pTextDrawPool->szFontText[textdrawid] : '\0';
+		const char *szText = (pNetGame->pTextDrawPool->bSlotState[textdrawid]) ? pNetGame->pTextDrawPool->szFontText[textdrawid] : "";
 		return set_amxstring(amx, params[2], szText, params[3]);
 	}
 
@@ -368,7 +368,7 @@ namespace Natives
 		bool bIsValid = static_cast<int>(pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->bSlotState[textdrawid]) != 0;
 		if (!bIsValid) return 0;
 
-		const char *szText = (bIsValid) ? pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->szFontText[textdrawid] : '\0';
+		const char *szText = (bIsValid) ? pNetGame->pPlayerPool->pPlayer[playerid]->pTextdraw->szFontText[textdrawid] : "";
 		return set_amxstring(amx, params[3], szText, params[4]);
 	}
 
