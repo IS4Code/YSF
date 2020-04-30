@@ -309,7 +309,7 @@ native GetVehicleRespawnTick(vehicleid); // GetTickCount() - GetVehicleRespawnTi
 native GetVehicleLastDriver(vehicleid);
 native GetVehicleCab(vehicleid);
 native HasVehicleBeenOccupied(vehicleid);
-native SetVehicleBeenOccupied(vehicleid, occupied);
+native SetVehicleBeenOccupied(vehicleid, bool:occupied);
 native IsVehicleOccupied(vehicleid);
 native IsVehicleDead(vehicleid);
 native SetVehicleDead(vehicleid, bool:dead);
