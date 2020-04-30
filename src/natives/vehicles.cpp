@@ -89,7 +89,7 @@ namespace Natives
 		int respawntime = CScriptParams::Get()->ReadInt();
 		if (respawntime >= -1)
 		{
-			spawn.iRespawnTime = respawntime;
+			spawn.iRespawnTime = respawntime * 1000;
 		}
 
 		int interior = CScriptParams::Get()->ReadInt();
