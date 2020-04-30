@@ -89,7 +89,7 @@ namespace Natives
 		int respawntime = CScriptParams::Get()->ReadInt();
 		if (respawntime >= -1)
 		{
-			spawn.iRespawnTime = respawntime * 1000;
+			spawn.iRespawnTime = respawntime > 0 ? respawntime * 1000 : respawntime;
 		}
 
 		int interior = CScriptParams::Get()->ReadInt();
@@ -227,7 +227,9 @@ namespace Natives
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
 
-		pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iRespawnTime = (CScriptParams::Get()->ReadInt() * 1000);
+		cell delay = CScriptParams::Get()->ReadInt();
+
+		pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iRespawnTime = delay > 0 ? delay * 1000 : delay;
 		return 1;
 	}
 
@@ -242,7 +244,9 @@ namespace Natives
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
 
-		return pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iRespawnTime / 1000;
+		int delay = pNetGame->pVehiclePool->pVehicle[vehicleid]->customSpawn.iRespawnTime;
+
+		return delay > 0 ? delay / 1000 : delay;
 	}
 
 	// native SetVehicleOccupiedTick(vehicleid, ticks);
