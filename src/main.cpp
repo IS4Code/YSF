@@ -112,7 +112,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	}
 	else
 	{
-		logprintf("Error: Unknown " OS_NAME " server version");
+		logprintf("Error: Unknown " OS_NAME " server version (0x%08X)", ppData[PLUGIN_DATA_LOGPRINTF]);
 		logprintf("Error: Big part of YSF will be unusable for you");
 	}
 	return true;
