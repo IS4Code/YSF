@@ -8,6 +8,7 @@
 #else
 #include <unistd.h>
 #include <sys/mman.h>
+#include <link.h>
 #endif
 
 #include "includes/platform.h"
@@ -41,25 +42,49 @@ bool memory_compare(const BYTE *data, const BYTE *pattern, const char *mask)
 
 DWORD FindPattern(char *pattern, char *mask)
 {
-	DWORD i;
-	DWORD size;
-	DWORD address;
 #ifdef _WIN32
-	MODULEINFO info = { 0 };
+	MODULEINFO info = {0};
 
-	address = (DWORD)GetModuleHandle(NULL);
+	DWORD address = (DWORD)GetModuleHandle(NULL);
 	GetModuleInformation(GetCurrentProcess(), GetModuleHandle(NULL), &info, sizeof(MODULEINFO));
-	size = (DWORD)info.SizeOfImage;
-#else
-	address = 0x804b480; // around the elf base
-	size = 0x8128B80 - address;
-#endif
-	for (i = 0; i < size; ++i)
+	DWORD size = (DWORD)info.SizeOfImage;
+
+	for(DWORD i = 0; i < size; ++i)
 	{
-		if (memory_compare((BYTE *)(address + i), (BYTE *)pattern, mask))
+		if(memory_compare((BYTE *)(address + i), (BYTE *)pattern, mask))
+		{
 			return (DWORD)(address + i);
+		}
 	}
 	return 0;
+#else
+	struct {
+		DWORD result;
+		char *pattern;
+		char *mask;
+	} pinfo;
+	pinfo.result = 0;
+	pinfo.pattern = pattern;
+	pinfo.mask = mask;
+	dl_iterate_phdr([](struct dl_phdr_info* info, size_t, void *data) {
+		auto info2 = reinterpret_cast<decltype(pinfo)*>(data);
+		for(int s = 0; s < info->dlpi_phnum; s++)
+		{
+			DWORD address = info->dlpi_addr + info->dlpi_phdr[s].p_vaddr;
+			DWORD size = info->dlpi_phdr[s].p_memsz;
+			for(DWORD i = 0; i < size; ++i)
+			{
+				if(memory_compare((BYTE *)(address + i), (BYTE *)info2->pattern, info2->mask))
+				{
+					info2->result = (DWORD)(address + i);
+					return 1;
+				}
+			}
+		}
+		return 1;
+	}, reinterpret_cast<void*>(&pinfo));
+	return pinfo.result;
+#endif
 }
 
 void InstallJump(unsigned long addr, void *func)
