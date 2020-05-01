@@ -82,7 +82,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	if(addr == CAddress::FUNC_Logprintf_037_R2_1 || Utility::CFGLoad("SkipVersionCheck"))
 	{
 		version = SAMPVersion::VERSION_037_R2;
-		strcpy(szVersion, "0.3.7 R2-1");
+		strcpy(szVersion, "0.3.7 R2-1 or R2-2");
 	}else if(addr == CAddress::FUNC_Logprintf_03DL_R1)
 	{
 		logprintf("This version of YSF doesn't support SA-MP 0.3.DL");
