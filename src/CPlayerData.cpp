@@ -426,11 +426,6 @@ bool CPlayerData::IsObjectHidden(WORD objectid) const
 	CObject *pObject = pNetGame->pObjectPool->pObjects[objectid];
 	if (!pObject) return false;
 
-	if (m_HideNewObjects)
-	{
-		return true;
-	}
-
 	return m_HiddenObjects.find(objectid) != m_HiddenObjects.end();
 }
 

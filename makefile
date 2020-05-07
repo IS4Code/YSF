@@ -5,8 +5,8 @@
 # make YSF
 #
 
-GPP = g++ -m32 -std=c++11 -Ilib -fno-stack-protector -nodefaultlibs
-GCC = gcc -m32 -Ilib -fno-stack-protector -nodefaultlibs
+GPP = g++ -D _GLIBCXX_USE_CXX11_ABI=0 -m32 -std=c++11 -Ilib -fno-stack-protector -nodefaultlibs
+GCC = gcc -D _GLIBCXX_USE_CXX11_ABI=0 -m32 -Ilib -fno-stack-protector -nodefaultlibs
 LINK = $(GCC)
 YSF_OUTFILE = "./YSF.so"
 
@@ -19,8 +19,8 @@ all: YSF
 clean:
 	-rm -f *~ *.o *.so
   
-static: GPP = g++ -m32 -std=c++11 -Ilib -fno-stack-protector -static-libgcc -static-libstdc++
-static: GCC = gcc -m32 -Ilib -fno-stack-protector -static-libgcc -static-libstdc++
+static: GPP = g++ -D _GLIBCXX_USE_CXX11_ABI=0 -m32 -std=c++11 -Ilib -fno-stack-protector -static-libgcc -static-libstdc++
+static: GCC = gcc -D _GLIBCXX_USE_CXX11_ABI=0 -m32 -Ilib -fno-stack-protector -static-libgcc -static-libstdc++
 static: LINK = $(GPP)
 static: all
 

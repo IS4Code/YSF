@@ -240,9 +240,13 @@ struct RemoteSystemStruct
 	DWORD dword898;
 	BYTE gap89C[16];
 	BYTE byte8AC;
+#ifdef _WIN32
 	BYTE gap8AD[1023];
+#else
+	BYTE gap8AD[945];
+#endif
 	unsigned int connectionTime;
-	enum ConnectMode
+	enum ConnectMode : DWORD
 	{
 		NO_ACTION,
 		DISCONNECT_ASAP,
@@ -259,7 +263,11 @@ struct RemoteSystemStruct
 	BYTE byteIsLogon;
 };
 
+#ifdef _WIN32
 static_assert(sizeof(RemoteSystemStruct) == 3255, "Invalid RemoteSystemStruct size");
+#else
+static_assert(sizeof(RemoteSystemStruct) == 3177, "Invalid RemoteSystemStruct size");
+#endif
 
 /* -------------------------------------------------------- */
 typedef struct _MATRIX4X4 

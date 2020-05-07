@@ -92,13 +92,7 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 
 CPlugin::~CPlugin()
 {
-	for(int i = 0; i != MAX_PLAYERS; ++i)
-		RemovePlayer(i);
 
-	if(CConfig::Get()->m_bUsePerPlayerGangZones)
-	{
-		SAFE_DELETE(pGangZonePool);
-	}
 }
 
 void CPlugin::AddPlayer(int playerid)
@@ -675,88 +669,6 @@ int CPlugin::FindNPCProcessID(WORD npcid)
 	return ::FindNPCProcessID(name);
 }
 
-#ifdef NEW_PLAYER_OBJECT_SYSTEM
-namespace Hooks
-{
-	AMX_DECLARE_NATIVE(DestroyPlayerObject);
-}
-
-bool CPlugin::CreatePlayerObjectLocalID(WORD playerid, WORD &objectid, bool playerobject)
-{
-	auto &pool = CServer::Get()->ObjectPool;
-	auto &ppool = CServer::Get()->PlayerObjectPool;
-	if (!playerobject && pool.IsValid(objectid))
-	{
-		CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &extra)
-		{
-			extra.localObjects.find_r(objectid).map([&](WORD id)
-			{
-				extra.localObjects.erase_l(id);
-				WORD newobjectid = id;
-				CreatePlayerObjectLocalID(playerid, newobjectid, true);
-				if (newobjectid == INVALID_OBJECT_ID)
-				{
-					cell params[3] = {2, playerid, id};
-					Hooks::DestroyPlayerObject(nullptr, params);
-				}
-				else {
-					logprintf("replacing with %d", newobjectid);
-					ppool[playerid][id]->wObjectID = newobjectid;
-					CSAMPFunctions::SpawnObjectForPlayer(ppool[playerid][id], playerid);
-				}
-			});
-		});
-	}else if (ppool.IsValid(playerid, objectid))
-	{
-		auto &extra = CServer::Get()->PlayerPool.Extra(playerid);
-		auto local = extra.localObjects.find_l(objectid);
-		if (local.has_value()) return *local;
-		logprintf("finding map for %d", objectid);
-		for (WORD index = pool.Capacity - 1; index >= 1; index--)
-		{
-			if (!pool.IsValid(index) && !extra.localObjects.find_r(index).has_value())
-			{
-				ppool[playerid][objectid]->wObjectID = index;
-				extra.localObjects.insert(objectid, index);
-				objectid = index;
-				return true;
-			}
-		}
-		objectid = INVALID_OBJECT_ID;
-		return true;
-	}
-	return false;
-}
-
-bool CPlugin::MapPlayerObjectIDToLocalID(WORD playerid, WORD &objectid)
-{
-	return CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &data)
-	{
-		auto local = data.localObjects.find_l(objectid);
-		if (local.has_value())
-		{
-			objectid = *local;
-			return true;
-		}
-		return false;
-	});
-}
-
-bool CPlugin::MapPlayerObjectIDToServerID(WORD playerid, WORD &objectid)
-{
-	return CServer::Get()->PlayerPool.MapExtra(playerid, [&](CPlayerData &data)
-	{
-		auto server = data.localObjects.find_r(objectid);
-		if (server.has_value())
-		{
-			objectid = *server;
-			return true;
-		}
-		return false;
-	});
-}
-#endif
-
 bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 {
 	switch (uniqueID)
@@ -788,20 +700,15 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 
 			bool hidden = CServer::Get()->PlayerPool.MapExtra(playerid, [=](CPlayerData &data)
 			{
+				if(data.NewObjectsHidden())
+				{
+					data.HideObject(objectid, false);
+					return true;
+				}
 				return data.IsObjectHidden(objectid);
 			});
 			if (hidden) return false;
 
-#ifdef NEW_PLAYER_OBJECT_SYSTEM
-			if (CreatePlayerObjectLocalID(playerid, objectid, false))
-			{
-				if (objectid == INVALID_OBJECT_ID) return false;
-				int write_offset = bsSync->GetWriteOffset();
-				bsSync->SetWriteOffset(read_offset);
-				bsSync->Write(objectid);
-				bsSync->SetWriteOffset(write_offset);
-			}
-#endif
 			break;
 		}
 		case RPC_InitGame:
@@ -819,11 +726,11 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			int onfoot_rate = CSAMPFunctions::GetIntVariable("onfoot_rate");
 			int incar_rate = CSAMPFunctions::GetIntVariable("incar_rate");
 			int weapon_rate = CSAMPFunctions::GetIntVariable("weapon_rate");
-			int lacgompmode = CSAMPFunctions::GetIntVariable("lagcompmode");
+			int lagcompmode = CSAMPFunctions::GetIntVariable("lagcompmode");
 			bool vehiclefriendlyfire = static_cast<int>(pNetGame->bVehicleFriendlyFire) != 0;
 
 			CCallbackManager::OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &globalchatradius, &nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
-				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
+				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lagcompmode, &vehiclefriendlyfire);
 
 			bsSync->Reset();
 			bsSync->Write((bool)!!pNetGame->byteEnableZoneNames);
@@ -850,7 +757,7 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			bsSync->Write(incar_rate);
 			bsSync->Write(weapon_rate);
 			bsSync->Write((int)2);
-			bsSync->Write(lacgompmode);
+			bsSync->Write(lagcompmode);
 
 			const char* szHostName = CSAMPFunctions::GetStringVariable("hostname");
 			if (szHostName)

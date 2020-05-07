@@ -25,6 +25,20 @@ enum E_SCM_EVENT_TYPE
     SCM_EVENT_MOD_SHOP = 4
 }
 
+enum E_PLAYER_CONNECT_MODE
+{
+    NO_ACTION,
+    DISCONNECT_ASAP,
+    DISCONNECT_ASAP_SILENTLY,
+    DISCONNECT_ON_NO_ACK,
+    REQUESTED_CONNECTION,
+    HANDLING_CONNECTION_REQUEST,
+    UNVERIFIED_SENDER,
+    SET_ENCRYPTION_ON_MULTIPLE_16_B,
+    CONNECTED
+}
+#define SET_ENCRYPTION_ON_MULTIPLE_16_BYTE_PACKET SET_ENCRYPTION_ON_MULTIPLE_16_B
+
 // Execute
 native execute(const command[], saveoutput=0, index=0);
 
@@ -57,6 +71,10 @@ native SetServerRule(const name[], const value[]);
 native IsValidServerRule(const name[]);
 native SetServerRuleFlags(const name[], E_SERVER_RULE_FLAGS:flags);
 native E_SERVER_RULE_FLAGS:GetServerRuleFlags(const name[]);
+
+// Chat character replacement
+native ToggleChatTextReplacement(bool:toggle);
+native bool:ChatTextReplacementToggled();
 
 // Server settings
 native GetServerSettings(&showplayermarkes, &shownametags = 0, &stuntbonus = 0, &useplayerpedanims = 0, &bLimitchatradius = 0, &disableinteriorenterexits = 0, &nametaglos = 0, &manualvehicleengine = 0, &limitplayermarkers = 0, &vehiclefriendlyfire = 0, &defaultcameracollision = 0, &Float:fGlobalchatradius = 0.0, &Float:fNameTagDrawDistance = 0.0, &Float:fPlayermarkerslimit = 0.0);
@@ -171,8 +189,24 @@ native SetPlayerSyncCameraFrontVector(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraPos(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraMode(playerid, mode);
 native SetPlayerSyncWeapon(playerid, weaponid);
+native GetPlayerSyncWeapon(playerid);
 native SetPlayerSyncWeaponState(playerid, weaponstate);
 native SetPlayerSyncSpecialAction(playerid, actionid);
+native SetPlayerSyncHealth(playerid, Float:health);
+native SetPlayerSyncArmour(playerid, Float:armour);
+native SetPlayerSyncPosition(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncVehicleId(playerid, vehicleid);
+native SetPlayerSyncVehiclePosition(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncVehicleVelocity(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncVehicleRotQuat(playerid, Float:w, Float:x, Float:y, Float:z);
+native SetPlayerSyncVehicleHealth(playerid, Float:health);
+native SendPlayerDeath(playerid, forplayerid=-1);
+native UpdatePlayerSyncData(playerid, type=-1);
+native SendPlayerClientGameInit(playerid, bool:usecjwalk=bool:-1, bool:limitglobalchat=bool:-1, Float:globalchatradius=Float:-1, Float:nametagdistance=Float:-1, bool:disableenterexits=bool:-1, bool:nametaglos=bool:-1, bool:manualvehengineandlights=bool:-1,
+				spawnsavailable=-1, bool:shownametags=bool:-1, bool:showplayermarkers=bool:-1, onfoot_rate=-1, incar_rate=-1, weapon_rate=-1, lagcompmode=-1, bool:vehiclefriendlyfire=bool:-1, const hostname[]="");
+
+native SetPlayerConnectMode(playerid, E_PLAYER_CONNECT_MODE:mode);
+native E_PLAYER_CONNECT_MODE:GetPlayerConnectMode(playerid);
 
 // Actors
 native GetActorSpawnInfo(actorid, &skinid, &Float:fX = 0.0, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fAngle = 0.0);
@@ -251,6 +285,8 @@ native GetLocalIP(index, localip[], len = sizeof(localip));
 native SetExclusiveBroadcast(toggle);
 native BroadcastToPlayer(playerid, toggle = 1);
 
+native ToggleCloseConnectionFix(bool:toggle);
+
 // Vehicle functions
 native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fRot = 0.0, &color1 = 0, &color2 = 0);
 native SetVehicleSpawnInfo(vehicleid, modelid, Float:fX, Float:fY, Float:fZ, Float:fAngle, color1, color2, respawntime = -2, interior = -2);
@@ -273,7 +309,7 @@ native GetVehicleRespawnTick(vehicleid); // GetTickCount() - GetVehicleRespawnTi
 native GetVehicleLastDriver(vehicleid);
 native GetVehicleCab(vehicleid);
 native HasVehicleBeenOccupied(vehicleid);
-native SetVehicleBeenOccupied(vehicleid, occupied);
+native SetVehicleBeenOccupied(vehicleid, bool:occupied);
 native IsVehicleOccupied(vehicleid);
 native IsVehicleDead(vehicleid);
 native SetVehicleDead(vehicleid, bool:dead);
@@ -427,7 +463,7 @@ forward OnPlayerStatsAndWeaponsUpdate(playerid);
 forward OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const command[]);
 forward OnServerMessage(const msg[]);
 forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
-				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lacgompmode, &vehiclefriendlyfire);
+				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lagcompmode, &vehiclefriendlyfire);
 forward OnOutcomeScmEvent(playerid, issuerid, E_SCM_EVENT_TYPE:eventid, vehicleid, arg1, arg2);
 forward OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31]);
 forward OnSystemCommandExecute(const line_output[], retval, index, success, line_current, line_total);

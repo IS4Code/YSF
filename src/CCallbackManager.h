@@ -54,7 +54,7 @@ public:
 	static void	OnPlayerStatsAndWeaponsUpdate(WORD playerid);
 	static bool OnServerMessage(const char* message);
 	static bool OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command);
-	static void OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bool* limitglobalchat, float* globalchatradius, float* nametagdistance, bool* disableenterexits, bool* nametaglos, bool* manualvehengineandlights, int* spawnsavailable, bool* shownametags, bool* showplayermarkers, int* onfoot_rate, int* incar_rate, int* weapon_rate, int* lacgompmode, bool* vehiclefriendlyfire);
+	static void OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bool* limitglobalchat, float* globalchatradius, float* nametagdistance, bool* disableenterexits, bool* nametaglos, bool* manualvehengineandlights, int* spawnsavailable, bool* shownametags, bool* showplayermarkers, int* onfoot_rate, int* incar_rate, int* weapon_rate, int* lagcompmode, bool* vehiclefriendlyfire);
 	static bool OnOutcomeScmEvent(WORD playerid, WORD issuerid, int eventid, int vehicleid, int arg1, int arg2);
 	static bool OnServerQueryInfo(unsigned int binaryAddress, char(&hostname)[51], char(&gameMode)[31], char(&language)[31]);
 	static void OnSystemCommandExecute(const char *output, int retval, int index, bool success, int line_current, int line_total);

@@ -90,6 +90,8 @@ DEFINE_FUNC_PTR(Packet_WeaponsUpdate);
 DEFINE_FUNC_PTR(Packet_StatsUpdate);
 DEFINE_FUNC_PTR(format_amxstring);
 
+DEFINE_FUNC_PTR(ReplaceBadChars);
+
 #ifdef SAMP_03DL
 DEFINE_FUNC_PTR(ClientJoin);
 DEFINE_FUNC_PTR(AddSimpleModel);
@@ -101,6 +103,12 @@ ADDR<BYTE> CAddress::ADDR_GetNetworkStats_VerbosityLevel;
 ADDR<BYTE> CAddress::ADDR_GetPlayerNetworkStats_VerbosityLevel;
 
 ADDR<const char*> CAddress::ADDR_RecordingDirectory;
+
+#ifdef _WIN32
+ADDR<unsigned char[82]> CAddress::ADDR_WrongPacketIDBranch;
+#else
+ADDR<unsigned char[114]> CAddress::ADDR_WrongPacketIDBranch;
+#endif
 
 // Callback hooks
 DEFINE_FUNC_PTR(CGameMode__OnPlayerConnect);
@@ -177,7 +185,9 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamOut =			FUNC_CGameMode__OnPlayerStreamIn + 0x70; // 0x0046E950;
 	FUNC_CGameMode__OnDialogResponse =			FUNC_CGameMode__OnPlayerStreamOut + 0x230;  // 0x0046EB80;
 
-	//FUNC_ClientJoin =							0x004966A0;
+	ADDR_WrongPacketIDBranch =						0x004591FC;
+
+	FUNC_ReplaceBadChars = 0x00468F20;
 	#else
 
 	// Thx for Mellnik
@@ -227,6 +237,10 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnPlayerStreamOut = 0x80A64D0;
 	FUNC_CGameMode__OnDialogResponse = 0x80A6750;
 
+	ADDR_WrongPacketIDBranch = 0x080752FC;
+
+	FUNC_ReplaceBadChars = 0x080D5CA0;
+
 	switch(sampVersion)
 	{
 		case SAMPVersion::VERSION_037:
@@ -242,7 +256,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 			VAR_pPosSyncBounds[2] =						0x08150718;
 			VAR_pPosSyncBounds[3] =						0x08150714;
 			ADDR_RecordingDirectory =					0x080CC7D2;
-			FUNC_CVehicle__Respawn =					0x814B4C0;
+			FUNC_CVehicle__Respawn =					FindPattern("\x55\x31\xD2\x89\xE5\x57\xB9\x00\x00\x00\x00\x53", "xxxxxxx????x");
 			FUNC_CPlayerPool__HandleVehicleRespawn =	0x80D1480;
 			VAR_wRCONUser =								0x08197DF0;
 			ARRAY_ConsoleCommands =						0x08196920;
@@ -423,5 +437,10 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	if(ADDR_GetPlayerNetworkStats_VerbosityLevel)
 	{
 		ADDR_GetPlayerNetworkStats_VerbosityLevel.unlock();
+	}
+
+	if(ADDR_WrongPacketIDBranch)
+	{
+		ADDR_WrongPacketIDBranch.unlock();
 	}
 }

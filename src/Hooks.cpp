@@ -55,6 +55,7 @@ subhook_t amx_Register_hook;
 subhook_t logprintf_hook;
 subhook_t query_hook;
 subhook_t CVehicle__Respawn_hook;
+subhook_t ReplaceBadChars_hook;
 
 // Callback hooks instead of using SAMP GDK
 subhook_t CGameMode__OnPlayerConnect_hook;
@@ -825,6 +826,16 @@ int HOOK_THISCALL(HOOK_CGameMode__OnDialogResponse, CGameMode *thisptr, cell pla
 
 //----------------------------------------------------
 
+void HOOK_ReplaceBadChars(char *szString)
+{
+	if(CPlugin::Get()->ChatTextReplacementToggled())
+	{
+		reinterpret_cast<ReplaceBadChars_t>(subhook_get_trampoline(ReplaceBadChars_hook))(szString);
+	}
+}
+
+//----------------------------------------------------
+
 #ifdef SAMP_03DL
 void CDECL HOOK_ClientJoin(RPCParameters *rpcParams)
 {
@@ -903,7 +914,7 @@ void InstallPreHooks()
 	query_hook = Hook(CAddress::FUNC_ProcessQueryPacket, HOOK_ProcessQueryPacket);*/
 	CVehicle__Respawn_hook = Hook(CAddress::FUNC_CVehicle__Respawn, HOOK_CVehicle__Respawn);
 	/*
-#ifdef SAMP_03DL
+	ReplaceBadChars_hook = Hook(CAddress::FUNC_ReplaceBadChars, HOOK_ReplaceBadChars);#ifdef SAMP_03DL
 	//ClientJoin_hook = Hook(CAddress::FUNC_ClientJoin, HOOK_ClientJoin);
 	//AddSimpleModel_hook = Hook(CAddress::FUNC_AddSimpleModel, HOOK_AddSimpleModel);
 #endif

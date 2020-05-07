@@ -23,8 +23,12 @@ namespace Natives
 		const int zoneid = CScriptParams::Get()->ReadInt();
 		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		cell ret = CConfig::Get()->m_bUsePerPlayerGangZones ? CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)) : pNetGame->pGangZonePool->bSlotState[static_cast<WORD>(zoneid)] != 0;
-		return ret;
+		if(CConfig::Get()->m_bUsePerPlayerGangZones)
+		{
+			return CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid));
+		}else{
+			return pNetGame->pGangZonePool->bSlotState[static_cast<WORD>(zoneid)] != 0;
+		}
 	}
 
 	// native IsGangZoneVisibleForPlayer(playerid, zoneid);
@@ -131,15 +135,21 @@ namespace Natives
 	AMX_DECLARE_NATIVE(GangZoneGetPos)
 	{
 		CHECK_PARAMS(5, LOADED);
-		CHECK_PER_PLAYER_ZONES_STATE()
 
 		const int zoneid = CScriptParams::Get()->ReadInt();
-		if (zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+		if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
+		if(CConfig::Get()->m_bUsePerPlayerGangZones)
+		{
+			if(!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid))) return 0;
 
-		if (!CPlugin::Get()->pGangZonePool->GetSlotState(static_cast<WORD>(zoneid)))  return 0;
+			auto &zone = CPlugin::Get()->pGangZonePool->pGangZone[zoneid]->fGangZone;
+			CScriptParams::Get()->Add(zone[0], zone[1], zone[2], zone[3]);
+		}else{
+			if(!pNetGame->pGangZonePool->bSlotState[static_cast<WORD>(zoneid)]) return 0;
 
-		CGangZone *pGangZone = CPlugin::Get()->pGangZonePool->pGangZone[zoneid];
-		CScriptParams::Get()->Add(pGangZone->fGangZone[0], pGangZone->fGangZone[1], pGangZone->fGangZone[2], pGangZone->fGangZone[3]);
+			auto &zone = pNetGame->pGangZonePool->fGangZone[static_cast<WORD>(zoneid)];
+			CScriptParams::Get()->Add(zone[0], zone[1], zone[2], zone[3]);
+		}
 		return 1;
 	}
 

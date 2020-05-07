@@ -1,9 +1,12 @@
 #include "../Natives.h"
 #include "../CPlugin.h"
+#include "../CAddresses.h"
 #include "../CScriptParams.h"
 #include "../Utils.h"
 
 #include "raknet/NetworkTypes.h"
+
+#include <cstring>
 
 namespace Natives
 {
@@ -199,6 +202,30 @@ namespace Natives
 		}
 		return 1;
 	}
+
+	// native ToggleCloseConnectionFix(bool:toggle);
+	AMX_DECLARE_NATIVE(ToggleCloseConnectionFix)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		auto &arr = *CAddress::ADDR_WrongPacketIDBranch;
+		static bool toggled = false;
+		static unsigned char backup[sizeof(arr)];
+
+		bool toggle = CScriptParams::Get()->ReadBool();
+		if(toggle != toggled)
+		{
+			toggled = toggle;
+			if(toggle)
+			{
+				std::memcpy(backup, arr, sizeof(arr));
+				std::memset(arr, 0x90, sizeof(arr));
+			}else{
+				std::memcpy(arr, backup, sizeof(arr));
+			}
+		}
+		return 1;
+	}
 }
 
 static AMX_NATIVE_INFO native_list[] =
@@ -212,6 +239,8 @@ static AMX_NATIVE_INFO native_list[] =
 
 	AMX_DEFINE_NATIVE(SendRPC)
 	AMX_DEFINE_NATIVE(SendData)
+
+	AMX_DEFINE_NATIVE(ToggleCloseConnectionFix)
 };
 
 void RakNetLoadNatives()

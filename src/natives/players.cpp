@@ -1054,6 +1054,27 @@ namespace Natives
 		return 1;
 	}
 
+	// native GetPlayerSyncWeapon(playerid);
+	AMX_DECLARE_NATIVE(GetPlayerSyncWeapon)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		switch(pPlayer->byteState)
+		{
+			case PLAYER_STATE_ONFOOT:
+				return pPlayer->syncData.byteWeapon;
+			case PLAYER_STATE_DRIVER:
+				return pPlayer->vehicleSyncData.bytePlayerWeapon;
+			case PLAYER_STATE_PASSENGER:
+				return pPlayer->passengerSyncData.bytePlayerWeapon;
+		}
+		return 0;
+	}
+
 	// native SetPlayerSyncWeaponState(playerid, weaponstate);
 	AMX_DECLARE_NATIVE(SetPlayerSyncWeaponState)
 	{
@@ -1078,6 +1099,266 @@ namespace Natives
 
 		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 		pPlayer->syncData.byteSpecialAction = CScriptParams::Get()->ReadInt();
+		return 1;
+	}
+
+	// native SetPlayerSyncHealth(playerid, Float:health);
+	AMX_DECLARE_NATIVE(SetPlayerSyncHealth)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.byteHealth = pPlayer->vehicleSyncData.bytePlayerHealth = pPlayer->passengerSyncData.bytePlayerHealth = static_cast<BYTE>(CScriptParams::Get()->ReadFloat());
+		return 1;
+	}
+
+	// native SetPlayerSyncArmour(playerid, Float:armour);
+	AMX_DECLARE_NATIVE(SetPlayerSyncArmour)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+		
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.byteArmour = pPlayer->vehicleSyncData.bytePlayerArmour = pPlayer->passengerSyncData.bytePlayerArmour = static_cast<BYTE>(CScriptParams::Get()->ReadFloat());
+
+		return 1;
+	}
+
+	// native SetPlayerSyncPosition(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncPosition)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.vecPosition.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.vecPosition.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.vecPosition.fZ = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleId(playerid, vehicleid);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleId)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.wVehicleId = pPlayer->passengerSyncData.wVehicleId = CScriptParams::Get()->ReadInt();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncVehiclePosition(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehiclePosition)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.vecPosition.fX = pPlayer->passengerSyncData.vecPosition.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.vecPosition.fY = pPlayer->passengerSyncData.vecPosition.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.vecPosition.fZ = pPlayer->passengerSyncData.vecPosition.fZ = CScriptParams::Get()->ReadFloat();
+		
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleVelocity(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleVelocity)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.vecVelocity.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.vecVelocity.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.vecVelocity.fZ = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleRotQuat(playerid, Float:w, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleRotQuat)
+	{
+		CHECK_PARAMS(5, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.fQuaternion[0] = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.fQuaternion[1] = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.fQuaternion[2] = CScriptParams::Get()->ReadFloat();
+		pPlayer->vehicleSyncData.fQuaternion[3] = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleHealth(playerid, Float:health);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleHealth)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.fHealth = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
+	// native SendPlayerDeath(playerid, forplayerid=-1);
+	AMX_DECLARE_NATIVE(SendPlayerDeath)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		int forplayerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(forplayerid) && forplayerid != -1) return 0;
+
+		RakNet::BitStream bs;
+		bs.Write((WORD)playerid);
+		CSAMPFunctions::RPC(&RPC_DeathBroadcast, &bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, forplayerid == -1 ? UNASSIGNED_PLAYER_ID : CSAMPFunctions::GetPlayerIDFromIndex(forplayerid), forplayerid == -1, 0);
+		return 1;
+	}
+
+	// native UpdatePlayerSyncData(playerid, type=-1);
+	AMX_DECLARE_NATIVE(UpdatePlayerSyncData)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		int type = CScriptParams::Get()->ReadInt();
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		if(type == -1)
+		{
+			switch(pPlayer->byteState)
+			{
+				case PLAYER_STATE_ONFOOT:
+					pPlayer->iUpdateState = 1;
+					break;
+				case PLAYER_STATE_DRIVER:
+					pPlayer->iUpdateState = 2;
+					break;
+				case PLAYER_STATE_PASSENGER:
+					pPlayer->iUpdateState = 3;
+					break;
+			}
+		}else{
+			pPlayer->iUpdateState = type;
+		}
+		return 1;
+	}
+
+	// native SetPlayerConnectMode(playerid, E_PLAYER_CONNECT_MODE:mode);
+	AMX_DECLARE_NATIVE(SetPlayerConnectMode)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+		pNetGame->pPlayerPool->pRemoteSystem[playerid]->connectMode = static_cast<RemoteSystemStruct::ConnectMode>(CScriptParams::Get()->ReadInt());
+		return 1;
+	}
+
+	// native E_PLAYER_CONNECT_MODE:GetPlayerConnectMode(playerid);
+	AMX_DECLARE_NATIVE(GetPlayerConnectMode)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+		return static_cast<cell>(pNetGame->pPlayerPool->pRemoteSystem[playerid]->connectMode);
+	}
+
+	// native SendPlayerClientGameInit(playerid, bool:usecjwalk=bool:-1, bool:limitglobalchat=bool:-1, Float:globalchatradius=Float:-1, Float:nametagdistance=Float:-1, bool:disableenterexits=bool:-1, bool:nametaglos=bool:-1, bool:manualvehengineandlights=bool:-1, spawnsavailable=-1, bool:shownametags=bool:-1, bool:showplayermarkers=bool:-1, onfoot_rate=-1, incar_rate=-1, weapon_rate=-1, lagcompmode=-1, bool:vehiclefriendlyfire=bool:-1, const hostname[]="");
+	AMX_DECLARE_NATIVE(SendPlayerClientGameInit)
+	{
+		CHECK_PARAMS(17, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+		bool usecjwalk = params[2] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bUseCJWalk) != 0;
+		bool limitglobalchat = params[3] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bLimitGlobalChatRadius) != 0;
+		float globalchatradius = params[4] != -1 ? CScriptParams::Get()->ReadFloat() : pNetGame->fGlobalChatRadius;
+		float nametagdistance = params[5] != -1 ? CScriptParams::Get()->ReadFloat() : pNetGame->fNameTagDrawDistance;
+		bool disableenterexits = params[6] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->byteDisableEnterExits) != 0;
+		bool nametaglos = params[7] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->byteNameTagLOS) != 0;
+		bool manualvehengineandlights = params[8] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bManulVehicleEngineAndLights) != 0;
+		int spawnsavailable = params[9] != -1 ? CScriptParams::Get()->ReadInt() : pNetGame->iSpawnsAvailable;
+		bool shownametags = params[10] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->byteShowNameTags) != 0;
+		bool showplayermarkers = params[11] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bShowPlayerMarkers) != 0;
+		int onfoot_rate = params[12] != -1 ? CScriptParams::Get()->ReadInt() : CSAMPFunctions::GetIntVariable("onfoot_rate");
+		int incar_rate = params[13] != -1 ? CScriptParams::Get()->ReadInt() : CSAMPFunctions::GetIntVariable("incar_rate");
+		int weapon_rate = params[14] != -1 ? CScriptParams::Get()->ReadInt() : CSAMPFunctions::GetIntVariable("weapon_rate");
+		int lagcompmode = params[15] != -1 ? CScriptParams::Get()->ReadInt() : CSAMPFunctions::GetIntVariable("lagcompmode");
+		bool vehiclefriendlyfire = params[16] != -1 ? CScriptParams::Get()->ReadBool() : static_cast<int>(pNetGame->bVehicleFriendlyFire) != 0;
+
+		RakNet::BitStream bsSync;
+		bsSync.Write((bool)!!pNetGame->byteEnableZoneNames);
+		bsSync.Write((bool)usecjwalk);
+		bsSync.Write((bool)!!pNetGame->byteAllowWeapons);
+		bsSync.Write(limitglobalchat);
+		bsSync.Write(globalchatradius);
+		bsSync.Write((bool)!!pNetGame->byteStuntBonus);
+		bsSync.Write(nametagdistance);
+		bsSync.Write(disableenterexits);
+		bsSync.Write(nametaglos);
+		bsSync.Write(manualvehengineandlights);
+		bsSync.Write(pNetGame->iSpawnsAvailable);
+		bsSync.Write((WORD)playerid);
+		bsSync.Write(shownametags);
+		bsSync.Write((int)showplayermarkers);
+		bsSync.Write(pNetGame->byteWorldTimeHour);
+		bsSync.Write(pNetGame->byteWeather);
+		bsSync.Write(pNetGame->fGravity);
+		bsSync.Write((bool)!!pNetGame->bLanMode);
+		bsSync.Write(pNetGame->iDeathDropMoney);
+		bsSync.Write(false);
+		bsSync.Write(onfoot_rate);
+		bsSync.Write(incar_rate);
+		bsSync.Write(weapon_rate);
+		bsSync.Write((int)2);
+		bsSync.Write(lagcompmode);
+
+		std::string hostname;
+		CScriptParams::Get()->Read(hostname);
+
+		const char* szHostName = !hostname.empty() ? hostname.c_str() : CSAMPFunctions::GetStringVariable("hostname");
+		if(szHostName)
+		{
+			size_t len = strlen(szHostName);
+			bsSync.Write((BYTE)len);
+			bsSync.Write(szHostName, len);
+		} else
+		{
+			bsSync.Write((BYTE)0);
+		}
+		bsSync.Write((char*)&pNetGame->pVehiclePool, 212); // modelsUsed
+		bsSync.Write((DWORD)vehiclefriendlyfire);
+
+		CSAMPFunctions::RPC(&RPC_InitGame, &bsSync, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+
 		return 1;
 	}
 }
@@ -1333,8 +1614,22 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncCameraPos) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncCameraMode) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncWeapon) // R20
+	AMX_DEFINE_NATIVE(GetPlayerSyncWeapon) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncWeaponState) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncSpecialAction) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncHealth) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncArmour) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncPosition) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleId) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehiclePosition) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleVelocity) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleRotQuat) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleHealth) // R20
+	AMX_DEFINE_NATIVE(SendPlayerDeath) // R20
+	AMX_DEFINE_NATIVE(UpdatePlayerSyncData) // R20
+	AMX_DEFINE_NATIVE(SetPlayerConnectMode) // R20
+	AMX_DEFINE_NATIVE(GetPlayerConnectMode) // R20
+	AMX_DEFINE_NATIVE(SendPlayerClientGameInit) // R20
 };
 
 static AMX_HOOK_INFO hook_list[] =

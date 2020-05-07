@@ -228,6 +228,8 @@ public:
 	DECLARE_FUNC_PTR(Packet_StatsUpdate);
 	DECLARE_FUNC_PTR(format_amxstring);
 
+	DECLARE_FUNC_PTR(ReplaceBadChars);
+
 #ifdef SAMP_03DL
 	DECLARE_FUNC_PTR(ClientJoin);
 	DECLARE_FUNC_PTR(AddSimpleModel);
@@ -239,6 +241,12 @@ public:
 	static ADDR<BYTE> ADDR_GetPlayerNetworkStats_VerbosityLevel;
 
 	static ADDR<const char*> ADDR_RecordingDirectory;
+
+#ifdef _WIN32
+	static ADDR<unsigned char[82]> ADDR_WrongPacketIDBranch;
+#else
+	static ADDR<unsigned char[114]> ADDR_WrongPacketIDBranch;
+#endif
 
 	// Callback hooks
 	DECLARE_FUNC_PTR(CGameMode__OnPlayerConnect);
