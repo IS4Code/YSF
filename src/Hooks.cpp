@@ -225,46 +225,52 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 		{
 			case ID_PLAYER_SYNC:
 			{
-				CSyncData *pSyncData = reinterpret_cast<CSyncData*>(&p->data[1]);
-
-				if(CPlugin::Get()->IsNightVisionFixEnabled())
+				if(p->data && p->length >= sizeof(CSyncData) + 1)
 				{
-					// Fix nightvision and infrared sync
-					if (pSyncData->byteWeapon == WEAPON_NIGHTVISION || pSyncData->byteWeapon == WEAPON_INFRARED)
-					{
-						pSyncData->wKeys &= ~(KEY_FIRE | KEY_ACTION);
-						pSyncData->byteWeapon = 0;
-						pSyncData->_unk_ = 0;
-					}
-				}
+					CSyncData *pSyncData = reinterpret_cast<CSyncData*>(&p->data[1]);
 
-				// Store surfing info because server reset it when player surfing on player object
-				data.wSurfingInfo = pSyncData->wSurfingInfo;
+					if(CPlugin::Get()->IsNightVisionFixEnabled())
+					{
+						// Fix nightvision and infrared sync
+						if(pSyncData->byteWeapon == WEAPON_NIGHTVISION || pSyncData->byteWeapon == WEAPON_INFRARED)
+						{
+							pSyncData->wKeys &= ~(KEY_FIRE | KEY_ACTION);
+							pSyncData->byteWeapon = 0;
+							pSyncData->_unk_ = 0;
+						}
+					}
+
+					// Store surfing info because server reset it when player surfing on player object
+					data.wSurfingInfo = pSyncData->wSurfingInfo;
+				}
 				break;
 			}
 			case ID_AIM_SYNC:
 			{
-				CAimSyncData *pAim = reinterpret_cast<CAimSyncData*>(&p->data[1]);
-
-				// Fix up, down aim sync - thx to Slice, from SKY
-				switch(pNetGame->pPlayerPool->pPlayer[playerid]->byteCurrentWeapon)
+				if(p->data && p->length >= sizeof(CAimSyncData) + 1)
 				{
-					case WEAPON_SNIPER:
-					case WEAPON_ROCKETLAUNCHER:
-					case WEAPON_HEATSEEKER:
-					case WEAPON_CAMERA:
-					{
-						pAim->fZAim = -pAim->vecFront.fZ;
+					CAimSyncData *pAim = reinterpret_cast<CAimSyncData*>(&p->data[1]);
 
-						if (pAim->fZAim > 1.0f)
+					// Fix up, down aim sync - thx to Slice, from SKY
+					switch(pNetGame->pPlayerPool->pPlayer[playerid]->byteCurrentWeapon)
+					{
+						case WEAPON_SNIPER:
+						case WEAPON_ROCKETLAUNCHER:
+						case WEAPON_HEATSEEKER:
+						case WEAPON_CAMERA:
 						{
-							pAim->fZAim = 1.0f;
+							pAim->fZAim = -pAim->vecFront.fZ;
+
+							if (pAim->fZAim > 1.0f)
+							{
+								pAim->fZAim = 1.0f;
+							}
+							else if (pAim->fZAim < -1.0f)
+							{
+								pAim->fZAim = -1.0f;
+							}
+							break;
 						}
-						else if (pAim->fZAim < -1.0f)
-						{
-							pAim->fZAim = -1.0f;
-						}
-						break;
 					}
 				}
 				break;
@@ -274,15 +280,21 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 				CSAMPFunctions::Packet_StatsUpdate(p);
 				CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
 
-				p->data[0] = 0xFF;
+				if(p->data && p->length >= 1)
+				{
+					p->data[0] = 0xFF;
+				}
 				break;
 			}
 			case ID_WEAPONS_UPDATE:
 			{
 				CSAMPFunctions::Packet_WeaponsUpdate(p);
 				CCallbackManager::OnPlayerStatsAndWeaponsUpdate(playerid);
-
-				p->data[0] = 0xFF;
+				
+				if(p->data && p->length >= 1)
+				{
+					p->data[0] = 0xFF;
+				}
 				break;
 			}
 		}

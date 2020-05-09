@@ -344,14 +344,15 @@ const char *GetPlayerName(int playerid, bool getForQuery)
 // From raknet
 BYTE GetPacketID(Packet *p)
 {
-	if (p == 0) return 255;
+	if (!p || !p->data || p->length == 0) return 0xFF;
 
-	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
+	if (p->data[0] == ID_TIMESTAMP)
 	{
-		assert(p->length > sizeof(unsigned char) + sizeof(unsigned long));
-		return (unsigned char)p->data[sizeof(unsigned char) + sizeof(unsigned long)];
+		auto ofs = sizeof(unsigned char) + sizeof(unsigned long);
+		if(p->length <= ofs) return 0xFF;
+		return p->data[ofs];
 	}
-	else return (unsigned char)p->data[0];
+	else return p->data[0];
 }
 
 bool IsPlayerUpdatePacket(BYTE packetId)
