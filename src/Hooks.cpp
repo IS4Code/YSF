@@ -909,7 +909,7 @@ template <class TFunc, class THook>
 subhook_t Hook(ADDR<TFunc> &func, THook hook)
 {
 	//logprintf("Hooking %x", (DWORD)func);
-	subhook_t var = subhook_new(reinterpret_cast<void*>(*func), reinterpret_cast<void*>(hook), static_cast<subhook_options_t>(0));
+	subhook_t var = subhook_new(reinterpret_cast<void*>(*func), reinterpret_cast<void*>(hook), {});
 	subhook_install(var);
 	return var;
 }
@@ -920,7 +920,7 @@ void InstallPreHooks()
 	SetWeather_hook = Hook(CAddress::FUNC_CNetGame__SetWeather, HOOK_CNetGame__SetWeather);
 	SetGravity_hook = Hook(CAddress::FUNC_CNetGame__SetGravity, HOOK_CNetGame__SetGravity);
 	Namecheck_hook = Hook(CAddress::FUNC_ContainsInvalidChars, HOOK_ContainsInvalidChars);
-	amx_Register_hook = subhook_new(reinterpret_cast<void*>(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register]), reinterpret_cast<void*>(HOOK_amx_Register), static_cast<subhook_options_t>(NULL));
+	amx_Register_hook = subhook_new(reinterpret_cast<void*>(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register]), reinterpret_cast<void*>(HOOK_amx_Register), {});
 	subhook_install(amx_Register_hook);
 	
 	query_hook = Hook(CAddress::FUNC_ProcessQueryPacket, HOOK_ProcessQueryPacket);
@@ -976,7 +976,7 @@ void InstallPostHooks()
 	*reinterpret_cast<uintptr_t*>(HOOK_logprintf + 1) = reinterpret_cast<uintptr_t>(&logprintf_trampoline) - reinterpret_cast<uintptr_t>(HOOK_logprintf + 5);
 	subhook_unprotect(HOOK_logprintf, sizeof(HOOK_logprintf));
 
-	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), HOOK_logprintf, static_cast<subhook_options_t>(NULL));
+	logprintf_hook = subhook_new(reinterpret_cast<void*>(ppPluginData[PLUGIN_DATA_LOGPRINTF]), HOOK_logprintf, {});
 	subhook_install(logprintf_hook);
 
 	// logprintf("YSF - pNetGame: 0x%X, pConsole: 0x%X, pRakServer: 0x%X", pNetGame, pConsole, pRakServer);
