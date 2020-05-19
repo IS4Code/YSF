@@ -805,7 +805,7 @@ namespace Hooks
 			if(objectid == min_player_object)
 			{
 				auto pool = pNetGame->pObjectPool;
-				cell i = min_player_object + 1;
+				cell i = min_player_object;
 				min_player_object = INVALID_OBJECT_ID;
 				for(; i < MAX_OBJECTS; i++)
 				{
