@@ -45,7 +45,7 @@
 // ------------
 
 #define PROJECT_NAME		"YSF"
-#define PROJECT_VERSION		"R20-RC4"
+#define PROJECT_VERSION		"2.0"
 
 // ------------
 // OS SPECIFICS

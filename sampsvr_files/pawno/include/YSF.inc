@@ -1,4 +1,4 @@
-/* YSF - kurta999's version */
+/* YSF 2.0 */
 #if defined _YSF_included
 	#endinput
 #endif
