@@ -320,6 +320,10 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	//FUNC_ClientJoin = 0x0049CEA0;
 	FUNC_AddSimpleModel = 0x00497170;
 	FUNC_DynamicListInsert = 0x00482100;
+
+	ADDR_WrongPacketIDBranch = 0x0045905C;
+
+	FUNC_ReplaceBadChars = 0x004690D0;
 #else
 	VAR_pRestartWaitTime = 0x08166610;
 	VAR_pPosSyncBounds[0] = 0x0815C670;
@@ -373,6 +377,10 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 
 	FUNC_AddSimpleModel = 0x080B98C0;
 	FUNC_DynamicListInsert = 0x080BA2D0;
+
+	ADDR_WrongPacketIDBranch = 0x0807D9AC;
+
+	FUNC_ReplaceBadChars = 0x080E1460;
 #endif
 #endif
 	
