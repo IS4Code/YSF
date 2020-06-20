@@ -115,7 +115,7 @@ void CGangZonePool::Delete(WORD playerid, WORD wZone)
 bool CGangZonePool::ShowForPlayer(WORD playerid, WORD wZone, DWORD dwColor, bool bPlayerZone)
 {	
 	// Find free zone slot on player, client side
-	WORD i = 0;;
+	WORD i = 0;
 	CGangZone *pZone = NULL;
 	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
 	while(i != MAX_GANG_ZONES)

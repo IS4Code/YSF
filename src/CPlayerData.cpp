@@ -70,6 +70,10 @@ CPlayerData::CPlayerData(WORD playerid) : wPlayerID(playerid)
 		if (CSAMPFunctions::GetPlayerIDFromIndex(playerid).binaryAddress == 0x0100007F)
 			iNPCProcessID = CPlugin::Get()->FindNPCProcessID(playerid);
 	}
+
+	std::memset(byteClientSideZoneIDUsed, 0xFF, sizeof(byteClientSideZoneIDUsed));
+	std::memset(wClientSideGlobalZoneID, 0xFF, sizeof(wClientSideGlobalZoneID));
+	std::memset(wClientSidePlayerZoneID, 0xFF, sizeof(wClientSidePlayerZoneID));
 }
 
 CPlayerData::~CPlayerData( void )

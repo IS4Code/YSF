@@ -140,7 +140,7 @@ public:
 	
 	// Per-player pos
 	std::bitset<MAX_PLAYERS> bCustomQuat;
-	std::unordered_map <WORD, CVector> customPos;
+	std::unordered_map<WORD, CVector> customPos;
 	float fCustomQuat[MAX_PLAYERS][4] = {};
 
 	std::shared_ptr<CPlayerObjectAttachAddon> GetObjectAddon(WORD objectid);
@@ -161,9 +161,10 @@ public:
 	class CGangZone *pPlayerZone[MAX_GANG_ZONES] = {};
 
 	// [clientsideid] = serversideid
-	BYTE byteClientSideZoneIDUsed[MAX_GANG_ZONES] = {};
-	WORD wClientSideGlobalZoneID[MAX_GANG_ZONES] = {};
-	WORD wClientSidePlayerZoneID[MAX_GANG_ZONES] = {};
+	// initialized to 0xFF
+	BYTE byteClientSideZoneIDUsed[MAX_GANG_ZONES];
+	WORD wClientSideGlobalZoneID[MAX_GANG_ZONES];
+	WORD wClientSidePlayerZoneID[MAX_GANG_ZONES];
 
 	std::bitset<MAX_GANG_ZONES> bInGangZone;
 	std::bitset<MAX_GANG_ZONES> bIsGangZoneFlashing;
