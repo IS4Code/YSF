@@ -905,40 +905,59 @@ int HOOK_THISCALL(HOOK_AddSimpleModel, CArtInfo *pArtInfo, MODEL_TYPE type, int 
 
 //----------------------------------------------------
 
+void dummy_hook_function()
+{
+	static bool printed = false;
+	if(!printed)
+	{
+		printed = true;
+		logprintf("Trampoline function for a non-existent hook was called.");
+	}
+}
+
 template <class TFunc, class THook>
-subhook_t Hook(ADDR<TFunc> &func, THook hook)
+subhook_t Hook(const char *name, ADDR<TFunc> &func, THook hook)
 {
 	//logprintf("Hooking %x", (DWORD)func);
-	subhook_t var = subhook_new(reinterpret_cast<void*>(*func), reinterpret_cast<void*>(hook), {});
+	subhook_t var;
+	if(!func)
+	{
+		logprintf("Address for %s was not found. Some functions may not be working correctly.", name);
+		var = subhook_new(reinterpret_cast<void*>(dummy_hook_function), reinterpret_cast<void*>(hook), {});
+	}else{
+		var = subhook_new(reinterpret_cast<void*>(*func), reinterpret_cast<void*>(hook), {});
+	}
 	subhook_install(var);
 	return var;
 }
 
+#define HOOK(name) Hook(#name, CAddress::FUNC_##name, HOOK_##name)
+
 // Things that needs to be hooked before netgame initialied
 void InstallPreHooks()
 {
-	SetWeather_hook = Hook(CAddress::FUNC_CNetGame__SetWeather, HOOK_CNetGame__SetWeather);
-	SetGravity_hook = Hook(CAddress::FUNC_CNetGame__SetGravity, HOOK_CNetGame__SetGravity);
-	Namecheck_hook = Hook(CAddress::FUNC_ContainsInvalidChars, HOOK_ContainsInvalidChars);
+	SetWeather_hook = HOOK(CNetGame__SetWeather);
+	SetGravity_hook = HOOK(CNetGame__SetGravity);
+	Namecheck_hook = HOOK(ContainsInvalidChars);
 	amx_Register_hook = subhook_new(reinterpret_cast<void*>(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register]), reinterpret_cast<void*>(HOOK_amx_Register), {});
 	subhook_install(amx_Register_hook);
 	
-	query_hook = Hook(CAddress::FUNC_ProcessQueryPacket, HOOK_ProcessQueryPacket);
-	CVehicle__Respawn_hook = Hook(CAddress::FUNC_CVehicle__Respawn, HOOK_CVehicle__Respawn);
-	ReplaceBadChars_hook = Hook(CAddress::FUNC_ReplaceBadChars, HOOK_ReplaceBadChars);
+	query_hook = HOOK(ProcessQueryPacket);
+	CVehicle__Respawn_hook = HOOK(CVehicle__Respawn);
+	ReplaceBadChars_hook = HOOK(ReplaceBadChars);
 	
 #ifdef SAMP_03DL
-	//ClientJoin_hook = Hook(CAddress::FUNC_ClientJoin, HOOK_ClientJoin);
-	//AddSimpleModel_hook = Hook(CAddress::FUNC_AddSimpleModel, HOOK_AddSimpleModel);
+	//ClientJoin_hook = HOOK(ClientJoin);
+	//AddSimpleModel_hook = HOOK(AddSimpleModel);
 #endif
 	
 	// Callback hooks
-	CGameMode__OnPlayerConnect_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerConnect, HOOK_CGameMode__OnPlayerConnect);
-	CGameMode__OnPlayerDisconnect_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerDisconnect, HOOK_CGameMode__OnPlayerDisconnect);
-	CGameMode__OnPlayerSpawn_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerSpawn, HOOK_CGameMode__OnPlayerSpawn);
-	CGameMode__OnPlayerStreamIn_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerStreamIn, HOOK_CGameMode__OnPlayerStreamIn);
-	CGameMode__OnPlayerStreamOut_hook = Hook(CAddress::FUNC_CGameMode__OnPlayerStreamOut, HOOK_CGameMode__OnPlayerStreamOut);
-	CGameMode__OnDialogResponse_hook = Hook(CAddress::FUNC_CGameMode__OnDialogResponse, HOOK_CGameMode__OnDialogResponse);
+	CGameMode__OnPlayerConnect_hook = HOOK(CGameMode__OnPlayerConnect);
+	CGameMode__OnPlayerDisconnect_hook = HOOK(CGameMode__OnPlayerDisconnect);
+	CGameMode__OnPlayerSpawn_hook = HOOK(CGameMode__OnPlayerSpawn);
+	CGameMode__OnPlayerStreamIn_hook = HOOK(CGameMode__OnPlayerStreamIn);
+	CGameMode__OnPlayerStreamOut_hook = HOOK(CGameMode__OnPlayerStreamOut);
+	CGameMode__OnDialogResponse_hook = HOOK(CGameMode__OnDialogResponse);
 	
 	if(CAddress::ADDR_RecordingDirectory)
 	{
