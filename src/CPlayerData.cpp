@@ -40,6 +40,8 @@
 #include "Utils.h"
 #include "RPCs.h"
 
+#include <cstring>
+
 CPlayerData::CPlayerData(WORD playerid) : wPlayerID(playerid)
 {
 	static DWORD dwPlayerColors[100] = 
