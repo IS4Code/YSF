@@ -154,7 +154,6 @@ namespace Natives
 		const int skin = CScriptParams::Get()->ReadInt();
 
 		if (!IsPlayerConnected(playerid) || !IsPlayerConnected(skinplayerid)) return 0;
-		if (skin < 0 || skin > 300) return 0;
 
 		CServer::Get()->PlayerPool.Extra(playerid).SetPlayerSkinForPlayer(static_cast<WORD>(skinplayerid), skin);
 		return 1;
