@@ -2,7 +2,7 @@
 #define YSF_BIMAP_H
 
 #include <unordered_map>
-#include <exception>
+#include <stdexcept>
 #include <functional>
 #include "optional.h"
 

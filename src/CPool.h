@@ -3,7 +3,7 @@
 
 #include <tuple>
 #include <unordered_map>
-#include <exception>
+#include <stdexcept>
 #include <type_traits>
 #include "includes/types.h"
 
