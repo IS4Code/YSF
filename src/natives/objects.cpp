@@ -909,6 +909,8 @@ namespace Hooks
 
 		if (Original::SetPlayerObjectMaterial(amx, params))
 		{
+			if (!CConfig::Get()->m_bStorePlayerObjectsMaterial) return 1;
+
 			int playerid = CScriptParams::Get()->ReadInt();
 			int objectid = CScriptParams::Get()->ReadInt();
 
@@ -955,12 +957,14 @@ namespace Hooks
 
 		if (Original::SetPlayerObjectMaterialText(amx, params))
 		{
+			if (!CConfig::Get()->m_bStorePlayerObjectsMaterial) return 1;
+
 			int playerid = CScriptParams::Get()->ReadInt();
 			int objectid = CScriptParams::Get()->ReadInt();
 
 			CObject *pObject = CServer::Get()->PlayerObjectPool[playerid][objectid];
 			int index = pObject->dwMaterialCount;
-			if (index < MAX_OBJECT_MATERIAL && CConfig::Get()->m_bStorePlayerObjectsMaterial)
+			if (index < MAX_OBJECT_MATERIAL)
 			{
 				std::string szText, szFontFace;
 				BYTE slot, materialsize, fontsize, bold, textalignment;
