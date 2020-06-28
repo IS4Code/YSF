@@ -1118,13 +1118,13 @@ public OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const
 }
 
 public OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
-				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &laggompmode, &vehiclefriendlyfire)
+				&spawnsavailable, &shownametags, &showplayermarkers, &onfoot_rate, &incar_rate, &weapon_rate, &lagcompmode, &vehiclefriendlyfire)
 
 {
 	printf("OnPlayerClientGameInit(playerid = %d, &usecjwalk = %d, &limitglobalchat = %d, &globalchatradius = %f, &nametagdistance = %f, &disableenterexits = %d, &nametaglos = %d, &manualvehengineandlights = %d, \
-				&spawnsavailable = %d, &shownametags = %d, &showplayermarkers = %d, &onfoot_rate = %d, &incar_rate = %d, &weapon_rate = %d, &laggompmode = %d, &vehiclefriendlyfire = %d",
+				&spawnsavailable = %d, &shownametags = %d, &showplayermarkers = %d, &onfoot_rate = %d, &incar_rate = %d, &weapon_rate = %d, &lagcompmode = %d, &vehiclefriendlyfire = %d",
 	playerid, usecjwalk, limitglobalchat, globalchatradius, nametagdistance, disableenterexits, nametaglos, manualvehengineandlights,
-				spawnsavailable, shownametags, showplayermarkers, onfoot_rate, incar_rate, weapon_rate, laggompmode, vehiclefriendlyfire);
+				spawnsavailable, shownametags, showplayermarkers, onfoot_rate, incar_rate, weapon_rate, lagcompmode, vehiclefriendlyfire);
 				
 
     onfoot_rate = 13;
