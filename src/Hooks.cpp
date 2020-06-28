@@ -533,6 +533,8 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
 					WORD wPlayerCount = CPlugin::Get()->GetPlayerCount();
+					if (wPlayerCount > 100) return 1;
+
 					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 					char* newdata = (char*)malloc(13 + (wPlayerCount * (MAX_PLAYER_NAME + 5))); // 5 = 1b String len, and 4b Score
 					char* keep_ptr = newdata;
@@ -580,6 +582,8 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					if (CheckQueryFlood(binaryAddress)) return 1;
 
 					WORD wPlayerCount = CPlugin::Get()->GetPlayerCount();
+					if (wPlayerCount > 100) return 1;
+
 					CPlayerPool* pPlayerPool = pNetGame->pPlayerPool;
 					char* newdata = (char*)malloc(13 + (wPlayerCount * (MAX_PLAYER_NAME + 10))); // 9 = 1b String len, 4b Score, 4b Ping, 1b Playerid
 					char* keep_ptr = newdata;
