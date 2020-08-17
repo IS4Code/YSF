@@ -14,7 +14,7 @@ namespace Natives
 		CHECK_PARAMS(7, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		CVehicle* pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
 		if (!pVehicle)
@@ -54,10 +54,10 @@ namespace Natives
 		CHECK_PARAMS(10, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		int modelid = CScriptParams::Get()->ReadInt();
-		if (modelid < 400 || modelid > 611) return 0;
+		if (400 <= modelid <= 611) return 0;
 
 		CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
 		if (!pVehicle)
@@ -122,7 +122,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int modelid = CScriptParams::Get()->ReadInt();
-		if (modelid < 400 || modelid > 611) return 0;
+		if (400 <= modelid <= 611) return 0;
 
 		return pNetGame->pVehiclePool->byteVehicleModelsUsed[modelid - 400];
 	}
@@ -148,7 +148,7 @@ namespace Natives
 		CHECK_PARAMS(3, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -170,7 +170,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -184,7 +184,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -198,7 +198,7 @@ namespace Natives
 		CHECK_PARAMS(3, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -222,7 +222,7 @@ namespace Natives
 		CHECK_PARAMS(2, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -239,7 +239,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -255,7 +255,7 @@ namespace Natives
 		CHECK_PARAMS(2, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -270,7 +270,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -284,7 +284,7 @@ namespace Natives
 		CHECK_PARAMS(2, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -299,7 +299,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -313,7 +313,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -327,7 +327,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -350,7 +350,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -364,7 +364,7 @@ namespace Natives
 		CHECK_PARAMS(2, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -379,7 +379,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		CPlayer *pPlayer;
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
@@ -399,7 +399,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -413,7 +413,7 @@ namespace Natives
 		CHECK_PARAMS(2, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if(1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if(!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -428,7 +428,7 @@ namespace Natives
 		CHECK_PARAMS(2, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -445,7 +445,7 @@ namespace Natives
 		CHECK_PARAMS(2, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -462,7 +462,7 @@ namespace Natives
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
@@ -476,7 +476,7 @@ namespace Natives
 		CHECK_PARAMS(10, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+		if (1 <= vehicleid <= MAX_VEHICLES) return 0;
 
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
