@@ -459,7 +459,8 @@ forward OnPlayerEnterPlayerGangZone(playerid, zoneid);
 forward OnPlayerLeavePlayerGangZone(playerid, zoneid);
 forward OnPlayerPickUpPlayerPickup(playerid, pickupid);
 forward OnPlayerPauseStateChange(playerid, pausestate);
-forward OnPlayerStatsAndWeaponsUpdate(playerid);
+forward OnPlayerStatsUpdate(playerid);
+forward OnPlayerWeaponsUpdate(playerid);
 forward OnRemoteRCONPacket(const ipaddr[], port, const password[], success, const command[]);
 forward OnServerMessage(const msg[]);
 forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:globalchatradius, &Float:nametagdistance, &disableenterexits, &nametaglos, &manualvehengineandlights,
