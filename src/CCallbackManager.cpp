@@ -272,13 +272,27 @@ bool CCallbackManager::OnRemoteRCONPacket(unsigned int binaryAddress, int port, 
 	return static_cast<int>(ret) != 0;
 }
 
-void CCallbackManager::OnPlayerStatsAndWeaponsUpdate(WORD playerid)
+void CCallbackManager::OnPlayerStatsUpdate(WORD playerid)
 {
 	int idx = -1;
 	cell ret = 1;
 	for (auto iter : m_setAMX)
 	{
-		if (!amx_FindPublic(iter, "OnPlayerStatsAndWeaponsUpdate", &idx))
+		if (!amx_FindPublic(iter, "OnPlayerStatsUpdate", &idx))
+		{
+			amx_Push(iter, static_cast<cell>(playerid));
+			amx_Exec(iter, &ret, idx);
+		}
+	}
+}
+
+void CCallbackManager::OnPlayerWeaponsUpdate(WORD playerid)
+{
+	int idx = -1;
+	cell ret = 1;
+	for (auto iter : m_setAMX)
+	{
+		if (!amx_FindPublic(iter, "OnPlayerWeaponsUpdate", &idx))
 		{
 			amx_Push(iter, static_cast<cell>(playerid));
 			amx_Exec(iter, &ret, idx);
@@ -529,4 +543,3 @@ void CCallbackManager::OnPlayerEditObject(WORD playerid, bool playerobject, DWOR
 		}
 	}
 }
-
