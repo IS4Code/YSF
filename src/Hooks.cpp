@@ -48,12 +48,12 @@
 #include "subhook/subhook.h"
 
 //----------------------------------------------------
-subhook_t SetWeather_hook;
-subhook_t SetGravity_hook;
-subhook_t Namecheck_hook;
+subhook_t CNetGame__SetWeather_hook;
+subhook_t CNetGame__SetGravity_hook;
+subhook_t ContainsInvalidChars_hook;
 subhook_t amx_Register_hook;
 subhook_t logprintf_hook;
-subhook_t query_hook;
+subhook_t ProcessQueryPacket_hook;
 subhook_t CVehicle__Respawn_hook;
 subhook_t ReplaceBadChars_hook;
 
@@ -85,7 +85,7 @@ char gRecordingDataPath[MAX_PATH];
 
 void HOOK_THISCALL(HOOK_CNetGame__SetWeather, void *thisptr, BYTE weatherid)
 {
-	subhook_remove(SetWeather_hook);
+	subhook_remove(CNetGame__SetWeather_hook);
 
 	auto &pool = CServer::Get()->PlayerPool;
 	for (int i = 0; i != MAX_PLAYERS; ++i)
@@ -95,14 +95,14 @@ void HOOK_THISCALL(HOOK_CNetGame__SetWeather, void *thisptr, BYTE weatherid)
 	}
 
 	CAddress::FUNC_CNetGame__SetWeather(thisptr, weatherid);
-	subhook_install(SetWeather_hook);
+	subhook_install(CNetGame__SetWeather_hook);
 }
 
 //----------------------------------------------------
 
 void HOOK_THISCALL(HOOK_CNetGame__SetGravity, void *thisptr, float gravity)
 {
-	subhook_remove(SetGravity_hook);
+	subhook_remove(CNetGame__SetGravity_hook);
 
 	auto &pool = CServer::Get()->PlayerPool;
 	for (WORD i = 0; i != MAX_PLAYERS; ++i)
@@ -112,7 +112,7 @@ void HOOK_THISCALL(HOOK_CNetGame__SetGravity, void *thisptr, float gravity)
 	}
 
 	CAddress::FUNC_CNetGame__SetGravity(thisptr, gravity);
-	subhook_install(SetGravity_hook);
+	subhook_install(CNetGame__SetGravity_hook);
 }
 
 //----------------------------------------------------
@@ -940,13 +940,13 @@ subhook_t Hook(const char *name, ADDR<TFunc> &func, THook hook)
 // Things that needs to be hooked before netgame initialied
 void InstallPreHooks()
 {
-	SetWeather_hook = HOOK(CNetGame__SetWeather);
-	SetGravity_hook = HOOK(CNetGame__SetGravity);
-	Namecheck_hook = HOOK(ContainsInvalidChars);
+	CNetGame__SetWeather_hook = HOOK(CNetGame__SetWeather);
+	CNetGame__SetGravity_hook = HOOK(CNetGame__SetGravity);
+	ContainsInvalidChars_hook = HOOK(ContainsInvalidChars);
 	amx_Register_hook = subhook_new(reinterpret_cast<void*>(((FUNC_amx_Register*)pAMXFunctions)[PLUGIN_AMX_EXPORT_Register]), reinterpret_cast<void*>(HOOK_amx_Register), {});
 	subhook_install(amx_Register_hook);
 	
-	query_hook = HOOK(ProcessQueryPacket);
+	ProcessQueryPacket_hook = HOOK(ProcessQueryPacket);
 	CVehicle__Respawn_hook = HOOK(CVehicle__Respawn);
 	ReplaceBadChars_hook = HOOK(ReplaceBadChars);
 	
@@ -1007,11 +1007,11 @@ void InstallPostHooks()
 
 void UninstallHooks()
 {
-	SUBHOOK_REMOVE(SetWeather_hook);
-	SUBHOOK_REMOVE(SetGravity_hook);
-	SUBHOOK_REMOVE(Namecheck_hook);
+	SUBHOOK_REMOVE(CNetGame__SetWeather_hook);
+	SUBHOOK_REMOVE(CNetGame__SetGravity_hook);
+	SUBHOOK_REMOVE(ContainsInvalidChars_hook);
 	SUBHOOK_REMOVE(amx_Register_hook);
-	SUBHOOK_REMOVE(query_hook);
+	SUBHOOK_REMOVE(ProcessQueryPacket_hook);
 	SUBHOOK_REMOVE(logprintf_hook);
 	SUBHOOK_REMOVE(CVehicle__Respawn_hook);
 	SUBHOOK_REMOVE(CGameMode__OnPlayerConnect_hook);
