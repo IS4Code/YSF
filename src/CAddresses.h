@@ -150,13 +150,18 @@ public:
 		return *this;
 	}
 
-	auto operator*() -> decltype(*ptr)
+	ptr_type get() const
+	{
+		return ptr;
+	}
+
+	auto operator*() -> decltype(*ptr) const
 	{
 		if (ptr == nullptr) throw std::logic_error("Attempt to dereference null pointer.");
 		return *ptr;
 	}
 
-	void unlock()
+	void unlock() const
 	{
 		if (ptr == nullptr) throw std::logic_error("Attempt to dereference null pointer.");
 		Unlock(reinterpret_cast<void*>(ptr), sizeof(T));
@@ -168,7 +173,7 @@ public:
 	}
 
 	template <class... Args>
-	auto operator()(Args&&... args) -> decltype(ptr(std::forward<Args>(args)...))
+	auto operator()(Args&&... args) -> decltype(ptr(std::forward<Args>(args)...)) const
 	{
 		if (ptr == nullptr) throw std::logic_error("Attempt to dereference null pointer.");
 		return ptr(std::forward<Args>(args)...);

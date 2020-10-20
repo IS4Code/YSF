@@ -35,13 +35,6 @@
 
 #include "includes/types.h"
 
-#define SUBHOOK_REMOVE(hookname) \
-	if(hookname) \
-	{ \
-		subhook_remove(hookname); \
-		subhook_free(hookname); \
-	} \
-
 extern char gRecordingDataPath[MAX_PATH];
 
 void InstallPreHooks();
