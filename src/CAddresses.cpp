@@ -187,7 +187,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 
 	ADDR_WrongPacketIDBranch =						0x004591FC;
 
-	FUNC_ReplaceBadChars = 0x00468F20;
+	FUNC_ReplaceBadChars = FindPattern("\x56\x8B\x74\x00\x00\x56\xE8\x00\x00\x00\x00\x8A\x06", "xxx??xx????xx"); // 0x00468F20
 	#else
 
 	// Thx for Mellnik
@@ -239,7 +239,7 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 
 	ADDR_WrongPacketIDBranch = 0x080752FC;
 
-	FUNC_ReplaceBadChars = 0x080D5CA0;
+	FUNC_ReplaceBadChars = FindPattern("\x55\x89\xE5\x53\x83\xEC\x04\x8B\x5D\x08\x89\x1C\x24\xE8\x00\x00\x00\x00\x0F", "xxxxxxxxxxxxxx????x"); // 080D5CA0
 
 	switch(sampVersion)
 	{
