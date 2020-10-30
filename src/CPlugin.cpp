@@ -56,12 +56,13 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 
 	//memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	
-	LoadNatives();
+	LoadNatives(!CConfig::Get()->m_bPassiveMode);
 
 	// Initialize addresses
 	CAddress::Initialize(version);
 	// Initialize SAMP Function
 	CSAMPFunctions::PreInitialize();
+
 	// Install pre-hooks
 	InstallPreHooks();
 
@@ -87,7 +88,6 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 		m_RCONCommands.push_back(std::string(cmds->szName));
 		cmds++;
 	} while (cmds->szName[0] && !cmds->dwFlags);
-	//logprintf("cussess");
 }
 
 CPlugin::~CPlugin()
@@ -107,7 +107,7 @@ bool CPlugin::RemovePlayer(int playerid)
 
 void CPlugin::Process()
 {
-	if(m_iTickRate == -1) return;
+	if(m_iTickRate == -1 || CConfig::Get()->m_bPassiveMode) return;
 
 	if(++m_iTicks >= m_iTickRate)
 	{

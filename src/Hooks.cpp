@@ -394,8 +394,6 @@ Packet* THISCALL CHookRakServer::Receive(void* ppRakServer)
 }
 
 //----------------------------------------------------
-FILE* g_fLog = NULL;
-
 bool	bRconSocketReply = false;
 
 SOCKET	cur_sock = INVALID_SOCKET;
@@ -1002,6 +1000,8 @@ FuncHook<TFunc> Hook(const char *name, ADDR<TFunc> &func, THook hook)
 // Things that needs to be hooked before netgame initialied
 void InstallPreHooks()
 {
+	if(CConfig::Get()->m_bPassiveMode) return;
+
 	CNetGame__SetWeather_hook = HOOK(CNetGame__SetWeather);
 	CNetGame__SetGravity_hook = HOOK(CNetGame__SetGravity);
 	ContainsInvalidChars_hook = HOOK(ContainsInvalidChars);
@@ -1035,10 +1035,12 @@ void InstallPreHooks()
 // Things that needs to be hooked after netgame initialied
 void InstallPostHooks()
 {
-	CSAMPFunctions::PostInitialize();
+	CSAMPFunctions::PostInitialize(CConfig::Get()->m_bPassiveMode);
 
 	if (CConfig::Get()->m_bIncreaseRakNetInternalPlayers)
 		CSAMPFunctions::Start(MAX_PLAYERS, 0, CConfig::Get()->m_iRakNetInternalSleepTime, static_cast<unsigned short>(CSAMPFunctions::GetIntVariable("port")), CSAMPFunctions::GetStringVariable("bind"));
+
+	if(CConfig::Get()->m_bPassiveMode) return;
 
 	// Recreate pools
 
@@ -1072,6 +1074,8 @@ void InstallPostHooks()
 
 void UninstallHooks()
 {
+	if(CConfig::Get()->m_bPassiveMode) return;
+
 	CNetGame__SetWeather_hook.free();
 	CNetGame__SetGravity_hook.free();
 	ContainsInvalidChars_hook.free();
@@ -1086,11 +1090,4 @@ void UninstallHooks()
 	CGameMode__OnPlayerStreamIn_hook.free();
 	CGameMode__OnPlayerStreamOut_hook.free();
 	CGameMode__OnDialogResponse_hook.free();
-
-	// Close log file
-	if (g_fLog)
-	{
-		fclose(g_fLog);
-		g_fLog = NULL;
-	}
 }

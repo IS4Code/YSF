@@ -83,31 +83,10 @@ RakNet__ClearBanList_t						CSAMPFunctions::pfn__RakNet__ClearBanList = NULL;
 
 void CSAMPFunctions::PreInitialize()
 {
-	/*INIT_FPTR(CConsole__AddStringVariable);
-	INIT_FPTR(CConsole__GetStringVariable);
-	INIT_FPTR(CConsole__SetStringVariable);
-	INIT_FPTR(CConsole__GetIntVariable);
-	INIT_FPTR(CConsole__SetIntVariable);
-	INIT_FPTR(CConsole__GetBoolVariable);
-	INIT_FPTR(CConsole__ModifyVariableFlags);
-	INIT_FPTR(CConsole__FindVariable);
-	INIT_FPTR(CConsole__SendRules);
-	INIT_FPTR(CConsole__Execute);
 
-	INIT_FPTR(CFilterscripts__LoadFilterscript);
-	INIT_FPTR(CFilterscripts__UnLoadFilterscript);
-
-	INIT_FPTR(CPlayer__SpawnForWorld);
-	INIT_FPTR(CPlayerPool__HandleVehicleRespawn);
-	INIT_FPTR(CObject__SpawnForPlayer);
-
-	INIT_FPTR(Packet_WeaponsUpdate);
-	INIT_FPTR(Packet_StatsUpdate);
-
-	INIT_FPTR(format_amxstring);*/
 }
 
-void CSAMPFunctions::PostInitialize()
+void CSAMPFunctions::PostInitialize(bool passive)
 {
 	// Get pNetGame
 	int (*pfn_GetNetGame)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_NETGAME];
@@ -142,6 +121,8 @@ void CSAMPFunctions::PostInitialize()
 	POINT_TO_MEMBER(RakNet__AddToBanList, pRakServer_VTBL[RAKNET_ADD_BAN_OFFSET]);
 	POINT_TO_MEMBER(RakNet__RemoveFromBanList, pRakServer_VTBL[RAKNET_REMOVE_BAN_OFFSET]);
 	POINT_TO_MEMBER(RakNet__ClearBanList, pRakServer_VTBL[RAKNET_CLEAR_BAN_OFFSET]);
+
+	if(passive) return;
 	
 	Unlock((void*)&pRakServer_VTBL[RAKNET_SEND_OFFSET], 4); pRakServer_VTBL[RAKNET_SEND_OFFSET] = reinterpret_cast<int>(CHookRakServer::Send);
 	Unlock((void*)&pRakServer_VTBL[RAKNET_RPC_OFFSET], 4); pRakServer_VTBL[RAKNET_RPC_OFFSET] = reinterpret_cast<int>(CHookRakServer::RPC_2);

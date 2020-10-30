@@ -87,10 +87,33 @@ int RegisterAllNatives(AMX *amx)
 	return return_code;
 }
 
-void LoadNatives()
-{
-	bool loadhooks = true;
+void ActorsLoadNatives();
+void FixesLoadNatives();
+void GangZonesLoadNatives();
+void GangZonesHooksLoadNatives();
+void MenusLoadNatives();
+void MiscLoadNatives();
+void ModelSizesLoadNatives();
+void ObjectsLoadNatives();
+void ObjectsHooksLoadNatives();
+void PickupsLoadNatives();
+void PickupsHooksLoadNatives();
+void PlayersLoadNatives();
+void PlayersHooksLoadNatives();
+void RakNetLoadNatives();
+void RakNetHooksLoadNatives();
+void ScoreBoardHooksLoadNatives();
+void ServerLoadNatives();
+void ServerHooksLoadNatives();
+void TextDrawsLoadNatives();
+void TextLabelsLoadNatives();
+void VehiclesLoadNatives();
+void VehiclesHooksLoadNatives();
+void YSFSettingsLoadNatives();
+void YSFSettingsHooksLoadNatives();
 
+void LoadNatives(bool loadhooks)
+{
 	ActorsLoadNatives();
 	FixesLoadNatives();
 	GangZonesLoadNatives();

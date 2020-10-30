@@ -10,6 +10,9 @@ CConfig::CConfig()
 	{
 		fileConfig = fopen("plugins/YSF.cfg", "w");
 
+		fprintf(fileConfig, "# Turning this on disables all hooks and custom processing, as well as natives that rely on that\n");
+		fprintf(fileConfig, "PassiveMode 0\n");
+		fprintf(fileConfig, "\n");
 		fprintf(fileConfig, "# Protection against fake pickup ids\n");
 		fprintf(fileConfig, "PickupProtection 0\n");
 		fprintf(fileConfig, "\n");
@@ -52,6 +55,7 @@ CConfig::CConfig()
 		fclose(fileConfig);
 	}
 
+	m_bPassiveMode = static_cast<int>(Utility::CFGLoad("PassiveMode") != 0);
 	m_bPickupProtection = static_cast<int>(Utility::CFGLoad("PickupProtection") != 0);
 	m_bDeathProtection = static_cast<int>(Utility::CFGLoad("DeathProtection") != 0);
 	m_bDialogProtection = static_cast<int>(Utility::CFGLoad("DialogProtection") != 0);

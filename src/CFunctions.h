@@ -137,7 +137,7 @@ class CSAMPFunctions
 {
 public:
 	static void		PreInitialize();
-	static void		PostInitialize();
+	static void		PostInitialize(bool passive);
 	
 	static void		AddStringVariable(char *szRule, int flags, char *szString, void *changefunc);
 	static char*	GetStringVariable(char *szRule);

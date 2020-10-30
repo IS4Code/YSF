@@ -56,32 +56,7 @@ struct AMX_HOOK_INFO
 	AMX_NATIVE func PACKED;
 };
 
-void ActorsLoadNatives();
-void FixesLoadNatives();
-void GangZonesLoadNatives();
-void GangZonesHooksLoadNatives();
-void MenusLoadNatives();
-void MiscLoadNatives();
-void ModelSizesLoadNatives();
-void ObjectsLoadNatives();
-void ObjectsHooksLoadNatives();
-void PickupsLoadNatives();
-void PickupsHooksLoadNatives();
-void PlayersLoadNatives();
-void PlayersHooksLoadNatives();
-void RakNetLoadNatives();
-void RakNetHooksLoadNatives();
-void ScoreBoardHooksLoadNatives();
-void ServerLoadNatives();
-void ServerHooksLoadNatives();
-void TextDrawsLoadNatives();
-void TextLabelsLoadNatives();
-void VehiclesLoadNatives();
-void VehiclesHooksLoadNatives();
-void YSFSettingsLoadNatives();
-void YSFSettingsHooksLoadNatives();
-
-void LoadNatives();
+void LoadNatives(bool loadhooks);
 
 bool ApplyHooks(AMX_NATIVE_INFO &native);
 
