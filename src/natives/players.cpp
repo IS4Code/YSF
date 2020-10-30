@@ -1088,6 +1088,53 @@ namespace Natives
 		return 1;
 	}
 
+	// native SetPlayerSyncPos(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncPos)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.vecPosition.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.vecPosition.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.vecPosition.fZ = CScriptParams::Get()->ReadFloat();
+		return 1;
+	}
+
+	// native SetPlayerSyncVelocity(playerid, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVelocity)
+	{
+		CHECK_PARAMS(4, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.vecVelocity.fX = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.vecVelocity.fY = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.vecVelocity.fZ = CScriptParams::Get()->ReadFloat();
+		return 1;
+	}
+
+	// native SetPlayerSyncRotationQuat(playerid, Float:w, Float:x, Float:y, Float:z);
+	AMX_DECLARE_NATIVE(SetPlayerSyncRotationQuat)
+	{
+		CHECK_PARAMS(5, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->syncData.fQuaternion[0] = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.fQuaternion[1] = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.fQuaternion[2] = CScriptParams::Get()->ReadFloat();
+		pPlayer->syncData.fQuaternion[3] = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
 	// native SetPlayerSyncSpecialAction(playerid, actionid);
 	AMX_DECLARE_NATIVE(SetPlayerSyncSpecialAction)
 	{
@@ -1154,6 +1201,20 @@ namespace Natives
 
 		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 		pPlayer->vehicleSyncData.wVehicleId = pPlayer->passengerSyncData.wVehicleId = CScriptParams::Get()->ReadInt();
+		
+		return 1;
+	}
+
+	// native SetPlayerSyncVehicleSeat(playerid, seat);
+	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleSeat)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->passengerSyncData.byteSeatFlags = CScriptParams::Get()->ReadInt();
 
 		return 1;
 	}
@@ -1217,6 +1278,20 @@ namespace Natives
 
 		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
 		pPlayer->vehicleSyncData.fHealth = CScriptParams::Get()->ReadFloat();
+
+		return 1;
+	}
+
+	// native SetPlayerSyncTrainSpeed(playerid, Float:speed);
+	AMX_DECLARE_NATIVE(SetPlayerSyncTrainSpeed)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		pPlayer->vehicleSyncData.fTrainSpeed = CScriptParams::Get()->ReadFloat();
 
 		return 1;
 	}
@@ -1629,6 +1704,11 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerConnectMode) // R20
 	AMX_DEFINE_NATIVE(GetPlayerConnectMode) // R20
 	AMX_DEFINE_NATIVE(SendPlayerClientGameInit) // R20
+	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleSeat)
+	AMX_DEFINE_NATIVE(SetPlayerSyncTrainSpeed)
+	AMX_DEFINE_NATIVE(SetPlayerSyncPos)
+	AMX_DEFINE_NATIVE(SetPlayerSyncVelocity)
+	AMX_DEFINE_NATIVE(SetPlayerSyncRotationQuat)
 };
 
 static AMX_HOOK_INFO hook_list[] =

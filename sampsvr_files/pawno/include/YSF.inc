@@ -185,6 +185,9 @@ native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:f
 native TogglePlayerGhostMode(playerid, bool:toggle);
 native GetPlayerGhostMode(playerid);
 native SetPlayerSyncKeys(playerid, keys, updown, leftright);
+native SetPlayerSyncPos(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncVelocity(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncRotationQuat(playerid, Float:w, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraFrontVector(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraPos(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraMode(playerid, mode);
@@ -196,10 +199,12 @@ native SetPlayerSyncHealth(playerid, Float:health);
 native SetPlayerSyncArmour(playerid, Float:armour);
 native SetPlayerSyncPosition(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncVehicleId(playerid, vehicleid);
+native SetPlayerSyncVehicleSeat(playerid, seat);
 native SetPlayerSyncVehiclePosition(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncVehicleVelocity(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncVehicleRotQuat(playerid, Float:w, Float:x, Float:y, Float:z);
 native SetPlayerSyncVehicleHealth(playerid, Float:health);
+native SetPlayerSyncTrainSpeed(playerid, Float:speed);
 native SendPlayerDeath(playerid, forplayerid=-1);
 native UpdatePlayerSyncData(playerid, type=-1);
 native SendPlayerClientGameInit(playerid, bool:usecjwalk=bool:-1, bool:limitglobalchat=bool:-1, Float:globalchatradius=Float:-1, Float:nametagdistance=Float:-1, bool:disableenterexits=bool:-1, bool:nametaglos=bool:-1, bool:manualvehengineandlights=bool:-1,
