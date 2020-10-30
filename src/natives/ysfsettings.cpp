@@ -24,30 +24,12 @@ namespace Natives
 		return static_cast<cell>(CPlugin::Get()->GetTickRate());
 	}
 
-	// native YSF_EnableNightVisionFix(enable);
-	AMX_DECLARE_NATIVE(YSF_EnableNightVisionFix)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		CPlugin::Get()->EnableNightVisionFix(CScriptParams::Get()->ReadBool());
-		return 1;
-	}
-
 	// native YSF_IsNightVisionFixEnabled();
 	AMX_DECLARE_NATIVE(YSF_IsNightVisionFixEnabled)
 	{
 		if (!CPlugin::IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
 
 		return static_cast<cell>(CPlugin::Get()->IsNightVisionFixEnabled());
-	}
-
-	// native YSF_ToggleOnServerMessage(toggle);
-	AMX_DECLARE_NATIVE(YSF_ToggleOnServerMessage)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		CPlugin::Get()->ToggleOnServerMessage(CScriptParams::Get()->ReadBool());
-		return 1;
 	}
 
 	// native YSF_IsOnServerMessageEnabled();
@@ -97,9 +79,7 @@ static AMX_NATIVE_INFO native_list[] =
 {
 	AMX_DEFINE_NATIVE(YSF_SetTickRate)
 	AMX_DEFINE_NATIVE(YSF_GetTickRate)
-	AMX_DEFINE_NATIVE(YSF_EnableNightVisionFix)
 	AMX_DEFINE_NATIVE(YSF_IsNightVisionFixEnabled)
-	AMX_DEFINE_NATIVE(YSF_ToggleOnServerMessage) // R18-2
 	AMX_DEFINE_NATIVE(YSF_IsOnServerMessageEnabled) // R18-2
 	AMX_DEFINE_NATIVE(YSF_SetExtendedNetStatsEnabled) // R17
 	AMX_DEFINE_NATIVE(YSF_IsExtendedNetStatsEnabled) // R17

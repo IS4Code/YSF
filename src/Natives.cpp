@@ -89,20 +89,30 @@ int RegisterAllNatives(AMX *amx)
 
 void LoadNatives()
 {
+	bool loadhooks = true;
+
 	ActorsLoadNatives();
 	FixesLoadNatives();
 	GangZonesLoadNatives();
+	if(loadhooks) GangZonesHooksLoadNatives();
 	MenusLoadNatives();
 	MiscLoadNatives();
 	ModelSizesLoadNatives();
 	ObjectsLoadNatives();
+	if(loadhooks) ObjectsHooksLoadNatives();
 	PickupsLoadNatives();
+	if(loadhooks) PickupsHooksLoadNatives();
 	PlayersLoadNatives();
+	if(loadhooks) PlayersHooksLoadNatives();
 	RakNetLoadNatives();
-	ScoreBoardLoadNatives();
+	if(loadhooks) RakNetHooksLoadNatives();
+	if(loadhooks) ScoreBoardHooksLoadNatives();
 	ServerLoadNatives();
+	if(loadhooks) ServerHooksLoadNatives();
 	TextDrawsLoadNatives();
 	TextLabelsLoadNatives();
 	VehiclesLoadNatives();
+	if(loadhooks) VehiclesHooksLoadNatives();
 	YSFSettingsLoadNatives();
+	if(loadhooks) YSFSettingsHooksLoadNatives();
 }

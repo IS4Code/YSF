@@ -59,19 +59,27 @@ struct AMX_HOOK_INFO
 void ActorsLoadNatives();
 void FixesLoadNatives();
 void GangZonesLoadNatives();
+void GangZonesHooksLoadNatives();
 void MenusLoadNatives();
 void MiscLoadNatives();
 void ModelSizesLoadNatives();
 void ObjectsLoadNatives();
+void ObjectsHooksLoadNatives();
 void PickupsLoadNatives();
+void PickupsHooksLoadNatives();
 void PlayersLoadNatives();
+void PlayersHooksLoadNatives();
 void RakNetLoadNatives();
-void ScoreBoardLoadNatives();
+void RakNetHooksLoadNatives();
+void ScoreBoardHooksLoadNatives();
 void ServerLoadNatives();
+void ServerHooksLoadNatives();
 void TextDrawsLoadNatives();
 void TextLabelsLoadNatives();
 void VehiclesLoadNatives();
+void VehiclesHooksLoadNatives();
 void YSFSettingsLoadNatives();
+void YSFSettingsHooksLoadNatives();
 
 void LoadNatives();
 

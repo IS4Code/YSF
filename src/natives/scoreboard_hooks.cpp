@@ -111,7 +111,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(ResetPlayerNameInServerQuery) // R20
 };
 
-void ScoreBoardLoadNatives()
+void ScoreBoardHooksLoadNatives()
 {
 	RegisterNatives(native_list);
 }
