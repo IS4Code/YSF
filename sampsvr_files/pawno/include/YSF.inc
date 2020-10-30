@@ -99,12 +99,12 @@ native HasPlayerConsoleMessages(playerid, &color = 0);
 // YSF settings
 native YSF_SetTickRate(ticks);
 native YSF_GetTickRate();
-native YSF_EnableNightVisionFix(enable);
-native YSF_IsNightVisionFixEnabled();
-native YSF_ToggleOnServerMessage(toggle);
-native YSF_IsOnServerMessageEnabled();
-native YSF_SetExtendedNetStatsEnabled(enable);
-native YSF_IsExtendedNetStatsEnabled();
+native YSF_EnableNightVisionFix(bool:enable);
+native bool:YSF_IsNightVisionFixEnabled();
+native YSF_ToggleOnServerMessage(bool:toggle);
+native bool:YSF_IsOnServerMessageEnabled();
+native YSF_SetExtendedNetStatsEnabled(bool:enable);
+native bool:YSF_IsExtendedNetStatsEnabled();
 native YSF_SetAFKAccuracy(time_ms);
 native YSF_GetAFKAccuracy();
 
