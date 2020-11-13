@@ -55,18 +55,18 @@ CConfig::CConfig()
 		fclose(fileConfig);
 	}
 
-	m_bPassiveMode = static_cast<int>(Utility::CFGLoad("PassiveMode") != 0);
-	m_bPickupProtection = static_cast<int>(Utility::CFGLoad("PickupProtection") != 0);
-	m_bDeathProtection = static_cast<int>(Utility::CFGLoad("DeathProtection") != 0);
-	m_bDialogProtection = static_cast<int>(Utility::CFGLoad("DialogProtection") != 0);
-	m_bUseCustomSpawn = static_cast<int>(Utility::CFGLoad("UseCustomSpawn") != 0);
-	m_bUsePerPlayerGangZones = static_cast<int>(Utility::CFGLoad("UsePerPlayerGangZones") != 0);
-	m_bAllowRemoteRCONWithBannedIPs = static_cast<int>(Utility::CFGLoad("AllowRemoteRCONWithBannedIPs") != 0);
-	m_bIncreaseRakNetInternalPlayers = static_cast<int>(Utility::CFGLoad("IncreaseRakNetInternalPlayers") != 0);
-	m_iRakNetInternalSleepTime = Utility::CFGLoad("RakNetInternalSleepTime");
-	m_iAttachObjectDelay = Utility::CFGLoad("AttachObjectDelay");
-	m_bStorePlayerObjectsMaterial = static_cast<int>(Utility::CFGLoad("StorePlayerObjectsMaterial") != 0);
-	m_bGroupPlayerObjects = static_cast<int>(Utility::CFGLoad("GroupPlayerObjects") != 0);
+	m_bPassiveMode = static_cast<int>(Utility::CFGLoad("PassiveMode", 0) != 0);
+	m_bPickupProtection = static_cast<int>(Utility::CFGLoad("PickupProtection", 0) != 0);
+	m_bDeathProtection = static_cast<int>(Utility::CFGLoad("DeathProtection", 0) != 0);
+	m_bDialogProtection = static_cast<int>(Utility::CFGLoad("DialogProtection", 0) != 0);
+	m_bUseCustomSpawn = static_cast<int>(Utility::CFGLoad("UseCustomSpawn", 0) != 0);
+	m_bUsePerPlayerGangZones = static_cast<int>(Utility::CFGLoad("UsePerPlayerGangZones", 0) != 0);
+	m_bAllowRemoteRCONWithBannedIPs = static_cast<int>(Utility::CFGLoad("AllowRemoteRCONWithBannedIPs", 0) != 0);
+	m_bIncreaseRakNetInternalPlayers = static_cast<int>(Utility::CFGLoad("IncreaseRakNetInternalPlayers", 0) != 0);
+	m_iRakNetInternalSleepTime = Utility::CFGLoad("RakNetInternalSleepTime", 5);
+	m_iAttachObjectDelay = Utility::CFGLoad("AttachObjectDelay", 2000);
+	m_bStorePlayerObjectsMaterial = static_cast<int>(Utility::CFGLoad("StorePlayerObjectsMaterial", 1) != 0);
+	m_bGroupPlayerObjects = static_cast<int>(Utility::CFGLoad("GroupPlayerObjects", 0) != 0);
 
 	//logprintf("%d, %d, %d, %d", m_bPickupProtection, m_bDeathProtection, m_iRakNetInternalSleepTime, m_iAttachObjectDelay);
 }

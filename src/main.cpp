@@ -69,7 +69,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 
 	DWORD addr = reinterpret_cast<DWORD>(logprintf);
 #ifdef SAMP_03DL
-	if(addr == CAddress::FUNC_Logprintf_03DL_R1 || Utility::CFGLoad("SkipVersionCheck"))
+	if(addr == CAddress::FUNC_Logprintf_03DL_R1 || Utility::CFGLoad("SkipVersionCheck", 0))
 	{
 		version = SAMPVersion::VERSION_03DL_R1;
 		strcpy(szVersion, "0.3.DL R1");
@@ -79,7 +79,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 		logprintf("Use another version of YSF or build without SAMP_03DL");
 	}
 #else
-	if(addr == CAddress::FUNC_Logprintf_037_R2_1 || Utility::CFGLoad("SkipVersionCheck"))
+	if(addr == CAddress::FUNC_Logprintf_037_R2_1 || Utility::CFGLoad("SkipVersionCheck", 0))
 	{
 		version = SAMPVersion::VERSION_037_R2;
 		strcpy(szVersion, "0.3.7 R2-1 or R2-2");
