@@ -162,6 +162,7 @@ native GetPlayerSpectateID(playerid);
 native GetPlayerSpectateType(playerid);
 native GetPlayerLastSyncedVehicleID(playerid);
 native GetPlayerLastSyncedTrailerID(playerid);
+native GetPlayerRawIp(playerid);
 
 native SendBulletData(senderid, forplayerid = -1, weaponid, hittype, hitid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ);
 native ShowPlayerForPlayer(forplayerid, playerid, bool:setskin=false);

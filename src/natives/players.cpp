@@ -1258,6 +1258,17 @@ namespace Natives
 
 		return 1;
 	}
+
+	// native GetPlayerRawIp(playerid);
+	AMX_DECLARE_NATIVE(GetPlayerRawIp)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		return CSAMPFunctions::GetPlayerIDFromIndex(playerid).binaryAddress;
+	}
 }
 
 static AMX_NATIVE_INFO native_list[] =
@@ -1342,6 +1353,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncPos)
 	AMX_DEFINE_NATIVE(SetPlayerSyncVelocity)
 	AMX_DEFINE_NATIVE(SetPlayerSyncRotationQuat)
+	AMX_DEFINE_NATIVE(GetPlayerRawIp)
 };
 
 void PlayersLoadNatives()
