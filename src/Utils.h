@@ -28,7 +28,7 @@ namespace Utility
 	std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
 	const char* GetWeaponName(BYTE weaponid);
 	BYTE GetWeaponSlot(BYTE weaponid);
-	int CFGLoad(char const * const name, int default = 1, char * const dest = 0, size_t dlen = 0);
+	int CFGLoad(char const * const name, int default_val = 1, char * const dest = 0, size_t dlen = 0);
 };
 
 float GetDistance3D(CVector *vecPosition, CVector *_vecPosition);

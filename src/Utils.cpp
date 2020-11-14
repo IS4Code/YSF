@@ -237,13 +237,13 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 }
 
 // Load an entry from server.cfg - Y_Less
-int Utility::CFGLoad(char const * const name, int default, char * const dest, size_t dlen)
+int Utility::CFGLoad(char const * const name, int default_val, char * const dest, size_t dlen)
 {
 	FILE * fileConfig = fopen("plugins/YSF.cfg", "r");
 	//logprintf("2");
 
 	int
-		ret = default,
+		ret = default_val,
 		len = strlen(name);
 	//logprintf("3");
 
