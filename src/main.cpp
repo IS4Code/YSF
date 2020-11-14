@@ -9,6 +9,8 @@
 #include "Utils.h"
 #include "Globals.h"
 
+#include <string>
+
 //----------------------------------------------------------
 // The Support() function indicates what possibilities this
 // plugin has. The SUPPORTS_VERSION flag is required to check
@@ -33,14 +35,14 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	
 	// Check server version
 	SAMPVersion version = SAMPVersion::VERSION_UNKNOWN;
-	char szVersion[64];
+	const char *szVersion;
 
 	DWORD addr = reinterpret_cast<DWORD>(logprintf);
 #ifdef SAMP_03DL
 	if(addr == CAddress::FUNC_Logprintf_03DL_R1 || Utility::CFGLoad("SkipVersionCheck", 0))
 	{
 		version = SAMPVersion::VERSION_03DL_R1;
-		strcpy(szVersion, "0.3.DL R1");
+		szVersion = "0.3.DL R1";
 	}else if(addr == CAddress::FUNC_Logprintf_037_R2_1)
 	{
 		logprintf("This version of YSF doesn't support SA-MP 0.3.7");
@@ -50,7 +52,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	if(addr == CAddress::FUNC_Logprintf_037_R2_1 || Utility::CFGLoad("SkipVersionCheck", 0))
 	{
 		version = SAMPVersion::VERSION_037_R2;
-		strcpy(szVersion, "0.3.7 R2-1 or R2-2");
+		szVersion = "0.3.7 R2-1 or R2-2";
 	}else if(addr == CAddress::FUNC_Logprintf_03DL_R1)
 	{
 		logprintf("This version of YSF doesn't support SA-MP 0.3.DL");
@@ -67,15 +69,18 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	if (version != SAMPVersion::VERSION_UNKNOWN)
 	{
 		CPlugin::Init(version);
-		
+
+		auto &header = " " PROJECT_NAME " " PROJECT_VERSION " (compiled " __DATE__ " " __TIME__") loaded";
 		logprintf("");
-		logprintf(" ===============================");
-		logprintf("        " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " loaded");
-		logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2016 kurta999");
-		logprintf("    Server version: %s", szVersion);
-		logprintf("    Operating System: " OS_NAME);
-		logprintf("    Built on: " __DATE__ " at " __TIME__);
-		logprintf(" ===============================");
+		std::string row(sizeof(header) - 1, '=');
+		row[0] = ' ';
+		logprintf(row.c_str());
+		logprintf(header);
+		logprintf("  (c) 2008 Alex \"Y_Less\" Cole");
+		logprintf("  (c) 2010 - 2018 kurta999");
+		logprintf("  (c) 2018 - 2020 IllidanS4");
+		logprintf(" Server version: %s, " OS_NAME, szVersion);
+		logprintf(row.c_str());
 		logprintf("");
 	}
 	else
@@ -97,12 +102,7 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 	CPlugin::Destroy();
 	CScriptParams::Destroy();
 
-	// Corrected apperance in log file
-	logprintf("");
-	logprintf(" ==============");
-	logprintf("  " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " unloaded");
-	logprintf(" ==============");
-	logprintf("");
+	logprintf(" " PROJECT_NAME " " PROJECT_VERSION " unloaded");
 }
 
 //----------------------------------------------------------
