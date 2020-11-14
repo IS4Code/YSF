@@ -433,6 +433,11 @@ native GetPickupPos(pickupid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0);
 native GetPickupModel(pickupid);
 native GetPickupType(pickupid);
 native GetPickupVirtualWorld(pickupid);
+native SetPickupPos(pickupid, Float:X, Float:Y, Float:Z);
+native SetPickupModel(pickupid, model);
+native SetPickupType(pickupid, type);
+native SetPickupVirtualWorld(pickupid, virtualworld);
+
 /*
 // Pickups - Player
 native CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
