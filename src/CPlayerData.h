@@ -85,7 +85,7 @@ public:
 	bool IsObjectHidden(WORD objectid) const;
 	void SetBuildingsRemoved(int modelid, const CVector &pos, float range);
 	size_t GetBuildingsRemoved() const;
-	bool IsBuildingRemoved(int modelid, const CVector &pos, float range) const;
+	bool IsBuildingRemoved(int modelid, const CVector &pos, float range, bool any) const;
 
 	int iNPCProcessID = -1;
 	WORD wSurfingInfo = 0;

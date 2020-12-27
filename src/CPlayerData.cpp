@@ -413,16 +413,24 @@ size_t CPlayerData::GetBuildingsRemoved() const
 	return m_RemovedBuildings.size();
 }
 
-bool CPlayerData::IsBuildingRemoved(int modelid, const CVector &pos, float range) const
+bool CPlayerData::IsBuildingRemoved(int modelid, const CVector &pos, float range, bool any) const
 {
 	for (auto &building : m_RemovedBuildings)
 	{
 		if (modelid == -1 || building.ModelId == -1 || modelid == building.ModelId)
 		{
-			CVector d = pos - building.Position;
-			if (d.Length() <= range + building.Range)
+			float d = (pos - building.Position).Length();
+			if(any)
 			{
-				return true;
+				if(d <= range + building.Range)
+				{
+					return true;
+				}
+			} else {
+				if(d + range <= building.Range)
+				{
+					return true;
+				}
 			}
 		}
 	}

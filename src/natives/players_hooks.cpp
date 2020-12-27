@@ -171,7 +171,7 @@ namespace Natives
 
 		if(!IsPlayerConnected(playerid)) return 0;
 
-		return static_cast<cell>(CServer::Get()->PlayerPool.Extra(playerid).IsBuildingRemoved(modelid, pos, range));
+		return static_cast<cell>(CServer::Get()->PlayerPool.Extra(playerid).IsBuildingRemoved(modelid, pos, range, false));
 	}
 
 	// native TogglePlayerGhostMode(playerid, bool:toggle);
