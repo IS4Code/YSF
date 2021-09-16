@@ -1014,16 +1014,22 @@ namespace Natives
 		return 1;
 	}
 
-	// native SetPlayerSyncVehicleId(playerid, vehicleid);
+	// native SetPlayerSyncVehicleId(playerid, vehicleid, bool:setstate=false);
 	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleId)
 	{
-		CHECK_PARAMS(2, LOADED);
+		CHECK_PARAMS(2, MORE_PARAMETER_ALLOWED);
 
 		const int playerid = CScriptParams::Get()->ReadInt();
 		if(!IsPlayerConnected(playerid)) return 0;
 
 		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-		pPlayer->vehicleSyncData.wVehicleId = pPlayer->passengerSyncData.wVehicleId = CScriptParams::Get()->ReadInt();
+		int id = CScriptParams::Get()->ReadInt();
+		pPlayer->vehicleSyncData.wVehicleId = pPlayer->passengerSyncData.wVehicleId = id;
+
+		if(params[0] / sizeof(cell) >= 3 && CScriptParams::Get()->ReadBool())
+		{
+			pPlayer->wVehicleId = id;
+		}
 		
 		return 1;
 	}
@@ -1054,6 +1060,7 @@ namespace Natives
 		pPlayer->vehicleSyncData.vecPosition.fX = pPlayer->passengerSyncData.vecPosition.fX = CScriptParams::Get()->ReadFloat();
 		pPlayer->vehicleSyncData.vecPosition.fY = pPlayer->passengerSyncData.vecPosition.fY = CScriptParams::Get()->ReadFloat();
 		pPlayer->vehicleSyncData.vecPosition.fZ = pPlayer->passengerSyncData.vecPosition.fZ = CScriptParams::Get()->ReadFloat();
+		pPlayer->bHasSetVehiclePos = false;
 		
 		return 1;
 	}
@@ -1136,10 +1143,10 @@ namespace Natives
 		return 1;
 	}
 
-	// native UpdatePlayerSyncData(playerid, type=-1);
+	// native UpdatePlayerSyncData(playerid, type=-1, bool:setstate=false);
 	AMX_DECLARE_NATIVE(UpdatePlayerSyncData)
 	{
-		CHECK_PARAMS(2, LOADED);
+		CHECK_PARAMS(2, MORE_PARAMETER_ALLOWED);
 
 		int playerid = CScriptParams::Get()->ReadInt();
 		if(!IsPlayerConnected(playerid)) return 0;
@@ -1163,6 +1170,10 @@ namespace Natives
 			}
 		}else{
 			pPlayer->iUpdateState = type;
+			if(params[0] / sizeof(cell) >= 3 && CScriptParams::Get()->ReadBool())
+			{
+				pPlayer->byteState = type;
+			}
 		}
 		return 1;
 	}
