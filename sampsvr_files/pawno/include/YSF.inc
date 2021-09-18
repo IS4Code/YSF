@@ -325,6 +325,8 @@ native IsVehicleSirenEnabled(vehicleid);
 native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY = 0.0, &Float:rightZ = 0.0, &Float:upX = 0.0, &Float:upY = 0.0, &Float:upZ = 0.0, &Float:atX = 0.0, &Float:atY = 0.0, &Float:atZ = 0.0);
 native GetVehicleModelCount(modelid);
 native GetVehicleModelsUsed();
+native HideVehicle(vehicleid, bool:enabled);
+native IsVehicleHidden(vehicleid);
 
 // Gangzones - Global
 native IsValidGangZone(zoneid);
