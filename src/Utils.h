@@ -22,12 +22,11 @@
 #define PAGESIZE (4096)
 #endif
 
-// Just to keep compatibility with streamer... If I got used to something, I don't like to switch to new one.
 namespace Utility
 {
 	std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
 	const char* GetWeaponName(BYTE weaponid);
-	BYTE GetWeaponSlot(BYTE weaponid);
+	int GetWeaponSlot(BYTE weaponid);
 	int CFGLoad(char const * const name, int default_val = 1, char * const dest = 0, size_t dlen = 0);
 };
 

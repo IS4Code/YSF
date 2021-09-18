@@ -885,16 +885,20 @@ namespace Natives
 		if(!IsPlayerConnected(playerid)) return 0;
 
 		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
+		BYTE weapon = -1;
 		switch(pPlayer->byteState)
 		{
 			case PLAYER_STATE_ONFOOT:
-				return pPlayer->syncData.byteWeapon;
+				weapon = pPlayer->syncData.byteWeapon;
+				break;
 			case PLAYER_STATE_DRIVER:
-				return pPlayer->vehicleSyncData.bytePlayerWeapon;
+				weapon = pPlayer->vehicleSyncData.bytePlayerWeapon;
+				break;
 			case PLAYER_STATE_PASSENGER:
-				return pPlayer->passengerSyncData.bytePlayerWeapon;
+				weapon = pPlayer->passengerSyncData.bytePlayerWeapon;
+				break;
 		}
-		return 0;
+		return static_cast<signed char>(weapon);
 	}
 
 	// native SetPlayerSyncWeaponState(playerid, weaponstate);

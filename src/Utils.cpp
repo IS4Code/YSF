@@ -153,9 +153,9 @@ const char* Utility::GetWeaponName(BYTE weaponid)
 	return "";
 }
 
-BYTE Utility::GetWeaponSlot(BYTE weaponid)
+int Utility::GetWeaponSlot(BYTE weaponid)
 {
-	BYTE result; // eax@2
+	int result;
 
 	switch (weaponid)
 	{
@@ -234,7 +234,7 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 		result = 11;
 		break;
 	default:
-		result = 0xFF;
+		result = -1;
 		break;
 	}
 	return result;
