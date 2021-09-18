@@ -1262,7 +1262,7 @@ namespace Natives
 		{
 			bsSync.Write((BYTE)0);
 		}
-		bsSync.Write((char*)&pNetGame->pVehiclePool, 212); // modelsUsed
+		bsSync.Write(reinterpret_cast<char(&)[212]>(pNetGame->pVehiclePool->byteVehicleModelsUsed), 212); // modelsUsed
 		bsSync.Write((DWORD)vehiclefriendlyfire);
 
 		CSAMPFunctions::RPC(&RPC_InitGame, &bsSync, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
