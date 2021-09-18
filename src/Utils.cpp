@@ -173,6 +173,19 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 	case 9:
 		result = 1;
 		break;
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+		result = 10;
+		break;
+	case 16:
+	case 17:
+	case 18:
+		result = 8;
+		break;
 	case 22:
 	case 23:
 	case 24:
@@ -185,12 +198,14 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 		break;
 	case 28:
 	case 29:
-	case 32:
 		result = 4;
 		break;
 	case 30:
 	case 31:
 		result = 5;
+		break;
+	case 32:
+		result = 4;
 		break;
 	case 33:
 	case 34:
@@ -202,32 +217,21 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 	case 38:
 		result = 7;
 		break;
-	case 16:
-	case 17:
-	case 18:
 	case 39:
 		result = 8;
+		break;
+	case 40:
+		result = 12;
 		break;
 	case 41:
 	case 42:
 	case 43:
 		result = 9;
 		break;
-	case 10:
-	case 11:
-	case 12:
-	case 13:
-	case 14:
-	case 15:
-		result = 10;
-		break;
 	case 44:
 	case 45:
 	case 46:
 		result = 11;
-		break;
-	case 40:
-		result = 12;
 		break;
 	default:
 		result = 0xFF;
