@@ -36,6 +36,8 @@ public:
 	static void	OnClientCheckResponse(WORD playerid, BYTE type, DWORD arg, BYTE response);
 	static void	OnPlayerSelectObject(WORD playerid, DWORD type, DWORD objectid, DWORD modelid, const CVector &pos);
 	static void	OnPlayerEditObject(WORD playerid, bool playerobject, DWORD objectid, DWORD response, const CVector &pos, const CVector &rot);
+	static void	OnPickupStreamIn(int pickupid, WORD forplayerid);
+	static void	OnPickupStreamOut(int pickupid, WORD forplayerid);
 
 	static std::set<AMX *>		m_setAMX;
 };

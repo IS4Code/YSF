@@ -481,6 +481,8 @@ forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:gl
 forward OnOutcomeScmEvent(playerid, issuerid, E_SCM_EVENT_TYPE:eventid, vehicleid, arg1, arg2);
 forward OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31]);
 forward OnSystemCommandExecute(const line_output[], retval, index, success, line_current, line_total);
+forward OnPickupStreamIn(pickupid, forplayerid);
+forward OnPickupStreamOut(pickupid, forplayerid);
 
 //////////////////////////////////////////////////////////////
 // Fixes

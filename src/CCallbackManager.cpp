@@ -498,3 +498,34 @@ void CCallbackManager::OnPlayerEditObject(WORD playerid, bool playerobject, DWOR
 	}
 }
 
+void CCallbackManager::OnPickupStreamIn(int pickupid, WORD forplayerid)
+{
+	int idx = -1;
+	cell ret = 1;
+	for(auto iter : m_setAMX)
+	{
+		if(!amx_FindPublic(iter, "OnPickupStreamIn", &idx))
+		{
+			amx_Push(iter, static_cast<cell>(forplayerid));
+			amx_Push(iter, static_cast<cell>(pickupid));
+
+			amx_Exec(iter, &ret, idx);
+		}
+	}
+}
+
+void CCallbackManager::OnPickupStreamOut(int pickupid, WORD forplayerid)
+{
+	int idx = -1;
+	cell ret = 1;
+	for(auto iter : m_setAMX)
+	{
+		if(!amx_FindPublic(iter, "OnPickupStreamOut", &idx))
+		{
+			amx_Push(iter, static_cast<cell>(forplayerid));
+			amx_Push(iter, static_cast<cell>(pickupid));
+
+			amx_Exec(iter, &ret, idx);
+		}
+	}
+}

@@ -101,7 +101,7 @@ namespace Natives
 
 			if(pNetGame->pPlayerPool->dwVirtualWorld[playerid] == static_cast<DWORD>(world))
 			{
-				CSAMPFunctions::RPC(&RPC_DestroyPickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+				CHookRakServer::RPC_2(pRakServer, &RPC_DestroyPickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 			}
 		}
 	}
@@ -122,7 +122,7 @@ namespace Natives
 
 			if(pNetGame->pPlayerPool->dwVirtualWorld[playerid] == static_cast<DWORD>(world))
 			{
-				CSAMPFunctions::RPC(&RPC_CreatePickup, &bsPickup, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+				CHookRakServer::RPC_2(pRakServer, &RPC_CreatePickup, &bsPickup, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 			}
 		}
 	}
@@ -236,7 +236,7 @@ namespace Natives
 		bsPickup.Write(pickup.vecPos.fY);
 		bsPickup.Write(pickup.vecPos.fZ);
 
-		CSAMPFunctions::RPC(&RPC_CreatePickup, &bsPickup, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+		CHookRakServer::RPC_2(pRakServer, &RPC_CreatePickup, &bsPickup, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 		return 1;
 	}
 
@@ -255,7 +255,7 @@ namespace Natives
 		RakNet::BitStream bsPickup;
 		bsPickup.Write(pickupid);
 
-		CSAMPFunctions::RPC(&RPC_DestroyPickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+		CHookRakServer::RPC_2(pRakServer, &RPC_DestroyPickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
 		return 1;
 	}
 
