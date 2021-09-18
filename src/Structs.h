@@ -182,13 +182,23 @@ typedef void(*VARCHANGEFUNC)();
 /* -------------------------------------------------------- */
 
 #pragma pack(push, 1)
+#ifndef OTHERFIELD
+#define OTHERFIELD(fname,ftype,...) \
+	ftype fname##__VA_ARGS__
+#endif
+#ifndef FIELD
 #define FIELD(fname,ftype,...) \
 	ftype fname##__VA_ARGS__
+#endif
+#ifndef BITFIELD
 #define BITFIELD(fname,ftype,size) \
 	ftype fname:size
+#endif
+#ifndef CHECK_TYPE
 #define CHECK_TYPE(type,size) \
 	static_assert(std::is_standard_layout<type>::value, #type" is not standard-layout"); \
 	static_assert(sizeof(type)==size, #type" must have size "#size)
+#endif
 
 #define PAD(a,b) char a[b]
 
@@ -198,6 +208,7 @@ struct PingAndClockDifferential
 	FIELD(pingTime, unsigned short);
 	FIELD(clockDifferential, unsigned int);
 };
+CHECK_TYPE(PingAndClockDifferential, 6);
 
 struct RemoteSystemStruct
 {
@@ -236,7 +247,6 @@ struct RemoteSystemStruct
 	FIELD(byteAuthType, BYTE);
 	FIELD(byteIsLogon, BYTE);
 };
-
 #ifdef _WIN32
 CHECK_TYPE(RemoteSystemStruct, 3255);
 #else
@@ -285,8 +295,15 @@ struct CAimSyncData
 	FIELD(vecFront, CVector); // 1 - 13
 	FIELD(vecPosition, CVector); // 13 - 25
 	FIELD(fZAim, float); // 25 - 29
-	BITFIELD(byteCameraZoom, BYTE, 6); // 29
-	BITFIELD(byteWeaponState, BYTE, 2); // 29
+	union
+	{
+		FIELD(byteCameraZoomWeaponState, BYTE);
+		struct
+		{
+			BITFIELD(byteCameraZoom, BYTE, 6); // 29
+			BITFIELD(byteWeaponState, BYTE, 2); // 29
+		};
+	};
 	FIELD(byteAspectRatio, BYTE); // 30 - 31
 };
 CHECK_TYPE(CAimSyncData, 31);
@@ -303,15 +320,22 @@ struct CVehicleSyncData
 	FIELD(fHealth, float); // 0x004F - 0x0053
 	FIELD(bytePlayerHealth, BYTE); // 0x0053 - 0x0054
 	FIELD(bytePlayerArmour, BYTE); // 0x0054 - 0x0055
-	BITFIELD(bytePlayerWeapon, BYTE, 6); // 0x0055 - 0x0056
-	BITFIELD(unk_2, BYTE, 2); // 0x0055 - 0x0056
+	union
+	{
+		FIELD(bytePlayerWeaponUnk, BYTE);
+		struct
+		{
+			BITFIELD(bytePlayerWeapon, BYTE, 6); // 0x0055 - 0x0056
+			BITFIELD(unk_2, BYTE, 2); // 0x0055 - 0x0056
+		};
+	};
 	FIELD(byteSirenState, BYTE); // 0x0056 - 0x0057
 	FIELD(byteGearState, BYTE); // 0x0057 -	0x0058
 	FIELD(wTrailerID, WORD); // 0x0058 - 0x005A
     union									// 
     {
 		FIELD(wHydraReactorAngle, WORD, [2]);
-		FIELD(fTrainSpeed, float);
+		OTHERFIELD(fTrainSpeed, float);
     };
 };
 CHECK_TYPE(CVehicleSyncData, 63);
@@ -319,8 +343,15 @@ CHECK_TYPE(CVehicleSyncData, 63);
 struct CPassengerSyncData
 {
 	FIELD(wVehicleId, WORD); // 0x005E - 0x0060
-	BITFIELD(byteSeatFlags, BYTE, 7);
-	BITFIELD(byteDriveBy, BYTE, 1);
+	union
+	{
+		FIELD(byteSeatFlagsDriveBy, BYTE);
+		struct
+		{
+			BITFIELD(byteSeatFlags, BYTE, 7);
+			BITFIELD(byteDriveBy, BYTE, 1);
+		};
+	};
 	FIELD(bytePlayerWeapon, BYTE); // 0x0061 - 0x0062
 	FIELD(bytePlayerHealth, BYTE); // 0x0062 - 0x0063
 	FIELD(bytePlayerArmour, BYTE); // 0x0063 - 0x0064
@@ -340,8 +371,15 @@ struct CSyncData
 	FIELD(fQuaternion, float, [4]); // 0x0088 - 0x008C
 	FIELD(byteHealth, BYTE); // 0x0098 - 0x0099
 	FIELD(byteArmour, BYTE); // 0x0099 - 0x009A
-	BITFIELD(byteWeapon, BYTE, 6); // 0x009A - 0x009B
-	BITFIELD(_unk_, BYTE, 2);
+	union
+	{
+		FIELD(byteWeaponUnk, BYTE);
+		struct
+		{
+			BITFIELD(byteWeapon, BYTE, 6); // 0x009A - 0x009B
+			BITFIELD(_unk_, BYTE, 2);
+		};
+	};
 	FIELD(byteSpecialAction, BYTE); // 0x009B - 0x009C
 	FIELD(vecVelocity, CVector); // 0x009C - 0x00A8
 	FIELD(vecSurfing, CVector); // 0x00A8 - 0x00B4
@@ -351,8 +389,8 @@ struct CSyncData
 		FIELD(dwAnimationData, DWORD); // 0x00B6 - 0x00BA
 		struct 
 		{
-			FIELD(wAnimIndex, WORD);
-			FIELD(wAnimFlags, WORD);
+			OTHERFIELD(wAnimIndex, WORD);
+			OTHERFIELD(wAnimFlags, WORD);
 		};
 	};
 };
@@ -771,6 +809,7 @@ struct CPickupPool
 	FIELD(iWorld, int, [MAX_PICKUPS]); // + 0xC000
 	FIELD(iPickupCount, int);
 };
+CHECK_TYPE(CPickupPool, 114692);
 
 /* -------------------------------------------------------- */
 // CObject
@@ -826,7 +865,6 @@ struct CObjectPool
 	FIELD(bObjectSlotState, BOOL, [MAX_OBJECTS]); // 8.004.000
 	FIELD(pObjects, CObject*, [MAX_OBJECTS]); // 8.008.000
 };
-
 #ifndef SAMP_03DL
 CHECK_TYPE(CObjectPool, 8012000);
 #else
@@ -843,6 +881,7 @@ struct MenuInteraction
 	FIELD(Row, BOOL, [MAX_ITEMS]);
 	FIELD(unknown, char, [12]);
 };
+CHECK_TYPE(MenuInteraction, 64);
 
 struct CMenu
 {
@@ -866,6 +905,7 @@ struct CMenuPool
 	FIELD(bIsCreated, BOOL, [MAX_MENUS]); //	+ 0x0200
 	FIELD(bPlayerMenu, BOOL, [MAX_PLAYERS]); //	+ 0x0400
 };
+CHECK_TYPE(CMenuPool, 5024);
 
 /* -------------------------------------------------------- */
 // CTextDraw
@@ -877,6 +917,7 @@ struct CTextDrawPool
 	FIELD(szFontText, char*, [MAX_TEXT_DRAWS]);
 	FIELD(bHasText, bool, [MAX_TEXT_DRAWS][MAX_PLAYERS]);
 };
+CHECK_TYPE(CTextDrawPool, 2072576);
 
 /* -------------------------------------------------------- */
 // C3DText
@@ -887,6 +928,7 @@ struct C3DTextPool
 	FIELD(bIsCreated, BOOL, [MAX_3DTEXT_GLOBAL]); // 0 - 4096 <- OK
 	FIELD(TextLabels, C3DText, [MAX_3DTEXT_GLOBAL]);
 };
+CHECK_TYPE(C3DTextPool, 37888);
 
 /* -------------------------------------------------------- */
 // CGangZone
@@ -897,6 +939,7 @@ struct CSAMPGangZonePool
 	FIELD(fGangZone, float, [MAX_GANG_ZONES][4]);
 	FIELD(bSlotState, BOOL, [MAX_GANG_ZONES]);
 };
+CHECK_TYPE(CSAMPGangZonePool, 20480);
 
 /* -------------------------------------------------------- */
 // CActor
@@ -932,7 +975,8 @@ struct CActor
 	FIELD(pad8, BYTE, [12]);			
 	FIELD(byteInvulnerable, BYTE);	
 	FIELD(wActorID, WORD);			
-}; //CHECK_TYPE(CActor, 211);
+};
+CHECK_TYPE(CActor, 211);
 
 struct CActorPool
 {
@@ -941,6 +985,7 @@ struct CActorPool
 	FIELD(pActor, CActor*, [MAX_ACTORS]);
 	FIELD(dwActorPoolSize, DWORD);
 };
+CHECK_TYPE(CActorPool, 12004);
 
 struct CGameMode
 {
@@ -949,6 +994,7 @@ struct CGameMode
 	FIELD(bSleeping, bool);
 	FIELD(fSleepTime, float);
 };
+CHECK_TYPE(CGameMode, sizeof(CGameMode));
 
 struct CFilterScripts
 {
@@ -956,6 +1002,7 @@ struct CFilterScripts
 	FIELD(szFilterScriptName, char, [MAX_FILTER_SCRIPTS][255]);
 	FIELD(iFilterScriptCount, int);
 };
+CHECK_TYPE(CFilterScripts, sizeof(CFilterScripts));
 
 struct ScriptTimer_s
 {
@@ -1085,6 +1132,8 @@ CHECK_TYPE(CArtInfo, 269);
 
 #undef CHECK_TYPE
 #undef PAD
+#undef BITFIELD
+#undef OTHERFIELD
 #undef FIELD
 #pragma pack(pop)
 
