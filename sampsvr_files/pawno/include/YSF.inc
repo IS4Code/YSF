@@ -437,6 +437,9 @@ native SetPickupPos(pickupid, Float:X, Float:Y, Float:Z, bool:update=true);
 native SetPickupModel(pickupid, model, bool:update=true);
 native SetPickupType(pickupid, type, bool:update=true);
 native SetPickupVirtualWorld(pickupid, virtualworld);
+native ShowPickupForPlayer(playerid, pickupid);
+native HidePickupForPlayer(playerid, pickupid);
+native SetPickupForPlayer(playerid, id, model, type, Float:X, Float:Y, Float:Z);
 
 /*
 // Pickups - Player
