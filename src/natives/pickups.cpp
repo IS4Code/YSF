@@ -127,10 +127,10 @@ namespace Natives
 		}
 	}
 
-	// native SetPickupPos(pickupid, Float:X, Float:Y, Float:Z);
+	// native SetPickupPos(pickupid, Float:X, Float:Y, Float:Z, bool:update=true);
 	AMX_DECLARE_NATIVE(SetPickupPos)
 	{
-		CHECK_PARAMS(4, LOADED);
+		CHECK_PARAMS(4, MORE_PARAMETER_ALLOWED);
 
 		const int id = CScriptParams::Get()->ReadInt();
 		if(id < 0 || id >= MAX_PICKUPS)
@@ -141,15 +141,18 @@ namespace Natives
 		auto &pickup = pNetGame->pPickupPool->Pickup[id];
 		CScriptParams::Get()->Read(pickup.vecPos);
 
-		ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		if(params[0] / sizeof(cell) < 5 || CScriptParams::Get()->ReadBool())
+		{
+			ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		}
 
 		return 1;
 	}
 
-	// native SetPickupModel(pickupid, model);
+	// native SetPickupModel(pickupid, model, bool:update=true);
 	AMX_DECLARE_NATIVE(SetPickupModel)
 	{
-		CHECK_PARAMS(2, LOADED);
+		CHECK_PARAMS(2, MORE_PARAMETER_ALLOWED);
 
 		const int id = CScriptParams::Get()->ReadInt();
 		if(id < 0 || id >= MAX_PICKUPS)
@@ -160,15 +163,18 @@ namespace Natives
 		auto &pickup = pNetGame->pPickupPool->Pickup[id];
 		CScriptParams::Get()->Read(pickup.iModel);
 
-		ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		if(params[0] / sizeof(cell) < 3 || CScriptParams::Get()->ReadBool())
+		{
+			ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		}
 
 		return 1;
 	}
 
-	// native SetPickupType(pickupid, type);
+	// native SetPickupType(pickupid, type, bool:update=true);
 	AMX_DECLARE_NATIVE(SetPickupType)
 	{
-		CHECK_PARAMS(2, LOADED);
+		CHECK_PARAMS(2, MORE_PARAMETER_ALLOWED);
 
 		const int id = CScriptParams::Get()->ReadInt();
 		if(id < 0 || id >= MAX_PICKUPS)
@@ -179,7 +185,10 @@ namespace Natives
 		auto &pickup = pNetGame->pPickupPool->Pickup[id];
 		CScriptParams::Get()->Read(pickup.iType);
 
-		ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		if(params[0] / sizeof(cell) < 3 || CScriptParams::Get()->ReadBool())
+		{
+			ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		}
 
 		return 1;
 	}

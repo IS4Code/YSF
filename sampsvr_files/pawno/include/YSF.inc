@@ -433,9 +433,9 @@ native GetPickupPos(pickupid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0);
 native GetPickupModel(pickupid);
 native GetPickupType(pickupid);
 native GetPickupVirtualWorld(pickupid);
-native SetPickupPos(pickupid, Float:X, Float:Y, Float:Z);
-native SetPickupModel(pickupid, model);
-native SetPickupType(pickupid, type);
+native SetPickupPos(pickupid, Float:X, Float:Y, Float:Z, bool:update=true);
+native SetPickupModel(pickupid, model, bool:update=true);
+native SetPickupType(pickupid, type, bool:update=true);
 native SetPickupVirtualWorld(pickupid, virtualworld);
 
 /*
