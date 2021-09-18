@@ -467,10 +467,10 @@ namespace Natives
 		return 1;
 	}
 
-	// native HideVehicle(vehicleid, bool:enabled);
+	// native HideVehicle(vehicleid);
 	AMX_DECLARE_NATIVE(HideVehicle)
 	{
-		CHECK_PARAMS(2, LOADED);
+		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
 		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
@@ -478,8 +478,23 @@ namespace Natives
 		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
 			return 0;
 
-		const int enabled = CScriptParams::Get()->ReadBool();
-		pNetGame->pVehiclePool->pVehicle[vehicleid]->vehActive = !enabled;
+		pNetGame->pVehiclePool->pVehicle[vehicleid]->vehActive = false;
+
+		return 1;
+	}
+
+	// native ShowVehicle(vehicleid);
+	AMX_DECLARE_NATIVE(ShowVehicle)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		const int vehicleid = CScriptParams::Get()->ReadInt();
+		if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+
+		if(!pNetGame->pVehiclePool->pVehicle[vehicleid])
+			return 0;
+
+		pNetGame->pVehiclePool->pVehicle[vehicleid]->vehActive = true;
 
 		return 1;
 	}
@@ -525,8 +540,9 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetVehicleMatrix) // R19
 	AMX_DEFINE_NATIVE(GetVehicleModelCount) // R17
 	AMX_DEFINE_NATIVE(GetVehicleModelsUsed) // R17
-	AMX_DEFINE_NATIVE(HideVehicle)
-	AMX_DEFINE_NATIVE(IsVehicleHidden)
+	AMX_DEFINE_NATIVE(HideVehicle) // 2.2
+	AMX_DEFINE_NATIVE(ShowVehicle) // 2.2
+	AMX_DEFINE_NATIVE(IsVehicleHidden) // 2.2
 };
 
 void VehiclesLoadNatives()
