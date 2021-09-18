@@ -74,6 +74,7 @@ void ScoreBoardHooksLoadNatives();
 void ServerLoadNatives();
 void ServerHooksLoadNatives();
 void TextDrawsLoadNatives();
+void TextDrawsHooksLoadNatives();
 void TextLabelsLoadNatives();
 void VehiclesLoadNatives();
 void VehiclesHooksLoadNatives();
@@ -101,6 +102,7 @@ void LoadNatives(bool loadhooks)
 	ServerLoadNatives();
 	if(loadhooks) ServerHooksLoadNatives();
 	TextDrawsLoadNatives();
+	if(loadhooks) TextDrawsHooksLoadNatives();
 	TextLabelsLoadNatives();
 	VehiclesLoadNatives();
 	if(loadhooks) VehiclesHooksLoadNatives();

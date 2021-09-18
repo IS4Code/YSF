@@ -186,6 +186,7 @@ copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Users\Ati\Desktop\tesztszerver\plug
     <ClCompile Include="src\natives\server.cpp" />
     <ClCompile Include="src\natives\server_hooks.cpp" />
     <ClCompile Include="src\natives\textdraws.cpp" />
+    <ClCompile Include="src\natives\textdraws_hooks.cpp" />
     <ClCompile Include="src\natives\textlabels.cpp" />
     <ClCompile Include="src\natives\vehicles.cpp" />
     <ClCompile Include="src\natives\vehicles_hooks.cpp" />

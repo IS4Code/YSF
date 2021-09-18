@@ -207,6 +207,9 @@
     <ClCompile Include="src\natives\ysfsettings_hooks.cpp">
       <Filter>src\Natives</Filter>
     </ClCompile>
+    <ClCompile Include="src\natives\textdraws_hooks.cpp">
+      <Filter>src\Natives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\CCallbackManager.h">
