@@ -1,4 +1,4 @@
-/* YSF 2.1 */
+/* YSF 2.2 */
 #if defined _YSF_included
 	#endinput
 #endif
