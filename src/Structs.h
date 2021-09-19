@@ -184,11 +184,11 @@ typedef void(*VARCHANGEFUNC)();
 #pragma pack(push, 1)
 #ifndef OTHERFIELD
 #define OTHERFIELD(fname,ftype,...) \
-	ftype fname##__VA_ARGS__
+	ftype fname __VA_ARGS__
 #endif
 #ifndef FIELD
 #define FIELD(fname,ftype,...) \
-	ftype fname##__VA_ARGS__
+	ftype fname __VA_ARGS__
 #endif
 #ifndef BITFIELD
 #define BITFIELD(fname,ftype,size) \
