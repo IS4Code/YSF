@@ -1002,22 +1002,6 @@ namespace Natives
 		return 1;
 	}
 
-	// native SetPlayerSyncPosition(playerid, Float:x, Float:y, Float:z);
-	AMX_DECLARE_NATIVE(SetPlayerSyncPosition)
-	{
-		CHECK_PARAMS(4, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		if(!IsPlayerConnected(playerid)) return 0;
-
-		CPlayer *pPlayer = pNetGame->pPlayerPool->pPlayer[playerid];
-		pPlayer->syncData.vecPosition.fX = CScriptParams::Get()->ReadFloat();
-		pPlayer->syncData.vecPosition.fY = CScriptParams::Get()->ReadFloat();
-		pPlayer->syncData.vecPosition.fZ = CScriptParams::Get()->ReadFloat();
-
-		return 1;
-	}
-
 	// native SetPlayerSyncVehicleId(playerid, vehicleid, bool:setstate=false);
 	AMX_DECLARE_NATIVE(SetPlayerSyncVehicleId)
 	{
@@ -1352,7 +1336,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncSpecialAction) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncHealth) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncArmour) // R20
-	AMX_DEFINE_NATIVE(SetPlayerSyncPosition) // R20
+	{"SetPlayerSyncPosition", Natives::SetPlayerSyncPos},
 	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleId) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncVehiclePosition) // R20
 	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleVelocity) // R20

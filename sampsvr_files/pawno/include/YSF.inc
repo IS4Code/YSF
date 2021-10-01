@@ -198,7 +198,6 @@ native SetPlayerSyncWeaponState(playerid, weaponstate);
 native SetPlayerSyncSpecialAction(playerid, actionid);
 native SetPlayerSyncHealth(playerid, Float:health);
 native SetPlayerSyncArmour(playerid, Float:armour);
-native SetPlayerSyncPosition(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncVehicleId(playerid, vehicleid, bool:setstate=false);
 native SetPlayerSyncVehicleSeat(playerid, seat);
 native SetPlayerSyncVehiclePosition(playerid, Float:x, Float:y, Float:z);
