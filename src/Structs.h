@@ -179,16 +179,30 @@ enum CON_VARTYPE { CON_VARTYPE_FLOAT, CON_VARTYPE_INT, CON_VARTYPE_BOOL, CON_VAR
 
 typedef void(*VARCHANGEFUNC)();
 
+template <class T, std::size_t N>
+class ARRAY
+{
+	typedef T (&ref_type)[N];
+
+	T data[N];
+
+public:
+	operator ref_type()
+	{
+		return data;
+	}
+};
+
 /* -------------------------------------------------------- */
 
 #pragma pack(push, 1)
 #ifndef OTHERFIELD
-#define OTHERFIELD(fname,ftype,...) \
-	ftype fname __VA_ARGS__
+#define OTHERFIELD(fname,...) \
+	__VA_ARGS__ fname
 #endif
 #ifndef FIELD
-#define FIELD(fname,ftype,...) \
-	ftype fname __VA_ARGS__
+#define FIELD(fname,...) \
+	__VA_ARGS__ fname
 #endif
 #ifndef BITFIELD
 #define BITFIELD(fname,ftype,size) \
@@ -278,7 +292,7 @@ CHECK_TYPE(ConsoleVariable_s, 16);
 
 struct ConsoleCommand_s
 {
-	FIELD(szName, char, [255]);
+	FIELD(szName, ARRAY<char, 255>);
 	FIELD(dwFlags, DWORD);
 	void (*fptrFunc)();
 };
@@ -314,7 +328,7 @@ struct CVehicleSyncData
 	FIELD(wLRAnalog, WORD); // 0x0021 - 0x0023
 	FIELD(wUDAnalog, WORD); // 0x0023 - 0x0025
 	FIELD(wKeys, WORD); // 0x0025 - 0x0027
-	FIELD(fQuaternion, float, [4]); // 0x002B - 0x0037
+	FIELD(fQuaternion, ARRAY<float, 4>); // 0x002B - 0x0037
 	FIELD(vecPosition, CVector); // 0x0037 - 0x0043
 	FIELD(vecVelocity, CVector); // 0x0043 - 0x004F
 	FIELD(fHealth, float); // 0x004F - 0x0053
@@ -334,7 +348,7 @@ struct CVehicleSyncData
 	FIELD(wTrailerID, WORD); // 0x0058 - 0x005A
     union									// 
     {
-		FIELD(wHydraReactorAngle, WORD, [2]);
+		FIELD(wHydraReactorAngle, ARRAY<WORD, 2>);
 		OTHERFIELD(fTrainSpeed, float);
     };
 };
@@ -368,7 +382,7 @@ struct CSyncData
 	FIELD(wUDAnalog, WORD); // 0x0078 - 0x007A
 	FIELD(wKeys, WORD); // 0x007A - 0x007C
 	FIELD(vecPosition, CVector); // 0x007C - 0x0088
-	FIELD(fQuaternion, float, [4]); // 0x0088 - 0x008C
+	FIELD(fQuaternion, ARRAY<float, 4>); // 0x0088 - 0x008C
 	FIELD(byteHealth, BYTE); // 0x0098 - 0x0099
 	FIELD(byteArmour, BYTE); // 0x0099 - 0x009A
 	union
@@ -422,7 +436,7 @@ struct CTrailerSyncData
 {
 	FIELD(wTrailerID, WORD); // + 0x0000
 	FIELD(vecPosition, CVector); // + 0x0002
-	FIELD(fQuaternion, float, [4]); // + 0x000E
+	FIELD(fQuaternion, ARRAY<float, 4>); // + 0x000E
 	FIELD(vecVelocity, CVector); // + 0x001E
 	FIELD(vecTurnVelocity, CVector); // + 0x002A
 };
@@ -463,10 +477,10 @@ CHECK_TYPE(CTextdraw, 63);
 
 struct CPlayerTextDraw
 {
-	FIELD(bSlotState, BOOL, [MAX_PLAYER_TEXT_DRAWS]);
-	FIELD(TextDraw, CTextdraw*, [MAX_PLAYER_TEXT_DRAWS]);
-	FIELD(szFontText, char*, [MAX_PLAYER_TEXT_DRAWS]);
-	FIELD(bHasText, bool, [MAX_PLAYER_TEXT_DRAWS]);
+	FIELD(bSlotState, ARRAY<BOOL, MAX_PLAYER_TEXT_DRAWS>);
+	FIELD(TextDraw, ARRAY<CTextdraw*, MAX_PLAYER_TEXT_DRAWS>);
+	FIELD(szFontText, ARRAY<char*, MAX_PLAYER_TEXT_DRAWS>);
+	FIELD(bHasText, ARRAY<bool, MAX_PLAYER_TEXT_DRAWS>);
 };
 CHECK_TYPE(CPlayerTextDraw, 2048 + 1024 + 256);
 
@@ -485,9 +499,9 @@ CHECK_TYPE(C3DText, 33);
 
 struct CPlayerText3DLabels
 {
-	FIELD(TextLabels, C3DText, [MAX_3DTEXT_PLAYER]); // + 0x0000
-	FIELD(isCreated, BOOL, [MAX_3DTEXT_PLAYER]); // + 0x8400
-	FIELD(unknown9800, BYTE, [MAX_3DTEXT_PLAYER]); // + 0x9400
+	FIELD(TextLabels, ARRAY<C3DText, MAX_3DTEXT_PLAYER>); // + 0x0000
+	FIELD(isCreated, ARRAY<BOOL, MAX_3DTEXT_PLAYER>); // + 0x8400
+	FIELD(unknown9800, ARRAY<BYTE, MAX_3DTEXT_PLAYER>); // + 0x9400
 	FIELD(wOwnerID, WORD);
 };
 CHECK_TYPE(CPlayerText3DLabels, 38914);
@@ -514,8 +528,8 @@ struct CPlayerSpawnInfo
 	FIELD(unk, BYTE); // 5 - 6
 	FIELD(vecPos, CVector); // 6 - 18
 	FIELD(fRotation, float); // 18 - 22
-	FIELD(iSpawnWeapons, int, [3]); // 22 - 34
-	FIELD(iSpawnWeaponsAmmo, int, [3]); // 34 - 46
+	FIELD(iSpawnWeapons, ARRAY<int, 3>); // 22 - 34
+	FIELD(iSpawnWeaponsAmmo, ARRAY<int, 3>); // 34 - 46
 };
 #ifndef SAMP_03DL
 CHECK_TYPE(CPlayerSpawnInfo, 46);
@@ -536,7 +550,7 @@ CHECK_TYPE(CBulletSyncData, 40);
 
 struct CPVar
 {
-    FIELD(szVarName, char, [MAX_PVAR_NAME + 1]);
+    FIELD(szVarName, ARRAY<char, MAX_PVAR_NAME + 1>);
     FIELD(bIsReadOnly, BOOL);
     FIELD(iVarType, int);
     FIELD(iValue, int);
@@ -547,8 +561,8 @@ CHECK_TYPE(CPVar, 61);
 
 struct CPlayerVar
 {
-    FIELD(Vars, CPVar, [MAX_PVARS]);
-	FIELD(bIsPVarActive, BOOL, [MAX_PVARS]);
+    FIELD(Vars, ARRAY<CPVar, MAX_PVARS>);
+	FIELD(bIsPVarActive, ARRAY<BOOL, MAX_PVARS>);
     FIELD(iUpperIndex, int);
 };
 CHECK_TYPE(CPlayerVar, 48800 + 3200 + 4);
@@ -568,15 +582,15 @@ struct CPlayer
 	FIELD(trailerSyncData, CTrailerSyncData); // 279 - 333
 	FIELD(dwPlayerSyncUnused, DWORD); // 333 - 337
 	FIELD(dwVehicleSyncUnused, DWORD); // 337 - 341
-	FIELD(byteStreamedIn, BYTE, [MAX_PLAYERS]); // 341 - 1341
-	FIELD(byteVehicleStreamedIn, BYTE, [MAX_VEHICLES]); // 1341 - 3341
-	FIELD(byteSomethingUnused, BYTE, [1000]); // 3341 - 4341
+	FIELD(byteStreamedIn, ARRAY<BYTE, MAX_PLAYERS>); // 341 - 1341
+	FIELD(byteVehicleStreamedIn, ARRAY<BYTE, MAX_VEHICLES>); // 1341 - 3341
+	FIELD(byteSomethingUnused, ARRAY<BYTE, 1000>); // 3341 - 4341
 #ifdef SAMP_03DL
-	FIELD(byteSomethingUnused2, BYTE, [1000]); // 4341 - 5341
+	FIELD(byteSomethingUnused2, ARRAY<BYTE, 1000>); // 4341 - 5341
 #endif
-	FIELD(byte3DTextLabelStreamedIn, BYTE, [1024]); // 4341  - 5365
-	FIELD(bPickupStreamedIn, BYTE, [MAX_PICKUPS]); // 5365 - 9461
-	FIELD(byteActorStreamedIn, BYTE, [MAX_PLAYERS]); // 9461 - 10461
+	FIELD(byte3DTextLabelStreamedIn, ARRAY<BYTE, 1024>); // 4341  - 5365
+	FIELD(bPickupStreamedIn, ARRAY<BYTE, MAX_PICKUPS>); // 5365 - 9461
+	FIELD(byteActorStreamedIn, ARRAY<BYTE, MAX_PLAYERS>); // 9461 - 10461
 	FIELD(dwStreamedInPlayers, DWORD); // 10461 - 10465
 	FIELD(dwStreamedInVehicles, DWORD); // 10465 - 10469
 	FIELD(dwStreamedInSomethingUnused, DWORD); // 10469 - 10473
@@ -592,7 +606,7 @@ struct CPlayer
 	FIELD(vecPosition, CVector); // 10517
 	FIELD(fHealth, float); // 10529 - 10533
 	FIELD(fArmour, float); // 10533 - 10537
-	FIELD(fQuaternion, float, [4]); // 10537 - 10553
+	FIELD(fQuaternion, ARRAY<float, 4>); // 10537 - 10553
 	FIELD(fAngle, float); // 10553 - 10557
 	FIELD(vecVelocity, CVector); // 10557 - 10569
 	FIELD(wLRAnalog, WORD); // 10569
@@ -609,8 +623,8 @@ struct CPlayer
 	FIELD(p3DText, CPlayerText3DLabels*); // 10595 - 10599
 	FIELD(wPlayerId, WORD); // 10599 - 10601
 	FIELD(iUpdateState, int); // 10601 - 10605
-	FIELD(attachedObject, CAttachedObject, [MAX_PLAYER_ATTACHED_OBJECTS]); // 10605 - 11125
-	FIELD(attachedObjectSlot, BOOL, [MAX_PLAYER_ATTACHED_OBJECTS]); // 11125 - 11165
+	FIELD(attachedObject, ARRAY<CAttachedObject, MAX_PLAYER_ATTACHED_OBJECTS>); // 10605 - 11125
+	FIELD(attachedObjectSlot, ARRAY<BOOL, MAX_PLAYER_ATTACHED_OBJECTS>); // 11125 - 11165
 	FIELD(bHasAimSync, BOOL); // 11165 - 11169
 	FIELD(bHasTrailerSync, BOOL); // 11169 - 11173
 	FIELD(bHasUnoccupiedSync, BOOL); // 11173 - 11177
@@ -624,7 +638,7 @@ struct CPlayer
 	FIELD(fRaceCPSize, float); // 11223 - 11227
 	FIELD(bIsInRaceCP, BOOL); // 11227 - 11231
 	FIELD(bIsInModShop, BOOL); // 11231 - 11235
-	FIELD(wSkillLevel, WORD, [11]); // 11235 - 11257
+	FIELD(wSkillLevel, ARRAY<WORD, 11>); // 11235 - 11257
 	FIELD(iLastMarkerUpdate, int); // 11257 - 11261
 	FIELD(spawn, CPlayerSpawnInfo); // 11261 - 11307
 	FIELD(bReadyToSpawn, BOOL); // 11307 - 11311
@@ -636,9 +650,9 @@ struct CPlayer
 	FIELD(bShowCheckpoint, BOOL); // 11320 - 11324
 	FIELD(bShowRaceCheckpoint, BOOL); // 11324 - 11328
 	FIELD(iInteriorId, int); // 11328 - 11332
-	FIELD(wWeaponAmmo, WORD, [12]); // 11332 - 11356
+	FIELD(wWeaponAmmo, ARRAY<WORD, 12>); // 11332 - 11356
 	PAD(pad10, 28); // 11356 - 11384
-	FIELD(byteWeaponId, BYTE, [12]); // 11384 - 11396
+	FIELD(byteWeaponId, ARRAY<BYTE, 12>); // 11384 - 11396
 	FIELD(byteWeaponID_unknown, BYTE); // 11396 - 11397
 	FIELD(byteCurrentWeapon, BYTE); // 11397 - 11398
 	FIELD(wTargetId, WORD); // 11398 - 11400
@@ -671,25 +685,25 @@ CHECK_TYPE(CPlayer, 12499);
 
 struct CPlayerPool
 {
-	FIELD(dwVirtualWorld, DWORD, [MAX_PLAYERS]); // 0 - 4000
+	FIELD(dwVirtualWorld, ARRAY<DWORD, MAX_PLAYERS>); // 0 - 4000
 	FIELD(dwPlayersCount, DWORD); // 4000 - 4004
 #ifdef SAMP_03DL
 	PAD(pad1, 1000);
 #endif
 	FIELD(dwlastMarkerUpdate, DWORD); // 4004 - 4008
 	FIELD(fUpdatePlayerGameTimers, float); // 4008 - 4012
-	FIELD(dwScore, DWORD, [MAX_PLAYERS]); // 4012 - 8012
-	FIELD(dwMoney, DWORD, [MAX_PLAYERS]); // 8012 - 12012
-	FIELD(dwDrunkLevel, DWORD, [MAX_PLAYERS]); // 12012 - 16012
-	FIELD(dwLastScoreUpdate, DWORD, [MAX_PLAYERS]); // 16012 - 20012
-	FIELD(szSerial, char, [MAX_PLAYERS][101]); // 20012 - 121012				
-	FIELD(szVersion, char, [MAX_PLAYERS][25]); // 121012 - 146012
-	FIELD(pRemoteSystem, RemoteSystemStruct*, [MAX_PLAYERS]); // 146012 - 150012
-	FIELD(bIsPlayerConnected, BOOL, [MAX_PLAYERS]); // 150012 - 154012
-	FIELD(pPlayer, CPlayer*, [MAX_PLAYERS]); // 154012 - 158012
-	FIELD(szName, char, [MAX_PLAYERS][MAX_PLAYER_NAME + 1]); // 158012 - 183012
-	FIELD(bIsAnAdmin, BOOL, [MAX_PLAYERS]); // 183012 - 187012
-	FIELD(bIsNPC, BOOL, [MAX_PLAYERS]); // 187012 - 191012
+	FIELD(dwScore, ARRAY<DWORD, MAX_PLAYERS>); // 4012 - 8012
+	FIELD(dwMoney, ARRAY<DWORD, MAX_PLAYERS>); // 8012 - 12012
+	FIELD(dwDrunkLevel, ARRAY<DWORD, MAX_PLAYERS>); // 12012 - 16012
+	FIELD(dwLastScoreUpdate, ARRAY<DWORD, MAX_PLAYERS>); // 16012 - 20012
+	FIELD(szSerial, ARRAY<ARRAY<char, 101>, MAX_PLAYERS>); // 20012 - 121012				
+	FIELD(szVersion, ARRAY<ARRAY<char, 25>, MAX_PLAYERS>); // 121012 - 146012
+	FIELD(pRemoteSystem, ARRAY<RemoteSystemStruct*, MAX_PLAYERS>); // 146012 - 150012
+	FIELD(bIsPlayerConnected, ARRAY<BOOL, MAX_PLAYERS>); // 150012 - 154012
+	FIELD(pPlayer, ARRAY<CPlayer*, MAX_PLAYERS>); // 154012 - 158012
+	FIELD(szName, ARRAY<ARRAY<char, MAX_PLAYER_NAME + 1>, MAX_PLAYERS>); // 158012 - 183012
+	FIELD(bIsAnAdmin, ARRAY<BOOL, MAX_PLAYERS>); // 183012 - 187012
+	FIELD(bIsNPC, ARRAY<BOOL, MAX_PLAYERS>); // 187012 - 191012
 	PAD(pad0, 8000); // 191012 - 199012
 	FIELD(dwConnectedPlayers, DWORD); // 199012 - 199016
 	FIELD(dwPlayerPoolSize, DWORD); // 199016 - 199020
@@ -719,7 +733,7 @@ CHECK_TYPE(CVehicleSpawn, 36);
 
 struct CVehicleModInfo
 {
-	FIELD(byteModSlots, BYTE, [14]); // + 0x0000
+	FIELD(byteModSlots, ARRAY<BYTE, 14>); // + 0x0000
     FIELD(bytePaintJob, BYTE); // + 0x000E
     FIELD(iColor1, int); // + 0x000F
     FIELD(iColor2, int); // + 0x0010
@@ -757,7 +771,7 @@ struct CVehicle
 	FIELD(wTrailerID, WORD); // 102 - 104
 	FIELD(wCabID, WORD); // 104 - 106
 	FIELD(wLastDriverID, WORD); // 106 - 108
-	FIELD(vehPassengers, WORD, [7]); // 108 - 122
+	FIELD(vehPassengers, ARRAY<WORD, 7>); // 108 - 122
 	FIELD(vehActive, DWORD); // 122 - 126
 	FIELD(vehWasted, DWORD); // 126 - 130	
 	FIELD(customSpawn, CVehicleSpawn); // 130 - 166
@@ -769,7 +783,7 @@ struct CVehicle
 	FIELD(bDead, bool); // 180 - 181
 	FIELD(wKillerID, WORD); // 181 - 183
 	FIELD(vehModInfo, CVehicleModInfo); // 183 - 206
-	FIELD(szNumberplate, char, [32 + 1]); // 206 - 239
+	FIELD(szNumberplate, ARRAY<char, 32 + 1>); // 206 - 239
 	FIELD(vehParamEx, CVehicleParams); // 239 - 255
     FIELD(bDeathNotification, BYTE); // 255 - 256
     FIELD(bOccupied, BYTE); // 256 - 257
@@ -782,10 +796,10 @@ CHECK_TYPE(CVehicle, 267);
 
 struct CVehiclePool
 {
-	FIELD(byteVehicleModelsUsed, BYTE, [212]); // 0 - 212
-	FIELD(iVirtualWorld, int, [MAX_VEHICLES]); // 212 - 8212
-	FIELD(bVehicleSlotState, BOOL, [MAX_VEHICLES]); // 8212 - 16212
-	FIELD(pVehicle, CVehicle*, [MAX_VEHICLES]); // 16212 - 24212
+	FIELD(byteVehicleModelsUsed, ARRAY<BYTE, 212>); // 0 - 212
+	FIELD(iVirtualWorld, ARRAY<int, MAX_VEHICLES>); // 212 - 8212
+	FIELD(bVehicleSlotState, ARRAY<BOOL, MAX_VEHICLES>); // 8212 - 16212
+	FIELD(pVehicle, ARRAY<CVehicle*, MAX_VEHICLES>); // 16212 - 24212
 	FIELD(dwVehiclePoolSize, DWORD); // 24212 - 24216
 };
 CHECK_TYPE(CVehiclePool, 24216);
@@ -804,9 +818,9 @@ CHECK_TYPE(tPickup, 20);
 
 struct CPickupPool
 {
-	FIELD(Pickup, tPickup, [MAX_PICKUPS]); // + 0x0000
-	FIELD(bActive, BOOL, [MAX_PICKUPS]); // + 0xA000
-	FIELD(iWorld, int, [MAX_PICKUPS]); // + 0xC000
+	FIELD(Pickup, ARRAY<tPickup, MAX_PICKUPS>); // + 0x0000
+	FIELD(bActive, ARRAY<BOOL, MAX_PICKUPS>); // + 0xA000
+	FIELD(iWorld, ARRAY<int, MAX_PICKUPS>); // + 0xC000
 	FIELD(iPickupCount, int);
 };
 CHECK_TYPE(CPickupPool, 114692);
@@ -821,10 +835,10 @@ struct CObjectMaterial
 	FIELD(byteSlot, BYTE); // 198 - 199
 	FIELD(wModelID, WORD); // 199 - 201
 	FIELD(dwMaterialColor, DWORD); // 201 - 205
-	FIELD(szMaterialTXD, char, [64 + 1]); // 205 - 270
-	FIELD(szMaterialTexture, char, [64 + 1]); // 270 - 335
+	FIELD(szMaterialTXD, ARRAY<char, 64 + 1>); // 205 - 270
+	FIELD(szMaterialTexture, ARRAY<char, 64 + 1>); // 270 - 335
 	FIELD(byteMaterialSize, BYTE); // 335 - 336
-	FIELD(szFont, char, [64 + 1]); // 336 - 401
+	FIELD(szFont, ARRAY<char, 64 + 1>); // 336 - 401
 	FIELD(byteFontSize, BYTE); // 401 - 402
 	FIELD(byteBold, BYTE); // 402 - 403
 	FIELD(dwFontColor, DWORD); // 403 - 407
@@ -852,18 +866,18 @@ struct CObject
 	FIELD(vecAttachedRotation, CVector); // 180 - 192
 	FIELD(byteSyncRot, BYTE); // 192 - 193
 	FIELD(dwMaterialCount, DWORD); // 193 - 197
-	FIELD(Material, CObjectMaterial, [MAX_OBJECT_MATERIAL]); // 197 - 3637
-	FIELD(szMaterialText, char*, [MAX_OBJECT_MATERIAL]); // 3637 - 3653
+	FIELD(Material, ARRAY<CObjectMaterial, MAX_OBJECT_MATERIAL>); // 197 - 3637
+	FIELD(szMaterialText, ARRAY<char*, MAX_OBJECT_MATERIAL>); // 3637 - 3653
 };
 CHECK_TYPE(CObject, 3701);
 
 struct CObjectPool
 {
-	FIELD(bPlayerObjectSlotState, BOOL, [MAX_PLAYERS][MAX_OBJECTS]); // 0 
-	FIELD(bPlayersObject, BOOL, [MAX_OBJECTS]); // 4.000.000
-	FIELD(pPlayerObjects, CObject*, [MAX_PLAYERS][MAX_OBJECTS]); // 4.004.000
-	FIELD(bObjectSlotState, BOOL, [MAX_OBJECTS]); // 8.004.000
-	FIELD(pObjects, CObject*, [MAX_OBJECTS]); // 8.008.000
+	FIELD(bPlayerObjectSlotState, ARRAY<ARRAY<BOOL, MAX_OBJECTS>, MAX_PLAYERS>); // 0 
+	FIELD(bPlayersObject, ARRAY<BOOL, MAX_OBJECTS>); // 4.000.000
+	FIELD(pPlayerObjects, ARRAY<ARRAY<CObject*, MAX_OBJECTS>, MAX_PLAYERS>); // 4.004.000
+	FIELD(bObjectSlotState, ARRAY<BOOL, MAX_OBJECTS>); // 8.004.000
+	FIELD(pObjects, ARRAY<CObject*, MAX_OBJECTS>); // 8.008.000
 };
 #ifndef SAMP_03DL
 CHECK_TYPE(CObjectPool, 8012000);
@@ -878,32 +892,32 @@ CHECK_TYPE(CObjectPool, 16024000);
 struct MenuInteraction
 {
 	FIELD(Menu, BOOL);
-	FIELD(Row, BOOL, [MAX_ITEMS]);
-	FIELD(unknown, char, [12]);
+	FIELD(Row, ARRAY<BOOL, MAX_ITEMS>);
+	FIELD(unknown, ARRAY<char, 12>);
 };
 CHECK_TYPE(MenuInteraction, 64);
 
 struct CMenu
 {
 	FIELD(menuID, BYTE); // + 0x0000
-	FIELD(szTitle, char, [MAX_MENU_TEXT_SIZE]); // + 0x0001
-	FIELD(szItems, char, [MAX_ITEMS][MAX_COLUMNS][MAX_MENU_TEXT_SIZE]); // + 0x0021
-	FIELD(szHeaders, char, [MAX_COLUMNS][MAX_MENU_TEXT_SIZE]); // + 0x0321
-	FIELD(bIsInitiedForPlayer, BOOL, [MAX_PLAYERS]); // + 0x0361
+	FIELD(szTitle, ARRAY<char, MAX_MENU_TEXT_SIZE>); // + 0x0001
+	FIELD(szItems, ARRAY<ARRAY<ARRAY<char, MAX_MENU_TEXT_SIZE>, MAX_COLUMNS>, MAX_ITEMS>); // + 0x0021
+	FIELD(szHeaders, ARRAY<ARRAY<char, MAX_MENU_TEXT_SIZE>, MAX_COLUMNS>); // + 0x0321
+	FIELD(bIsInitiedForPlayer, ARRAY<BOOL, MAX_PLAYERS>); // + 0x0361
 	FIELD(interaction, MenuInteraction); // + 0x0B31
 	FIELD(vecPos, CVector2D);
 	FIELD(fColumn1Width, float); // + 0x0B79
 	FIELD(fColumn2Width, float); // + 0x0B7D
 	FIELD(byteColumnsNumber, BYTE); // + 0x0B81
-	FIELD(byteItemsCount, BYTE, [MAX_COLUMNS]); // + 0x0B82
+	FIELD(byteItemsCount, ARRAY<BYTE, MAX_COLUMNS>); // + 0x0B82
 };
 CHECK_TYPE(CMenu, 4948);
 
 struct CMenuPool
 {
-	FIELD(pMenu, CMenu*, [MAX_MENUS]); //	+ 0x0000
-	FIELD(bIsCreated, BOOL, [MAX_MENUS]); //	+ 0x0200
-	FIELD(bPlayerMenu, BOOL, [MAX_PLAYERS]); //	+ 0x0400
+	FIELD(pMenu, ARRAY<CMenu*, MAX_MENUS>); //	+ 0x0000
+	FIELD(bIsCreated, ARRAY<BOOL, MAX_MENUS>); //	+ 0x0200
+	FIELD(bPlayerMenu, ARRAY<BOOL, MAX_PLAYERS>); //	+ 0x0400
 };
 CHECK_TYPE(CMenuPool, 5024);
 
@@ -912,10 +926,10 @@ CHECK_TYPE(CMenuPool, 5024);
 /* -------------------------------------------------------- */
 struct CTextDrawPool
 {
-	FIELD(bSlotState, BOOL, [MAX_TEXT_DRAWS]);
-	FIELD(TextDraw, CTextdraw*, [MAX_TEXT_DRAWS]);
-	FIELD(szFontText, char*, [MAX_TEXT_DRAWS]);
-	FIELD(bHasText, bool, [MAX_TEXT_DRAWS][MAX_PLAYERS]);
+	FIELD(bSlotState, ARRAY<BOOL, MAX_TEXT_DRAWS>);
+	FIELD(TextDraw, ARRAY<CTextdraw*, MAX_TEXT_DRAWS>);
+	FIELD(szFontText, ARRAY<char*, MAX_TEXT_DRAWS>);
+	FIELD(bHasText, ARRAY<ARRAY<bool, MAX_PLAYERS>, MAX_TEXT_DRAWS>);
 };
 CHECK_TYPE(CTextDrawPool, 2072576);
 
@@ -925,8 +939,8 @@ CHECK_TYPE(CTextDrawPool, 2072576);
 
 struct C3DTextPool
 {
-	FIELD(bIsCreated, BOOL, [MAX_3DTEXT_GLOBAL]); // 0 - 4096 <- OK
-	FIELD(TextLabels, C3DText, [MAX_3DTEXT_GLOBAL]);
+	FIELD(bIsCreated, ARRAY<BOOL, MAX_3DTEXT_GLOBAL>); // 0 - 4096 <- OK
+	FIELD(TextLabels, ARRAY<C3DText, MAX_3DTEXT_GLOBAL>);
 };
 CHECK_TYPE(C3DTextPool, 37888);
 
@@ -936,8 +950,8 @@ CHECK_TYPE(C3DTextPool, 37888);
 
 struct CSAMPGangZonePool
 {
-	FIELD(fGangZone, float, [MAX_GANG_ZONES][4]);
-	FIELD(bSlotState, BOOL, [MAX_GANG_ZONES]);
+	FIELD(fGangZone, ARRAY<ARRAY<float, 4>, MAX_GANG_ZONES>);
+	FIELD(bSlotState, ARRAY<BOOL, MAX_GANG_ZONES>);
 };
 CHECK_TYPE(CSAMPGangZonePool, 20480);
 
@@ -947,8 +961,8 @@ CHECK_TYPE(CSAMPGangZonePool, 20480);
 
 struct CActorAnim // 140
 {
-	FIELD(szAnimLib, char, [64 + 1]); // 0 - 64
-	FIELD(szAnimName, char, [64 + 1]); // 64 - 128
+	FIELD(szAnimLib, ARRAY<char, 64 + 1>); // 0 - 64
+	FIELD(szAnimName, ARRAY<char, 64 + 1>); // 64 - 128
 	FIELD(fDelta, float); // 128 - 132
 	FIELD(byteLoop, BYTE); // 132 - 133
 	FIELD(byteLockX, BYTE); // 133 - 134
@@ -972,7 +986,7 @@ struct CActor
 	FIELD(pad, DWORD);				
 	FIELD(fAngle, float);			
 	FIELD(vecPos, CVector);	
-	FIELD(pad8, BYTE, [12]);			
+	FIELD(pad8, ARRAY<BYTE, 12>);			
 	FIELD(byteInvulnerable, BYTE);	
 	FIELD(wActorID, WORD);			
 };
@@ -980,9 +994,9 @@ CHECK_TYPE(CActor, 211);
 
 struct CActorPool
 {
-	FIELD(iActorVirtualWorld, int, [MAX_ACTORS]);
-	FIELD(bValidActor, BOOL, [MAX_ACTORS]);
-	FIELD(pActor, CActor*, [MAX_ACTORS]);
+	FIELD(iActorVirtualWorld, ARRAY<int, MAX_ACTORS>);
+	FIELD(bValidActor, ARRAY<BOOL, MAX_ACTORS>);
+	FIELD(pActor, ARRAY<CActor*, MAX_ACTORS>);
 	FIELD(dwActorPoolSize, DWORD);
 };
 CHECK_TYPE(CActorPool, 12004);
@@ -998,15 +1012,15 @@ CHECK_TYPE(CGameMode, sizeof(CGameMode));
 
 struct CFilterScripts
 {
-	FIELD(pFilterScripts, AMX*, [MAX_FILTER_SCRIPTS]);
-	FIELD(szFilterScriptName, char, [MAX_FILTER_SCRIPTS][255]);
+	FIELD(pFilterScripts, ARRAY<AMX*, MAX_FILTER_SCRIPTS>);
+	FIELD(szFilterScriptName, ARRAY<ARRAY<char, 255>, MAX_FILTER_SCRIPTS>);
 	FIELD(iFilterScriptCount, int);
 };
 CHECK_TYPE(CFilterScripts, sizeof(CFilterScripts));
 
 struct ScriptTimer_s
 {
-	FIELD(szScriptFunc, char, [255]);
+	FIELD(szScriptFunc, ARRAY<char, 255>);
 	FIELD(iTotalTime, int);
 	FIELD(iRemainingTime, int);
 	FIELD(bRepeating, BOOL);
@@ -1077,7 +1091,7 @@ struct CNetGame
 	FIELD(dElapsedTime, double);
 #endif
 	FIELD(iSpawnsAvailable, int); // 130 - 134
-	FIELD(AvailableSpawns, CPlayerSpawnInfo, [319]); // 134 - 14808
+	FIELD(AvailableSpawns, ARRAY<CPlayerSpawnInfo, 319>); // 134 - 14808
 };
 #ifdef _WIN32
 #ifndef SAMP_03DL
@@ -1123,7 +1137,7 @@ CHECK_TYPE(CArtList, 8);
 
 struct CArtInfo
 {
-	FIELD(szArtPath, char, [MAX_PATH]); // 0 - 260
+	FIELD(szArtPath, ARRAY<char, MAX_PATH>); // 0 - 260
 	FIELD(bUnknown, BYTE); // 260 - 261
 	FIELD(artList, CArtList); // 261 - 269
 };

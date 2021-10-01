@@ -9,7 +9,6 @@
 #include "utils/pair_hash.h"
 #include "CPool.h"
 #include "CPlayerData.h"
-#include "Structs.h"
 
 template <class ObjectType, size_t MaxSize>
 class CPerPlayerPoolBase
@@ -23,7 +22,7 @@ public:
 	CPerPlayerPoolBase &operator=(const CPerPlayerPoolBase&) = delete;
 	virtual ~CPerPlayerPoolBase() = default;
 
-	virtual ObjectType(&operator[](size_t playerid))[MaxSize] = 0;
+	virtual ARRAY<ObjectType, MaxSize> &operator[](size_t playerid) = 0;
 	virtual ObjectType &Get(size_t playerid, size_t index) = 0;
 	virtual bool IsValid(size_t playerid, size_t index) const = 0;
 
@@ -80,7 +79,7 @@ public:
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ObjectType(PoolType::*PoolArray)[PlayerPoolMaxSize][MaxSize], class ExtraData = std::tuple<size_t>>
+template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), class ExtraData = std::tuple<size_t>>
 class CBasicPerPlayerPool : public CExtendedPerPlayerPool<ObjectType, MaxSize, ExtraData>
 {
 	typedef CExtendedPerPlayerPool<ObjectType, MaxSize, ExtraData> Base;
@@ -93,7 +92,7 @@ public:
 
 	}
 
-	virtual ObjectType(&operator[](size_t playerid))[MaxSize] OVERRIDE
+	virtual ARRAY<ObjectType, MaxSize> &operator[](size_t playerid) OVERRIDE
 	{
 		return (pool.*PoolArray)[playerid];
 	}
@@ -110,7 +109,7 @@ public:
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ObjectType(PoolType::*PoolArray)[PlayerPoolMaxSize][MaxSize], BOOL(PoolType::*SlotArray)[PlayerPoolMaxSize][MaxSize], class ExtraData = std::tuple<size_t>>
+template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), ARRAY<ARRAY<BOOL, MaxSize>, PlayerPoolMaxSize> (PoolType::*SlotArray), class ExtraData = std::tuple<size_t>>
 class CSlotPerPlayerPool : public CBasicPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, ExtraData>
 {
 	typedef CBasicPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, ExtraData> Base;
@@ -126,7 +125,7 @@ public:
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ObjectType(PoolType::*PoolArray)[PlayerPoolMaxSize][MaxSize], BOOL(PoolType::*SlotArray)[PlayerPoolMaxSize][MaxSize], DWORD(PoolType::*PoolSize)[PlayerPoolMaxSize], class ExtraData = std::tuple<size_t>>
+template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), ARRAY<ARRAY<BOOL, MaxSize>, PlayerPoolMaxSize> (PoolType::*SlotArray), ARRAY<DWORD, MaxSize> (PoolType::*PoolSize), class ExtraData = std::tuple<size_t>>
 class CBoundedPerPlayerPool : public CSlotPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, SlotArray, ExtraData>
 {
 	typedef CSlotPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, SlotArray, ExtraData> Base;

@@ -318,7 +318,7 @@ namespace Natives
 		{
 			for (BYTE i = 0; i != 16; ++i)
 			{
-				if (scriptname == pNetGame->pFilterScriptPool->szFilterScriptName[i])
+				if (!scriptname.compare(pNetGame->pFilterScriptPool->szFilterScriptName[i]))
 				{
 					pAMX = pNetGame->pFilterScriptPool->pFilterScripts[i];
 					break;

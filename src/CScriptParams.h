@@ -37,7 +37,7 @@ public:
 
 private:
 	template <class numType>
-	void AddInternal(numType num);
+	typename std::enable_if<std::is_integral<numType>::value>::type AddInternal(numType num);
 	void AddInternal(float num);
 	void AddInternal(double num);
 	void AddInternal(CVector2D vec);
@@ -59,7 +59,7 @@ private:
 	}
 
 	template <class numType>
-	void ReadInternal(numType &num);
+	typename std::enable_if<std::is_integral<numType>::value>::type ReadInternal(numType &num);
 	void ReadInternal(float &num);
 	void ReadInternal(double &num);
 	void ReadInternal(CVector2D &vec);
@@ -116,9 +116,8 @@ private:
 //----------------------------------------------------
 
 template <class numType>
-void CScriptParams::AddInternal(numType num)
+typename std::enable_if<std::is_integral<numType>::value>::type CScriptParams::AddInternal(numType num)
 {
-	static_assert(std::is_integral<numType>::value, "Only integral type can be converted.");
 	cell *address;
 	if (amx_GetAddr(m_AMX, ReadCell(), &address) == AMX_ERR_NONE)
 	{
@@ -127,9 +126,8 @@ void CScriptParams::AddInternal(numType num)
 }
 
 template <class numType>
-void CScriptParams::ReadInternal(numType &num)
+typename std::enable_if<std::is_integral<numType>::value>::type CScriptParams::ReadInternal(numType &num)
 {
-	static_assert(std::is_integral<numType>::value, "Only integral type can be converted.");
 	num = static_cast<numType>(ReadCell());
 }
 
