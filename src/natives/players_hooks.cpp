@@ -122,17 +122,17 @@ namespace Natives
 		return 1;
 	}
 
-	// native SetExclusiveBroadcast(toggle);
+	// native SetExclusiveBroadcast(status);
 	AMX_DECLARE_NATIVE(SetExclusiveBroadcast)
 	{
 		CHECK_PARAMS(1, LOADED);
 
-		const int toggle = CScriptParams::Get()->ReadInt();
-		CPlugin::Get()->SetExclusiveBroadcast(!!toggle);
+		const int status = CScriptParams::Get()->ReadInt();
+		CPlugin::Get()->SetExclusiveBroadcast(status, status != 0);
 		return 1;
 	}
 
-	// native BroadcastToPlayer(playerid, toggle = 1);
+	// native BroadcastToPlayer(playerid, bool:toggle = true);
 	AMX_DECLARE_NATIVE(BroadcastToPlayer)
 	{
 		CHECK_PARAMS(2, LOADED);

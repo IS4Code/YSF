@@ -287,8 +287,17 @@ native SetTimeoutTime(playerid, time_ms);
 native GetLocalIP(index, localip[], len = sizeof(localip));
 
 // Exclusive RPC broadcast
-native SetExclusiveBroadcast(toggle);
-native BroadcastToPlayer(playerid, toggle = 1);
+
+enum
+{
+    EXCLUSIVE_BROADCAST_ONCE_OFF = -1,
+	EXCLUSIVE_BROADCAST_OFF = 0,
+    EXCLUSIVE_BROADCAST_ON = 1,
+    EXCLUSIVE_BROADCAST_ONCE_ON = 2
+};
+
+native SetExclusiveBroadcast(status);
+native BroadcastToPlayer(playerid, bool:toggle = true);
 
 native ToggleCloseConnectionFix(bool:toggle);
 

@@ -375,10 +375,10 @@ WORD CPlugin::GetNPCCount()
 	return count;
 }
 
-void CPlugin::SetExclusiveBroadcast(bool toggle) 
+void CPlugin::SetExclusiveBroadcast(int status, bool reset)
 { 
-	m_bExclusiveBroadcast = toggle;
-	if (toggle) // if we just activated exclusive broadcast, exclude all players from broadcast list and let scripter readd them
+	m_iExclusiveBroadcast = status;
+	if (reset)
 	{
 		auto &pool = CServer::Get()->PlayerPool;
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
@@ -387,9 +387,9 @@ void CPlugin::SetExclusiveBroadcast(bool toggle)
 	}
 }
 
-bool CPlugin::GetExclusiveBroadcast(void) 
+int CPlugin::GetExclusiveBroadcast(void) 
 { 
-	return m_bExclusiveBroadcast; 
+	return m_iExclusiveBroadcast;
 }
 
 RakNet::BitStream *CPlugin::BuildSyncData(RakNet::BitStream *bsOrig, WORD toplayerid)

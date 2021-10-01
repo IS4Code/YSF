@@ -225,16 +225,29 @@ bool THISCALL CHookRakServer::RPC_2(void* ppRakServer, BYTE* uniqueID, RakNet::B
 	if (!CPlugin::Get()->RebuildRPCData(*uniqueID, parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)))) return 1;
 
 	auto &pool = CServer::Get()->PlayerPool;
-	if (CPlugin::Get()->GetExclusiveBroadcast())
+	int broadcastStatus = CPlugin::Get()->GetExclusiveBroadcast();
+	if(broadcastStatus >= 1)
 	{
-		for (WORD i = 0; i != MAX_PLAYERS; ++i)
-			if (IsPlayerConnected(i) && pool.Extra(i).bBroadcastTo)
+		if(broadcastStatus > 1)
+		{
+			CPlugin::Get()->SetExclusiveBroadcast(broadcastStatus - 2, false);
+		}
+		for(WORD i = 0; i != MAX_PLAYERS; ++i)
+		{
+			if(IsPlayerConnected(i) && pool.Extra(i).bBroadcastTo)
+			{
 				CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, CSAMPFunctions::GetPlayerIDFromIndex(i), false, shiftTimestamp);
+			}
+		}
 
 		return 1;
+	}else{
+		if(broadcastStatus < 0)
+		{
+			CPlugin::Get()->SetExclusiveBroadcast(broadcastStatus + 2, false);
+		}
+		return CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 	}
-
-	return CSAMPFunctions::RPC(uniqueID, parameters, priority, reliability, orderingChannel, playerId, broadcast, shiftTimestamp);
 }
 
 //----------------------------------------------------
