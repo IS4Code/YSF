@@ -414,7 +414,7 @@ struct CUnoccupiedSyncData
 {
 	FIELD(wVehicleID, WORD); // + 0x0000
 	FIELD(bytePassengerSlot, BYTE); // + 0x0002
-	FIELD(vecRool, CVector); // + 0x0003
+	FIELD(vecRoll, CVector); // + 0x0003
 	FIELD(vecDirection, CVector); // + 0x000F
 	FIELD(vecPosition, CVector); // + 0x001B
 	FIELD(vecVelocity, CVector); // + 0x0027
