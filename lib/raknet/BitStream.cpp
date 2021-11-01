@@ -614,9 +614,12 @@ void BitStream::AddBitsAndReallocate( const int numberOfBitsToWrite )
 		}
 		else
 		{
-			data = ( unsigned char* ) realloc( data, amountToAllocate );
+			unsigned char* tmp = ( unsigned char* ) realloc( data, amountToAllocate );
+			if (tmp != NULL)
+			{
+				data = tmp;
+			}
 		}
-
 #ifdef _DEBUG
 		assert( data ); // Make sure realloc succeeded
 #endif

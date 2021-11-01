@@ -14,10 +14,7 @@ protected:
 	static std::unique_ptr<T> m_Instance;
 
 public:
-	CSingleton()
-	{
-
-	}
+	CSingleton() = default;
 
 	virtual ~CSingleton()
 	{

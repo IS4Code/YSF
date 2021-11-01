@@ -395,18 +395,21 @@ namespace Natives
 				if (amx_GetAddr(amx, params[param_offset + (param_idx + 1)], &arraySize) != AMX_ERR_NONE)
 				{
 					logprintf("missing 'd' / 'i' specifier for array size");
+					delete[] format;
 					return 0;
 				}
 
 				if ((*(format + (len))) != 'd' && (*(format + (len))) != 'i')
 				{
 					logprintf("expected 'd'/'i' specifier for array size (got '%c' instead)", *(format + (len)));
+					delete[] format;
 					return 0;
 				}
 
 				if (arraySize <= 0)
 				{
 					logprintf("invalid array size '%d'", arraySize);
+					delete[] format;
 					return 0;
 				}
 
@@ -425,6 +428,7 @@ namespace Natives
 			default:
 			{
 				logprintf("invalid format specifier '%c'", *(format + (len - 1)));
+				delete[] format;
 				return 0;
 				break;
 			}
@@ -532,6 +536,8 @@ namespace Natives
 
 		char temp[MAX_PATH];
 		const size_t len = strlen(gRecordingDataPath);
+		if (len <= 7) return 0;
+
 		strcpy(temp, gRecordingDataPath);
 		temp[len - 7] = 0;
 
