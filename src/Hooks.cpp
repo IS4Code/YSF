@@ -437,17 +437,26 @@ void RconSocketReply(char* szMessage)
 }
 
 //----------------------------------------------------
-// bool CheckQueryFlood()
+// bool ProcessQueryFlood()
 // returns 1 if this query could flood
 // returns 0 otherwise
-bool CheckQueryFlood(unsigned int binaryAddress, char type, DWORD limit)
+bool ProcessQueryFlood(unsigned int binaryAddress, char type, DWORD limit)
 {
 	static struct {
 		DWORD dwLastQueryTick = 0;
 		unsigned int lastBinAddr = 0;
-	} typeData['z' - 'a' + 1];
+	} packetTypeFloodData['z' - 'a' + 1];
 
-	auto &data = typeData[type - 'a'];
+	auto &data = packetTypeFloodData[type - 'a'];
+
+	if(limit == -1)
+	{
+		if(data.lastBinAddr == binaryAddress)
+		{
+			data.dwLastQueryTick = 0;
+		}
+		return 0;
+	}
 
 	auto tick = GetTickCount();
 	if(!data.dwLastQueryTick)
@@ -499,7 +508,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				{
 					if (length == 15)
 					{
-						if(CheckQueryFlood(binaryAddress, type, 250)) return 1;
+						if(ProcessQueryFlood(binaryAddress, type, 250)) return 1;
 						sendto(s, data, 15, 0, (sockaddr*)&to, sizeof(to));
 					}
 					break;
@@ -508,7 +517,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				{
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
-					if (CheckQueryFlood(binaryAddress, type, 25)) return 1;
+					if (ProcessQueryFlood(binaryAddress, type, 25)) return 1;
 
 					char *temp;
 
@@ -608,7 +617,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				{
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
-					if (CheckQueryFlood(binaryAddress, type, 100)) return 1;
+					if (ProcessQueryFlood(binaryAddress, type, 100)) return 1;
 
 					WORD wPlayerCount = CPlugin::Get()->GetPlayerCount();
 					if (wPlayerCount > 100) return 1;
@@ -657,7 +666,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				{
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
-					if (CheckQueryFlood(binaryAddress, type, 200)) return 1;
+					if (ProcessQueryFlood(binaryAddress, type, 200)) return 1;
 
 					WORD wPlayerCount = CPlugin::Get()->GetPlayerCount();
 					if (wPlayerCount > 100) return 1;
@@ -710,7 +719,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 				{
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query")) return 1;
-					if (CheckQueryFlood(binaryAddress, type, 50)) return 1;
+					if (ProcessQueryFlood(binaryAddress, type, 50)) return 1;
 
 					CSAMPFunctions::SendRules(s, data, (sockaddr_in*)&to, sizeof(to));
 					break;
@@ -721,7 +730,7 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 					
 					// We do not process these queries 'query' is 0
 					if (!CSAMPFunctions::GetBoolVariable("query") || !CSAMPFunctions::GetBoolVariable("rcon")) return 1;
-					if (CheckQueryFlood(binaryAddress, type, 25)) return 1;
+					if (ProcessQueryFlood(binaryAddress, type, 25)) return 1;
 					
 					cur_sock = s;
 					cur_data = data;
@@ -770,6 +779,8 @@ int HOOK_ProcessQueryPacket(unsigned int binaryAddress, unsigned short port, cha
 						char* szCommand = (char*)malloc(wStrLen + 1);
 						memcpy(szCommand, data, wStrLen);
 						szCommand[wStrLen] = 0;
+
+						ProcessQueryFlood(binaryAddress, type, -1);
 
 						if (pConsole)
 						{
