@@ -3,20 +3,38 @@
   "repo": "YSF",
   "contributors": ["Y_Less", "kurta999"],
   "dependencies": ["sampctl/samp-stdlib"],
+  "include_path": "sampsvr_files",
   "resources": [
-    {
-      "name": "YSF.*\\.zip",
-      "archive": true,
-      "platform": "windows",
-      "includes": ["pawno/include"],
-      "plugins": ["plugins/YSF.dll"]
-    },
-    {
-      "name": "YSF.*\\.zip",
-      "archive": true,
-      "platform": "linux",
-      "includes": ["pawno/include"],
-      "plugins": ["plugins/YSF.so"]
-    }
-  ]
+      {
+          "name": "YSF.zip",
+          "platform": "linux",
+          "archive": true,
+          "version": "0.3.7",
+          "plugins": ["plugins/YSF.so"]
+      },
+      {
+          "name": "YSF.zip",
+          "platform": "windows",
+          "archive": true,
+          "version": "0.3.7",
+          "plugins": ["plugins/YSF.dll"]
+      },
+      {
+          "name": "YSF.zip",
+          "platform": "linux",
+          "archive": true,
+          "version": "0.3.DL",
+          "plugins": ["plugins/YSF_DL.so"]
+      },
+      {
+          "name": "YSF.zip",
+          "platform": "windows",
+          "archive": true,
+          "version": "0.3.DL",
+          "plugins": ["plugins/YSF_DL.dll"]
+      }        
+  ],
+  "runtime": {
+      "plugins": ["IllidanS4/YSF"]
+  }
 }
