@@ -3,7 +3,7 @@
   "repo": "YSF",
   "contributors": ["Y_Less", "kurta999"],
   "dependencies": ["sampctl/samp-stdlib"],
-  "include_path": "sampsvr_files",
+  "include_path": "sampsvr_files\\pawno\\include",
   "resources": [
       {
           "name": "YSF.zip",
