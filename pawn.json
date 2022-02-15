@@ -3,35 +3,54 @@
   "repo": "YSF",
   "contributors": ["Y_Less", "kurta999"],
   "dependencies": ["sampctl/samp-stdlib"],
-  "include_path": "sampsvr_files\\pawno\\include",
   "resources": [
       {
           "name": "YSF.zip",
           "platform": "linux",
           "archive": true,
           "version": "0.3.7",
-          "plugins": ["plugins/YSF.so"]
+          "plugins": ["plugins/YSF.so"],
+          "files":
+          {
+                "YSF.cfg": "plugins/YSF.cfg"
+          },
+          "includes": ["pawno/include/YSF.inc"]
       },
       {
           "name": "YSF.zip",
           "platform": "windows",
           "archive": true,
           "version": "0.3.7",
-          "plugins": ["plugins/YSF.dll"]
+          "plugins": ["plugins/YSF.dll"],
+          "files":
+          {
+                "YSF.cfg": "plugins/YSF.cfg"
+          },
+          "includes": ["pawno/include/YSF.inc"]
       },
       {
           "name": "YSF.zip",
           "platform": "linux",
           "archive": true,
           "version": "0.3.DL",
-          "plugins": ["plugins/YSF_DL.so"]
+          "plugins": ["plugins/YSF_DL.so"],
+          "files":
+          {
+                "YSF.cfg": "plugins/YSF.cfg"
+          },
+          "includes": ["pawno/include/YSF.inc"]
       },
       {
           "name": "YSF.zip",
           "platform": "windows",
           "archive": true,
           "version": "0.3.DL",
-          "plugins": ["plugins/YSF_DL.dll"]
+          "plugins": ["plugins/YSF_DL.dll"],
+          "files":
+          {
+                "YSF.cfg": "plugins/YSF.cfg"
+          },
+          "includes": ["pawno/include/YSF.inc"]
       }        
   ],
   "runtime": {
