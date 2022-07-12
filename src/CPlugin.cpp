@@ -53,7 +53,7 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 	ConsoleCommand_s *cmds = *CAddress::ARRAY_ConsoleCommands;
 	do
 	{
-		m_RCONCommands.push_back(std::string(cmds->szName));
+		m_RCONCommands.emplace_back(cmds->szName);
 		cmds++;
 	} while (cmds->szName[0] && !cmds->dwFlags);
 }

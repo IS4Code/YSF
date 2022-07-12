@@ -40,7 +40,7 @@ static std::vector<std::pair<const AMX_NATIVE_INFO *, int>> native_list;
 
 void RegisterNatives(const AMX_NATIVE_INFO *natives_list, int count)
 {
-	native_list.push_back(std::make_pair(natives_list, count));
+	native_list.emplace_back(natives_list, count);
 }
 
 int RegisterAllNatives(AMX *amx)
