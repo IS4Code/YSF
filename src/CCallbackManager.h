@@ -19,7 +19,8 @@ public:
 	static void	OnPlayerEnterPlayerGangZone(WORD playerid, WORD zoneid);
 	static void	OnPlayerLeavePlayerGangZone(WORD playerid, WORD zoneid);
 	static void	OnPlayerPauseStateChange(WORD playerid, bool pausestate);
-	static void	OnPlayerStatsAndWeaponsUpdate(WORD playerid);
+	static void	OnPlayerStatsUpdate(WORD playerid);
+	static void	OnPlayerWeaponsUpdate(WORD playerid);
 	static bool OnServerMessage(const char* message);
 	static bool OnRemoteRCONPacket(unsigned int binaryAddress, int port, char *password, bool success, char* command);
 	static void OnPlayerClientGameInit(WORD playerid, bool* usecjwalk, bool* limitglobalchat, float* globalchatradius, float* nametagdistance, bool* disableenterexits, bool* nametaglos, bool* manualvehengineandlights, int* spawnsavailable, bool* shownametags, bool* showplayermarkers, int* onfoot_rate, int* incar_rate, int* weapon_rate, int* lagcompmode, bool* vehiclefriendlyfire);
