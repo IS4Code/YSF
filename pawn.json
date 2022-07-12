@@ -4,19 +4,56 @@
   "contributors": ["Y_Less", "kurta999"],
   "dependencies": ["sampctl/samp-stdlib"],
   "resources": [
-    {
-      "name": "YSF.*\\.zip",
-      "archive": true,
-      "platform": "windows",
-      "includes": ["pawno/include"],
-      "plugins": ["plugins/YSF.dll"]
-    },
-    {
-      "name": "YSF.*\\.zip",
-      "archive": true,
-      "platform": "linux",
-      "includes": ["pawno/include"],
-      "plugins": ["plugins/YSF.so"]
-    }
-  ]
+      {
+          "name": "YSF.zip",
+          "platform": "linux",
+          "archive": true,
+          "version": "0.3.7",
+          "plugins": ["plugins/YSF.so"],
+          "files":
+          {
+                "YSF.cfg": "plugins/YSF.cfg"
+          },
+          "includes": ["pawno/include/YSF.inc"]
+      },
+      {
+          "name": "YSF.zip",
+          "platform": "windows",
+          "archive": true,
+          "version": "0.3.7",
+          "plugins": ["plugins/YSF.dll"],
+          "files":
+          {
+                "YSF.cfg": "plugins/YSF.cfg"
+          },
+          "includes": ["pawno/include/YSF.inc"]
+      },
+      {
+          "name": "YSF.zip",
+          "platform": "linux",
+          "archive": true,
+          "version": "0.3.DL",
+          "plugins": ["plugins/YSF_DL.so"],
+          "files":
+          {
+                "YSF.cfg": "plugins/YSF.cfg"
+          },
+          "includes": ["pawno/include/YSF.inc"]
+      },
+      {
+          "name": "YSF.zip",
+          "platform": "windows",
+          "archive": true,
+          "version": "0.3.DL",
+          "plugins": ["plugins/YSF_DL.dll"],
+          "files":
+          {
+                "YSF.cfg": "plugins/YSF.cfg"
+          },
+          "includes": ["pawno/include/YSF.inc"]
+      }        
+  ],
+  "runtime": {
+      "plugins": ["IllidanS4/YSF"]
+  }
 }

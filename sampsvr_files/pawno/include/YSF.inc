@@ -1,4 +1,4 @@
-/* YSF 2.0 */
+/* YSF 2.2 */
 #if defined _YSF_included
 	#endinput
 #endif
@@ -99,12 +99,12 @@ native HasPlayerConsoleMessages(playerid, &color = 0);
 // YSF settings
 native YSF_SetTickRate(ticks);
 native YSF_GetTickRate();
-native YSF_EnableNightVisionFix(enable);
-native YSF_IsNightVisionFixEnabled();
-native YSF_ToggleOnServerMessage(toggle);
-native YSF_IsOnServerMessageEnabled();
-native YSF_SetExtendedNetStatsEnabled(enable);
-native YSF_IsExtendedNetStatsEnabled();
+native YSF_EnableNightVisionFix(bool:enable);
+native bool:YSF_IsNightVisionFixEnabled();
+native YSF_ToggleOnServerMessage(bool:toggle);
+native bool:YSF_IsOnServerMessageEnabled();
+native YSF_SetExtendedNetStatsEnabled(bool:enable);
+native bool:YSF_IsExtendedNetStatsEnabled();
 native YSF_SetAFKAccuracy(time_ms);
 native YSF_GetAFKAccuracy();
 
@@ -162,6 +162,7 @@ native GetPlayerSpectateID(playerid);
 native GetPlayerSpectateType(playerid);
 native GetPlayerLastSyncedVehicleID(playerid);
 native GetPlayerLastSyncedTrailerID(playerid);
+native GetPlayerRawIp(playerid);
 
 native SendBulletData(senderid, forplayerid = -1, weaponid, hittype, hitid, Float:fHitOriginX, Float:fHitOriginY, Float:fHitOriginZ, Float:fHitTargetX, Float:fHitTargetY, Float:fHitTargetZ, Float:fCenterOfHitX, Float:fCenterOfHitY, Float:fCenterOfHitZ);
 native ShowPlayerForPlayer(forplayerid, playerid, bool:setskin=false);
@@ -185,6 +186,9 @@ native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:f
 native TogglePlayerGhostMode(playerid, bool:toggle);
 native GetPlayerGhostMode(playerid);
 native SetPlayerSyncKeys(playerid, keys, updown, leftright);
+native SetPlayerSyncPos(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncVelocity(playerid, Float:x, Float:y, Float:z);
+native SetPlayerSyncRotationQuat(playerid, Float:w, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraFrontVector(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraPos(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncCameraMode(playerid, mode);
@@ -194,14 +198,15 @@ native SetPlayerSyncWeaponState(playerid, weaponstate);
 native SetPlayerSyncSpecialAction(playerid, actionid);
 native SetPlayerSyncHealth(playerid, Float:health);
 native SetPlayerSyncArmour(playerid, Float:armour);
-native SetPlayerSyncPosition(playerid, Float:x, Float:y, Float:z);
-native SetPlayerSyncVehicleId(playerid, vehicleid);
+native SetPlayerSyncVehicleId(playerid, vehicleid, bool:setstate=false);
+native SetPlayerSyncVehicleSeat(playerid, seat);
 native SetPlayerSyncVehiclePosition(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncVehicleVelocity(playerid, Float:x, Float:y, Float:z);
 native SetPlayerSyncVehicleRotQuat(playerid, Float:w, Float:x, Float:y, Float:z);
 native SetPlayerSyncVehicleHealth(playerid, Float:health);
+native SetPlayerSyncTrainSpeed(playerid, Float:speed);
 native SendPlayerDeath(playerid, forplayerid=-1);
-native UpdatePlayerSyncData(playerid, type=-1);
+native UpdatePlayerSyncData(playerid, type=-1, bool:setstate=false);
 native SendPlayerClientGameInit(playerid, bool:usecjwalk=bool:-1, bool:limitglobalchat=bool:-1, Float:globalchatradius=Float:-1, Float:nametagdistance=Float:-1, bool:disableenterexits=bool:-1, bool:nametaglos=bool:-1, bool:manualvehengineandlights=bool:-1,
 				spawnsavailable=-1, bool:shownametags=bool:-1, bool:showplayermarkers=bool:-1, onfoot_rate=-1, incar_rate=-1, weapon_rate=-1, lagcompmode=-1, bool:vehiclefriendlyfire=bool:-1, const hostname[]="");
 
@@ -282,8 +287,17 @@ native SetTimeoutTime(playerid, time_ms);
 native GetLocalIP(index, localip[], len = sizeof(localip));
 
 // Exclusive RPC broadcast
-native SetExclusiveBroadcast(toggle);
-native BroadcastToPlayer(playerid, toggle = 1);
+
+enum
+{
+    EXCLUSIVE_BROADCAST_ONCE_OFF = -1,
+	EXCLUSIVE_BROADCAST_OFF = 0,
+    EXCLUSIVE_BROADCAST_ON = 1,
+    EXCLUSIVE_BROADCAST_ONCE_ON = 2
+};
+
+native SetExclusiveBroadcast(status);
+native BroadcastToPlayer(playerid, bool:toggle = true);
 
 native ToggleCloseConnectionFix(bool:toggle);
 
@@ -319,6 +333,9 @@ native IsVehicleSirenEnabled(vehicleid);
 native GetVehicleMatrix(vehicleid, &Float:rightX, &Float:rightY = 0.0, &Float:rightZ = 0.0, &Float:upX = 0.0, &Float:upY = 0.0, &Float:upZ = 0.0, &Float:atX = 0.0, &Float:atY = 0.0, &Float:atZ = 0.0);
 native GetVehicleModelCount(modelid);
 native GetVehicleModelsUsed();
+native HideVehicle(vehicleid);
+native ShowVehicle(vehicleid);
+native IsVehicleHidden(vehicleid);
 
 // Gangzones - Global
 native IsValidGangZone(zoneid);
@@ -427,6 +444,14 @@ native GetPickupPos(pickupid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0);
 native GetPickupModel(pickupid);
 native GetPickupType(pickupid);
 native GetPickupVirtualWorld(pickupid);
+native SetPickupPos(pickupid, Float:X, Float:Y, Float:Z, bool:update=true);
+native SetPickupModel(pickupid, model, bool:update=true);
+native SetPickupType(pickupid, type, bool:update=true);
+native SetPickupVirtualWorld(pickupid, virtualworld);
+native ShowPickupForPlayer(playerid, pickupid);
+native HidePickupForPlayer(playerid, pickupid);
+native SetPickupForPlayer(playerid, id, model, type, Float:X, Float:Y, Float:Z);
+
 /*
 // Pickups - Player
 native CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
@@ -468,6 +493,8 @@ forward OnPlayerClientGameInit(playerid, &usecjwalk, &limitglobalchat, &Float:gl
 forward OnOutcomeScmEvent(playerid, issuerid, E_SCM_EVENT_TYPE:eventid, vehicleid, arg1, arg2);
 forward OnServerQueryInfo(const ipaddr[], hostname[51], gamemode[31], language[31]);
 forward OnSystemCommandExecute(const line_output[], retval, index, success, line_current, line_total);
+forward OnPickupStreamIn(pickupid, forplayerid);
+forward OnPickupStreamOut(pickupid, forplayerid);
 
 //////////////////////////////////////////////////////////////
 // Fixes

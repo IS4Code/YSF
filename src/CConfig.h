@@ -8,6 +8,7 @@ class CConfig : public CSingleton<CConfig>
 public:
 	CConfig();
 
+	bool m_bPassiveMode : 1;
 	bool m_bPickupProtection : 1;
 	bool m_bDeathProtection : 1;
 	bool m_bDialogProtection : 1;

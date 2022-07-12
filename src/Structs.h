@@ -1,50 +1,15 @@
-/*
-*  Version: MPL 1.1
-*
-*  The contents of this file are subject to the Mozilla Public License Version
-*  1.1 (the "License"); you may not use this file except in compliance with
-*  the License. You may obtain a copy of the License at
-*  http://www.mozilla.org/MPL/
-*
-*  Software distributed under the License is distributed on an "AS IS" basis,
-*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-*  for the specific language governing rights and limitations under the
-*  License.
-*
-*  The Original Code is the YSI 2.0 SA:MP plugin.
-*
-*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-*  Portions created by the Initial Developer are Copyright (C) 2008
-*  the Initial Developer. All Rights Reserved. The development was abandobed
-*  around 2010, afterwards kurta999 has continued it.
-*
-*  Contributor(s):
-*
-*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
-*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
-*
-*  Special Thanks to:
-*
-*	SA:MP Team past, present and future
-*	Incognito, maddinat0r, OrMisicL, Zeex
-*
-*/
-
 #ifndef YSF_STRUCTS_H
 #define YSF_STRUCTS_H
 
 #include "CVector.h"
 #include "CVector2D.h"
 #include <map>
+#include <type_traits>
 
 #include <raknet/BitStream.h>
 #include <raknet/NetworkTypes.h>
 #include <sdk/amx/amx.h>
 #include "includes/types.h"
-
-#if !defined PAD
-	#define PAD(a, b) char a[b]
-#endif
 
 /* -------------------------------------------------------- */
 
@@ -214,38 +179,72 @@ enum CON_VARTYPE { CON_VARTYPE_FLOAT, CON_VARTYPE_INT, CON_VARTYPE_BOOL, CON_VAR
 
 typedef void(*VARCHANGEFUNC)();
 
+template <class T, std::size_t N>
+class ARRAY
+{
+	typedef T (&ref_type)[N];
+
+	T data[N];
+
+public:
+	operator ref_type()
+	{
+		return data;
+	}
+};
+
 /* -------------------------------------------------------- */
 
 #pragma pack(push, 1)
+#ifndef OTHERFIELD
+#define OTHERFIELD(fname,...) \
+	__VA_ARGS__ fname
+#endif
+#ifndef FIELD
+#define FIELD(fname,...) \
+	__VA_ARGS__ fname
+#endif
+#ifndef BITFIELD
+#define BITFIELD(fname,ftype,size) \
+	ftype fname:size
+#endif
+#ifndef CHECK_TYPE
+#define CHECK_TYPE(type,size) \
+	static_assert(std::is_standard_layout<type>::value, #type" is not standard-layout"); \
+	static_assert(sizeof(type)==size, #type" must have size "#size)
+#endif
+
+#define PAD(a,b) char a[b]
 
 // RakNet Remote system
 struct PingAndClockDifferential
 {
-	unsigned short pingTime;
-	unsigned int clockDifferential;
+	FIELD(pingTime, unsigned short);
+	FIELD(clockDifferential, unsigned int);
 };
+CHECK_TYPE(PingAndClockDifferential, 6);
 
 struct RemoteSystemStruct
 {
-	bool isActive;
-	PlayerID playerId;  // The remote system associated with this reliability layer
-	PlayerID myExternalPlayerId;  // Your own IP, as reported by the remote system
-	BYTE gapD[1895];
-	DWORD dword774;
-	WORD word778;
-	BYTE gap77A[2];
-	DWORD dword77C;
-	DWORD dword780;
-	BYTE gap784[276];
-	DWORD dword898;
-	BYTE gap89C[16];
-	BYTE byte8AC;
+	FIELD(isActive, bool);
+	FIELD(playerId, PlayerID); // The remote system associated with this reliability layer
+	FIELD(myExternalPlayerId, PlayerID); // Your own IP, as reported by the remote system
+	PAD(padD, 1895);
+	FIELD(dword774, DWORD);
+	FIELD(word778, WORD);
+	PAD(pad77A, 2);
+	FIELD(dword77C, DWORD);
+	FIELD(dword780, DWORD);
+	PAD(pad784, 276);
+	FIELD(dword898, DWORD);
+	PAD(pad89C, 16);
+	FIELD(byte8AC, BYTE);
 #ifdef _WIN32
-	BYTE gap8AD[1023];
+	PAD(pad8AD, 1023);
 #else
-	BYTE gap8AD[945];
+	PAD(pad8AD, 945);
 #endif
-	unsigned int connectionTime;
+	FIELD(connectionTime, unsigned int);
 	enum ConnectMode : DWORD
 	{
 		NO_ACTION,
@@ -258,47 +257,46 @@ struct RemoteSystemStruct
 		SET_ENCRYPTION_ON_MULTIPLE_16_BYTE_PACKET,
 		CONNECTED
 	} connectMode;
-	BYTE byteAuthTableIndex; // https://github.com/kurta999/YSF/pull/64
-	BYTE byteAuthType;
-	BYTE byteIsLogon;
+	FIELD(byteAuthTableIndex, BYTE); // https://github.com/kurta999/YSF/pull/64
+	FIELD(byteAuthType, BYTE);
+	FIELD(byteIsLogon, BYTE);
 };
-
 #ifdef _WIN32
-static_assert(sizeof(RemoteSystemStruct) == 3255, "Invalid RemoteSystemStruct size");
+CHECK_TYPE(RemoteSystemStruct, 3255);
 #else
-static_assert(sizeof(RemoteSystemStruct) == 3177, "Invalid RemoteSystemStruct size");
+CHECK_TYPE(RemoteSystemStruct, 3177);
 #endif
 
 /* -------------------------------------------------------- */
-typedef struct _MATRIX4X4 
+struct MATRIX4X4 
 {
-	CVector right;
-	DWORD  flags;
-	CVector up;
-	float  pad_u;
-	CVector at;
-	float  pad_a;
-	CVector pos;
-	float  pad_p;
-} MATRIX4X4, *PMATRIX4X4;
-static_assert(sizeof(_MATRIX4X4) == 64, "Invalid _MATRIX4X4 size");
+	FIELD(right, CVector);
+	FIELD(flags, DWORD);
+	FIELD(up, CVector);
+	FIELD(pad_u, float);
+	FIELD(at, CVector);
+	FIELD(pad_a, float);
+	FIELD(pos, CVector);
+	FIELD(pad_p, float);
+};
+CHECK_TYPE(MATRIX4X4, 64);
 
 struct ConsoleVariable_s
 {
-	CON_VARTYPE		VarType;
-	DWORD			VarFlags;
-	void*			VarPtr;
-	VARCHANGEFUNC	VarChangeFunc;
+	FIELD(VarType, CON_VARTYPE);
+	FIELD(VarFlags, DWORD);
+	FIELD(VarPtr, void*);
+	FIELD(VarChangeFunc, VARCHANGEFUNC);
 };
-static_assert(sizeof(ConsoleVariable_s) == 16, "Invalid ConsoleVariable_s size");
+CHECK_TYPE(ConsoleVariable_s, 16);
 
 struct ConsoleCommand_s
 {
-	char			szName[255];
-	DWORD			dwFlags;
-	void			(*fptrFunc)();
+	FIELD(szName, ARRAY<char, 255>);
+	FIELD(dwFlags, DWORD);
+	void (*fptrFunc)();
 };
-static_assert(sizeof(ConsoleCommand_s) == 263, "Invalid ConsoleCommand_s size");
+CHECK_TYPE(ConsoleCommand_s, 263);
 
 /* -------------------------------------------------------- */
 // CPlayer
@@ -307,387 +305,414 @@ static_assert(sizeof(ConsoleCommand_s) == 263, "Invalid ConsoleCommand_s size");
 // Big thanks to OrMisicL
 struct CAimSyncData
 {
-	BYTE			byteCameraMode;			// 0
-	CVector			vecFront;				// 1 - 13
-	CVector			vecPosition;			// 13 - 25
-	float			fZAim;					// 25 - 29
-	BYTE			byteCameraZoom : 6;		// 29
-	BYTE			byteWeaponState  : 2;	// 29
-	BYTE			byteAspectRatio;					// 30 - 31
+	FIELD(byteCameraMode, BYTE); // 0
+	FIELD(vecFront, CVector); // 1 - 13
+	FIELD(vecPosition, CVector); // 13 - 25
+	FIELD(fZAim, float); // 25 - 29
+	union
+	{
+		FIELD(byteCameraZoomWeaponState, BYTE);
+		struct
+		{
+			BITFIELD(byteCameraZoom, BYTE, 6); // 29
+			BITFIELD(byteWeaponState, BYTE, 2); // 29
+		};
+	};
+	FIELD(byteAspectRatio, BYTE); // 30 - 31
 };
-static_assert(sizeof(CAimSyncData) == 31, "Invalid CAimSyncData size");
+CHECK_TYPE(CAimSyncData, 31);
 
 struct CVehicleSyncData
 {
-	WORD			wVehicleId;				// 0x001F - 0x0021
-	WORD			wLRAnalog;				// 0x0021 - 0x0023
-	WORD			wUDAnalog;				// 0x0023 - 0x0025
-	WORD			wKeys;					// 0x0025 - 0x0027
-	float			fQuaternion[4];			// 0x002B - 0x0037
-	CVector			vecPosition;			// 0x0037 - 0x0043
-	CVector			vecVelocity;			// 0x0043 - 0x004F
-	float			fHealth;				// 0x004F - 0x0053
-	BYTE			bytePlayerHealth;		// 0x0053 - 0x0054
-	BYTE			bytePlayerArmour;		// 0x0054 - 0x0055
-	BYTE			bytePlayerWeapon : 6;	// 0x0055 - 0x0056
-	BYTE			unk_2 : 2;				// 0x0055 - 0x0056
-	BYTE			byteSirenState;			// 0x0056 - 0x0057
-	BYTE			byteGearState;			// 0x0057 -	0x0058
-	WORD			wTrailerID;				// 0x0058 - 0x005A
+	FIELD(wVehicleId, WORD); // 0x001F - 0x0021
+	FIELD(wLRAnalog, WORD); // 0x0021 - 0x0023
+	FIELD(wUDAnalog, WORD); // 0x0023 - 0x0025
+	FIELD(wKeys, WORD); // 0x0025 - 0x0027
+	FIELD(fQuaternion, ARRAY<float, 4>); // 0x002B - 0x0037
+	FIELD(vecPosition, CVector); // 0x0037 - 0x0043
+	FIELD(vecVelocity, CVector); // 0x0043 - 0x004F
+	FIELD(fHealth, float); // 0x004F - 0x0053
+	FIELD(bytePlayerHealth, BYTE); // 0x0053 - 0x0054
+	FIELD(bytePlayerArmour, BYTE); // 0x0054 - 0x0055
+	union
+	{
+		FIELD(bytePlayerWeaponUnk, BYTE);
+		struct
+		{
+			BITFIELD(bytePlayerWeapon, BYTE, 6); // 0x0055 - 0x0056
+			BITFIELD(unk_2, BYTE, 2); // 0x0055 - 0x0056
+		};
+	};
+	FIELD(byteSirenState, BYTE); // 0x0056 - 0x0057
+	FIELD(byteGearState, BYTE); // 0x0057 -	0x0058
+	FIELD(wTrailerID, WORD); // 0x0058 - 0x005A
     union									// 
     {
-            WORD			wHydraReactorAngle[2];                       
-            float           fTrainSpeed;
+		FIELD(wHydraReactorAngle, ARRAY<WORD, 2>);
+		OTHERFIELD(fTrainSpeed, float);
     };
 };
-static_assert(sizeof(CVehicleSyncData) == 63, "Invalid CVehicleSyncData size");
+CHECK_TYPE(CVehicleSyncData, 63);
 
 struct CPassengerSyncData
 {
-	WORD			wVehicleId;				// 0x005E - 0x0060
-	BYTE			byteSeatFlags : 7;
-	BYTE			byteDriveBy : 1;
-	BYTE			bytePlayerWeapon;		// 0x0061 - 0x0062
-	BYTE			bytePlayerHealth;		// 0x0062 - 0x0063
-	BYTE			bytePlayerArmour;		// 0x0063 - 0x0064
-	WORD			wLRAnalog;				// 0x0064 - 0x0066
-	WORD			wUDAnalog;				// 0x0066 - 0x0068
-	WORD			wKeys;					// 0x0068 - 0x006A
-	CVector			vecPosition;			// 0x006A - 0x0076
+	FIELD(wVehicleId, WORD); // 0x005E - 0x0060
+	union
+	{
+		FIELD(byteSeatFlagsDriveBy, BYTE);
+		struct
+		{
+			BITFIELD(byteSeatFlags, BYTE, 7);
+			BITFIELD(byteDriveBy, BYTE, 1);
+		};
+	};
+	FIELD(bytePlayerWeapon, BYTE); // 0x0061 - 0x0062
+	FIELD(bytePlayerHealth, BYTE); // 0x0062 - 0x0063
+	FIELD(bytePlayerArmour, BYTE); // 0x0063 - 0x0064
+	FIELD(wLRAnalog, WORD); // 0x0064 - 0x0066
+	FIELD(wUDAnalog, WORD); // 0x0066 - 0x0068
+	FIELD(wKeys, WORD); // 0x0068 - 0x006A
+	FIELD(vecPosition, CVector); // 0x006A - 0x0076
 };
-static_assert(sizeof(CPassengerSyncData) == 24, "Invalid CPassengerSyncData size");
+CHECK_TYPE(CPassengerSyncData, 24);
 
 struct CSyncData
 {
-	WORD			wLRAnalog;				// 0x0076 - 0x0078
-	WORD			wUDAnalog;				// 0x0078 - 0x007A
-	WORD			wKeys;					// 0x007A - 0x007C
-	CVector			vecPosition;			// 0x007C - 0x0088
-	float			fQuaternion[4];			// 0x0088 - 0x008C
-	BYTE			byteHealth;				// 0x0098 - 0x0099
-	BYTE			byteArmour;				// 0x0099 - 0x009A
-	BYTE			byteWeapon : 6;				// 0x009A - 0x009B
-	BYTE			_unk_ : 2;
-	BYTE			byteSpecialAction;		// 0x009B - 0x009C
-	CVector			vecVelocity;			// 0x009C - 0x00A8
-	CVector			vecSurfing;				// 0x00A8 - 0x00B4
-	WORD			wSurfingInfo;			// 0x00B4 - 0x00B6
+	FIELD(wLRAnalog, WORD); // 0x0076 - 0x0078
+	FIELD(wUDAnalog, WORD); // 0x0078 - 0x007A
+	FIELD(wKeys, WORD); // 0x007A - 0x007C
+	FIELD(vecPosition, CVector); // 0x007C - 0x0088
+	FIELD(fQuaternion, ARRAY<float, 4>); // 0x0088 - 0x008C
+	FIELD(byteHealth, BYTE); // 0x0098 - 0x0099
+	FIELD(byteArmour, BYTE); // 0x0099 - 0x009A
+	union
+	{
+		FIELD(byteWeaponUnk, BYTE);
+		struct
+		{
+			BITFIELD(byteWeapon, BYTE, 6); // 0x009A - 0x009B
+			BITFIELD(_unk_, BYTE, 2);
+		};
+	};
+	FIELD(byteSpecialAction, BYTE); // 0x009B - 0x009C
+	FIELD(vecVelocity, CVector); // 0x009C - 0x00A8
+	FIELD(vecSurfing, CVector); // 0x00A8 - 0x00B4
+	FIELD(wSurfingInfo, WORD); // 0x00B4 - 0x00B6
 	union 
 	{
-		DWORD		dwAnimationData;		// 0x00B6 - 0x00BA
+		FIELD(dwAnimationData, DWORD); // 0x00B6 - 0x00BA
 		struct 
 		{
-			WORD	wAnimIndex;
-			WORD	wAnimFlags;
+			OTHERFIELD(wAnimIndex, WORD);
+			OTHERFIELD(wAnimFlags, WORD);
 		};
 	};
 };
-static_assert(sizeof(CSyncData) == 68, "Invalid CSyncData size");
+CHECK_TYPE(CSyncData, 68);
 
 struct CUnoccupiedSyncData
 {
-	WORD			wVehicleID;				// + 0x0000
-	BYTE			bytePassengerSlot;			// + 0x0002
-	CVector			vecRool;				// + 0x0003
-	CVector			vecDirection;			// + 0x000F
-	CVector			vecPosition;			// + 0x001B
-	CVector			vecVelocity;			// + 0x0027
-	CVector			vecTurnVelocity;		// + 0x0033
-	float			fHealth;					// + 0x003F
+	FIELD(wVehicleID, WORD); // + 0x0000
+	FIELD(bytePassengerSlot, BYTE); // + 0x0002
+	FIELD(vecRoll, CVector); // + 0x0003
+	FIELD(vecDirection, CVector); // + 0x000F
+	FIELD(vecPosition, CVector); // + 0x001B
+	FIELD(vecVelocity, CVector); // + 0x0027
+	FIELD(vecTurnVelocity, CVector); // + 0x0033
+	FIELD(fHealth, float); // + 0x003F
 };
-static_assert(sizeof(CUnoccupiedSyncData) == 67, "Invalid CUnoccupiedSyncData size");
+CHECK_TYPE(CUnoccupiedSyncData, 67);
 
 struct CSpectatingSyncData
 {
-	WORD			wLeftRightKeysOnSpectating;				// + 0x0000
-	WORD			wUpDownKeysOnSpectating;				// + 0x0002
-	WORD			wKeysOnSpectating;						// + 0x0004
-	CVector			vecPosition;							// + 0x0006
+	FIELD(wLeftRightKeysOnSpectating, WORD); // + 0x0000
+	FIELD(wUpDownKeysOnSpectating, WORD); // + 0x0002
+	FIELD(wKeysOnSpectating, WORD); // + 0x0004
+	FIELD(vecPosition, CVector); // + 0x0006
 };
-static_assert(sizeof(CSpectatingSyncData) == 18, "Invalid CSpectatingSyncData size");
+CHECK_TYPE(CSpectatingSyncData, 18);
 
 struct CTrailerSyncData
 {
-	WORD			wTrailerID;			// + 0x0000
-	CVector			vecPosition;			// + 0x0002
-	float			fQuaternion[4];			// + 0x000E
-	CVector			vecVelocity;			// + 0x001E
-	CVector			vecTurnVelocity;		// + 0x002A
+	FIELD(wTrailerID, WORD); // + 0x0000
+	FIELD(vecPosition, CVector); // + 0x0002
+	FIELD(fQuaternion, ARRAY<float, 4>); // + 0x000E
+	FIELD(vecVelocity, CVector); // + 0x001E
+	FIELD(vecTurnVelocity, CVector); // + 0x002A
 };
-static_assert(sizeof(CTrailerSyncData) == 54, "Invalid CTrailerSyncData size");
+CHECK_TYPE(CTrailerSyncData, 54);
 
-typedef struct CTextdraw
+struct CTextdraw
 {
 	union
 	{
-		BYTE byteFlags;			// 25
+		FIELD(byteFlags, BYTE); // 25
 		struct
 		{
-			BYTE byteBox : 1;
-			BYTE byteLeft : 1; 
-			BYTE byteRight : 1;
-			BYTE byteCenter : 1;
-			BYTE byteProportional : 1;
-			BYTE bytePadding : 3;
+			BITFIELD(byteBox, BYTE, 1);
+			BITFIELD(byteLeft, BYTE, 1); 
+			BITFIELD(byteRight, BYTE, 1);
+			BITFIELD(byteCenter, BYTE, 1);
+			BITFIELD(byteProportional, BYTE, 1);
+			BITFIELD(bytePadding, BYTE, 3);
 		};
 	};
-	CVector2D		vecLetter;	// 1 - 9
-	DWORD			dwLetterColor;		// 9
-	CVector2D		vecLine;
-	DWORD			dwBoxColor;			// 21
-	BYTE			byteShadow; // 26
-	BYTE			byteOutline; // 27
-	DWORD			dwBackgroundColor; // 31
-	BYTE			byteStyle; // 32
-	BYTE			byteSelectable; // 32
-	CVector2D		vecPos;
-	WORD			dwModelIndex; // 41 - 43
-	CVector			vecRot;  // 43 - 55
-	float			fZoom; // 55 - 59
-	WORD			color1; // 59 - 61
-	WORD			color2; // 61 - 63
-} _CTextdraw;
-static_assert(sizeof(CTextdraw) == 63, "Invalid CTextdraw size");
+	FIELD(vecLetter, CVector2D); // 1 - 9
+	FIELD(dwLetterColor, DWORD); // 9
+	FIELD(vecLine, CVector2D);
+	FIELD(dwBoxColor, DWORD); // 21
+	FIELD(byteShadow, BYTE); // 26
+	FIELD(byteOutline, BYTE); // 27
+	FIELD(dwBackgroundColor, DWORD); // 31
+	FIELD(byteStyle, BYTE); // 32
+	FIELD(byteSelectable, BYTE); // 32
+	FIELD(vecPos, CVector2D);
+	FIELD(dwModelIndex, WORD); // 41 - 43
+	FIELD(vecRot, CVector); // 43 - 55
+	FIELD(fZoom, float); // 55 - 59
+	FIELD(color1, WORD); // 59 - 61
+	FIELD(color2, WORD); // 61 - 63
+};
+CHECK_TYPE(CTextdraw, 63);
 
 struct CPlayerTextDraw
 {
-	BOOL			bSlotState[MAX_PLAYER_TEXT_DRAWS];
-	CTextdraw	    *TextDraw[MAX_PLAYER_TEXT_DRAWS];
-	char			*szFontText[MAX_PLAYER_TEXT_DRAWS];
-	bool			bHasText[MAX_PLAYER_TEXT_DRAWS];
+	FIELD(bSlotState, ARRAY<BOOL, MAX_PLAYER_TEXT_DRAWS>);
+	FIELD(TextDraw, ARRAY<CTextdraw*, MAX_PLAYER_TEXT_DRAWS>);
+	FIELD(szFontText, ARRAY<char*, MAX_PLAYER_TEXT_DRAWS>);
+	FIELD(bHasText, ARRAY<bool, MAX_PLAYER_TEXT_DRAWS>);
 };
-static_assert(sizeof(CPlayerTextDraw) == 2048 + 1024 + 256, "Invalid CPlayerTextDraw size");
+CHECK_TYPE(CPlayerTextDraw, 2048 + 1024 + 256);
 
 struct C3DText
 {
-	char*			szText;					// + 0x00
-	DWORD			dwColor;				// + 0x04
-	CVector			vecPos;
-	float			fDrawDistance;			// + 0x14
-	bool			bLineOfSight;           // + 0x18
-	int				iWorld;                 // + 0x19
-	WORD			wAttachedToPlayerID;    // + 0x1D
-	WORD			wAttachedToVehicleID;   // + 0x1F
+	FIELD(szText, char*); // + 0x00
+	FIELD(dwColor, DWORD); // + 0x04
+	FIELD(vecPos, CVector);
+	FIELD(fDrawDistance, float); // + 0x14
+	FIELD(bLineOfSight, bool); // + 0x18
+	FIELD(iWorld, int); // + 0x19
+	FIELD(wAttachedToPlayerID, WORD); // + 0x1D
+	FIELD(wAttachedToVehicleID, WORD); // + 0x1F
 };
-static_assert(sizeof(C3DText) == 33, "Invalid C3DText size");
+CHECK_TYPE(C3DText, 33);
 
 struct CPlayerText3DLabels
 {
-	C3DText			TextLabels[ MAX_3DTEXT_PLAYER ];	// + 0x0000
-	BOOL			isCreated[ MAX_3DTEXT_PLAYER ];	// + 0x8400
-	BYTE			unknown9800[MAX_3DTEXT_PLAYER];				// + 0x9400
-	WORD			wOwnerID;
+	FIELD(TextLabels, ARRAY<C3DText, MAX_3DTEXT_PLAYER>); // + 0x0000
+	FIELD(isCreated, ARRAY<BOOL, MAX_3DTEXT_PLAYER>); // + 0x8400
+	FIELD(unknown9800, ARRAY<BYTE, MAX_3DTEXT_PLAYER>); // + 0x9400
+	FIELD(wOwnerID, WORD);
 };
-static_assert(sizeof(CPlayerText3DLabels) == 38914, "Invalid CPlayerText3DLabels size");
+CHECK_TYPE(CPlayerText3DLabels, 38914);
 
 struct CAttachedObject
 {
-    int				iModelID;
-    int				iBoneiD;
-    CVector         vecPos;
-    CVector         vecRot;
-    CVector         vecScale;
-	DWORD			dwMaterialColor1;
-	DWORD			dwMaterialColor2;
+    FIELD(iModelID, int);
+    FIELD(iBoneiD, int);
+    FIELD(vecPos, CVector);
+    FIELD(vecRot, CVector);
+    FIELD(vecScale, CVector);
+	FIELD(dwMaterialColor1, DWORD);
+	FIELD(dwMaterialColor2, DWORD);
 };
-static_assert(sizeof(CAttachedObject) == 52, "Invalid CAttachedObject size");
+CHECK_TYPE(CAttachedObject, 52);
 
 struct CPlayerSpawnInfo
 {
-	BYTE			byteTeam;				// 0 - 1
-	int				iSkin;					// 1 - 5
+	FIELD(byteTeam, BYTE); // 0 - 1
+	FIELD(iSkin, int); // 1 - 5
 #ifdef SAMP_03DL
-	DWORD			dwCustomSkin;
+	FIELD(dwCustomSkin, DWORD);
 #endif
-	BYTE			unk;					// 5 - 6
-	CVector			vecPos;					// 6 - 18
-	float			fRotation;				// 18 - 22
-	int				iSpawnWeapons[3];		// 22 - 34
-	int				iSpawnWeaponsAmmo[3];	// 34 - 46
+	FIELD(unk, BYTE); // 5 - 6
+	FIELD(vecPos, CVector); // 6 - 18
+	FIELD(fRotation, float); // 18 - 22
+	FIELD(iSpawnWeapons, ARRAY<int, 3>); // 22 - 34
+	FIELD(iSpawnWeaponsAmmo, ARRAY<int, 3>); // 34 - 46
 };
 #ifndef SAMP_03DL
-static_assert(sizeof(CPlayerSpawnInfo) == 46, "Invalid CPlayerSpawnInfo size");
+CHECK_TYPE(CPlayerSpawnInfo, 46);
 #else
-static_assert(sizeof(CPlayerSpawnInfo) == 50, "Invalid CPlayerSpawnInfo size");
+CHECK_TYPE(CPlayerSpawnInfo, 50);
 #endif
 
 struct CBulletSyncData
 {
-	BYTE			byteHitType;
-	WORD			wHitID;
-	CVector			vecHitOrigin;
-	CVector			vecHitTarget;
-	CVector			vecCenterOfHit;
-	BYTE			byteWeaponID;
+	FIELD(byteHitType, BYTE);
+	FIELD(wHitID, WORD);
+	FIELD(vecHitOrigin, CVector);
+	FIELD(vecHitTarget, CVector);
+	FIELD(vecCenterOfHit, CVector);
+	FIELD(byteWeaponID, BYTE);
 }; 
-static_assert(sizeof(CBulletSyncData) == 40, "Invalid CBulletSyncData size");
+CHECK_TYPE(CBulletSyncData, 40);
 
 struct CPVar
 {
-    char			szVarName[MAX_PVAR_NAME + 1];
-    BOOL			bIsReadOnly;
-    int				iVarType;
-    int				iValue;
-    float			fValue;
-    char*			szValue;
+    FIELD(szVarName, ARRAY<char, MAX_PVAR_NAME + 1>);
+    FIELD(bIsReadOnly, BOOL);
+    FIELD(iVarType, int);
+    FIELD(iValue, int);
+    FIELD(fValue, float);
+    FIELD(szValue, char*);
 };
-static_assert(sizeof(CPVar) == 61, "Invalid CPVar size");
+CHECK_TYPE(CPVar, 61);
 
 struct CPlayerVar
 {
-    CPVar			Vars[MAX_PVARS];
-	BOOL			bIsPVarActive[MAX_PVARS];
-    int				iUpperIndex;
+    FIELD(Vars, ARRAY<CPVar, MAX_PVARS>);
+	FIELD(bIsPVarActive, ARRAY<BOOL, MAX_PVARS>);
+    FIELD(iUpperIndex, int);
 };
-static_assert(sizeof(CPlayerVar) == 48800 + 3200 + 4, "Invalid CPlayerVar size");
+CHECK_TYPE(CPlayerVar, 48800 + 3200 + 4);
 
 struct CPlayer
 {
-	CAimSyncData			aimSyncData;			// 0 - 31
-	WORD					wCameraObject;			// 31 - 33
-	WORD					wCameraVehicle;			// 33 - 35
-	WORD					wCameraPlayer;			// 35 - 37
-	WORD					wCameraActor;			// 37 - 39
-	CVehicleSyncData		vehicleSyncData;		// 39 -
-	CPassengerSyncData		passengerSyncData;		//
-	CSyncData				syncData;				// 126 - 194
-	CUnoccupiedSyncData		unoccupiedSyncData;		// 194 - 261
-	CSpectatingSyncData		spectatingSyncData;		// 261 - 279
-	CTrailerSyncData		trailerSyncData;		// 279 - 333
-	DWORD					dwPlayerSyncUnused;		// 333 - 337
-	DWORD					dwVehicleSyncUnused;	// 337 - 341
-	BYTE					byteStreamedIn[MAX_PLAYERS];				// 341 - 1341
-	BYTE					byteVehicleStreamedIn[MAX_VEHICLES];		// 1341 - 3341
-	BYTE					byteSomethingUnused[1000];					// 3341 - 4341
+	FIELD(aimSyncData, CAimSyncData); // 0 - 31
+	FIELD(wCameraObject, WORD); // 31 - 33
+	FIELD(wCameraVehicle, WORD); // 33 - 35
+	FIELD(wCameraPlayer, WORD); // 35 - 37
+	FIELD(wCameraActor, WORD); // 37 - 39
+	FIELD(vehicleSyncData, CVehicleSyncData); // 39 -
+	FIELD(passengerSyncData, CPassengerSyncData); //
+	FIELD(syncData, CSyncData); // 126 - 194
+	FIELD(unoccupiedSyncData, CUnoccupiedSyncData); // 194 - 261
+	FIELD(spectatingSyncData, CSpectatingSyncData); // 261 - 279
+	FIELD(trailerSyncData, CTrailerSyncData); // 279 - 333
+	FIELD(dwPlayerSyncUnused, DWORD); // 333 - 337
+	FIELD(dwVehicleSyncUnused, DWORD); // 337 - 341
+	FIELD(byteStreamedIn, ARRAY<BYTE, MAX_PLAYERS>); // 341 - 1341
+	FIELD(byteVehicleStreamedIn, ARRAY<BYTE, MAX_VEHICLES>); // 1341 - 3341
+	FIELD(byteSomethingUnused, ARRAY<BYTE, 1000>); // 3341 - 4341
 #ifdef SAMP_03DL
-	BYTE					byteSomethingUnused2[1000];					// 4341 - 5341
+	FIELD(byteSomethingUnused2, ARRAY<BYTE, 1000>); // 4341 - 5341
 #endif
-	BYTE					byte3DTextLabelStreamedIn[1024];			// 4341  - 5365
-	BYTE					bPickupStreamedIn[MAX_PICKUPS];				// 5365 - 9461
-	BYTE					byteActorStreamedIn[MAX_PLAYERS];			// 9461 - 10461
-	DWORD					dwStreamedInPlayers;						// 10461 - 10465
-	DWORD					dwStreamedInVehicles;						// 10465 - 10469
-	DWORD					dwStreamedInSomethingUnused;				// 10469 - 10473
-	DWORD					dwStreamedIn3DTextLabels;					// 10479 - 10477
-	DWORD					dwStreamedInPickups;						// 10477 - 10481
-	DWORD					dwStreamedInActors;							// 10481 - 10485
-	DWORD					bHasSetVehiclePos;	// 10485 - 10489
-	DWORD					dwSetVehiclePosTick;// 10489 - 10493
-	CVector					vecVehicleNewPos;	// 10493 - 10505
-	BOOL					bCameraTarget;		// 10505
-	DWORD					bHasSpawnInfo;		// 10509
-	BOOL					bUpdateKeys;		// 10513
-	CVector					vecPosition;		// 10517
-	float					fHealth;			// 10529 - 10533
-	float					fArmour;			// 10533 - 10537
-	float					fQuaternion[4];		// 10537 - 10553
-	float					fAngle;				// 10553 - 10557
-	CVector					vecVelocity;		// 10557 - 10569
-	WORD					wLRAnalog;			// 10569
-	WORD					wUDAnalog;			// 10571
-	DWORD					dwKeys;				// 10573 - 10577
-	DWORD					dwOldKeys;			// 10577 - 10581
+	FIELD(byte3DTextLabelStreamedIn, ARRAY<BYTE, 1024>); // 4341  - 5365
+	FIELD(bPickupStreamedIn, ARRAY<BYTE, MAX_PICKUPS>); // 5365 - 9461
+	FIELD(byteActorStreamedIn, ARRAY<BYTE, MAX_PLAYERS>); // 9461 - 10461
+	FIELD(dwStreamedInPlayers, DWORD); // 10461 - 10465
+	FIELD(dwStreamedInVehicles, DWORD); // 10465 - 10469
+	FIELD(dwStreamedInSomethingUnused, DWORD); // 10469 - 10473
+	FIELD(dwStreamedIn3DTextLabels, DWORD); // 10479 - 10477
+	FIELD(dwStreamedInPickups, DWORD); // 10477 - 10481
+	FIELD(dwStreamedInActors, DWORD); // 10481 - 10485
+	FIELD(bHasSetVehiclePos, DWORD); // 10485 - 10489
+	FIELD(dwSetVehiclePosTick, DWORD); // 10489 - 10493
+	FIELD(vecVehicleNewPos, CVector); // 10493 - 10505
+	FIELD(bCameraTarget, BOOL); // 10505
+	FIELD(bHasSpawnInfo, DWORD); // 10509
+	FIELD(bUpdateKeys, BOOL); // 10513
+	FIELD(vecPosition, CVector); // 10517
+	FIELD(fHealth, float); // 10529 - 10533
+	FIELD(fArmour, float); // 10533 - 10537
+	FIELD(fQuaternion, ARRAY<float, 4>); // 10537 - 10553
+	FIELD(fAngle, float); // 10553 - 10557
+	FIELD(vecVelocity, CVector); // 10557 - 10569
+	FIELD(wLRAnalog, WORD); // 10569
+	FIELD(wUDAnalog, WORD); // 10571
+	FIELD(dwKeys, DWORD); // 10573 - 10577
+	FIELD(dwOldKeys, DWORD); // 10577 - 10581
 #ifdef SAMP_03DL
-	DWORD					dwUnknown1;			// 11581 - 11585
+	FIELD(dwUnknown1, DWORD); // 11581 - 11585
 #endif
-	BOOL					bEditObject;		// 10581 - 10585
-	BOOL					bEditAttachedObject;// 10585 - 10589
-	WORD					wDialogID;			// 10589 - 10591
-	CPlayerTextDraw*		pTextdraw;			// 10591 - 10595
-	CPlayerText3DLabels*	p3DText;			// 10595 - 10599
-	WORD					wPlayerId;			// 10599 - 10601
-	int						iUpdateState;		// 10601 - 10605
-	//DWORD					dwLastSyncTick;		// 10605 - 10609
-	CAttachedObject			attachedObject[MAX_PLAYER_ATTACHED_OBJECTS]; // 10605 - 11125
-	BOOL					attachedObjectSlot[MAX_PLAYER_ATTACHED_OBJECTS]; // 11125 - 11165
-	BOOL					bHasAimSync;		// 11165 - 11169
-	BOOL					bHasTrailerSync;	// 11169 - 11173
-	BOOL					bHasUnoccupiedSync;	// 11173 - 11177
-	BYTE					byteState;			// 11177 - 11178
-	CVector					vecCPPos;			// 11178 - 11190
-	float					fCPSize;			// 11190 - 11194
-	BOOL					bIsInCP;			// 11194 - 11198
-	CVector					vecRaceCPPos;		// 11198 - 11210
-	CVector					vecRaceCPNextPos;	// 11210 - 11222 
-	BYTE					byteRaceCPType;		// 11222 - 11223 // TODO -> replace
-	float					fRaceCPSize;		// 11223 - 11227
-	BOOL					bIsInRaceCP;		// 11227 - 11231
-	BOOL					bIsInModShop;		// 11231 - 11235
-	WORD					wSkillLevel[11];	// 11235 - 11257
-	int						iLastMarkerUpdate;	// 11257 - 11261
-	CPlayerSpawnInfo		spawn;				// 11261 - 11307
-	BOOL					bReadyToSpawn;		// 11307 - 11311
-	BYTE					byteWantedLevel;	// 11311 - 11312
-	BYTE					byteFightingStyle;  // 11312 - 11313
-	BYTE					byteSeatId;			// 11313 - 11314
-	WORD					wVehicleId;			// 11314 - 11316
-	DWORD					dwNickNameColor;	// 11316 - 11320
-	BOOL					bShowCheckpoint;	// 11320 - 11324
-	BOOL					bShowRaceCheckpoint;// 11324 - 11328
-	int						iInteriorId;		// 11328 - 11332
-	WORD					wWeaponAmmo[12];	// 11332 - 11356
-	PAD(pad10, 28);								// 11356 - 11384
-	BYTE					byteWeaponId[12];	// 11384 - 11396
-	BYTE					byteWeaponID_unknown;// 11396 - 11397
-	BYTE					byteCurrentWeapon;	// 11397 - 11398
-	WORD					wTargetId;			// 11398 - 11400
-	WORD					wTargetActorId;		// 11400 - 11402
-	DWORD					dwLastShotTick;		// 11402 - 11406
-	BYTE					dwLastShotWeapon;	// 11406 - 11407
-	CBulletSyncData			bulletSyncData;		// 11407 - 11447	
-	BYTE					m_byteTime;			// 11447 - 11448
-	float					m_fGameTime;		// 11448 - 11452
-	BYTE					byteSpectateType;	// 11452 - 11453
-	DWORD					wSpectateID;		// 11453 - 11457
-	DWORD					dwLastStreaming;	// 11457 - 11461
+	FIELD(bEditObject, BOOL); // 10581 - 10585
+	FIELD(bEditAttachedObject, BOOL); // 10585 - 10589
+	FIELD(wDialogID, WORD); // 10589 - 10591
+	FIELD(pTextdraw, CPlayerTextDraw*); // 10591 - 10595
+	FIELD(p3DText, CPlayerText3DLabels*); // 10595 - 10599
+	FIELD(wPlayerId, WORD); // 10599 - 10601
+	FIELD(iUpdateState, int); // 10601 - 10605
+	FIELD(attachedObject, ARRAY<CAttachedObject, MAX_PLAYER_ATTACHED_OBJECTS>); // 10605 - 11125
+	FIELD(attachedObjectSlot, ARRAY<BOOL, MAX_PLAYER_ATTACHED_OBJECTS>); // 11125 - 11165
+	FIELD(bHasAimSync, BOOL); // 11165 - 11169
+	FIELD(bHasTrailerSync, BOOL); // 11169 - 11173
+	FIELD(bHasUnoccupiedSync, BOOL); // 11173 - 11177
+	FIELD(byteState, BYTE); // 11177 - 11178
+	FIELD(vecCPPos, CVector); // 11178 - 11190
+	FIELD(fCPSize, float); // 11190 - 11194
+	FIELD(bIsInCP, BOOL); // 11194 - 11198
+	FIELD(vecRaceCPPos, CVector); // 11198 - 11210
+	FIELD(vecRaceCPNextPos, CVector); // 11210 - 11222 
+	FIELD(byteRaceCPType, BYTE); // 11222 - 11223 // TODO -> replace
+	FIELD(fRaceCPSize, float); // 11223 - 11227
+	FIELD(bIsInRaceCP, BOOL); // 11227 - 11231
+	FIELD(bIsInModShop, BOOL); // 11231 - 11235
+	FIELD(wSkillLevel, ARRAY<WORD, 11>); // 11235 - 11257
+	FIELD(iLastMarkerUpdate, int); // 11257 - 11261
+	FIELD(spawn, CPlayerSpawnInfo); // 11261 - 11307
+	FIELD(bReadyToSpawn, BOOL); // 11307 - 11311
+	FIELD(byteWantedLevel, BYTE); // 11311 - 11312
+	FIELD(byteFightingStyle, BYTE); // 11312 - 11313
+	FIELD(byteSeatId, BYTE); // 11313 - 11314
+	FIELD(wVehicleId, WORD); // 11314 - 11316
+	FIELD(dwNickNameColor, DWORD); // 11316 - 11320
+	FIELD(bShowCheckpoint, BOOL); // 11320 - 11324
+	FIELD(bShowRaceCheckpoint, BOOL); // 11324 - 11328
+	FIELD(iInteriorId, int); // 11328 - 11332
+	FIELD(wWeaponAmmo, ARRAY<WORD, 12>); // 11332 - 11356
+	PAD(pad10, 28); // 11356 - 11384
+	FIELD(byteWeaponId, ARRAY<BYTE, 12>); // 11384 - 11396
+	FIELD(byteWeaponID_unknown, BYTE); // 11396 - 11397
+	FIELD(byteCurrentWeapon, BYTE); // 11397 - 11398
+	FIELD(wTargetId, WORD); // 11398 - 11400
+	FIELD(wTargetActorId, WORD); // 11400 - 11402
+	FIELD(dwLastShotTick, DWORD); // 11402 - 11406
+	FIELD(dwLastShotWeapon, BYTE); // 11406 - 11407
+	FIELD(bulletSyncData, CBulletSyncData); // 11407 - 11447	
+	FIELD(m_byteTime, BYTE); // 11447 - 11448
+	FIELD(m_fGameTime, float); // 11448 - 11452
+	FIELD(byteSpectateType, BYTE); // 11452 - 11453
+	FIELD(wSpectateID, DWORD); // 11453 - 11457
+	FIELD(dwLastStreaming, DWORD); // 11457 - 11461
 #ifdef SAMP_03DL
-	BYTE					bUnknown2;			// 12469 - 12470
+	FIELD(bUnknown2, BYTE); // 12469 - 12470
 #endif
-	DWORD					dwNPCRecordingType;	// 11461 - 11465
-	FILE					*pRecordingFile;	// 11465 - 11469
-	DWORD					dwFirstNPCWritingTime; // 11469 - 11473 
-	PAD(unused, 9);								// 11473 - 11482
-	CPlayerVar*				pPlayerVars;		// 11482 - 11486
+	FIELD(dwNPCRecordingType, DWORD); // 11461 - 11465
+	FIELD(pRecordingFile, FILE*); // 11465 - 11469
+	FIELD(dwFirstNPCWritingTime, DWORD); // 11469 - 11473 
+	PAD(unused, 9); // 11473 - 11482
+	FIELD(pPlayerVars, CPlayerVar*); // 11482 - 11486
 #ifdef SAMP_03DL
-	DWORD					dwUnknown3;			// 12495 - 12499
+	FIELD(dwUnknown3, DWORD); // 12495 - 12499
 #endif
 };
 #ifndef SAMP_03DL
-static_assert(sizeof(CPlayer) == 11486, "Invalid CPlayer size");
+CHECK_TYPE(CPlayer, 11486);
 #else
-static_assert(sizeof(CPlayer) == 12499, "Invalid CPlayer size");
+CHECK_TYPE(CPlayer, 12499);
 #endif
 
 struct CPlayerPool
 {
-	DWORD					dwVirtualWorld[MAX_PLAYERS];				// 0 - 4000
-	DWORD					dwPlayersCount;								// 4000 - 4004
+	FIELD(dwVirtualWorld, ARRAY<DWORD, MAX_PLAYERS>); // 0 - 4000
+	FIELD(dwPlayersCount, DWORD); // 4000 - 4004
 #ifdef SAMP_03DL
 	PAD(pad1, 1000);
 #endif
-	DWORD					dwlastMarkerUpdate;							// 4004 - 4008
-	float					fUpdatePlayerGameTimers;					// 4008 - 4012
-	DWORD					dwScore[MAX_PLAYERS];						// 4012 - 8012
-	DWORD					dwMoney[MAX_PLAYERS];						// 8012 - 12012
-	DWORD					dwDrunkLevel[MAX_PLAYERS];					// 12012 - 16012
-	DWORD					dwLastScoreUpdate[MAX_PLAYERS];				// 16012 - 20012
-	char					szSerial[MAX_PLAYERS][101];					// 20012 - 121012				
-	char					szVersion[MAX_PLAYERS][25];					// 121012 - 146012
-	RemoteSystemStruct		*pRemoteSystem[MAX_PLAYERS];				// 146012 - 150012
-	BOOL					bIsPlayerConnected[MAX_PLAYERS];			// 150012 - 154012
-	CPlayer					*pPlayer[MAX_PLAYERS];						// 154012 - 158012
-	char					szName[MAX_PLAYERS][MAX_PLAYER_NAME + 1];	// 158012 - 183012
-	BOOL					bIsAnAdmin[MAX_PLAYERS];					// 183012 - 187012
-	BOOL					bIsNPC[MAX_PLAYERS];						// 187012 - 191012
-	PAD(pad0, 8000);													// 191012 - 199012
-	DWORD					dwConnectedPlayers;							// 199012 - 199016
-	DWORD					dwPlayerPoolSize;							// 199016 - 199020
-	DWORD					dwUnk;										// 199020 - 199024
+	FIELD(dwlastMarkerUpdate, DWORD); // 4004 - 4008
+	FIELD(fUpdatePlayerGameTimers, float); // 4008 - 4012
+	FIELD(dwScore, ARRAY<DWORD, MAX_PLAYERS>); // 4012 - 8012
+	FIELD(dwMoney, ARRAY<DWORD, MAX_PLAYERS>); // 8012 - 12012
+	FIELD(dwDrunkLevel, ARRAY<DWORD, MAX_PLAYERS>); // 12012 - 16012
+	FIELD(dwLastScoreUpdate, ARRAY<DWORD, MAX_PLAYERS>); // 16012 - 20012
+	FIELD(szSerial, ARRAY<ARRAY<char, 101>, MAX_PLAYERS>); // 20012 - 121012				
+	FIELD(szVersion, ARRAY<ARRAY<char, 25>, MAX_PLAYERS>); // 121012 - 146012
+	FIELD(pRemoteSystem, ARRAY<RemoteSystemStruct*, MAX_PLAYERS>); // 146012 - 150012
+	FIELD(bIsPlayerConnected, ARRAY<BOOL, MAX_PLAYERS>); // 150012 - 154012
+	FIELD(pPlayer, ARRAY<CPlayer*, MAX_PLAYERS>); // 154012 - 158012
+	FIELD(szName, ARRAY<ARRAY<char, MAX_PLAYER_NAME + 1>, MAX_PLAYERS>); // 158012 - 183012
+	FIELD(bIsAnAdmin, ARRAY<BOOL, MAX_PLAYERS>); // 183012 - 187012
+	FIELD(bIsNPC, ARRAY<BOOL, MAX_PLAYERS>); // 187012 - 191012
+	PAD(pad0, 8000); // 191012 - 199012
+	FIELD(dwConnectedPlayers, DWORD); // 199012 - 199016
+	FIELD(dwPlayerPoolSize, DWORD); // 199016 - 199020
+	FIELD(dwUnk, DWORD); // 199020 - 199024
 };
 #ifndef SAMP_03DL
-static_assert(sizeof(CPlayerPool) == 199024, "Invalid CPlayerPool size");
+CHECK_TYPE(CPlayerPool, 199024);
 #else
-static_assert(sizeof(CPlayerPool) == 200024, "Invalid CPlayerPool size");
+CHECK_TYPE(CPlayerPool, 200024);
 #endif
 
 /* -------------------------------------------------------- */
@@ -696,107 +721,109 @@ static_assert(sizeof(CPlayerPool) == 200024, "Invalid CPlayerPool size");
 
 struct CVehicleSpawn
 {
-	int				iModelID;
-    CVector			vecPos;   
-    float			fRot;
-    int				iColor1;  
-    int				iColor2;  
-    int				iRespawnTime;
-    int				iInterior;
+	FIELD(iModelID, int);
+    FIELD(vecPos, CVector);   
+    FIELD(fRot, float);
+    FIELD(iColor1, int);  
+    FIELD(iColor2, int);  
+    FIELD(iRespawnTime, int);
+    FIELD(iInterior, int);
 };
-static_assert(sizeof(CVehicleSpawn) == 36, "Invalid CVehicleSpawn size");
+CHECK_TYPE(CVehicleSpawn, 36);
 
 struct CVehicleModInfo
 {
-	BYTE			byteModSlots[14];                // + 0x0000
-    BYTE			bytePaintJob;                    // + 0x000E
-    int				iColor1;                             // + 0x000F
-    int				iColor2;                             // + 0x0010
+	FIELD(byteModSlots, ARRAY<BYTE, 14>); // + 0x0000
+    FIELD(bytePaintJob, BYTE); // + 0x000E
+    FIELD(iColor1, int); // + 0x000F
+    FIELD(iColor2, int); // + 0x0010
 };
-static_assert(sizeof(CVehicleModInfo) == 23, "Invalid CVehicleModInfo size");
+CHECK_TYPE(CVehicleModInfo, 23);
 
 struct CVehicleParams
 {
-	char engine;
-	char lights;
-	char alarm;
-	char doors;
-	char bonnet;
-	char boot;
-	char objective; // 6
-	char siren; // 7
-	char door_driver; // 8
-	char door_passenger;
-	char door_backleft;
-	char door_backright; // 11
-	char window_driver; // 12
-	char window_passenger;
-	char window_backleft;
-	char window_backright; // 15 - 16
+	FIELD(engine, char);
+	FIELD(lights, char);
+	FIELD(alarm, char);
+	FIELD(doors, char);
+	FIELD(bonnet, char);
+	FIELD(boot, char);
+	FIELD(objective, char); // 6
+	FIELD(siren, char); // 7
+	FIELD(door_driver, char); // 8
+	FIELD(door_passenger, char);
+	FIELD(door_backleft, char);
+	FIELD(door_backright, char); // 11
+	FIELD(window_driver, char); // 12
+	FIELD(window_passenger, char);
+	FIELD(window_backleft, char);
+	FIELD(window_backright, char); // 15 - 16
 };
-static_assert(sizeof(CVehicleParams) == 16, "Invalid CVehicleParams size");
+CHECK_TYPE(CVehicleParams, 16);
 
 struct CVehicle
 {
-	CVector			vecPosition;		// 0 - 12
-	MATRIX4X4		vehMatrix;			// 12 - 76
-	CVector			vecVelocity;		// 76 - 88
-	CVector			vecTurnSpeed;		// 88 - 100
-	WORD			wVehicleID;			// 100 - 102
-	WORD			wTrailerID;			// 102 - 104
-	WORD			wCabID;				// 104 - 106
-	WORD			wLastDriverID;		// 106 - 108
-	WORD			vehPassengers[7];	// 108 - 122
-	DWORD			vehActive;			// 122 - 126
-	DWORD			vehWasted;			// 126 - 130	
-	CVehicleSpawn	customSpawn;		// 130 - 166
-	float			fHealth;			// 166 - 170
-	DWORD			vehDoorStatus;		// 170 - 174
-	DWORD			vehPanelStatus;		// 174 - 178
-	BYTE			vehLightStatus;		// 178 - 179
-	BYTE			vehTireStatus;		// 179 - 180
-	bool			bDead;				// 180 - 181
-	WORD			wKillerID;			// 181 - 183
-	CVehicleModInfo vehModInfo;			// 183 - 206
-	char			szNumberplate[32 + 1]; // 206 - 239
-	CVehicleParams	vehParamEx;			// 239 - 255
-    BYTE			bDeathNotification; // 255 - 256
-    BYTE			bOccupied;			// 256 - 257
-    DWORD			vehOccupiedTick;	// 257 - 261
-    DWORD			vehRespawnTick;		// 261 - 265
-	BYTE			byteSirenEnabled;	// 265 - 266
-	BYTE			byteNewSirenState;	// 266 - 267 : passed to OnVehicleSirenStateChange
+	FIELD(vecPosition, CVector); // 0 - 12
+	FIELD(vehMatrix, MATRIX4X4); // 12 - 76
+	FIELD(vecVelocity, CVector); // 76 - 88
+	FIELD(vecTurnSpeed, CVector); // 88 - 100
+	FIELD(wVehicleID, WORD); // 100 - 102
+	FIELD(wTrailerID, WORD); // 102 - 104
+	FIELD(wCabID, WORD); // 104 - 106
+	FIELD(wLastDriverID, WORD); // 106 - 108
+	FIELD(vehPassengers, ARRAY<WORD, 7>); // 108 - 122
+	FIELD(vehActive, DWORD); // 122 - 126
+	FIELD(vehWasted, DWORD); // 126 - 130	
+	FIELD(customSpawn, CVehicleSpawn); // 130 - 166
+	FIELD(fHealth, float); // 166 - 170
+	FIELD(vehDoorStatus, DWORD); // 170 - 174
+	FIELD(vehPanelStatus, DWORD); // 174 - 178
+	FIELD(vehLightStatus, BYTE); // 178 - 179
+	FIELD(vehTireStatus, BYTE); // 179 - 180
+	FIELD(bDead, bool); // 180 - 181
+	FIELD(wKillerID, WORD); // 181 - 183
+	FIELD(vehModInfo, CVehicleModInfo); // 183 - 206
+	FIELD(szNumberplate, ARRAY<char, 32 + 1>); // 206 - 239
+	FIELD(vehParamEx, CVehicleParams); // 239 - 255
+    FIELD(bDeathNotification, BYTE); // 255 - 256
+    FIELD(bOccupied, BYTE); // 256 - 257
+    FIELD(vehOccupiedTick, DWORD); // 257 - 261
+    FIELD(vehRespawnTick, DWORD); // 261 - 265
+	FIELD(byteSirenEnabled, BYTE); // 265 - 266
+	FIELD(byteNewSirenState, BYTE); // 266 - 267 : passed to OnVehicleSirenStateChange
 };
-static_assert(sizeof(CVehicle) == 267, "Invalid CVehicle size");
+CHECK_TYPE(CVehicle, 267);
 
 struct CVehiclePool
 {
-	BYTE			byteVehicleModelsUsed[212];			// 0 - 212
-	int				iVirtualWorld[MAX_VEHICLES];		// 212 - 8212
-	BOOL			bVehicleSlotState[MAX_VEHICLES];	// 8212 - 16212
-	CVehicle		*pVehicle[MAX_VEHICLES];			// 16212 - 24212
-	DWORD			dwVehiclePoolSize;					// 24212 - 24216
+	FIELD(byteVehicleModelsUsed, ARRAY<BYTE, 212>); // 0 - 212
+	FIELD(iVirtualWorld, ARRAY<int, MAX_VEHICLES>); // 212 - 8212
+	FIELD(bVehicleSlotState, ARRAY<BOOL, MAX_VEHICLES>); // 8212 - 16212
+	FIELD(pVehicle, ARRAY<CVehicle*, MAX_VEHICLES>); // 16212 - 24212
+	FIELD(dwVehiclePoolSize, DWORD); // 24212 - 24216
 };
-static_assert(sizeof(CVehiclePool) == 24216, "Invalid CVehiclePool size");
+CHECK_TYPE(CVehiclePool, 24216);
 
 /* -------------------------------------------------------- */
 // CPickup
 /* -------------------------------------------------------- */
 
-struct tPickup // size 0x14
+struct tPickup
 {
-	int				iModel;
-	int				iType;
-	CVector			vecPos;
+	FIELD(iModel, int);
+	FIELD(iType, int);
+	FIELD(vecPos, CVector);
 };
+CHECK_TYPE(tPickup, 20);
 
 struct CPickupPool
 {
-	tPickup			Pickup[MAX_PICKUPS];			// + 0x0000
-	BOOL			bActive[MAX_PICKUPS];			// + 0xA000
-	int				iWorld[MAX_PICKUPS];		// + 0xC000
-	int				iPickupCount;
+	FIELD(Pickup, ARRAY<tPickup, MAX_PICKUPS>); // + 0x0000
+	FIELD(bActive, ARRAY<BOOL, MAX_PICKUPS>); // + 0xA000
+	FIELD(iWorld, ARRAY<int, MAX_PICKUPS>); // + 0xC000
+	FIELD(iPickupCount, int);
 };
+CHECK_TYPE(CPickupPool, 114692);
 
 /* -------------------------------------------------------- */
 // CObject
@@ -804,59 +831,58 @@ struct CPickupPool
 
 struct CObjectMaterial
 {
-	BYTE			byteUsed;				// 197 - 198
-	BYTE			byteSlot;				// 198 - 199
-	WORD			wModelID;				// 199 - 201
-	DWORD			dwMaterialColor;		// 201 - 205
-	char			szMaterialTXD[64 + 1];	// 205 - 270
-	char			szMaterialTexture[64 + 1]; // 270 - 335
-	BYTE			byteMaterialSize;		// 335 - 336
-	char			szFont[64 + 1];			// 336 - 401
-	BYTE			byteFontSize;			// 401 - 402
-	BYTE			byteBold;				// 402 - 403
-	DWORD			dwFontColor;			// 403 - 407
-	DWORD			dwBackgroundColor;		// 407 - 411
-	BYTE			byteAlignment;			// 411 - 412
+	FIELD(byteUsed, BYTE); // 197 - 198
+	FIELD(byteSlot, BYTE); // 198 - 199
+	FIELD(wModelID, WORD); // 199 - 201
+	FIELD(dwMaterialColor, DWORD); // 201 - 205
+	FIELD(szMaterialTXD, ARRAY<char, 64 + 1>); // 205 - 270
+	FIELD(szMaterialTexture, ARRAY<char, 64 + 1>); // 270 - 335
+	FIELD(byteMaterialSize, BYTE); // 335 - 336
+	FIELD(szFont, ARRAY<char, 64 + 1>); // 336 - 401
+	FIELD(byteFontSize, BYTE); // 401 - 402
+	FIELD(byteBold, BYTE); // 402 - 403
+	FIELD(dwFontColor, DWORD); // 403 - 407
+	FIELD(dwBackgroundColor, DWORD); // 407 - 411
+	FIELD(byteAlignment, BYTE); // 411 - 412
 };
-static_assert(sizeof(CObjectMaterial) == 215, "Invalid CObjectMaterial size");
+CHECK_TYPE(CObjectMaterial, 215);
 
 struct CObject
 {
-	WORD			wObjectID;			// 0 - 2
-	int				iModel;				// 2 - 6
-	BOOL			bActive;			// 6 - 10
-	MATRIX4X4		matWorld;			// 10 - 74 - pos - Object position
-	CVector			vecRot; 			// 74 - 86 - Object rotation
-	MATRIX4X4		matTarget;			// 86 - 150	- 
-	BYTE			bIsMoving;			// 150 - 151
-	BYTE			bNoCameraCol;		// 151 - 152
-	float			fMoveSpeed;			// 152 - 156
-	DWORD			unk_4;				// 156 -160
-	float			fDrawDistance;		// 160 - 164
-	WORD			wAttachedVehicleID;	// 164 - 166
-	WORD			wAttachedObjectID;	// 166 - 168
-	CVector			vecAttachedOffset;	// 168 - 180
-	CVector			vecAttachedRotation;// 180 - 192
-	BYTE			byteSyncRot;		// 192 - 193
-	DWORD			dwMaterialCount;	// 193 - 197
-	CObjectMaterial	Material[MAX_OBJECT_MATERIAL];		// 197 - 3637
-	char			*szMaterialText[MAX_OBJECT_MATERIAL];// 3637 - 3653
+	FIELD(wObjectID, WORD); // 0 - 2
+	FIELD(iModel, int); // 2 - 6
+	FIELD(bActive, BOOL); // 6 - 10
+	FIELD(matWorld, MATRIX4X4); // 10 - 74 - pos - Object position
+	FIELD(vecRot, CVector); // 74 - 86 - Object rotation
+	FIELD(matTarget, MATRIX4X4); // 86 - 150	- 
+	FIELD(bIsMoving, BYTE); // 150 - 151
+	FIELD(bNoCameraCol, BYTE); // 151 - 152
+	FIELD(fMoveSpeed, float); // 152 - 156
+	FIELD(unk_4, DWORD); // 156 -160
+	FIELD(fDrawDistance, float); // 160 - 164
+	FIELD(wAttachedVehicleID, WORD); // 164 - 166
+	FIELD(wAttachedObjectID, WORD); // 166 - 168
+	FIELD(vecAttachedOffset, CVector); // 168 - 180
+	FIELD(vecAttachedRotation, CVector); // 180 - 192
+	FIELD(byteSyncRot, BYTE); // 192 - 193
+	FIELD(dwMaterialCount, DWORD); // 193 - 197
+	FIELD(Material, ARRAY<CObjectMaterial, MAX_OBJECT_MATERIAL>); // 197 - 3637
+	FIELD(szMaterialText, ARRAY<char*, MAX_OBJECT_MATERIAL>); // 3637 - 3653
 };
-static_assert(sizeof(CObject) == 3701, "Invalid CObject size");
+CHECK_TYPE(CObject, 3701);
 
 struct CObjectPool
 {
-	BOOL			bPlayerObjectSlotState[MAX_PLAYERS][MAX_OBJECTS];	// 0 
-	BOOL			bPlayersObject[MAX_OBJECTS];						// 4.000.000
-	CObject			*pPlayerObjects[MAX_PLAYERS][MAX_OBJECTS];			// 4.004.000
-	BOOL			bObjectSlotState[MAX_OBJECTS];						// 8.004.000
-	CObject			*pObjects[MAX_OBJECTS];								// 8.008.000
+	FIELD(bPlayerObjectSlotState, ARRAY<ARRAY<BOOL, MAX_OBJECTS>, MAX_PLAYERS>); // 0 
+	FIELD(bPlayersObject, ARRAY<BOOL, MAX_OBJECTS>); // 4.000.000
+	FIELD(pPlayerObjects, ARRAY<ARRAY<CObject*, MAX_OBJECTS>, MAX_PLAYERS>); // 4.004.000
+	FIELD(bObjectSlotState, ARRAY<BOOL, MAX_OBJECTS>); // 8.004.000
+	FIELD(pObjects, ARRAY<CObject*, MAX_OBJECTS>); // 8.008.000
 };
-
 #ifndef SAMP_03DL
-static_assert(sizeof(CObjectPool) == 8012000, "Invalid CObjectPool size");
+CHECK_TYPE(CObjectPool, 8012000);
 #else
-static_assert(sizeof(CObjectPool) == 16024000, "Invalid CObjectPool size");
+CHECK_TYPE(CObjectPool, 16024000);
 #endif
 
 /* -------------------------------------------------------- */
@@ -865,54 +891,58 @@ static_assert(sizeof(CObjectPool) == 16024000, "Invalid CObjectPool size");
 
 struct MenuInteraction
 {
-	BOOL			Menu;
-	BOOL			Row[MAX_ITEMS];
-	char			unknown[12];
+	FIELD(Menu, BOOL);
+	FIELD(Row, ARRAY<BOOL, MAX_ITEMS>);
+	FIELD(unknown, ARRAY<char, 12>);
 };
-	
-struct CMenu	// size 0xB84
+CHECK_TYPE(MenuInteraction, 64);
+
+struct CMenu
 {
-	BYTE			menuID;														// + 0x0000
-	char			szTitle[ MAX_MENU_TEXT_SIZE ];								// + 0x0001
-	char			szItems[ MAX_ITEMS ][ MAX_COLUMNS ][ MAX_MENU_TEXT_SIZE ];	// + 0x0021
-	char			szHeaders[MAX_COLUMNS][MAX_MENU_TEXT_SIZE];					// + 0x0321
-	BOOL			bIsInitiedForPlayer[MAX_PLAYERS];							// + 0x0361
-	MenuInteraction interaction;												// + 0x0B31
-	CVector2D		vecPos;
-	float			fColumn1Width;												// + 0x0B79
-	float			fColumn2Width;												// + 0x0B7D
-	BYTE			byteColumnsNumber;											// + 0x0B81
-	BYTE			byteItemsCount[ MAX_COLUMNS ];								// + 0x0B82
+	FIELD(menuID, BYTE); // + 0x0000
+	FIELD(szTitle, ARRAY<char, MAX_MENU_TEXT_SIZE>); // + 0x0001
+	FIELD(szItems, ARRAY<ARRAY<ARRAY<char, MAX_MENU_TEXT_SIZE>, MAX_COLUMNS>, MAX_ITEMS>); // + 0x0021
+	FIELD(szHeaders, ARRAY<ARRAY<char, MAX_MENU_TEXT_SIZE>, MAX_COLUMNS>); // + 0x0321
+	FIELD(bIsInitiedForPlayer, ARRAY<BOOL, MAX_PLAYERS>); // + 0x0361
+	FIELD(interaction, MenuInteraction); // + 0x0B31
+	FIELD(vecPos, CVector2D);
+	FIELD(fColumn1Width, float); // + 0x0B79
+	FIELD(fColumn2Width, float); // + 0x0B7D
+	FIELD(byteColumnsNumber, BYTE); // + 0x0B81
+	FIELD(byteItemsCount, ARRAY<BYTE, MAX_COLUMNS>); // + 0x0B82
 };
+CHECK_TYPE(CMenu, 4948);
 
 struct CMenuPool
 {
-	CMenu*			pMenu[ MAX_MENUS ];			//	+ 0x0000
-	BOOL			bIsCreated[ MAX_MENUS ];		//	+ 0x0200
-	BOOL			bPlayerMenu[MAX_PLAYERS];	//	+ 0x0400
+	FIELD(pMenu, ARRAY<CMenu*, MAX_MENUS>); //	+ 0x0000
+	FIELD(bIsCreated, ARRAY<BOOL, MAX_MENUS>); //	+ 0x0200
+	FIELD(bPlayerMenu, ARRAY<BOOL, MAX_PLAYERS>); //	+ 0x0400
 };
+CHECK_TYPE(CMenuPool, 5024);
 
 /* -------------------------------------------------------- */
 // CTextDraw
 /* -------------------------------------------------------- */
 struct CTextDrawPool
 {
-	BOOL			bSlotState[MAX_TEXT_DRAWS];
-	CTextdraw*		TextDraw[MAX_TEXT_DRAWS];
-	char*			szFontText[MAX_TEXT_DRAWS];
-	bool			bHasText[MAX_TEXT_DRAWS][MAX_PLAYERS];
+	FIELD(bSlotState, ARRAY<BOOL, MAX_TEXT_DRAWS>);
+	FIELD(TextDraw, ARRAY<CTextdraw*, MAX_TEXT_DRAWS>);
+	FIELD(szFontText, ARRAY<char*, MAX_TEXT_DRAWS>);
+	FIELD(bHasText, ARRAY<ARRAY<bool, MAX_PLAYERS>, MAX_TEXT_DRAWS>);
 };
+CHECK_TYPE(CTextDrawPool, 2072576);
 
 /* -------------------------------------------------------- */
 // C3DText
 /* -------------------------------------------------------- */
 
-class C3DTextPool
+struct C3DTextPool
 {
-public:
-	BOOL			bIsCreated[MAX_3DTEXT_GLOBAL]; // 0 - 4096 <- OK
-	C3DText			TextLabels[MAX_3DTEXT_GLOBAL];
+	FIELD(bIsCreated, ARRAY<BOOL, MAX_3DTEXT_GLOBAL>); // 0 - 4096 <- OK
+	FIELD(TextLabels, ARRAY<C3DText, MAX_3DTEXT_GLOBAL>);
 };
+CHECK_TYPE(C3DTextPool, 37888);
 
 /* -------------------------------------------------------- */
 // CGangZone
@@ -920,9 +950,10 @@ public:
 
 struct CSAMPGangZonePool
 {
-	float			fGangZone[MAX_GANG_ZONES][4];
-	BOOL			bSlotState[MAX_GANG_ZONES];
+	FIELD(fGangZone, ARRAY<ARRAY<float, 4>, MAX_GANG_ZONES>);
+	FIELD(bSlotState, ARRAY<BOOL, MAX_GANG_ZONES>);
 };
+CHECK_TYPE(CSAMPGangZonePool, 20480);
 
 /* -------------------------------------------------------- */
 // CActor
@@ -930,186 +961,194 @@ struct CSAMPGangZonePool
 
 struct CActorAnim // 140
 {
-	char			szAnimLib[64 + 1]; // 0 - 64
-	char			szAnimName[64 + 1]; // 64 - 128
-	float			fDelta;		// 128 - 132
-	BYTE			byteLoop;		// 132 - 133
-	BYTE			byteLockX;			// 133 - 134
-	BYTE			byteLockY;			// 134 - 135
-	BYTE			byteFreeze;		// 135 - 136
-	int				iTime;				//  136 - 140
+	FIELD(szAnimLib, ARRAY<char, 64 + 1>); // 0 - 64
+	FIELD(szAnimName, ARRAY<char, 64 + 1>); // 64 - 128
+	FIELD(fDelta, float); // 128 - 132
+	FIELD(byteLoop, BYTE); // 132 - 133
+	FIELD(byteLockX, BYTE); // 133 - 134
+	FIELD(byteLockY, BYTE); // 134 - 135
+	FIELD(byteFreeze, BYTE); // 135 - 136
+	FIELD(iTime, int); //  136 - 140
 };
-static_assert(sizeof(CActorAnim) == 142, "Invalid CActorAnim size");
+CHECK_TYPE(CActorAnim, 142);
 
 struct CActor
 {
-	BYTE			pad0;				
-	int				iSkinID;			
-	CVector			vecSpawnPos;	
-	float			fSpawnAngle;		
-	DWORD			pad4;				
-	DWORD			pad5;				
-	BYTE			byteLoopAnim;		
-	CActorAnim		anim;
-	float			fHealth;			
-	DWORD			pad;				
-	float			fAngle;			
-	CVector			vecPos;	
-	BYTE			pad8[12];			
-	BYTE			byteInvulnerable;	
-	WORD			wActorID;			
+	FIELD(pad0, BYTE);				
+	FIELD(iSkinID, int);			
+	FIELD(vecSpawnPos, CVector);	
+	FIELD(fSpawnAngle, float);		
+	FIELD(pad4, DWORD);				
+	FIELD(pad5, DWORD);				
+	FIELD(byteLoopAnim, BYTE);		
+	FIELD(anim, CActorAnim);
+	FIELD(fHealth, float);			
+	FIELD(pad, DWORD);				
+	FIELD(fAngle, float);			
+	FIELD(vecPos, CVector);	
+	FIELD(pad8, ARRAY<BYTE, 12>);			
+	FIELD(byteInvulnerable, BYTE);	
+	FIELD(wActorID, WORD);			
 };
-//static_assert(sizeof(CActor) == 211, "Invalid CActor size");
+CHECK_TYPE(CActor, 211);
 
 struct CActorPool
 {
-	int				iActorVirtualWorld[MAX_ACTORS];
-	BOOL			bValidActor[MAX_ACTORS];
-	CActor*			pActor[MAX_ACTORS];
-	DWORD			dwActorPoolSize;
+	FIELD(iActorVirtualWorld, ARRAY<int, MAX_ACTORS>);
+	FIELD(bValidActor, ARRAY<BOOL, MAX_ACTORS>);
+	FIELD(pActor, ARRAY<CActor*, MAX_ACTORS>);
+	FIELD(dwActorPoolSize, DWORD);
 };
+CHECK_TYPE(CActorPool, 12004);
 
 struct CGameMode
 {
-	AMX				amx;
-	bool			bInitialised;
-	bool			bSleeping;
-	float			fSleepTime;
+	FIELD(amx, AMX);
+	FIELD(bInitialised, bool);
+	FIELD(bSleeping, bool);
+	FIELD(fSleepTime, float);
 };
+CHECK_TYPE(CGameMode, sizeof(CGameMode));
 
 struct CFilterScripts
 {
-	AMX*			pFilterScripts[MAX_FILTER_SCRIPTS];
-	char			szFilterScriptName[MAX_FILTER_SCRIPTS][255];
-	int				iFilterScriptCount;
+	FIELD(pFilterScripts, ARRAY<AMX*, MAX_FILTER_SCRIPTS>);
+	FIELD(szFilterScriptName, ARRAY<ARRAY<char, 255>, MAX_FILTER_SCRIPTS>);
+	FIELD(iFilterScriptCount, int);
 };
+CHECK_TYPE(CFilterScripts, sizeof(CFilterScripts));
 
-struct ScriptTimer_s // sizeof = 0x11B (283)
+struct ScriptTimer_s
 {
-	char szScriptFunc[255];
-	int iTotalTime;
-	int iRemainingTime;
-	BOOL bRepeating;
-	BOOL bKilled;
-	AMX* pAMX;
-	int iParamCount;
-	void* cellParams;
+	FIELD(szScriptFunc, ARRAY<char, 255>);
+	FIELD(iTotalTime, int);
+	FIELD(iRemainingTime, int);
+	FIELD(bRepeating, BOOL);
+	FIELD(bKilled, BOOL);
+	FIELD(pAMX, AMX*);
+	FIELD(iParamCount, int);
+	FIELD(cellParams, void*);
 };
+CHECK_TYPE(ScriptTimer_s, 283);
 
 typedef std::map<DWORD, ScriptTimer_s*> DwordTimerMap;
 
-class CScriptTimers
+struct CScriptTimers
 {
-public:
-	DwordTimerMap			Timers;
-	DWORD					dwTimerCount;
+	FIELD(Timers, DwordTimerMap);
+	FIELD(dwTimerCount, DWORD);
 };
 
 struct CNetGame
 {
-	CGameMode				*pGameModePool;			// 0
-	CFilterScripts			*pFilterScriptPool;		// 4
-	CPlayerPool				*pPlayerPool;			// 8
-	CVehiclePool			*pVehiclePool;			// 12
-	CPickupPool				*pPickupPool;			// 16
-	CObjectPool				*pObjectPool;			// 20
-	CMenuPool				*pMenuPool;				// 24
-	CTextDrawPool			*pTextDrawPool;			// 28
-	C3DTextPool				*p3DTextPool;			// 32
-	CSAMPGangZonePool		*pGangZonePool;			// 36 
-	CActorPool				*pActorPool;			// 40 
-	int						iCurrentGameModeIndex;	// 44
-	int						iCurrentGameModeRepeat;	// 48
-	BOOL					bFirstGameModeLoaded;	// 52
-	void					*pHttpClient;			// 56
-	CScriptTimers			*pScriptTimers;			// 60
-	void					*pRak;					// 64
-	DWORD					dwSomethingTick;
-	DWORD					dwUnk;
-	DWORD					dwUnk1;
-	BOOL					bLanMode;				// 
-	BOOL					bShowPlayerMarkers;		// 84
-	BYTE					byteShowNameTags;		// 
-	BYTE					byteWorldTimeHour;		// 
-	BYTE					byteAllowWeapons;		// 
-	BYTE					byteStuntBonus;			// 91 - 92
-	BYTE					byteDefaultCameraCollision; // 92 - 93
-	BYTE					byteWeather;			// 93 - 94
-	int						iGameState;				// 94 - 98
-	float					fGravity;				// 98 - 102
-	int						iDeathDropMoney;		// 102 - 106
-	BYTE					byteEnableZoneNames;				// 106 - 107
-	BYTE					byteMode;				// 107 - 108
-	BYTE					bLimitGlobalChatRadius;	// 108 - 109
-	BYTE					bUseCJWalk;				// 109 - 110
-	float					fGlobalChatRadius;		// 110 - 114
-	float					fNameTagDrawDistance;	// 114 - 118
-	BYTE					byteDisableEnterExits;	// 118 - 119
-	BYTE					byteNameTagLOS;			// 119 - 120
-	BYTE					bManulVehicleEngineAndLights; // 120 - 121
-	BYTE					bLimitPlayerMarkers;	// 121 - 122
-	float					fPlayerMarkesLimit;		// 122 - 126 
-	BOOL					bVehicleFriendlyFire;	// 126 - 130
+	FIELD(pGameModePool, CGameMode*); // 0
+	FIELD(pFilterScriptPool, CFilterScripts*); // 4
+	FIELD(pPlayerPool, CPlayerPool*); // 8
+	FIELD(pVehiclePool, CVehiclePool*); // 12
+	FIELD(pPickupPool, CPickupPool*); // 16
+	FIELD(pObjectPool, CObjectPool*); // 20
+	FIELD(pMenuPool, CMenuPool*); // 24
+	FIELD(pTextDrawPool, CTextDrawPool*); // 28
+	FIELD(p3DTextPool, C3DTextPool*); // 32
+	FIELD(pGangZonePool, CSAMPGangZonePool*); // 36 
+	FIELD(pActorPool, CActorPool*); // 40 
+	FIELD(iCurrentGameModeIndex, int); // 44
+	FIELD(iCurrentGameModeRepeat, int); // 48
+	FIELD(bFirstGameModeLoaded, BOOL); // 52
+	FIELD(pHttpClient, void*); // 56
+	FIELD(pScriptTimers, CScriptTimers*); // 60
+	FIELD(pRak, void*); // 64
+	FIELD(dwSomethingTick, DWORD);
+	FIELD(dwUnk, DWORD);
+	FIELD(dwUnk1, DWORD);
+	FIELD(bLanMode, BOOL); // 
+	FIELD(bShowPlayerMarkers, BOOL); // 84
+	FIELD(byteShowNameTags, BYTE); // 
+	FIELD(byteWorldTimeHour, BYTE); // 
+	FIELD(byteAllowWeapons, BYTE); // 
+	FIELD(byteStuntBonus, BYTE); // 91 - 92
+	FIELD(byteDefaultCameraCollision, BYTE); // 92 - 93
+	FIELD(byteWeather, BYTE); // 93 - 94
+	FIELD(iGameState, int); // 94 - 98
+	FIELD(fGravity, float); // 98 - 102
+	FIELD(iDeathDropMoney, int); // 102 - 106
+	FIELD(byteEnableZoneNames, BYTE); // 106 - 107
+	FIELD(byteMode, BYTE); // 107 - 108
+	FIELD(bLimitGlobalChatRadius, BYTE); // 108 - 109
+	FIELD(bUseCJWalk, BYTE); // 109 - 110
+	FIELD(fGlobalChatRadius, float); // 110 - 114
+	FIELD(fNameTagDrawDistance, float); // 114 - 118
+	FIELD(byteDisableEnterExits, BYTE); // 118 - 119
+	FIELD(byteNameTagLOS, BYTE); // 119 - 120
+	FIELD(bManulVehicleEngineAndLights, BYTE); // 120 - 121
+	FIELD(bLimitPlayerMarkers, BYTE); // 121 - 122
+	FIELD(fPlayerMarkesLimit, float); // 122 - 126 
+	FIELD(bVehicleFriendlyFire, BOOL); // 126 - 130
 #ifdef SAMP_03DL
-	DWORD					dwUnk3;					// 130 - 134
+	FIELD(dwUnk3, DWORD); // 130 - 134
 #endif
 #ifndef _WIN32
-	double					dElapsedTime;			// size = 8
+	FIELD(dElapsedTime, double);
 #endif
-	int						iSpawnsAvailable;		// 130 - 134
-	CPlayerSpawnInfo		AvailableSpawns[319];	// 134 - 14808
+	FIELD(iSpawnsAvailable, int); // 130 - 134
+	FIELD(AvailableSpawns, ARRAY<CPlayerSpawnInfo, 319>); // 134 - 14808
 };
 #ifdef _WIN32
 #ifndef SAMP_03DL
-static_assert(sizeof(CNetGame) == 14808, "Invalid CNetGame size");
+CHECK_TYPE(CNetGame, 14808);
 #else
-static_assert(sizeof(CNetGame) == 16088, "Invalid CNetGame size");
+CHECK_TYPE(CNetGame, 16088);
 #endif
 #else
 #ifndef SAMP_03DL
-static_assert(sizeof(CNetGame) == 14816, "Invalid CNetGame size");
+CHECK_TYPE(CNetGame, 14816);
 #else
-static_assert(sizeof(CNetGame) == 16096, "Invalid CNetGame size");
+CHECK_TYPE(CNetGame, 16096);
 #endif
 #endif
 
 #ifdef SAMP_03DL
 enum MODEL_TYPE : BYTE { MODEL_TYPE_CHAR = 1, MODEL_TYPE_SIMPLE = 2 };
-static_assert(sizeof(MODEL_TYPE) == 1, "Invalid MODEL_TYPE size");
+CHECK_TYPE(MODEL_TYPE, 1);
 
 struct CModelInfo
 {
-	MODEL_TYPE bType;				// 0 - 1
-	DWORD dwVirtualWorld;			// 1 - 5
-	DWORD dwBaseId;					// 5 - 9
-	DWORD dwNewId;					// 9 - 13
-	char szDffName[MAX_PATH + 1];	// 13 - 274
-	char szTxdName[MAX_PATH + 1];	// 274 - 535
-	DWORD dwDffCrc;					// 535 - 539
-	DWORD dwTxdCrc;					// 539 - 543
-	DWORD dwDffLength;				// 543 - 547
-	DWORD dwTxdLength;				// 547 - 551
-	BYTE bTimeOn;					// 551 - 552
-	BYTE bTimeOff;					// 552 - 553
+	FIELD(bType, MODEL_TYPE); // 0 - 1
+	FIELD(dwVirtualWorld, DWORD); // 1 - 5
+	FIELD(dwBaseId, DWORD); // 5 - 9
+	FIELD(dwNewId, DWORD); // 9 - 13
+	FIELD(szDffName, char, [MAX_PATH + 1]); // 13 - 274
+	FIELD(szTxdName, char, [MAX_PATH + 1]); // 274 - 535
+	FIELD(dwDffCrc, DWORD); // 535 - 539
+	FIELD(dwTxdCrc, DWORD); // 539 - 543
+	FIELD(dwDffLength, DWORD); // 543 - 547
+	FIELD(dwTxdLength, DWORD); // 547 - 551
+	FIELD(bTimeOn, BYTE); // 551 - 552
+	FIELD(bTimeOff, BYTE); // 552 - 553
 };
-static_assert(sizeof(CModelInfo) == 553, "Invalid CModelInfo size");
+CHECK_TYPE(CModelInfo, 553);
 
 struct CArtList
 {
-	CModelInfo **pModelList;	// 0 - 4
-	DWORD dwCapacity;				// 4 - 8
+	CModelInfo **pModelList; // 0 - 4
+	FIELD(dwCapacity, DWORD); // 4 - 8
 };
-static_assert(sizeof(CArtList) == 8, "Invalid CArtList size");
+CHECK_TYPE(CArtList, 8);
 
 struct CArtInfo
 {
-	char szArtPath[MAX_PATH];	// 0 - 260
-	BYTE bUnknown;				// 260 - 261
-	CArtList artList;			// 261 - 269
+	FIELD(szArtPath, ARRAY<char, MAX_PATH>); // 0 - 260
+	FIELD(bUnknown, BYTE); // 260 - 261
+	FIELD(artList, CArtList); // 261 - 269
 };
-static_assert(sizeof(CArtInfo) == 269, "Invalid CArtInfo size");
+CHECK_TYPE(CArtInfo, 269);
 #endif
 
+#undef CHECK_TYPE
+#undef PAD
+#undef BITFIELD
+#undef OTHERFIELD
+#undef FIELD
 #pragma pack(pop)
 
 #endif

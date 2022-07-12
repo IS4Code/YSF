@@ -1,35 +1,3 @@
-/*
-*  Version: MPL 1.1
-*
-*  The contents of this file are subject to the Mozilla Public License Version
-*  1.1 (the "License"); you may not use this file except in compliance with
-*  the License. You may obtain a copy of the License at
-*  http://www.mozilla.org/MPL/
-*
-*  Software distributed under the License is distributed on an "AS IS" basis,
-*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-*  for the specific language governing rights and limitations under the
-*  License.
-*
-*  The Original Code is the YSI 2.0 SA:MP plugin.
-*
-*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-*  Portions created by the Initial Developer are Copyright (C) 2008
-*  the Initial Developer. All Rights Reserved. The development was abandobed
-*  around 2010, afterwards kurta999 has continued it.
-*
-*  Contributor(s):
-*
-*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
-*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
-*
-*  Special Thanks to:
-*
-*	SA:MP Team past, present and future
-*	Incognito, maddinat0r, OrMisicL, Zeex
-*
-*/
-
 #include <string>
 #include <sstream>
 
@@ -185,9 +153,9 @@ const char* Utility::GetWeaponName(BYTE weaponid)
 	return "";
 }
 
-BYTE Utility::GetWeaponSlot(BYTE weaponid)
+int Utility::GetWeaponSlot(BYTE weaponid)
 {
-	BYTE result; // eax@2
+	int result;
 
 	switch (weaponid)
 	{
@@ -205,6 +173,19 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 	case 9:
 		result = 1;
 		break;
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+	case 15:
+		result = 10;
+		break;
+	case 16:
+	case 17:
+	case 18:
+		result = 8;
+		break;
 	case 22:
 	case 23:
 	case 24:
@@ -217,12 +198,14 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 		break;
 	case 28:
 	case 29:
-	case 32:
 		result = 4;
 		break;
 	case 30:
 	case 31:
 		result = 5;
+		break;
+	case 32:
+		result = 4;
 		break;
 	case 33:
 	case 34:
@@ -234,48 +217,37 @@ BYTE Utility::GetWeaponSlot(BYTE weaponid)
 	case 38:
 		result = 7;
 		break;
-	case 16:
-	case 17:
-	case 18:
 	case 39:
 		result = 8;
+		break;
+	case 40:
+		result = 12;
 		break;
 	case 41:
 	case 42:
 	case 43:
 		result = 9;
 		break;
-	case 10:
-	case 11:
-	case 12:
-	case 13:
-	case 14:
-	case 15:
-		result = 10;
-		break;
 	case 44:
 	case 45:
 	case 46:
 		result = 11;
 		break;
-	case 40:
-		result = 12;
-		break;
 	default:
-		result = 0xFF;
+		result = -1;
 		break;
 	}
 	return result;
 }
 
 // Load an entry from server.cfg - Y_Less
-int Utility::CFGLoad(char const * const name, char * const dest, size_t dlen)
+int Utility::CFGLoad(char const * const name, int default_val, char * const dest, size_t dlen)
 {
 	FILE * fileConfig = fopen("plugins/YSF.cfg", "r");
 	//logprintf("2");
 
 	int
-		ret = 1,
+		ret = default_val,
 		len = strlen(name);
 	//logprintf("3");
 

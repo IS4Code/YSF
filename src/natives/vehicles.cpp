@@ -142,28 +142,6 @@ namespace Natives
 		return byteModelsUsed;
 	}
 
-	// native GetVehicleColor(vehicleid, &color1, &color2);
-	AMX_DECLARE_NATIVE(GetVehicleColor)
-	{
-		CHECK_PARAMS(3, LOADED);
-
-		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
-
-		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
-			return 0;
-
-		CVehicle *pVehicle = pNetGame->pVehiclePool->pVehicle[vehicleid];
-		
-		bool changed = CServer::Get()->VehiclePool.MapExtra(vehicleid, [](CVehicleData &data) {return data.bChangedVehicleColor; });
-		
-		int color1 = changed ? pVehicle->vehModInfo.iColor1 : pVehicle->customSpawn.iColor1;
-		int color2 = changed ? pVehicle->vehModInfo.iColor2 : pVehicle->customSpawn.iColor2;
-
-		CScriptParams::Get()->Add(color1, color2);
-		return 1;
-	}
-
 	// native GetVehiclePaintjob(vehicleid);
 	AMX_DECLARE_NATIVE(GetVehiclePaintjob)
 	{
@@ -488,42 +466,51 @@ namespace Natives
 		CScriptParams::Get()->Add(matrix->right, matrix->up, matrix->at);
 		return 1;
 	}
-}
 
-namespace Original
-{
-	AMX_NATIVE ChangeVehicleColor;
-	AMX_NATIVE DestroyVehicle;
-}
-
-namespace Hooks
-{
-	// native ChangeVehicleColor(vehicleid, color1, color2)
-	AMX_DECLARE_NATIVE(ChangeVehicleColor)
-	{
-		CHECK_PARAMS(3, LOADED);
-
-		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (Original::ChangeVehicleColor(amx, params))
-		{
-			CServer::Get()->VehiclePool.Extra(vehicleid).bChangedVehicleColor = true;
-			return 1;
-		}
-		return 0;
-	}
-
-	// native DestroyVehicle(vehicleid);
-	AMX_DECLARE_NATIVE(DestroyVehicle)
+	// native HideVehicle(vehicleid);
+	AMX_DECLARE_NATIVE(HideVehicle)
 	{
 		CHECK_PARAMS(1, LOADED);
 
 		const int vehicleid = CScriptParams::Get()->ReadInt();
-		if (Original::DestroyVehicle(amx, params))
-		{
-			CServer::Get()->VehiclePool.RemoveExtra(vehicleid);
-			return 1;
-		}
-		return 0;
+		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+
+		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
+			return 0;
+
+		pNetGame->pVehiclePool->pVehicle[vehicleid]->vehActive = false;
+
+		return 1;
+	}
+
+	// native ShowVehicle(vehicleid);
+	AMX_DECLARE_NATIVE(ShowVehicle)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		const int vehicleid = CScriptParams::Get()->ReadInt();
+		if(vehicleid < 1 || vehicleid > MAX_VEHICLES) return 0;
+
+		if(!pNetGame->pVehiclePool->pVehicle[vehicleid])
+			return 0;
+
+		pNetGame->pVehiclePool->pVehicle[vehicleid]->vehActive = true;
+
+		return 1;
+	}
+
+	// native IsVehicleHidden(vehicleid);
+	AMX_DECLARE_NATIVE(IsVehicleHidden)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		const int vehicleid = CScriptParams::Get()->ReadInt();
+		if (vehicleid < 1 || vehicleid > MAX_VEHICLES) return -1;
+
+		if (!pNetGame->pVehiclePool->pVehicle[vehicleid])
+			return -1;
+
+		return !pNetGame->pVehiclePool->pVehicle[vehicleid]->vehActive;
 	}
 }
 
@@ -531,7 +518,6 @@ static AMX_NATIVE_INFO native_list[] =
 {
 	AMX_DEFINE_NATIVE(GetVehicleSpawnInfo)
 	AMX_DEFINE_NATIVE(SetVehicleSpawnInfo) // R16
-	AMX_DEFINE_NATIVE(GetVehicleColor)
 	AMX_DEFINE_NATIVE(GetVehiclePaintjob)
 	AMX_DEFINE_NATIVE(GetVehicleInterior)
 	AMX_DEFINE_NATIVE(GetVehicleNumberPlate)
@@ -554,16 +540,12 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetVehicleMatrix) // R19
 	AMX_DEFINE_NATIVE(GetVehicleModelCount) // R17
 	AMX_DEFINE_NATIVE(GetVehicleModelsUsed) // R17
-};
-
-static AMX_HOOK_INFO hook_list[] =
-{
-	AMX_DEFINE_HOOK(ChangeVehicleColor)
-	AMX_DEFINE_HOOK(DestroyVehicle)
+	AMX_DEFINE_NATIVE(HideVehicle) // 2.2
+	AMX_DEFINE_NATIVE(ShowVehicle) // 2.2
+	AMX_DEFINE_NATIVE(IsVehicleHidden) // 2.2
 };
 
 void VehiclesLoadNatives()
 {
 	RegisterNatives(native_list);
-	RegisterHooks(hook_list);
 }

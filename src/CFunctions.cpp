@@ -1,35 +1,3 @@
-/*
-*  Version: MPL 1.1
-*
-*  The contents of this file are subject to the Mozilla Public License Version
-*  1.1 (the "License"); you may not use this file except in compliance with
-*  the License. You may obtain a copy of the License at
-*  http://www.mozilla.org/MPL/
-*
-*  Software distributed under the License is distributed on an "AS IS" basis,
-*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-*  for the specific language governing rights and limitations under the
-*  License.
-*
-*  The Original Code is the YSI 2.0 SA:MP plugin.
-*
-*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-*  Portions created by the Initial Developer are Copyright (C) 2008
-*  the Initial Developer. All Rights Reserved. The development was abandobed
-*  around 2010, afterwards kurta999 has continued it.
-*
-*  Contributor(s):
-*
-*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
-*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
-*
-*  Special Thanks to:
-*
-*	SA:MP Team past, present and future
-*	Incognito, maddinat0r, OrMisicL, Zeex
-*
-*/
-
 #include <unordered_map>
 #include "sdk/plugincommon.h"
 #include "includes/platform.h"
@@ -83,31 +51,10 @@ RakNet__ClearBanList_t						CSAMPFunctions::pfn__RakNet__ClearBanList = NULL;
 
 void CSAMPFunctions::PreInitialize()
 {
-	/*INIT_FPTR(CConsole__AddStringVariable);
-	INIT_FPTR(CConsole__GetStringVariable);
-	INIT_FPTR(CConsole__SetStringVariable);
-	INIT_FPTR(CConsole__GetIntVariable);
-	INIT_FPTR(CConsole__SetIntVariable);
-	INIT_FPTR(CConsole__GetBoolVariable);
-	INIT_FPTR(CConsole__ModifyVariableFlags);
-	INIT_FPTR(CConsole__FindVariable);
-	INIT_FPTR(CConsole__SendRules);
-	INIT_FPTR(CConsole__Execute);
 
-	INIT_FPTR(CFilterscripts__LoadFilterscript);
-	INIT_FPTR(CFilterscripts__UnLoadFilterscript);
-
-	INIT_FPTR(CPlayer__SpawnForWorld);
-	INIT_FPTR(CPlayerPool__HandleVehicleRespawn);
-	INIT_FPTR(CObject__SpawnForPlayer);
-
-	INIT_FPTR(Packet_WeaponsUpdate);
-	INIT_FPTR(Packet_StatsUpdate);
-
-	INIT_FPTR(format_amxstring);*/
 }
 
-void CSAMPFunctions::PostInitialize()
+void CSAMPFunctions::PostInitialize(bool passive)
 {
 	// Get pNetGame
 	int (*pfn_GetNetGame)(void) = (int(*)(void))ppPluginData[PLUGIN_DATA_NETGAME];
@@ -142,6 +89,8 @@ void CSAMPFunctions::PostInitialize()
 	POINT_TO_MEMBER(RakNet__AddToBanList, pRakServer_VTBL[RAKNET_ADD_BAN_OFFSET]);
 	POINT_TO_MEMBER(RakNet__RemoveFromBanList, pRakServer_VTBL[RAKNET_REMOVE_BAN_OFFSET]);
 	POINT_TO_MEMBER(RakNet__ClearBanList, pRakServer_VTBL[RAKNET_CLEAR_BAN_OFFSET]);
+
+	if(passive) return;
 	
 	Unlock((void*)&pRakServer_VTBL[RAKNET_SEND_OFFSET], 4); pRakServer_VTBL[RAKNET_SEND_OFFSET] = reinterpret_cast<int>(CHookRakServer::Send);
 	Unlock((void*)&pRakServer_VTBL[RAKNET_RPC_OFFSET], 4); pRakServer_VTBL[RAKNET_RPC_OFFSET] = reinterpret_cast<int>(CHookRakServer::RPC_2);

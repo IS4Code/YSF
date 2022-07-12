@@ -1,35 +1,3 @@
-/*
-*  Version: MPL 1.1
-*
-*  The contents of this file are subject to the Mozilla Public License Version
-*  1.1 (the "License"); you may not use this file except in compliance with
-*  the License. You may obtain a copy of the License at
-*  http://www.mozilla.org/MPL/
-*
-*  Software distributed under the License is distributed on an "AS IS" basis,
-*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-*  for the specific language governing rights and limitations under the
-*  License.
-*
-*  The Original Code is the YSI 2.0 SA:MP plugin.
-*
-*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-*  Portions created by the Initial Developer are Copyright (C) 2008
-*  the Initial Developer. All Rights Reserved. The development was abandobed
-*  around 2010, afterwards kurta999 has continued it.
-*
-*  Contributor(s):
-*
-*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
-*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
-*
-*  Special Thanks to:
-*
-*	SA:MP Team past, present and future
-*	Incognito, maddinat0r, OrMisicL, Zeex
-*
-*/
-
 #include "CPlugin.h"
 #include "CServer.h"
 #include "CConfig.h"
@@ -56,12 +24,13 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 
 	//memset(&pPlayerData, NULL, sizeof(pPlayerData));
 	
-	LoadNatives();
+	LoadNatives(!CConfig::Get()->m_bPassiveMode);
 
 	// Initialize addresses
 	CAddress::Initialize(version);
 	// Initialize SAMP Function
 	CSAMPFunctions::PreInitialize();
+
 	// Install pre-hooks
 	InstallPreHooks();
 
@@ -87,7 +56,6 @@ CPlugin::CPlugin(SAMPVersion version) : main_thread(std::this_thread::get_id())
 		m_RCONCommands.push_back(std::string(cmds->szName));
 		cmds++;
 	} while (cmds->szName[0] && !cmds->dwFlags);
-	//logprintf("cussess");
 }
 
 CPlugin::~CPlugin()
@@ -107,7 +75,7 @@ bool CPlugin::RemovePlayer(int playerid)
 
 void CPlugin::Process()
 {
-	if(m_iTickRate == -1) return;
+	if(m_iTickRate == -1 || CConfig::Get()->m_bPassiveMode) return;
 
 	if(++m_iTicks >= m_iTickRate)
 	{
@@ -407,10 +375,10 @@ WORD CPlugin::GetNPCCount()
 	return count;
 }
 
-void CPlugin::SetExclusiveBroadcast(bool toggle) 
+void CPlugin::SetExclusiveBroadcast(int status, bool reset)
 { 
-	m_bExclusiveBroadcast = toggle;
-	if (toggle) // if we just activated exclusive broadcast, exclude all players from broadcast list and let scripter readd them
+	m_iExclusiveBroadcast = status;
+	if (reset)
 	{
 		auto &pool = CServer::Get()->PlayerPool;
 		for (WORD i = 0; i != MAX_PLAYERS; ++i)
@@ -419,9 +387,9 @@ void CPlugin::SetExclusiveBroadcast(bool toggle)
 	}
 }
 
-bool CPlugin::GetExclusiveBroadcast(void) 
+int CPlugin::GetExclusiveBroadcast(void) 
 { 
-	return m_bExclusiveBroadcast; 
+	return m_iExclusiveBroadcast;
 }
 
 RakNet::BitStream *CPlugin::BuildSyncData(RakNet::BitStream *bsOrig, WORD toplayerid)
@@ -669,10 +637,54 @@ int CPlugin::FindNPCProcessID(WORD npcid)
 	return ::FindNPCProcessID(name);
 }
 
+#define STREAMING_CHANGE_SIGNAL 255
+
 bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD playerid)
 {
 	switch (uniqueID)
 	{
+		case RPC_CreatePickup:
+		case RPC_DestroyPickup:
+		{
+			const int read_offset = bsSync->GetReadOffset();
+			int pickupid;
+			bsSync->Read<int>(pickupid);
+			bsSync->SetReadOffset(read_offset);
+
+			if(pickupid >= 0 && pickupid < MAX_PICKUPS && pNetGame->pPickupPool->bActive[pickupid])
+			{
+				if(auto player = pNetGame->pPlayerPool->pPlayer[playerid])
+				{
+					auto &streamedIn = player->bPickupStreamedIn[pickupid];
+					if(streamedIn == STREAMING_CHANGE_SIGNAL)
+					{
+						streamedIn = uniqueID == RPC_CreatePickup;
+					}else{
+						// the callback might call the RPC again, in which case the callback will be blocked
+						// and the original RPC will be ignored
+						if(uniqueID == RPC_CreatePickup && !streamedIn)
+						{
+							streamedIn = STREAMING_CHANGE_SIGNAL;
+							CCallbackManager::OnPickupStreamIn(pickupid, playerid);
+						}else if(uniqueID == RPC_DestroyPickup && streamedIn)
+						{
+							streamedIn = STREAMING_CHANGE_SIGNAL;
+							CCallbackManager::OnPickupStreamOut(pickupid, playerid);
+						}else{
+							break;
+						}
+						auto newVal = streamedIn;
+						streamedIn = uniqueID != RPC_CreatePickup;
+						if(newVal != STREAMING_CHANGE_SIGNAL)
+						{
+							return false;
+						}
+					}
+				}
+			}
+
+			break;
+		}
 		case RPC_ScmEvent:
 		{
 			const int read_offset = bsSync->GetReadOffset();
@@ -770,7 +782,7 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			{
 				bsSync->Write((BYTE)0);
 			}
-			bsSync->Write((char*)&pNetGame->pVehiclePool, 212); // modelsUsed
+			bsSync->Write(reinterpret_cast<char(&)[212]>(pNetGame->pVehiclePool->byteVehicleModelsUsed), 212); // modelsUsed
 			bsSync->Write((DWORD)vehiclefriendlyfire);
 			break;
 		}

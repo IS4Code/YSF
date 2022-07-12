@@ -3,226 +3,11 @@
 #include "../CScriptParams.h"
 #include "../Globals.h"
 #include "../Utils.h"
+#include "../RPCs.h"
 
+#ifndef NEW_PICKUP_SYSTEM
 namespace Natives
 {
-#ifdef NEW_PICKUP_SYSTEM
-	// native IsValidPickup(pickupid);
-	AMX_DECLARE_NATIVE(IsValidPickup)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		const int id = CScriptParams::Get()->ReadInt();
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		return CPlugin::Get()->pPickupPool->FindPickup(id) != 0;
-	}
-
-	// native IsPickupStreamedIn(playerid, pickupid);
-	AMX_DECLARE_NATIVE(IsPickupStreamedIn)
-	{
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int id = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
-		if (!pPickup) return 0;
-
-		return CPlugin::Get()->pPickupPool->IsStreamed(playerid, pPickup);
-	}
-
-	// native GetPickupPos(pickupid, &Float:fX, &Float:fY, &Float:fZ);
-	AMX_DECLARE_NATIVE(GetPickupPos)
-	{
-		CHECK_PARAMS(4, LOADED);
-
-		const int id = CScriptParams::Get()->ReadInt();
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
-		if (!pPickup) return 0;
-
-		CScriptParams::Get()->Add(pPickup->vecPos);
-		return 1;
-	}
-
-	// native GetPickupModel(pickupid);
-	AMX_DECLARE_NATIVE(GetPickupModel)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		const int id = CScriptParams::Get()->ReadInt();
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
-		if (!pPickup) return 0;
-
-		return pPickup->iModel;
-	}
-
-	// native GetPickupType(pickupid);
-	AMX_DECLARE_NATIVE(GetPickupType)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		const int id = CScriptParams::Get()->ReadInt();
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
-		if (!pPickup) return 0;
-
-		return pPickup->iType;
-	}
-
-	// native GetPickupVirtualWorld(pickupid);
-	AMX_DECLARE_NATIVE(GetPickupVirtualWorld)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		const int id = CScriptParams::Get()->ReadInt();
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(id);
-		if (!pPickup) return 0;
-
-		return pPickup->iWorld;
-	}
-
-	// CreatePlayerPickup(playerid, model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
-	AMX_DECLARE_NATIVE(CreatePlayerPickup)
-	{
-		CHECK_PARAMS(7, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-
-		return CPlugin::Get()->pPickupPool->New(playerid, (int)params[2], (int)params[3], CVector(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])), (int)params[7]);
-	}
-
-	// native DestroyPlayerPickup(playerid, pickupid);
-	AMX_DECLARE_NATIVE(DestroyPlayerPickup)
-	{
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int id = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
-		if (!pPickup) return 0;
-
-		CPlugin::Get()->pPickupPool->Destroy((WORD)playerid, id);
-		return 1;
-	}
-
-	// native IsValidPlayerPickup(playerid, pickupid);
-	AMX_DECLARE_NATIVE(IsValidPlayerPickup)
-	{
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int id = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		return CPlugin::Get()->pPickupPool->FindPickup(playerid, id) != 0;
-	}
-
-	// native IsPlayerPickupStreamedIn(playerid, pickupid);
-	AMX_DECLARE_NATIVE(IsPlayerPickupStreamedIn)
-	{
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int id = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
-		if (!pPickup) return 0;
-
-		return CPlugin::Get()->pPickupPool->IsStreamed(playerid, pPickup);
-	}
-
-	// native GetPlayerPickupPos(playerid, pickupid, &Float:fX, &Float:fY, &Float:fZ);
-	AMX_DECLARE_NATIVE(GetPlayerPickupPos)
-	{
-		CHECK_PARAMS(5, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int id = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
-		if (!pPickup) return 0;
-
-		CScriptParams::Get()->Add(pPickup->vecPos);
-		return 1;
-	}
-
-	// native GetPlayerPickupModel(playerid, pickupid);
-	AMX_DECLARE_NATIVE(GetPlayerPickupModel)
-	{
-		if (!CPlugin::Get()->IsInitialized()) return std::numeric_limits<int>::lowest(); // If unknown server version
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int id = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
-		if (!pPickup) return 0;
-
-		return pPickup->iModel;
-	}
-
-	// native GetPlayerPickupType(playerid, pickupid);
-	AMX_DECLARE_NATIVE(GetPlayerPickupType)
-	{
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int id = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
-		if (!pPickup) return 0;
-
-		return pPickup->iType;
-	}
-
-	// native GetPlayerPickupVirtualWorld(playerid, pickupid);
-	AMX_DECLARE_NATIVE(GetPlayerPickupVirtualWorld)
-	{
-		CHECK_PARAMS(2, LOADED);
-
-		const int playerid = CScriptParams::Get()->ReadInt();
-		const int id = CScriptParams::Get()->ReadInt();
-		if (!IsPlayerConnected(playerid)) return 0;
-		if (id < 0 || id >= MAX_PICKUPS) return 0;
-
-		CPickup *pPickup = CPlugin::Get()->pPickupPool->FindPickup(playerid, id);
-		if (!pPickup) return 0;
-
-		return pPickup->iWorld;
-	}
-
-	// native SetPickupStreamingEnabled(enabled);
-	AMX_DECLARE_NATIVE(SetPickupStreamingEnabled)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		CPlugin::Get()->pPickupPool->SetStreamingEnabled(!!params[1]);
-		return 1;
-	}
-#else
 	// native IsValidPickup(pickupid);
 	AMX_DECLARE_NATIVE(IsValidPickup)
 	{
@@ -304,38 +89,199 @@ namespace Natives
 
 		return pNetGame->pPickupPool->iWorld[id];
 	}
-#endif
-}
 
-namespace Original
-{
-	AMX_NATIVE CreatePickup;
-	AMX_NATIVE DestroyPickup;
-	AMX_NATIVE AddStaticPickup;
-}
-
-namespace Hooks
-{
-#ifdef NEW_PICKUP_SYSTEM
-	// native CreatePickup(model, type, Float:X, Float:Y, Float:Z, virtualworld = 0);
-	AMX_DECLARE_NATIVE(CreatePickup)
+	static void HidePickup(int pickupid, int world)
 	{
-		CHECK_PARAMS(6, LOADED);
+		RakNet::BitStream bsPickup;
+		bsPickup.Write(pickupid);
 
-		return CPlugin::Get()->pPickupPool->New((int)params[1], (int)params[2], CVector(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5])), (int)params[6]);
+		for(WORD playerid = 0; playerid != MAX_PLAYERS; ++playerid)
+		{
+			if(!IsPlayerConnected(playerid)) continue;
+
+			if(pNetGame->pPlayerPool->dwVirtualWorld[playerid] == static_cast<DWORD>(world))
+			{
+				CHookRakServer::RPC_2(pRakServer, &RPC_DestroyPickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+			}
+		}
 	}
 
-	constexpr AMX_NATIVE AddStaticPickup = CreatePickup;
-
-	// native DestroyPickup(pickupid);
-	AMX_DECLARE_NATIVE(DestroyPickup)
+	static void ShowPickup(int pickupid, int world, tPickup &pickup)
 	{
-		CHECK_PARAMS(1, LOADED);
+		RakNet::BitStream bsPickup;
+		bsPickup.Write(pickupid);
+		bsPickup.Write(pickup.iModel);
+		bsPickup.Write(pickup.iType);
+		bsPickup.Write(pickup.vecPos.fX);
+		bsPickup.Write(pickup.vecPos.fY);
+		bsPickup.Write(pickup.vecPos.fZ);
 
-		CPlugin::Get()->pPickupPool->Destroy((int)params[1]);
+		for(WORD playerid = 0; playerid != MAX_PLAYERS; ++playerid)
+		{
+			if(!IsPlayerConnected(playerid)) continue;
+
+			if(pNetGame->pPlayerPool->dwVirtualWorld[playerid] == static_cast<DWORD>(world))
+			{
+				CHookRakServer::RPC_2(pRakServer, &RPC_CreatePickup, &bsPickup, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+			}
+		}
+	}
+
+	// native SetPickupPos(pickupid, Float:X, Float:Y, Float:Z, bool:update=true);
+	AMX_DECLARE_NATIVE(SetPickupPos)
+	{
+		CHECK_PARAMS(4, MORE_PARAMETER_ALLOWED);
+
+		const int id = CScriptParams::Get()->ReadInt();
+		if(id < 0 || id >= MAX_PICKUPS)
+			return 0;
+
+		if(!pNetGame->pPickupPool->bActive[id]) return 0;
+
+		auto &pickup = pNetGame->pPickupPool->Pickup[id];
+		CScriptParams::Get()->Read(pickup.vecPos);
+
+		if(params[0] / sizeof(cell) < 5 || CScriptParams::Get()->ReadBool())
+		{
+			ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		}
+
 		return 1;
 	}
-#endif
+
+	// native SetPickupModel(pickupid, model, bool:update=true);
+	AMX_DECLARE_NATIVE(SetPickupModel)
+	{
+		CHECK_PARAMS(2, MORE_PARAMETER_ALLOWED);
+
+		const int id = CScriptParams::Get()->ReadInt();
+		if(id < 0 || id >= MAX_PICKUPS)
+			return 0;
+
+		if(!pNetGame->pPickupPool->bActive[id]) return 0;
+
+		auto &pickup = pNetGame->pPickupPool->Pickup[id];
+		CScriptParams::Get()->Read(pickup.iModel);
+
+		if(params[0] / sizeof(cell) < 3 || CScriptParams::Get()->ReadBool())
+		{
+			ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		}
+
+		return 1;
+	}
+
+	// native SetPickupType(pickupid, type, bool:update=true);
+	AMX_DECLARE_NATIVE(SetPickupType)
+	{
+		CHECK_PARAMS(2, MORE_PARAMETER_ALLOWED);
+
+		const int id = CScriptParams::Get()->ReadInt();
+		if(id < 0 || id >= MAX_PICKUPS)
+			return 0;
+
+		if(!pNetGame->pPickupPool->bActive[id]) return 0;
+
+		auto &pickup = pNetGame->pPickupPool->Pickup[id];
+		CScriptParams::Get()->Read(pickup.iType);
+
+		if(params[0] / sizeof(cell) < 3 || CScriptParams::Get()->ReadBool())
+		{
+			ShowPickup(id, pNetGame->pPickupPool->iWorld[id], pickup);
+		}
+
+		return 1;
+	}
+
+	// native SetPickupVirtualWorld(pickupid, virtualworld);
+	AMX_DECLARE_NATIVE(SetPickupVirtualWorld)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int id = CScriptParams::Get()->ReadInt();
+		if(id < 0 || id >= MAX_PICKUPS)
+			return 0;
+
+		if(!pNetGame->pPickupPool->bActive[id]) return 0;
+
+		auto &world = pNetGame->pPickupPool->iWorld[id];
+		HidePickup(id, world);
+		CScriptParams::Get()->Read(world);
+		ShowPickup(id, world, pNetGame->pPickupPool->Pickup[id]);
+
+		return 1;
+	}
+
+	// native ShowPickupForPlayer(playerid, pickupid);
+	AMX_DECLARE_NATIVE(ShowPickupForPlayer)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if (!IsPlayerConnected(playerid)) return 0;
+
+		const int pickupid = CScriptParams::Get()->ReadInt();
+		if(pickupid < 0 || pickupid >= MAX_PICKUPS)
+			return 0;
+
+		if(!pNetGame->pPickupPool->bActive[pickupid]) return 0;
+
+		const auto &pickup = pNetGame->pPickupPool->Pickup[pickupid];
+
+		RakNet::BitStream bsPickup;
+		bsPickup.Write(pickupid);
+		bsPickup.Write(pickup.iModel);
+		bsPickup.Write(pickup.iType);
+		bsPickup.Write(pickup.vecPos.fX);
+		bsPickup.Write(pickup.vecPos.fY);
+		bsPickup.Write(pickup.vecPos.fZ);
+
+		CHookRakServer::RPC_2(pRakServer, &RPC_CreatePickup, &bsPickup, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+		return 1;
+	}
+
+	// native HidePickupForPlayer(playerid, pickupid);
+	AMX_DECLARE_NATIVE(HidePickupForPlayer)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		const int pickupid = CScriptParams::Get()->ReadInt();
+		if(pickupid < 0 || pickupid >= MAX_PICKUPS)
+			return 0;
+
+		RakNet::BitStream bsPickup;
+		bsPickup.Write(pickupid);
+
+		CHookRakServer::RPC_2(pRakServer, &RPC_DestroyPickup, &bsPickup, HIGH_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+		return 1;
+	}
+
+	// native SetPickupForPlayer(playerid, id, model, type, Float:X, Float:Y, Float:Z);
+	AMX_DECLARE_NATIVE(SetPickupForPlayer)
+	{
+		CHECK_PARAMS(7, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		const int pickupid = CScriptParams::Get()->ReadInt();
+		if(pickupid < 0 || pickupid >= MAX_PICKUPS)
+			return 0;
+
+		RakNet::BitStream bsPickup;
+		bsPickup.Write(pickupid);
+		bsPickup.Write(CScriptParams::Get()->ReadInt());
+		bsPickup.Write(CScriptParams::Get()->ReadInt());
+		bsPickup.Write(CScriptParams::Get()->ReadFloat());
+		bsPickup.Write(CScriptParams::Get()->ReadFloat());
+		bsPickup.Write(CScriptParams::Get()->ReadFloat());
+
+		CSAMPFunctions::RPC(&RPC_CreatePickup, &bsPickup, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, CSAMPFunctions::GetPlayerIDFromIndex(playerid), false, false);
+		return 1;
+	}
 }
 
 static AMX_NATIVE_INFO native_list[] =
@@ -347,33 +293,24 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(GetPickupModel) // R10
 	AMX_DEFINE_NATIVE(GetPickupType) // R10
 	AMX_DEFINE_NATIVE(GetPickupVirtualWorld) // R10
-#ifdef NEW_PICKUP_SYSTEM
-	// Pickups - Per-player
-	AMX_DEFINE_NATIVE(CreatePlayerPickup) // R10
-	AMX_DEFINE_NATIVE(DestroyPlayerPickup) // R10
-	AMX_DEFINE_NATIVE(IsValidPlayerPickup) // R10
-	AMX_DEFINE_NATIVE(IsPlayerPickupStreamedIn) // R10
-	AMX_DEFINE_NATIVE(GetPlayerPickupPos) // R10
-	AMX_DEFINE_NATIVE(GetPlayerPickupModel) // R10
-	AMX_DEFINE_NATIVE(GetPlayerPickupType) // R10
-	AMX_DEFINE_NATIVE(GetPlayerPickupVirtualWorld) // R10
-	AMX_DEFINE_NATIVE(SetPickupStreamingEnabled)
-#endif
-};
 
-#ifdef NEW_PICKUP_SYSTEM
-static AMX_HOOK_INFO hook_list[] =
-{
-	AMX_DEFINE_HOOK(CreatePickup)
-	AMX_DEFINE_HOOK(AddStaticPickup)
-	AMX_DEFINE_HOOK(DestroyPickup)
+	AMX_DEFINE_NATIVE(SetPickupPos)
+	AMX_DEFINE_NATIVE(SetPickupModel)
+	AMX_DEFINE_NATIVE(SetPickupType)
+	AMX_DEFINE_NATIVE(SetPickupVirtualWorld)
+
+	AMX_DEFINE_NATIVE(ShowPickupForPlayer) // 2.2
+	AMX_DEFINE_NATIVE(HidePickupForPlayer) // 2.2
+	AMX_DEFINE_NATIVE(SetPickupForPlayer) // 2.2
 };
-#endif
 
 void PickupsLoadNatives()
 {
 	RegisterNatives(native_list);
-#ifdef NEW_PICKUP_SYSTEM
-	RegisterHooks(hook_list);
-#endif
 }
+#else
+void PickupsLoadNatives()
+{
+
+}
+#endif

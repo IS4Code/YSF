@@ -1,35 +1,3 @@
-/*
-*  Version: MPL 1.1
-*
-*  The contents of this file are subject to the Mozilla Public License Version
-*  1.1 (the "License"); you may not use this file except in compliance with
-*  the License. You may obtain a copy of the License at
-*  http://www.mozilla.org/MPL/
-*
-*  Software distributed under the License is distributed on an "AS IS" basis,
-*  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-*  for the specific language governing rights and limitations under the
-*  License.
-*
-*  The Original Code is the YSI 2.0 SA:MP plugin.
-*
-*  The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-*  Portions created by the Initial Developer are Copyright (C) 2008
-*  the Initial Developer. All Rights Reserved. The development was abandobed
-*  around 2010, afterwards kurta999 has continued it.
-*
-*  Contributor(s):
-*
-*	0x688, balika011, Gamer_Z, iFarbod, karimcambridge, Mellnik, P3ti, Riddick94
-*	Slice, sprtik, uint32, Whitetigerswt, Y_Less, ziggi and complete SA-MP community
-*
-*  Special Thanks to:
-*
-*	SA:MP Team past, present and future
-*	Incognito, maddinat0r, OrMisicL, Zeex
-*
-*/
-
 #include "main.h"
 #include "includes/platform.h"
 #include "CPlugin.h"
@@ -40,6 +8,8 @@
 #include "Natives.h"
 #include "Utils.h"
 #include "Globals.h"
+
+#include <string>
 
 //----------------------------------------------------------
 // The Support() function indicates what possibilities this
@@ -65,24 +35,24 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	
 	// Check server version
 	SAMPVersion version = SAMPVersion::VERSION_UNKNOWN;
-	char szVersion[64];
+	const char *szVersion;
 
 	DWORD addr = reinterpret_cast<DWORD>(logprintf);
 #ifdef SAMP_03DL
-	if(addr == CAddress::FUNC_Logprintf_03DL_R1 || Utility::CFGLoad("SkipVersionCheck"))
+	if(addr == CAddress::FUNC_Logprintf_03DL_R1 || Utility::CFGLoad("SkipVersionCheck", 0))
 	{
 		version = SAMPVersion::VERSION_03DL_R1;
-		strcpy(szVersion, "0.3.DL R1");
+		szVersion = "0.3.DL R1";
 	}else if(addr == CAddress::FUNC_Logprintf_037_R2_1)
 	{
 		logprintf("This version of YSF doesn't support SA-MP 0.3.7");
 		logprintf("Use another version of YSF or build without SAMP_03DL");
 	}
 #else
-	if(addr == CAddress::FUNC_Logprintf_037_R2_1 || Utility::CFGLoad("SkipVersionCheck"))
+	if(addr == CAddress::FUNC_Logprintf_037_R2_1 || Utility::CFGLoad("SkipVersionCheck", 0))
 	{
 		version = SAMPVersion::VERSION_037_R2;
-		strcpy(szVersion, "0.3.7 R2-1 or R2-2");
+		szVersion = "0.3.7 R2-1 or R2-2";
 	}else if(addr == CAddress::FUNC_Logprintf_03DL_R1)
 	{
 		logprintf("This version of YSF doesn't support SA-MP 0.3.DL");
@@ -99,15 +69,18 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void ** ppData)
 	if (version != SAMPVersion::VERSION_UNKNOWN)
 	{
 		CPlugin::Init(version);
-		
+
+		auto &header = " " PROJECT_NAME " " PROJECT_VERSION " (compiled " __DATE__ " " __TIME__") loaded";
 		logprintf("");
-		logprintf(" ===============================");
-		logprintf("        " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " loaded");
-		logprintf("   (c) 2008 Alex \"Y_Less\" Cole - (c) 2010 - 2016 kurta999");
-		logprintf("    Server version: %s", szVersion);
-		logprintf("    Operating System: " OS_NAME);
-		logprintf("    Built on: " __DATE__ " at " __TIME__);
-		logprintf(" ===============================");
+		std::string row(sizeof(header) - 1, '=');
+		row[0] = ' ';
+		logprintf(row.c_str());
+		logprintf(header);
+		logprintf("  (c) 2008 Alex \"Y_Less\" Cole");
+		logprintf("  (c) 2010 - 2018 kurta999");
+		logprintf("  (c) 2018 - 2020 IllidanS4");
+		logprintf(" Server version: %s, " OS_NAME, szVersion);
+		logprintf(row.c_str());
 		logprintf("");
 	}
 	else
@@ -129,12 +102,7 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload()
 	CPlugin::Destroy();
 	CScriptParams::Destroy();
 
-	// Corrected apperance in log file
-	logprintf("");
-	logprintf(" ==============");
-	logprintf("  " PROJECT_NAME " - kurta999's version " PROJECT_VERSION " unloaded");
-	logprintf(" ==============");
-	logprintf("");
+	logprintf(" " PROJECT_NAME " " PROJECT_VERSION " unloaded");
 }
 
 //----------------------------------------------------------

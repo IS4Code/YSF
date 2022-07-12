@@ -20,16 +20,6 @@ namespace Natives
 		return 1;
 	}
 
-	// native IsBanned(ipaddress[]);
-	AMX_DECLARE_NATIVE(IsBanned)
-	{
-		CHECK_PARAMS(1, LOADED);
-
-		char *ip;
-		amx_StrParam(amx, params[1], ip);
-		return (ip) ? CPlugin::Get()->IsBanned(ip) : 0;
-	}
-
 	// native SetTimeoutTime(playerid, time);
 	AMX_DECLARE_NATIVE(SetTimeoutTime)
 	{
@@ -232,7 +222,6 @@ static AMX_NATIVE_INFO native_list[] =
 {
 	// RakServer functions
 	AMX_DEFINE_NATIVE(ClearBanList)
-	AMX_DEFINE_NATIVE(IsBanned)
 
 	AMX_DEFINE_NATIVE(SetTimeoutTime)
 	AMX_DEFINE_NATIVE(GetLocalIP)

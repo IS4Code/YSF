@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <type_traits>
 #include "includes/types.h"
+#include "Structs.h"
 
 namespace aux
 {
@@ -103,7 +104,7 @@ public:
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, ObjectType (PoolType::*PoolArray)[MaxSize], class ExtraData = std::tuple<size_t>>
+template <class PoolType, class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), class ExtraData = std::tuple<size_t>>
 class CBasicPool : public CExtendedPool<ObjectType, MaxSize, ExtraData>
 {
 	typedef CExtendedPool<ObjectType, MaxSize, ExtraData> Base;
@@ -132,7 +133,7 @@ public:
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, ObjectType (PoolType::*PoolArray)[MaxSize], BOOL(PoolType::*SlotArray)[MaxSize], class ExtraData = std::tuple<size_t>>
+template <class PoolType, class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), ARRAY<BOOL, MaxSize> (PoolType::*SlotArray), class ExtraData = std::tuple<size_t>>
 class CSlotPool : public CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData>
 {
 	typedef CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData> Base;
@@ -148,7 +149,7 @@ public:
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, ObjectType (PoolType::*PoolArray)[MaxSize], BOOL(PoolType::*SlotArray)[MaxSize], DWORD PoolType::*PoolSize, class ExtraData = std::tuple<size_t>>
+template <class PoolType, class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), ARRAY<BOOL, MaxSize> (PoolType::*SlotArray), DWORD PoolType::*PoolSize, class ExtraData = std::tuple<size_t>>
 class CBoundedPool : public CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData>
 {
 	typedef CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData> Base;
