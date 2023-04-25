@@ -10,7 +10,7 @@
 #include "CPool.h"
 #include "CPlayerData.h"
 
-class CServer;
+extern CNetGame* pNetGame;
 
 template <class ObjectType, size_t MaxSize>
 class CPerPlayerPoolBase
@@ -90,7 +90,7 @@ protected:
 
 	PoolType& pool() const
 	{
-		return *((CServer::Get()->NetGame).*PoolMember);
+		return *(pNetGame->*PoolMember);
 	}
 
 public:

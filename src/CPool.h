@@ -35,7 +35,7 @@ namespace aux
 	}
 }
 
-class CServer;
+extern CNetGame* pNetGame;
 
 template <class ObjectType, size_t MaxSize>
 class CPoolBase
@@ -113,7 +113,7 @@ class CBasicPool : public CExtendedPool<ObjectType, MaxSize, ExtraData>
 protected:
 	PoolType& pool() const
 	{
-		return *((CServer::Get()->NetGame).*PoolMember);
+		return *(pNetGame->*PoolMember);
 	}
 
 public:
