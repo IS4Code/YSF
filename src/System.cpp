@@ -186,7 +186,7 @@ void ExecuteCommand(const std::string &cmd, bool saveOutput, int index)
 
 		CPlugin::SysExec_t exec;
 		exec.index = index;
-		exec.output = "";
+		exec.output.clear();
 		exec.success = false;
 
 		if ((pPipe = popen(command.c_str(), "r")) != NULL)
@@ -280,6 +280,7 @@ char* GetNPCCommandLine(int processId)
 
 int FindNPCProcessID(const char *name)
 {
+	size_t len = strlen(name);
 #ifdef _WIN32
 	DWORD cpid = GetCurrentProcessId();
 
@@ -321,7 +322,7 @@ int FindNPCProcessID(const char *name)
 			{
 				if (*++iter == '-' && *++iter == 'n' && *++iter == ' ')
 				{
-					if (!strncmp(++iter, name, strlen(name)))
+					if (!strncmp(++iter, name, len))
 					{
 						pid = ProcessId.uintVal;
 						found = true;
@@ -393,7 +394,7 @@ int FindNPCProcessID(const char *name)
 									{
 										if (*++iter == '-' && *++iter == 'n' && *++iter == '\0')
 										{
-											if (!strncmp(++iter, name, strlen(name)))
+											if (!strncmp(++iter, name, len))
 											{
 												found = true;
 												break;
