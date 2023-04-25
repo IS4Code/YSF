@@ -35,6 +35,8 @@ namespace aux
 	}
 }
 
+class CServer;
+
 template <class ObjectType, size_t MaxSize>
 class CPoolBase
 {

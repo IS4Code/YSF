@@ -10,6 +10,8 @@
 #include "CPool.h"
 #include "CPlayerData.h"
 
+class CServer;
+
 template <class ObjectType, size_t MaxSize>
 class CPerPlayerPoolBase
 {
