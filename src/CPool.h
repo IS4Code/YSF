@@ -104,64 +104,68 @@ public:
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), class ExtraData = std::tuple<size_t>>
+template <class PoolType, PoolType*(CNetGame::*PoolMember), class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), class ExtraData = std::tuple<size_t>>
 class CBasicPool : public CExtendedPool<ObjectType, MaxSize, ExtraData>
 {
 	typedef CExtendedPool<ObjectType, MaxSize, ExtraData> Base;
 protected:
-	PoolType& pool;
+	PoolType& pool() const
+	{
+		return *((CServer::Get()->NetGame).*PoolMember);
+	}
+
 public:
-	CBasicPool(PoolType& poolData) : pool(poolData)
+	CBasicPool()
 	{
 
 	}
 
 	virtual ObjectType &operator[](size_t index) OVERRIDE
 	{
-		return (pool.*PoolArray)[index];
+		return (pool().*PoolArray)[index];
 	}
 
 	virtual ObjectType &Get(size_t index) OVERRIDE
 	{
 		if (!IsValid(index)) throw std::invalid_argument("Invalid index accessed.");
-		return (pool.*PoolArray)[index];
+		return (pool().*PoolArray)[index];
 	}
 
 	virtual bool IsValid(size_t index) const OVERRIDE
 	{
-		return index >= 0 && index < MaxSize && !aux::is_null((pool.*PoolArray)[index]);
+		return index >= 0 && index < MaxSize && !aux::is_null((pool().*PoolArray)[index]);
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), ARRAY<BOOL, MaxSize> (PoolType::*SlotArray), class ExtraData = std::tuple<size_t>>
-class CSlotPool : public CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData>
+template <class PoolType, PoolType*(CNetGame::*PoolMember), class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), ARRAY<BOOL, MaxSize> (PoolType::*SlotArray), class ExtraData = std::tuple<size_t>>
+class CSlotPool : public CBasicPool<PoolType, PoolMember, ObjectType, MaxSize, PoolArray, ExtraData>
 {
-	typedef CBasicPool<PoolType, ObjectType, MaxSize, PoolArray, ExtraData> Base;
+	typedef CBasicPool<PoolType, PoolMember, ObjectType, MaxSize, PoolArray, ExtraData> Base;
 public:
-	CSlotPool(PoolType& poolData) : Base(poolData)
+	CSlotPool() : Base()
 	{
 
 	}
 
 	virtual bool IsValid(size_t index) const OVERRIDE
 	{
-		return index >= 0 && index < MaxSize && (Base::pool.*SlotArray)[index] && !aux::is_null((Base::pool.*PoolArray)[index]);
+		return index >= 0 && index < MaxSize && (Base::pool().*SlotArray)[index] && !aux::is_null((Base::pool().*PoolArray)[index]);
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), ARRAY<BOOL, MaxSize> (PoolType::*SlotArray), DWORD PoolType::*PoolSize, class ExtraData = std::tuple<size_t>>
-class CBoundedPool : public CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData>
+template <class PoolType, PoolType*(CNetGame::*PoolMember), class ObjectType, size_t MaxSize, ARRAY<ObjectType, MaxSize> (PoolType::*PoolArray), ARRAY<BOOL, MaxSize> (PoolType::*SlotArray), DWORD PoolType::*PoolSize, class ExtraData = std::tuple<size_t>>
+class CBoundedPool : public CSlotPool<PoolType, PoolMember, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData>
 {
-	typedef CSlotPool<PoolType, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData> Base;
+	typedef CSlotPool<PoolType, PoolMember, ObjectType, MaxSize, PoolArray, SlotArray, ExtraData> Base;
 public:
-	CBoundedPool(PoolType& poolData) : Base(poolData)
+	CBoundedPool() : Base()
 	{
 
 	}
 
 	virtual size_t TopIndex() const OVERRIDE
 	{
-		return Base::pool.*PoolSize;
+		return Base::pool().*PoolSize;
 	}
 };
 

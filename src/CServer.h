@@ -13,16 +13,16 @@ class CServer : public CSingleton<CServer>
 {
 public:
 	CNetGame &NetGame;
-	CBoundedPool<CPlayerPool, CPlayer*, MAX_PLAYERS, &CPlayerPool::pPlayer, &CPlayerPool::bIsPlayerConnected, &CPlayerPool::dwPlayerPoolSize, CPlayerData> PlayerPool;
-	CBoundedPool<CVehiclePool, CVehicle*, MAX_VEHICLES, &CVehiclePool::pVehicle, &CVehiclePool::bVehicleSlotState, &CVehiclePool::dwVehiclePoolSize, CVehicleData> VehiclePool;
-	CBoundedPool<CActorPool, CActor*, MAX_ACTORS, &CActorPool::pActor, &CActorPool::bValidActor, &CActorPool::dwActorPoolSize> ActorPool;
-	CSlotPool<CObjectPool, CObject*, MAX_OBJECTS, &CObjectPool::pObjects, &CObjectPool::bObjectSlotState, CObjectData> ObjectPool;
-	CSlotPool<CPickupPool, tPickup, MAX_PICKUPS, &CPickupPool::Pickup, &CPickupPool::bActive> PickupPool;
-	CSlotPool<CMenuPool, CMenu*, MAX_MENUS, &CMenuPool::pMenu, &CMenuPool::bIsCreated> MenuPool;
-	CSlotPool<C3DTextPool, C3DText, MAX_3DTEXT_GLOBAL, &C3DTextPool::TextLabels, &C3DTextPool::bIsCreated> Text3DPool;
-	CSlotPool<CTextDrawPool, CTextdraw*, MAX_TEXT_DRAWS, &CTextDrawPool::TextDraw, &CTextDrawPool::bSlotState> TextDrawPool;
-	CSlotPool<CSAMPGangZonePool, ARRAY<float, 4>, MAX_GANG_ZONES, &CSAMPGangZonePool::fGangZone, &CSAMPGangZonePool::bSlotState> GangZonePool;
-	CSlotPerPlayerPool<CObjectPool, CObject*, MAX_OBJECTS, MAX_PLAYERS, &CObjectPool::pPlayerObjects, &CObjectPool::bPlayerObjectSlotState> PlayerObjectPool;
+	CBoundedPool<CPlayerPool, &CNetGame::pPlayerPool, CPlayer*, MAX_PLAYERS, &CPlayerPool::pPlayer, &CPlayerPool::bIsPlayerConnected, &CPlayerPool::dwPlayerPoolSize, CPlayerData> PlayerPool;
+	CBoundedPool<CVehiclePool, &CNetGame::pVehiclePool, CVehicle*, MAX_VEHICLES, &CVehiclePool::pVehicle, &CVehiclePool::bVehicleSlotState, &CVehiclePool::dwVehiclePoolSize, CVehicleData> VehiclePool;
+	CBoundedPool<CActorPool, &CNetGame::pActorPool, CActor*, MAX_ACTORS, &CActorPool::pActor, &CActorPool::bValidActor, &CActorPool::dwActorPoolSize> ActorPool;
+	CSlotPool<CObjectPool, &CNetGame::pObjectPool, CObject*, MAX_OBJECTS, &CObjectPool::pObjects, &CObjectPool::bObjectSlotState, CObjectData> ObjectPool;
+	CSlotPool<CPickupPool, &CNetGame::pPickupPool, tPickup, MAX_PICKUPS, &CPickupPool::Pickup, &CPickupPool::bActive> PickupPool;
+	CSlotPool<CMenuPool, &CNetGame::pMenuPool, CMenu*, MAX_MENUS, &CMenuPool::pMenu, &CMenuPool::bIsCreated> MenuPool;
+	CSlotPool<C3DTextPool, &CNetGame::p3DTextPool, C3DText, MAX_3DTEXT_GLOBAL, &C3DTextPool::TextLabels, &C3DTextPool::bIsCreated> Text3DPool;
+	CSlotPool<CTextDrawPool, &CNetGame::pTextDrawPool, CTextdraw*, MAX_TEXT_DRAWS, &CTextDrawPool::TextDraw, &CTextDrawPool::bSlotState> TextDrawPool;
+	CSlotPool<CSAMPGangZonePool, &CNetGame::pGangZonePool, ARRAY<float, 4>, MAX_GANG_ZONES, &CSAMPGangZonePool::fGangZone, &CSAMPGangZonePool::bSlotState> GangZonePool;
+	CSlotPerPlayerPool<CObjectPool, &CNetGame::pObjectPool, CObject*, MAX_OBJECTS, MAX_PLAYERS, &CObjectPool::pPlayerObjects, &CObjectPool::bPlayerObjectSlotState> PlayerObjectPool;
 
 	CServer(CNetGame &netGame);
 };

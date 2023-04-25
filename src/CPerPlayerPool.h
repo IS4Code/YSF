@@ -79,58 +79,63 @@ public:
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), class ExtraData = std::tuple<size_t>>
+template <class PoolType, PoolType*(CNetGame::*PoolMember), class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), class ExtraData = std::tuple<size_t>>
 class CBasicPerPlayerPool : public CExtendedPerPlayerPool<ObjectType, MaxSize, ExtraData>
 {
 	typedef CExtendedPerPlayerPool<ObjectType, MaxSize, ExtraData> Base;
 protected:
-	PoolType& pool;
 	const CPoolBase<CPlayer*, PlayerPoolMaxSize>& players;
+
+	PoolType& pool() const
+	{
+		return *((CServer::Get()->NetGame).*PoolMember);
+	}
+
 public:
-	CBasicPerPlayerPool(PoolType& poolData, const CPoolBase<CPlayer*, PlayerPoolMaxSize>& playerPool) : pool(poolData), players(playerPool)
+	CBasicPerPlayerPool(const CPoolBase<CPlayer*, PlayerPoolMaxSize>& playerPool) : players(playerPool)
 	{
 
 	}
 
 	virtual ARRAY<ObjectType, MaxSize> &operator[](size_t playerid) OVERRIDE
 	{
-		return (pool.*PoolArray)[playerid];
+		return (pool().*PoolArray)[playerid];
 	}
 
 	virtual ObjectType &Get(size_t playerid, size_t index) OVERRIDE
 	{
 		if (!IsValid(playerid, index)) throw std::invalid_argument("Invalid index accessed.");
-		return (pool.*PoolArray)[playerid][index];
+		return (pool().*PoolArray)[playerid][index];
 	}
 
 	virtual bool IsValid(size_t playerid, size_t index) const OVERRIDE
 	{
-		return players.IsValid(playerid) && index >= 0 && index < MaxSize && !aux::is_null((pool.*PoolArray)[playerid][index]);
+		return players.IsValid(playerid) && index >= 0 && index < MaxSize && !aux::is_null((pool().*PoolArray)[playerid][index]);
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), ARRAY<ARRAY<BOOL, MaxSize>, PlayerPoolMaxSize> (PoolType::*SlotArray), class ExtraData = std::tuple<size_t>>
-class CSlotPerPlayerPool : public CBasicPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, ExtraData>
+template <class PoolType, PoolType*(CNetGame::*PoolMember), class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), ARRAY<ARRAY<BOOL, MaxSize>, PlayerPoolMaxSize> (PoolType::*SlotArray), class ExtraData = std::tuple<size_t>>
+class CSlotPerPlayerPool : public CBasicPerPlayerPool<PoolType, PoolMember, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, ExtraData>
 {
-	typedef CBasicPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, ExtraData> Base;
+	typedef CBasicPerPlayerPool<PoolType, PoolMember, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, ExtraData> Base;
 public:
-	CSlotPerPlayerPool(PoolType& poolData, const CPoolBase<CPlayer*, PlayerPoolMaxSize>& playerPool) : Base(poolData, playerPool)
+	CSlotPerPlayerPool(const CPoolBase<CPlayer*, PlayerPoolMaxSize>& playerPool) : Base(playerPool)
 	{
 
 	}
 
 	virtual bool IsValid(size_t playerid, size_t index) const OVERRIDE
 	{
-		return playerid >= 0 && playerid < PlayerPoolMaxSize && index >= 0 && index < MaxSize && (Base::pool.*SlotArray)[playerid][index] && !aux::is_null((Base::pool.*PoolArray)[playerid][index]);
+		return playerid >= 0 && playerid < PlayerPoolMaxSize && index >= 0 && index < MaxSize && (Base::pool().*SlotArray)[playerid][index] && !aux::is_null((Base::pool().*PoolArray)[playerid][index]);
 	}
 };
 
-template <class PoolType, class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), ARRAY<ARRAY<BOOL, MaxSize>, PlayerPoolMaxSize> (PoolType::*SlotArray), ARRAY<DWORD, MaxSize> (PoolType::*PoolSize), class ExtraData = std::tuple<size_t>>
-class CBoundedPerPlayerPool : public CSlotPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, SlotArray, ExtraData>
+template <class PoolType, PoolType*(CNetGame::*PoolMember), class ObjectType, size_t MaxSize, size_t PlayerPoolMaxSize, ARRAY<ARRAY<ObjectType, MaxSize>, PlayerPoolMaxSize> (PoolType::*PoolArray), ARRAY<ARRAY<BOOL, MaxSize>, PlayerPoolMaxSize> (PoolType::*SlotArray), ARRAY<DWORD, MaxSize> (PoolType::*PoolSize), class ExtraData = std::tuple<size_t>>
+class CBoundedPerPlayerPool : public CSlotPerPlayerPool<PoolType, PoolMember, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, SlotArray, ExtraData>
 {
-	typedef CSlotPerPlayerPool<PoolType, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, SlotArray, ExtraData> Base;
+	typedef CSlotPerPlayerPool<PoolType, PoolMember, ObjectType, MaxSize, PlayerPoolMaxSize, PoolArray, SlotArray, ExtraData> Base;
 public:
-	CBoundedPerPlayerPool(PoolType& poolData, const CPoolBase<CPlayer*, PlayerPoolMaxSize>& playerPool) : Base(poolData, playerPool)
+	CBoundedPerPlayerPool(const CPoolBase<CPlayer*, PlayerPoolMaxSize>& playerPool) : Base(playerPool)
 	{
 
 	}
