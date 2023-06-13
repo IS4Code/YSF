@@ -225,7 +225,9 @@ namespace Natives
 		if(!IsPlayerConnected(playerid)) return 0;
 		if(zoneid < 0 || zoneid >= MAX_GANG_ZONES) return 0;
 
-		CPlugin::Get()->pGangZonePool->HideForPlayer(static_cast<WORD>(playerid), static_cast<WORD>(zoneid), true);
+		if(!CServer::Get()->PlayerPool.Extra(playerid).pPlayerZone[zoneid]) return 0;
+
+		CPlugin::Get()->pGangZonePool->Delete(static_cast<WORD>(playerid), static_cast<WORD>(zoneid));
 		return 1;
 	}
 
