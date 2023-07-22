@@ -1,4 +1,4 @@
-YSF 2.2
+YSF 2.2.1
 ===
 
 ![alt tag](https://travis-ci.org/IllidanS4/YSF.svg)
