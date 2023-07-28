@@ -240,6 +240,43 @@ namespace Natives
 		}
 		return 1;
 	}
+
+	// native ToggleCreateVehicleModelCheck(bool:toggle);
+	AMX_DECLARE_NATIVE(ToggleCreateVehicleModelCheck)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		bool toggle = CScriptParams::Get()->ReadBool();
+		if(toggle)
+		{
+			if(CAddress::ADDR_CreateVehicle_IdMin)
+			{
+				*CAddress::ADDR_CreateVehicle_IdMin = 400;
+			}
+			if(CAddress::ADDR_CreateVehicle_IdMax)
+			{
+				*CAddress::ADDR_CreateVehicle_IdMax = 611;
+			}
+			if(CAddress::ADDR_CreateVehicle_IdRange)
+			{
+				*CAddress::ADDR_CreateVehicle_IdRange = 611 - 400;
+			}
+		} else {
+			if(CAddress::ADDR_CreateVehicle_IdMin)
+			{
+				*CAddress::ADDR_CreateVehicle_IdMin = 0;
+			}
+			if(CAddress::ADDR_CreateVehicle_IdMax)
+			{
+				*CAddress::ADDR_CreateVehicle_IdMax = 0xFFFF;
+			}
+			if(CAddress::ADDR_CreateVehicle_IdRange)
+			{
+				*CAddress::ADDR_CreateVehicle_IdRange = 0xFFFF;
+			}
+		}
+		return 1;
+	}
 }
 
 static AMX_NATIVE_INFO native_list[] =
@@ -255,6 +292,7 @@ static AMX_NATIVE_INFO native_list[] =
 
 	AMX_DEFINE_NATIVE(ToggleCloseConnectionFix)
 	AMX_DEFINE_NATIVE(ToggleInvalidSkinProtection)
+	AMX_DEFINE_NATIVE(ToggleCreateVehicleModelCheck)
 };
 
 void RakNetLoadNatives()

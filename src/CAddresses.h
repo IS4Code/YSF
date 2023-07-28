@@ -225,6 +225,10 @@ public:
 
 	static ADDR<WORD> ADDR_CreatePlayerObject_IdStart;
 
+	static ADDR<WORD> ADDR_CreateVehicle_IdMin;
+	static ADDR<WORD> ADDR_CreateVehicle_IdMax;
+	static ADDR<WORD> ADDR_CreateVehicle_IdRange;
+
 	// Callback hooks
 	DECLARE_FUNC_PTR(CGameMode__OnPlayerConnect);
 	DECLARE_FUNC_PTR(CGameMode__OnPlayerDisconnect);
