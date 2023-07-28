@@ -300,6 +300,7 @@ native SetExclusiveBroadcast(status);
 native BroadcastToPlayer(playerid, bool:toggle = true);
 
 native ToggleCloseConnectionFix(bool:toggle);
+native ToggleInvalidSkinProtection(bool:toggle);
 
 // Vehicle functions
 native GetVehicleSpawnInfo(vehicleid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fRot = 0.0, &color1 = 0, &color2 = 0);

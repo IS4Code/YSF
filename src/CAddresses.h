@@ -217,9 +217,13 @@ public:
 
 #ifdef _WIN32
 	static ADDR<unsigned char[82]> ADDR_WrongPacketIDBranch;
+	static ADDR<unsigned char[20]> ADDR_OnPlayerSpawn_WrongSkinCheck;
 #else
 	static ADDR<unsigned char[114]> ADDR_WrongPacketIDBranch;
+	static ADDR<unsigned char[12]> ADDR_OnPlayerSpawn_WrongSkinCheck;
 #endif
+
+	static ADDR<WORD> ADDR_CreatePlayerObject_IdStart;
 
 	// Callback hooks
 	DECLARE_FUNC_PTR(CGameMode__OnPlayerConnect);

@@ -74,9 +74,13 @@ ADDR<const char*> CAddress::ADDR_RecordingDirectory;
 
 #ifdef _WIN32
 ADDR<unsigned char[82]> CAddress::ADDR_WrongPacketIDBranch;
+ADDR<unsigned char[20]> CAddress::ADDR_OnPlayerSpawn_WrongSkinCheck;
 #else
 ADDR<unsigned char[114]> CAddress::ADDR_WrongPacketIDBranch;
+ADDR<unsigned char[12]> CAddress::ADDR_OnPlayerSpawn_WrongSkinCheck;
 #endif
+
+ADDR<WORD> CAddress::ADDR_CreatePlayerObject_IdStart;
 
 // Callback hooks
 DEFINE_FUNC_PTR(CGameMode__OnPlayerConnect);
@@ -154,6 +158,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnDialogResponse =			FUNC_CGameMode__OnPlayerStreamOut + 0x230;  // 0x0046EB80;
 
 	ADDR_WrongPacketIDBranch =						0x004591FC;
+	ADDR_OnPlayerSpawn_WrongSkinCheck =				0x004913B7;
+	ADDR_CreatePlayerObject_IdStart =				0x00465470;
 
 	FUNC_ReplaceBadChars = FindPattern("\x56\x8B\x74\x00\x00\x56\xE8\x00\x00\x00\x00\x8A\x06", "xxx??xx????xx"); // 0x00468F20
 	#else
@@ -206,6 +212,8 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	FUNC_CGameMode__OnDialogResponse = 0x80A6750;
 
 	ADDR_WrongPacketIDBranch = 0x080752FC;
+	ADDR_OnPlayerSpawn_WrongSkinCheck = 0x080B0E12;
+	ADDR_CreatePlayerObject_IdStart = 0x080C869A;
 
 	FUNC_ReplaceBadChars = FindPattern("\x55\x89\xE5\x53\x83\xEC\x04\x8B\x5D\x08\x89\x1C\x24\xE8\x00\x00\x00\x00\x0F", "xxxxxxxxxxxxxx????x"); // 080D5CA0
 
@@ -418,5 +426,15 @@ void CAddress::Initialize(SAMPVersion sampVersion)
 	if(ADDR_WrongPacketIDBranch)
 	{
 		ADDR_WrongPacketIDBranch.unlock();
+	}
+
+	if(ADDR_OnPlayerSpawn_WrongSkinCheck)
+	{
+		ADDR_OnPlayerSpawn_WrongSkinCheck.unlock();
+	}
+
+	if(ADDR_CreatePlayerObject_IdStart)
+	{
+		ADDR_CreatePlayerObject_IdStart.unlock();
 	}
 }

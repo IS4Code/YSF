@@ -216,6 +216,30 @@ namespace Natives
 		}
 		return 1;
 	}
+
+	// native ToggleInvalidSkinProtection(bool:toggle);
+	AMX_DECLARE_NATIVE(ToggleInvalidSkinProtection)
+	{
+		CHECK_PARAMS(1, LOADED);
+
+		auto &arr = *CAddress::ADDR_OnPlayerSpawn_WrongSkinCheck;
+		static bool toggled = true;
+		static unsigned char backup[sizeof(arr)];
+
+		bool toggle = CScriptParams::Get()->ReadBool();
+		if(toggle != toggled)
+		{
+			toggled = toggle;
+			if(toggle)
+			{
+				std::memcpy(arr, backup, sizeof(arr));
+			}else{
+				std::memcpy(backup, arr, sizeof(arr));
+				std::memset(arr, 0x90, sizeof(arr));
+			}
+		}
+		return 1;
+	}
 }
 
 static AMX_NATIVE_INFO native_list[] =
@@ -230,6 +254,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SendData)
 
 	AMX_DEFINE_NATIVE(ToggleCloseConnectionFix)
+	AMX_DEFINE_NATIVE(ToggleInvalidSkinProtection)
 };
 
 void RakNetLoadNatives()
