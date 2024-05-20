@@ -651,34 +651,39 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			bsSync->Read<int>(pickupid);
 			bsSync->SetReadOffset(read_offset);
 
-			if(pickupid >= 0 && pickupid < MAX_PICKUPS && pNetGame->pPickupPool->bActive[pickupid])
+			if(pickupid < 0 || pickupid >= MAX_PICKUPS || !pNetGame->pPickupPool->bActive[pickupid])
 			{
-				if(auto player = pNetGame->pPlayerPool->pPlayer[playerid])
+				break;
+			}
+			if(playerid >= MAX_PLAYERS || !pNetGame->pPlayerPool->bIsPlayerConnected[playerid])
+			{
+				break;
+			}
+			if(auto player = pNetGame->pPlayerPool->pPlayer[playerid])
+			{
+				auto &streamedIn = player->bPickupStreamedIn[pickupid];
+				if(streamedIn == STREAMING_CHANGE_SIGNAL)
 				{
-					auto &streamedIn = player->bPickupStreamedIn[pickupid];
-					if(streamedIn == STREAMING_CHANGE_SIGNAL)
+					streamedIn = uniqueID == RPC_CreatePickup;
+				}else{
+					// the callback might call the RPC again, in which case the callback will be blocked
+					// and the original RPC will be ignored
+					if(uniqueID == RPC_CreatePickup && !streamedIn)
 					{
-						streamedIn = uniqueID == RPC_CreatePickup;
+						streamedIn = STREAMING_CHANGE_SIGNAL;
+						CCallbackManager::OnPickupStreamIn(pickupid, playerid);
+					}else if(uniqueID == RPC_DestroyPickup && streamedIn)
+					{
+						streamedIn = STREAMING_CHANGE_SIGNAL;
+						CCallbackManager::OnPickupStreamOut(pickupid, playerid);
 					}else{
-						// the callback might call the RPC again, in which case the callback will be blocked
-						// and the original RPC will be ignored
-						if(uniqueID == RPC_CreatePickup && !streamedIn)
-						{
-							streamedIn = STREAMING_CHANGE_SIGNAL;
-							CCallbackManager::OnPickupStreamIn(pickupid, playerid);
-						}else if(uniqueID == RPC_DestroyPickup && streamedIn)
-						{
-							streamedIn = STREAMING_CHANGE_SIGNAL;
-							CCallbackManager::OnPickupStreamOut(pickupid, playerid);
-						}else{
-							break;
-						}
-						auto newVal = streamedIn;
-						streamedIn = uniqueID != RPC_CreatePickup;
-						if(newVal != STREAMING_CHANGE_SIGNAL)
-						{
-							return false;
-						}
+						break;
+					}
+					auto newVal = streamedIn;
+					streamedIn = uniqueID != RPC_CreatePickup;
+					if(newVal != STREAMING_CHANGE_SIGNAL)
+					{
+						return false;
 					}
 				}
 			}
