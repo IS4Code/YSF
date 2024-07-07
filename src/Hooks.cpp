@@ -851,9 +851,9 @@ int HOOK_THISCALL(HOOK_CGameMode__OnPlayerConnect, CGameMode *thisptr, cell play
 
 int HOOK_THISCALL(HOOK_CGameMode__OnPlayerDisconnect, CGameMode *thisptr, cell playerid, cell reason)
 {
+	int result = CGameMode__OnPlayerDisconnect_hook(thisptr, playerid, reason);
 	CPlugin::Get()->RemovePlayer(playerid);
-	
-	return CGameMode__OnPlayerDisconnect_hook(thisptr, playerid, reason);
+	return result;
 }
 
 //----------------------------------------------------
