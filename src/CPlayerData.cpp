@@ -436,3 +436,15 @@ bool CPlayerData::IsBuildingRemoved(int modelid, const CVector &pos, float range
 	}
 	return false;
 }
+
+void CPlayerData::IgnorePacketsFromPlayer(WORD ignoreplayerid, bool ignore)
+{
+	if(ignore)
+	{
+		m_IgnoredPackets.insert(ignoreplayerid);
+	}
+	else
+	{
+		m_IgnoredPackets.erase(ignoreplayerid);
+	}
+}

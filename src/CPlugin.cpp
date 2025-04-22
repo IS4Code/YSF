@@ -408,6 +408,12 @@ RakNet::BitStream *CPlugin::BuildSyncData(RakNet::BitStream *bsOrig, WORD toplay
 	//logprintf("RebuildSyncData %d - %d", id, playerid);
 	auto &data = CServer::Get()->PlayerPool.Extra(playerid);
 	auto &todata = CServer::Get()->PlayerPool.Extra(toplayerid);
+
+	if(todata.ArePacketsIgnoredFromPlayer(playerid))
+	{
+		return new RakNet::BitStream();
+	}
+
 	switch (id)
 	{
 		case ID_PLAYER_SYNC:

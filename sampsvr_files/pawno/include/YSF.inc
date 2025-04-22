@@ -179,6 +179,8 @@ native BroadcastDeath(playerid);
 native IsPlayerCameraTargetEnabled(playerid);
 native SetPlayerDisabledKeysSync(playerid, keys, updown = 0, leftright = 0);
 native GetPlayerDisabledKeysSync(playerid, &keys, &updown = 0, &leftright = 0);
+native IgnorePacketsFromPlayer(playerid, fromplayerid, bool:ignore = true);
+native ArePacketsIgnoredFromPlayer(playerid, fromplayerid);
 
 native GetPlayerBuildingsRemoved(playerid);
 native IsBuildingRemovedForPlayer(playerid, modelid, Float:fX, Float:fY, Float:fZ, Float:fRadius);

@@ -87,6 +87,9 @@ public:
 	size_t GetBuildingsRemoved() const;
 	bool IsBuildingRemoved(int modelid, const CVector &pos, float range, bool any) const;
 
+	void IgnorePacketsFromPlayer(WORD ignoreplayerid, bool ignore);
+	inline bool ArePacketsIgnoredFromPlayer(WORD playerid) { return m_IgnoredPackets.find(playerid) != m_IgnoredPackets.end(); }
+
 	int iNPCProcessID = -1;
 	WORD wSurfingInfo = 0;
 	WORD wDialogID = -1;
@@ -178,6 +181,7 @@ private:
 	int m_iFightingStyles[MAX_PLAYERS] = {};
 	std::unordered_map<WORD, std::string> m_PlayerNames;
 	std::unordered_set<WORD> m_HiddenObjects;
+	std::unordered_set<WORD> m_IgnoredPackets;
 	bool m_HideNewObjects = false;
 	std::vector<RemovedBuilding> m_RemovedBuildings;
 };

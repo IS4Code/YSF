@@ -1215,6 +1215,34 @@ namespace Natives
 		return 1;
 	}
 
+	// native IgnorePacketsFromPlayer(playerid, fromplayerid, bool:ignore = true);
+	AMX_DECLARE_NATIVE(IgnorePacketsFromPlayer)
+	{
+		CHECK_PARAMS(3, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		const int fromplayerid = CScriptParams::Get()->ReadInt();
+		const bool ignore = CScriptParams::Get()->ReadBool();
+
+		if(!IsPlayerConnected(playerid) || !IsPlayerConnected(fromplayerid)) return 0;
+
+		CServer::Get()->PlayerPool.Extra(playerid).IgnorePacketsFromPlayer(static_cast<WORD>(fromplayerid), ignore);
+		return 1;
+	}
+
+	// native ArePacketsIgnoredFromPlayer(playerid, fromplayerid);
+	AMX_DECLARE_NATIVE(ArePacketsIgnoredFromPlayer)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		const int playerid = CScriptParams::Get()->ReadInt();
+		const int fromplayerid = CScriptParams::Get()->ReadInt();
+
+		if(!IsPlayerConnected(playerid)) return 0;
+
+		return CServer::Get()->PlayerPool.Extra(playerid).ArePacketsIgnoredFromPlayer(static_cast<WORD>(fromplayerid));
+	}
+
 	// native SetPlayerConnectMode(playerid, E_PLAYER_CONNECT_MODE:mode);
 	AMX_DECLARE_NATIVE(SetPlayerConnectMode)
 	{
@@ -1394,6 +1422,8 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SendPlayerDeath) // R20
 	AMX_DEFINE_NATIVE(UpdatePlayerSyncData) // R20
 	AMX_DEFINE_NATIVE(CopyPlayerSyncData) // 2.3
+	AMX_DEFINE_NATIVE(IgnorePacketsFromPlayer) // 2.3
+	AMX_DEFINE_NATIVE(ArePacketsIgnoredFromPlayer) // 2.3
 	AMX_DEFINE_NATIVE(SetPlayerConnectMode) // R20
 	AMX_DEFINE_NATIVE(GetPlayerConnectMode) // R20
 	AMX_DEFINE_NATIVE(SendPlayerClientGameInit) // R20

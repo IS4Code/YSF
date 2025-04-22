@@ -210,6 +210,12 @@ bool THISCALL CHookRakServer::Send(void* ppRakServer, RakNet::BitStream* paramet
 	RakNet::BitStream *newParams = CPlugin::Get()->BuildSyncData(parameters, static_cast<WORD>(CSAMPFunctions::GetIndexFromPlayerID(playerId)));
 	if(newParams)
 	{
+		if(newParams->GetNumberOfBitsUsed() == 0)
+		{
+			// Ignore packet
+			delete newParams;
+			return false;
+		}
 		bool ret = CSAMPFunctions::Send(newParams, priority, reliability, orderingChannel, playerId, broadcast);
 		delete newParams;
 		return ret;
