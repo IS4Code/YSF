@@ -1166,6 +1166,55 @@ namespace Natives
 		return 1;
 	}
 
+	// native CopyPlayerSyncData(fromplayerid, toplayerid);
+	AMX_DECLARE_NATIVE(CopyPlayerSyncData)
+	{
+		CHECK_PARAMS(2, LOADED);
+
+		int fromplayerid = CScriptParams::Get()->ReadInt();
+		if(!IsPlayerConnected(fromplayerid)) return 0;
+
+		int toplayerid = CScriptParams::Get()->ReadInt();
+		if(toplayerid == fromplayerid || !IsPlayerConnected(toplayerid)) return 0;
+
+		CPlayer *pFromPlayer = pNetGame->pPlayerPool->pPlayer[fromplayerid];
+		CPlayer *pToPlayer = pNetGame->pPlayerPool->pPlayer[toplayerid];
+		switch(pFromPlayer->byteState)
+		{
+			case PLAYER_STATE_ONFOOT:
+				pToPlayer->iUpdateState = 1;
+				pToPlayer->syncData = pFromPlayer->syncData;
+				pToPlayer->bHasAimSync = pFromPlayer->bHasAimSync;
+				if(pToPlayer->bHasAimSync)
+				{
+					pToPlayer->aimSyncData = pFromPlayer->aimSyncData;
+				}
+				break;
+			case PLAYER_STATE_DRIVER:
+				pToPlayer->iUpdateState = 2;
+				pToPlayer->vehicleSyncData = pFromPlayer->vehicleSyncData;
+				pToPlayer->bHasTrailerSync = pFromPlayer->bHasTrailerSync;
+				if(pToPlayer->bHasTrailerSync)
+				{
+					pToPlayer->trailerSyncData = pFromPlayer->trailerSyncData;
+				}
+				break;
+			case PLAYER_STATE_PASSENGER:
+				pToPlayer->iUpdateState = 3;
+				pToPlayer->passengerSyncData = pFromPlayer->passengerSyncData;
+				pToPlayer->bHasAimSync = pFromPlayer->bHasAimSync;
+				if(pToPlayer->bHasAimSync)
+				{
+					pToPlayer->aimSyncData = pFromPlayer->aimSyncData;
+				}
+				break;
+			default:
+				return 0;
+		}
+		pToPlayer->byteState = pFromPlayer->byteState;
+		return 1;
+	}
+
 	// native SetPlayerConnectMode(playerid, E_PLAYER_CONNECT_MODE:mode);
 	AMX_DECLARE_NATIVE(SetPlayerConnectMode)
 	{
@@ -1344,6 +1393,7 @@ static AMX_NATIVE_INFO native_list[] =
 	AMX_DEFINE_NATIVE(SetPlayerSyncVehicleHealth) // R20
 	AMX_DEFINE_NATIVE(SendPlayerDeath) // R20
 	AMX_DEFINE_NATIVE(UpdatePlayerSyncData) // R20
+	AMX_DEFINE_NATIVE(CopyPlayerSyncData) // 2.3
 	AMX_DEFINE_NATIVE(SetPlayerConnectMode) // R20
 	AMX_DEFINE_NATIVE(GetPlayerConnectMode) // R20
 	AMX_DEFINE_NATIVE(SendPlayerClientGameInit) // R20

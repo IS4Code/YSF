@@ -207,6 +207,7 @@ native SetPlayerSyncVehicleHealth(playerid, Float:health);
 native SetPlayerSyncTrainSpeed(playerid, Float:speed);
 native SendPlayerDeath(playerid, forplayerid=-1);
 native UpdatePlayerSyncData(playerid, type=-1, bool:setstate=false);
+native CopyPlayerSyncData(fromplayerid, toplayerid);
 native SendPlayerClientGameInit(playerid, bool:usecjwalk=bool:-1, bool:limitglobalchat=bool:-1, Float:globalchatradius=Float:-1, Float:nametagdistance=Float:-1, bool:disableenterexits=bool:-1, bool:nametaglos=bool:-1, bool:manualvehengineandlights=bool:-1,
 				spawnsavailable=-1, bool:shownametags=bool:-1, bool:showplayermarkers=bool:-1, onfoot_rate=-1, incar_rate=-1, weapon_rate=-1, lagcompmode=-1, bool:vehiclefriendlyfire=bool:-1, const hostname[]="");
 
