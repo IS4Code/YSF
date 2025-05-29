@@ -278,7 +278,7 @@ native GetPlayerAttachedObject(playerid, index, &modelid, &bone = 0, &Float:fX =
 //native RemPlayerAttachedObjForPlayer(forplayerid, removefromplayerid, index);
 //native IsPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index);
 
-//n_ative AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ);
+native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ);
 native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
 
 // RakNet ban functions
