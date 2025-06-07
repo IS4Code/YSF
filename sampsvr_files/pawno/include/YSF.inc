@@ -19,23 +19,23 @@ enum E_SERVER_RULE_FLAGS (<<= 1)
 
 enum E_SCM_EVENT_TYPE
 {
-    SCM_EVENT_PAINTJOB = 1,
-    SCM_EVENT_MOD = 2,
-    SCM_EVENT_RESPRAY = 3,
-    SCM_EVENT_MOD_SHOP = 4
+	SCM_EVENT_PAINTJOB = 1,
+	SCM_EVENT_MOD = 2,
+	SCM_EVENT_RESPRAY = 3,
+	SCM_EVENT_MOD_SHOP = 4
 }
 
 enum E_PLAYER_CONNECT_MODE
 {
-    NO_ACTION,
-    DISCONNECT_ASAP,
-    DISCONNECT_ASAP_SILENTLY,
-    DISCONNECT_ON_NO_ACK,
-    REQUESTED_CONNECTION,
-    HANDLING_CONNECTION_REQUEST,
-    UNVERIFIED_SENDER,
-    SET_ENCRYPTION_ON_MULTIPLE_16_B,
-    CONNECTED
+	NO_ACTION,
+	DISCONNECT_ASAP,
+	DISCONNECT_ASAP_SILENTLY,
+	DISCONNECT_ON_NO_ACK,
+	REQUESTED_CONNECTION,
+	HANDLING_CONNECTION_REQUEST,
+	UNVERIFIED_SENDER,
+	SET_ENCRYPTION_ON_MULTIPLE_16_B,
+	CONNECTED
 }
 #define SET_ENCRYPTION_ON_MULTIPLE_16_BYTE_PACKET SET_ENCRYPTION_ON_MULTIPLE_16_B
 
@@ -148,7 +148,9 @@ native IsPlayerCheckpointActive(playerid);
 native GetPlayerCheckpoint(playerid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fSize = 0.0);
 native IsPlayerRaceCheckpointActive(playerid);
 native GetPlayerRaceCheckpoint(playerid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fNextX = 0.0, &Float:fNextY = 0.0, &Float:fNextZ = 0.0, &Float:fSize = 0.0);
+#if !defined GetPlayerWorldBounds
 native GetPlayerWorldBounds(playerid, &Float:x_max, &Float:x_min = 0.0, &Float:y_max = 0.0, &Float:y_min = 0.0);
+#endif
 native IsPlayerInModShop(playerid);
 native GetPlayerSirenState(playerid);
 native GetPlayerLandingGearState(playerid);
@@ -278,7 +280,8 @@ native GetPlayerAttachedObject(playerid, index, &modelid, &bone = 0, &Float:fX =
 //native RemPlayerAttachedObjForPlayer(forplayerid, removefromplayerid, index);
 //native IsPlayerAttachedObjForPlayer(forplayerid, attachtoplayerid, index);
 
-native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ);
+// Already declared in a_objects.inc
+//native AttachPlayerObjectToPlayer(objectplayer, objectid, attachplayer, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:rX, Float:rY, Float:rZ);
 native AttachPlayerObjectToObject(playerid, objectid, attachtoid, Float:OffsetX, Float:OffsetY, Float:OffsetZ, Float:RotX, Float:RotY, Float:RotZ, SyncRotation = 1);
 
 // RakNet ban functions
@@ -293,10 +296,10 @@ native GetLocalIP(index, localip[], len = sizeof(localip));
 
 enum
 {
-    EXCLUSIVE_BROADCAST_ONCE_OFF = -1,
+	EXCLUSIVE_BROADCAST_ONCE_OFF = -1,
 	EXCLUSIVE_BROADCAST_OFF = 0,
-    EXCLUSIVE_BROADCAST_ON = 1,
-    EXCLUSIVE_BROADCAST_ONCE_ON = 2
+	EXCLUSIVE_BROADCAST_ON = 1,
+	EXCLUSIVE_BROADCAST_ONCE_ON = 2
 };
 
 native SetExclusiveBroadcast(status);
@@ -468,6 +471,7 @@ native GetPlayerPickupModel(playerid, pickupid);
 native GetPlayerPickupType(playerid, pickupid);
 native GetPlayerPickupVirtualWorld(playerid, pickupid);
 */
+
 // Y_Less's model sizes inc
 native GetColCount();
 native Float:GetColSphereRadius(modelid);
@@ -540,23 +544,23 @@ native SendData(playerid, {Float,_}:...); // playerid == -1 -> broadcast
 CMD:pickup(playerid, params[])
 {
 	new
-	    Float:X, Float:Y, Float:Z;
+		Float:X, Float:Y, Float:Z;
 	GetPlayerPos(playerid, X, Y, Z);
 
-    SendRPC(playerid, 95, // rpcid
+	SendRPC(playerid, 95, // rpcid
 		BS_INT, strval(params), // int - pickupid
-		BS_INT, 1222,    // int - modelid
-		BS_INT, 19,     // int   - type
-		BS_FLOAT, X + 2.0,   // float
-		BS_FLOAT, Y,     // float
-		BS_FLOAT, Z);    // float
+		BS_INT, 1222, // int - modelid
+		BS_INT, 19, // int - type
+		BS_FLOAT, X + 2.0, // float
+		BS_FLOAT, Y, // float
+		BS_FLOAT, Z); // float
 	return 1;
 }
 
 CMD:destroypickup(playerid, params[])
 {
 	SendRPC(playerid, 63, // rpcid
-		BS_INT, strval(params));    // int - pickupid
+		BS_INT, strval(params)); // int - pickupid
 	return 1;
 }
 */
