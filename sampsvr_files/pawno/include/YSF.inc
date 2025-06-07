@@ -148,7 +148,9 @@ native IsPlayerCheckpointActive(playerid);
 native GetPlayerCheckpoint(playerid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fSize = 0.0);
 native IsPlayerRaceCheckpointActive(playerid);
 native GetPlayerRaceCheckpoint(playerid, &Float:fX, &Float:fY = 0.0, &Float:fZ = 0.0, &Float:fNextX = 0.0, &Float:fNextY = 0.0, &Float:fNextZ = 0.0, &Float:fSize = 0.0);
+#if !defined GetPlayerWorldBounds
 native GetPlayerWorldBounds(playerid, &Float:x_max, &Float:x_min = 0.0, &Float:y_max = 0.0, &Float:y_min = 0.0);
+#endif
 native IsPlayerInModShop(playerid);
 native GetPlayerSirenState(playerid);
 native GetPlayerLandingGearState(playerid);
