@@ -793,7 +793,10 @@ bool CPlugin::RebuildRPCData(BYTE uniqueID, RakNet::BitStream *bsSync, WORD play
 			{
 				bsSync->Write((BYTE)0);
 			}
-			bsSync->Write(reinterpret_cast<char(&)[212]>(pNetGame->pVehiclePool->byteVehicleModelsUsed), 212); // modelsUsed
+			if(auto vehiclePool = pNetGame->pVehiclePool)
+			{
+				bsSync->Write(reinterpret_cast<char(&)[212]>(vehiclePool->byteVehicleModelsUsed), 212); // modelsUsed
+			}
 			bsSync->Write((DWORD)vehiclefriendlyfire);
 			break;
 		}
